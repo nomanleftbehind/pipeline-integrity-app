@@ -7,7 +7,7 @@ const PipelineSchema = new Schema({
   substance: {type: String, required: true},
   from: {type: String, required: true},
   to: {type: String, required: true},
-  "injection points": [{type: Schema.Types.ObjectId, ref: 'InjectionPoints'}],
+  injection_points: [{type: Schema.Types.ObjectId, ref: 'InjectionPoints'}],
   status: {type: String, required: true, enum: ['Operating', 'Discontinued', 'Abandoned'], default: 'Operating'},
   created_at: { type: Date, default: Date.now }
 });

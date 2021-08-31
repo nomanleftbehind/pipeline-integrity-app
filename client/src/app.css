@@ -66,12 +66,14 @@ tr[target="pipeline index is even"] {
 
 .left {
   float: left;
+  margin-right: 10px;
   /* width: 100px; */
   /* display:table-cell; */
 }
 
 .right {
   float: right;
+
   /* width: 100px; */
   /* vertical-align: middle; */
 }

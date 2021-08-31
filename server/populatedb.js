@@ -28,7 +28,7 @@ function pipelineCreate(license, segment, substance, from, to, inj_pts, status, 
     substance: substance,
     from: from,
     to: to,
-    "injection points": inj_pts,
+    injection_points: inj_pts,
     status: status
   }
 
@@ -100,6 +100,9 @@ function createInjectionPoints(cb) {
     },
     function (callback) {
       injectionPointCreate('100/10-20-046-07W5/00', 1, 0, 0.15, callback);
+    },
+    function (callback) {
+      injectionPointCreate('', 0, 0, 0, callback);
     },
     function (callback) {
       injectionPointCreate('102/06-32-046-07W5/00', 1.92, 3.76, 0.62, callback);

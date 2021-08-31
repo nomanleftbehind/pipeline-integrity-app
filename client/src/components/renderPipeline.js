@@ -1,9 +1,12 @@
 import React from 'react';
 import InjectionPointForm from './InjectionPointForm';
 import Modal from './Modal';
-import { ReactComponent as RemovePipelineIcon } from '../svg/remove-pipeline.svg';
+import { ReactComponent as RemoveIcon } from '../svg/remove-pipeline.svg';
 import { ReactComponent as AddPipelineIcon } from '../svg/add-pipeline.svg';
+import { ReactComponent as EditIcon } from '../svg/edit-icon.svg';
+import { ReactComponent as CancelIcon } from '../svg/cancel-icon.svg';
 import '../styles/pipeline.css';
+import '../styles/injection-point-form.css';
 
 const isEven = (value) => {
   if (value % 2 === 0)
@@ -23,12 +26,13 @@ class RenderPipeline extends React.Component {
     };
     this.handleClick = this.handleClick.bind(this);
     this.handleAddPipeline = this.handleAddPipeline.bind(this);
+    this.handleAddInjectionPoint = this.handleAddInjectionPoint.bind(this);
     this.handleInjectionPointChange = this.handleInjectionPointChange.bind(this);
     this.handleInjectionPointChangeSubmit = this.handleInjectionPointChangeSubmit.bind(this);
     this.showModalDeletePipeline = this.showModalDeletePipeline.bind(this);
     this.hideModalDeletePipeline = this.hideModalDeletePipeline.bind(this);
     this.hideDuplicateInjectionPointModal = this.hideDuplicateInjectionPointModal.bind(this);
-    this.handleDeletePipeline = this.handleDeletePipeline.bind(this);
+    this.deletePipeline = this.deletePipeline.bind(this);
   }
 
   handleClick() {
@@ -43,6 +47,24 @@ class RenderPipeline extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(this.props.pipeline),
+    })
+      .then(response => { console.log(response); return response.json() })
+      .then(data => {
+        this.props.fetchPipelines();
+        console.log('Success:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+
+  handleAddInjectionPoint(e) {
+    // e.preventDefault();
+    fetch("http://localhost:5002/pipeline/" + this.props.pipeline._id + "/addinjpt", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
       .then(response => { console.log(response); return response.json() })
       .then(data => {
@@ -76,7 +98,7 @@ class RenderPipeline extends React.Component {
     const modifiedInjectionPoints = this.state.modifiedInjectionPoints;
     modifiedInjectionPoints[inj_pt_id] = e.target.value;
     this.setState({ modifiedInjectionPoints });
-    console.log(modifiedInjectionPoints);
+    // console.log(e.target.value);
   }
 
   toggleInjectionPointSubmitForm(inj_pt_id) {
@@ -89,21 +111,53 @@ class RenderPipeline extends React.Component {
     }));
   }
 
-  changeInjectionPoint(e, inj_pt_id) {
-    const pipeline = { ...this.props.pipeline };
-    const inj_pts = [...pipeline["injection points"]];
-    pipeline["injection points"] = inj_pts;
-    const inj_pt_index = pipeline["injection points"].findIndex(inj_pt => inj_pt === inj_pt_id);
-    pipeline["injection points"][inj_pt_index] = e.target.name;
-    this.handleUpdatePipeline(pipeline);
+  databaseChangeInjectionPoint(inj_pt_id, new_inj_pt_id) {
+    fetch(`http://localhost:5002/pipeline/${this.props.pipeline._id}/${inj_pt_id}/${new_inj_pt_id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => { return response.json() })
+      .then(data => {
+        this.props.fetchPipelines();
+        console.log('Success:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+
+  submitInjectionPointChange(e, inj_pt_id) {
+    // const pipeline = { ...this.props.pipeline };
+    // const inj_pts = [...pipeline.injection_points];
+    // pipeline.injection_points = inj_pts;
+    // const inj_pt_index = pipeline.injection_points.findIndex(inj_pt => inj_pt._id === inj_pt_id);
+    // pipeline.injection_points[inj_pt_index] = e.target.name;
+    this.databaseChangeInjectionPoint(inj_pt_id, e.target.name);
+    console.log(this.state.injectionPoints);
   }
 
   handleInjectionPointChangeSubmit(e, inj_pt_id) {
-    this.setState({ injectionPoints: this.props.pipeline["injection points"] },
+    this.setState({ injectionPoints: this.props.pipeline.injection_points.map(({_id}) => _id) },
       () => {
         this.state.injectionPoints.includes(e.target.name) ?
           this.setState({ showDuplicateInjectionPointModal: true }) :
-          this.changeInjectionPoint(e, inj_pt_id)
+          this.submitInjectionPointChange(e, inj_pt_id)
+      });
+  }
+
+  deleteInjectionPoint(inj_pt_id) {
+    fetch(`http://localhost:5002/pipeline/${this.props.pipeline._id}/${inj_pt_id}`, {
+      method: 'DELETE',
+    })
+      .then(response => { return response.json() })
+      .then(data => {
+        this.props.fetchPipelines();
+        console.log('Delete Success:', data);
+      })
+      .catch((error) => {
+        console.error('Delete Error:', error);
       });
   }
 
@@ -119,7 +173,7 @@ class RenderPipeline extends React.Component {
     this.setState({ showDeletePipelineModal: false });
   }
 
-  handleDeletePipeline() {
+  deletePipeline() {
     fetch("http://localhost:5002/pipeline/" + this.props.pipeline._id, {
       method: 'DELETE',
     })
@@ -140,7 +194,7 @@ class RenderPipeline extends React.Component {
     const pipeline = this.props.pipeline;
     const expandedPipelines = this.props.expandedPipelines;
     const modifiedInjectionPoints = this.state.modifiedInjectionPoints;
-    const { _id, license, segment, substance, from, to, "injection points": inj_pts, status } = pipeline;
+    const { _id, license, segment, substance, from, to, injection_points: inj_pts, status } = pipeline;
 
     const modalDeletePipeline = this.state.showDeletePipelineModal ? (
       <Modal>
@@ -149,7 +203,7 @@ class RenderPipeline extends React.Component {
             <div>
               Are you sure you want to delete {`${license}-${segment}`} pipeline?
             </div>
-            <button onClick={this.handleDeletePipeline}>Delete</button>
+            <button onClick={this.deletePipeline}>Delete</button>
             <button onClick={this.hideModalDeletePipeline}>Cancel</button>
           </div>
         </div>
@@ -183,7 +237,7 @@ class RenderPipeline extends React.Component {
         <td>
           <div className="add-remove-pipeline-container">
             <button onClick={this.showModalDeletePipeline} type="button">
-              <RemovePipelineIcon />
+              <RemoveIcon />
             </button>
             <button onClick={this.handleAddPipeline} type="button">
               <AddPipelineIcon />
@@ -198,34 +252,49 @@ class RenderPipeline extends React.Component {
         <td><span>{substance}</span></td>
         <td><span>{from}</span></td>
         <td><span>{to}</span></td>
-        <td><span>{inj_pts.length === 1 ? "1 well" : `${inj_pts.length} wells`}</span></td>
+        <td>
+          <div>
+            <span>{inj_pts.length === 1 ? "1 well" : `${inj_pts.length} wells`}</span>
+          </div>
+          <div className="add-remove-pipeline-container right">
+            <button onClick={this.handleAddInjectionPoint} type="button">
+              <AddPipelineIcon />
+            </button>
+          </div>
+        </td>
         <td><span>{status}</span></td>
       </tr>
     ];
 
     if (expandedPipelines.includes(_id)) {
       pipelineRows.push(
-        inj_pts.map(inj_pt_id => {
-          const inj_pt = this.props.injectionPointOptions.find((inj_pt) => inj_pt._id === inj_pt_id);
+        inj_pts.map(inj_pt => {
+          // const inj_pt = this.props.injectionPointOptions.find((inj_pt) => inj_pt._id === inj_pt_id);
+          // console.log(this.state);
           return (
-            <tr key={`pipeline ${_id} injection point ${inj_pt_id}`} target={"pipeline index is " + isEven(ppl_idx)}>
+            <tr key={`pipeline ${_id} injection point ${inj_pt._id}`} target={"pipeline index is " + isEven(ppl_idx)}>
               <td colSpan="8"></td>
               <td className="injection-point">
                 <div className="left">
                   <span>{inj_pt.source}</span>
                 </div>
-                <div className="right">
-                  <button onClick={() => this.toggleInjectionPointSubmitForm(inj_pt_id)}>{this.state.showSubmitForm[inj_pt_id] ? "Cancel" : "Edit"}</button>
+                <div className="add-remove-pipeline-container left">
+                  <button onClick={() => this.toggleInjectionPointSubmitForm(inj_pt._id)}>{this.state.showSubmitForm[inj_pt._id] ? <CancelIcon /> : <EditIcon />}</button>
+                </div>
+                <div className="add-remove-pipeline-container right">
+                  <button onClick={() => this.deleteInjectionPoint(inj_pt._id)} type="button">
+                    <RemoveIcon />
+                  </button>
                 </div>
                 <div className="bottom">
-                  {this.state.showSubmitForm[inj_pt_id] ?
+                  {this.state.showSubmitForm[inj_pt._id] ?
                     <InjectionPointForm
-                      inj_pt_id={inj_pt_id}
+                      inj_pt_id={inj_pt._id}
                       injectionPointOptions={this.props.injectionPointOptions}
-                      modifiedInjectionPoint={modifiedInjectionPoints[inj_pt_id]}
-                      onToggleInjectionPointSubmitForm={() => this.toggleInjectionPointSubmitForm(inj_pt_id)}
-                      onInjectionPointChange={(e) => this.handleInjectionPointChange(e, inj_pt_id)}
-                      onInjectionPointChangeSubmit={(e) => this.handleInjectionPointChangeSubmit(e, inj_pt_id)} /> :
+                      modifiedInjectionPoint={modifiedInjectionPoints[inj_pt._id]}
+                      onToggleInjectionPointSubmitForm={() => this.toggleInjectionPointSubmitForm(inj_pt._id)}
+                      onInjectionPointChange={(e) => this.handleInjectionPointChange(e, inj_pt._id)}
+                      onInjectionPointChangeSubmit={(e) => this.handleInjectionPointChangeSubmit(e, inj_pt._id)} /> :
                     null
                   }
                 </div>

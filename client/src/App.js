@@ -11,7 +11,7 @@ class PipelineDatabase extends React.Component {
       pipelines: [],
       injectionPointOptions: [],
       expandedPipelines: [],
-      filterText: { "license": "", segment: "", substance: "", from: "", to: "", "injection points": "", status: "" }
+      filterText: { "license": "", segment: "", substance: "", from: "", to: "", injection_points: "", status: "" }
     };
     this.fetchPipelines = this.fetchPipelines.bind(this);
     this.handleFilterTextChange = this.handleFilterTextChange.bind(this);
@@ -93,7 +93,7 @@ class PipelineDatabase extends React.Component {
         }
       }
 
-      const inj_pt_source = pipeline["injection points"].map(inj_pt_id => this.state.injectionPointOptions.find(inj_pt => inj_pt._id === inj_pt_id));
+      const inj_pt_source = pipeline.injection_points.map(inj_pt_id => this.state.injectionPointOptions.find(inj_pt => inj_pt._id === inj_pt_id));
       return (
         caseInsensitivePipeline.license.includes(caseInsensitiveFilterText.license) &&
         caseInsensitivePipeline.segment.includes(caseInsensitiveFilterText.segment) &&
@@ -101,13 +101,13 @@ class PipelineDatabase extends React.Component {
         caseInsensitivePipeline.from.includes(caseInsensitiveFilterText.from) &&
         caseInsensitivePipeline.to.includes(caseInsensitiveFilterText.to) &&
         (inj_pt_source === undefined ||
-          (inj_pt_source.length === 0 && caseInsensitiveFilterText["injection points"].length === 0) ||
+          (inj_pt_source.length === 0 && caseInsensitiveFilterText.injection_points.length === 0) ||
           inj_pt_source.some(i => {
             switch (i) {
               case undefined:
-                return caseInsensitiveFilterText["injection points"].length === 0;
+                return caseInsensitiveFilterText.injection_points.length === 0;
               default:
-                return i.source.includes(caseInsensitiveFilterText["injection points"])
+                return i.source.includes(caseInsensitiveFilterText.injection_points)
             }
           })) &&
         caseInsensitivePipeline.status.includes(caseInsensitiveFilterText.status)
