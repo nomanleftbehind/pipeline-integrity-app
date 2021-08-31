@@ -1,0 +1,21 @@
+{
+  "name": "pipeline_database_server",
+  "version": "1.0.0",
+  "description": "Connects to MongoDB",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nomanleftbehind/pipeline_database.git"
+  },
+  "author": "Domagoj Sucic",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongoose": "^6.0.2"
+  }
+}

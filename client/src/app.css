@@ -1,0 +1,134 @@
+#title {
+  text-align: center;
+  font-family: arial, sans-serif;
+}
+
+#pipelines {
+  table-layout: auto;
+  text-align: center;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  border: 3px solid #ddd;
+  /* width: 100%; */
+  white-space: nowrap;
+}
+
+#pipelines tr:hover {
+  background-color: #ddd;
+}
+
+/* #pipelines tr:nth-child(even){background-color: #f2f2f2;} */
+
+tr[target="pipeline index is even"] {
+  background-color: #f2f2f2;
+}
+
+#pipelines td, #pipelines th {
+  border: 1px dashed #ddd;
+  padding: 6px;
+}
+
+#pipelines th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #4c63af;
+  color: white;
+}
+
+.MuiIconButton-label {
+  width: 100%;
+  display: flex;
+  align-items: inherit;
+  justify-content: inherit;
+}
+
+.alert-enter {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.alert-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.alert-exit {
+  opacity: 1;
+}
+
+.alert-exit-active {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.left {
+  float: left;
+  /* width: 100px; */
+  /* display:table-cell; */
+}
+
+.right {
+  float: right;
+  /* width: 100px; */
+  /* vertical-align: middle; */
+}
+
+.bottom {
+  flex-flow: column wrap;
+  display: table-cell;
+}
+
+#modal-root {
+  position: relative;
+  z-index: 999;
+}
+
+.app {
+  /* height: 10em; */
+  /* width: 10em; */
+  /* background: lightblue; */
+  overflow: hidden;
+}
+
+.modal {
+  background-color: rgba(0,0,0,0.5);
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  /* display: flex; */
+  align-items: center;
+  justify-content: center;
+}
+ 
+.modal-box {
+  position: relative;
+  width: 30%;
+  margin: 0;
+  height: auto;
+  max-height: 70vh;
+  margin-top: calc(100vh - 85vh - 20px);
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid #999;
+  overflow: auto;
+}
+
+/* .injection-point {
+  width: 1%;
+  white-space: nowrap;
+} */
+
+/* td {
+border: 1px solid black;} */
+
+/* tr td::content {
+    text-align:right;
+    width: 1%;
+    white-space: nowrap;
+} */
