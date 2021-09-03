@@ -1,0 +1,25 @@
+.button-container button {
+    background-color: inherit;
+    border: 0;
+    cursor: pointer;
+    display: flex;
+    padding: 0;
+    position: relative;
+    vertical-align: middle;
+    justify-content: center;
+    background-color: transparent;
+    width: 10px;
+}
+
+.button-container svg {
+    fill: currentColor;
+    display: inline;
+    flex-shrink: 0;
+    user-select: none;
+    vertical-align: middle;
+    justify-content: center;
+}
+
+.button-container svg:hover {
+    background-color: white;
+}

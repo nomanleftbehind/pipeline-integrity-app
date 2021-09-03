@@ -67,8 +67,9 @@ tr[target="pipeline index is even"] {
 .left {
   float: left;
   margin-right: 10px;
-  /* width: 100px; */
-  /* display:table-cell; */
+  vertical-align: middle;
+  /* vertical-align: bottom; */
+  display:table-cell;
 }
 
 .right {
@@ -80,6 +81,7 @@ tr[target="pipeline index is even"] {
 
 .bottom {
   flex-flow: column wrap;
+  vertical-align: bottom;
   display: table-cell;
 }
 

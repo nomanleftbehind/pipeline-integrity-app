@@ -4,6 +4,8 @@
   "description": "Connects to MongoDB",
   "main": "server.js",
   "scripts": {
+    "start": "node ./server",
+    "devstart": "nodemon ./server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,6 +17,7 @@
   "dependencies": {
     "async": "^3.2.1",
     "cors": "^2.8.5",
+    "dateformat": "^4.5.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "mongoose": "^6.0.2"

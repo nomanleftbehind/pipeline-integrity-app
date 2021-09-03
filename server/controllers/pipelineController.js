@@ -3,6 +3,8 @@ const InjectionPoint = require('../models/injectionPoint');
 const { populate } = require('../models/pipeline');
 // const { body, validationResult } = require('express-validator');
 
+const opts = { runValidators: true };
+
 exports.pipeline_list = function (req, res, next) {
 
   Pipeline.find({})
@@ -10,7 +12,7 @@ exports.pipeline_list = function (req, res, next) {
     .populate("injection_points")
     .exec(function (err, list_pipelines) {
       if (err) { return next(err); }
-      console.log(list_pipelines);
+      // console.log(list_pipelines);
       res.json(list_pipelines);
     });
 
@@ -24,9 +26,19 @@ exports.pipeline_copy_post = function (req, res, next) {
       segment: req.body.segment,
       substance: req.body.substance,
       from: req.body.from,
+      from_feature: req.body.from_feature,
       to: req.body.to,
-      injection_points: req.body.injection_points,
-      status: req.body.status
+      to_feature: req.body.to_feature,
+      status: req.body.status,
+      length: req.body.length,
+      type: req.body.type,
+      grade: req.body.grade,
+      outside_diameter: req.body.outside_diameter,
+      wall_thickness: req.body.wall_thickness,
+      material: req.body.material,
+      mop: req.body.mop,
+      internal_protection: req.body.internal_protection,
+      injection_points: req.body.injection_points
     });
 
   newPipeline.save()
@@ -109,7 +121,7 @@ exports.injection_point_add = function (req, res, next) {
       { _id: req.params.id },
       {
         $addToSet: { injection_points: inj_pt_id._id }
-      },
+      }, opts,
       function (err, model) {
         if (err) {
           console.log("ERROR: ", err);
@@ -123,4 +135,24 @@ exports.injection_point_add = function (req, res, next) {
   });
 
   // res.json('Injection point added!');
+}
+
+exports.license_change = function (req, res, next) {
+  console.log(req.body.license);
+  Pipeline.updateOne({ _id: req.params.id },
+    { $set: { license: req.body.license } }, opts, function (err, theLicense) {
+      if (err) { return next(err); }
+      console.log("Changed license: ", theLicense);
+      res.json('License changed!');
+    });
+}
+
+exports.segment_change = function (req, res, next) {
+  console.log(req.body.segment);
+  Pipeline.updateOne({ _id: req.params.id },
+    { $set: { segment: req.body.segment } }, opts, function (err, theSegment) {
+      if (err) { return next(err); }
+      console.log("Changed segment: ", theSegment);
+      res.json('Segment changed!');
+    });
 }

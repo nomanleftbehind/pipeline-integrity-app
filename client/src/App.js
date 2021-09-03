@@ -3,6 +3,7 @@ import RenderPipeline from './components/renderPipeline';
 import Header from './components/Header';
 
 import './app.css';
+import './styles/form-validation.css';
 
 class PipelineDatabase extends React.Component {
   constructor(props) {
@@ -11,13 +12,14 @@ class PipelineDatabase extends React.Component {
       pipelines: [],
       injectionPointOptions: [],
       expandedPipelines: [],
-      filterText: { "license": "", segment: "", substance: "", from: "", to: "", injection_points: "", status: "" }
+      filterText: { created_at: "", "license": "", segment: "", substance: "", from: "", to: "", injection_points: "", status: "" }
     };
     this.fetchPipelines = this.fetchPipelines.bind(this);
     this.handleFilterTextChange = this.handleFilterTextChange.bind(this);
   }
 
   fetchPipelines() {
+    console.log("FETCHHHED BITCH!!");
     fetch("http://localhost:5002/pipelines")
       .then(res => res.json())
       .then(
@@ -79,8 +81,6 @@ class PipelineDatabase extends React.Component {
     for (const [i, j] of Object.entries(filterText)) {
       caseInsensitiveFilterText[i] = j.toUpperCase();
     }
-    // const a = [...this.state.pipelines];
-    // console.log(a);
 
     const pipelines = this.state.pipelines.filter(pipeline => {
       const caseInsensitivePipeline = {};
@@ -93,7 +93,8 @@ class PipelineDatabase extends React.Component {
         }
       }
 
-      const inj_pt_source = pipeline.injection_points.map(inj_pt_id => this.state.injectionPointOptions.find(inj_pt => inj_pt._id === inj_pt_id));
+      const inj_pt_source = pipeline.injection_points.map(({source}) => source);
+
       return (
         caseInsensitivePipeline.license.includes(caseInsensitiveFilterText.license) &&
         caseInsensitivePipeline.segment.includes(caseInsensitiveFilterText.segment) &&
@@ -107,7 +108,7 @@ class PipelineDatabase extends React.Component {
               case undefined:
                 return caseInsensitiveFilterText.injection_points.length === 0;
               default:
-                return i.source.includes(caseInsensitiveFilterText.injection_points)
+                return i.includes(caseInsensitiveFilterText.injection_points)
             }
           })) &&
         caseInsensitivePipeline.status.includes(caseInsensitiveFilterText.status)
@@ -129,8 +130,6 @@ class PipelineDatabase extends React.Component {
                 <RenderPipeline
                   key={pipeline._id}
                   ppl_idx={ppl_idx}
-                  state={this.state.pipelines}
-                  // a={a}
                   pipeline={pipeline}
                   injectionPointOptions={this.state.injectionPointOptions}
                   expandedPipelines={expandedPipelines}

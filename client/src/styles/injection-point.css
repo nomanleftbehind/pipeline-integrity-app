@@ -1,0 +1,4 @@
+td.injection-point div {
+    display: table-cell;
+    vertical-align: middle;
+}

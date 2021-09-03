@@ -18,7 +18,7 @@ class Header extends React.Component {
           {Object.entries(this.props.filterText).map(([key, value], index) => {
             return (
               <th scope="col" key={index}>
-                <div>{key.toUpperCase()}</div>
+                <div>{key.replace('_', ' ').toUpperCase()}</div>
                 <div>
                   <form>
                     <input

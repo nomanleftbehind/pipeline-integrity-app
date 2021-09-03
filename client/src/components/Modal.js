@@ -25,4 +25,37 @@ class Modal extends React.Component {
   }
 }
 
-export default Modal;
+
+export function ModalDeletePipeline({ segment, license, deletePipeline, hideModalDeletePipeline }) {
+
+  return (
+    <Modal>
+      <div className="modal">
+        <div className="modal-box">
+          <div>
+            Are you sure you want to delete {`${license}-${segment}`} pipeline?
+          </div>
+          <button onClick={deletePipeline}>Delete</button>
+          <button onClick={hideModalDeletePipeline}>Cancel</button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+
+export function ModalDuplicateInjectionPoint({ hideDuplicateInjectionPointModal }) {
+
+  return (
+    <Modal>
+      <div className="modal">
+        <div className="modal-box">
+          <div>
+            Selected source already is injection point to the respective pipeline!
+          </div>
+          <button onClick={hideDuplicateInjectionPointModal}>OK</button>
+        </div>
+      </div>
+    </Modal>
+  );
+}

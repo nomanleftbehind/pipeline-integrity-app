@@ -9,6 +9,9 @@ router.post('/pipeline/copy', pipeline_controller.pipeline_copy_post);
 router.post('/pipeline/update/:id', pipeline_controller.pipeline_update_post);
 router.delete('/pipeline/:id', pipeline_controller.pipeline_delete_post);
 
+router.post('/pipeline/:id/license', pipeline_controller.license_change);
+router.post('/pipeline/:id/segment', pipeline_controller.segment_change);
+
 router.post('/pipeline/:id/addinjpt', pipeline_controller.injection_point_add);
 router.post('/pipeline/:ppl_id/:inj_pt_id/:new_inj_pt_id', pipeline_controller.injection_point_change);
 router.delete('/pipeline/:ppl_id/:inj_pt_id', pipeline_controller.injection_point_delete);
