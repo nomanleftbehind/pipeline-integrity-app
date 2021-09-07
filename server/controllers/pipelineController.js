@@ -1,6 +1,8 @@
-const Pipeline = require('../models/pipeline');
+const { Pipeline, validators } = require('../models/pipeline');
 const InjectionPoint = require('../models/injectionPoint');
 const { populate } = require('../models/pipeline');
+
+
 // const { body, validationResult } = require('express-validator');
 
 const opts = { runValidators: true };
@@ -16,6 +18,11 @@ exports.pipeline_list = function (req, res, next) {
       res.json(list_pipelines);
     });
 
+};
+
+exports.validators = function (req, res, next) {
+  console.log(validators);
+  res.json(validators);
 };
 
 exports.pipeline_copy_post = function (req, res, next) {
@@ -137,22 +144,16 @@ exports.injection_point_add = function (req, res, next) {
   // res.json('Injection point added!');
 }
 
-exports.license_change = function (req, res, next) {
-  console.log(req.body.license);
+exports.record_change = function (req, res, next) {
+  column = req.body.column;
   Pipeline.updateOne({ _id: req.params.id },
-    { $set: { license: req.body.license } }, opts, function (err, theLicense) {
-      if (err) { return next(err); }
-      console.log("Changed license: ", theLicense);
-      res.json('License changed!');
-    });
-}
-
-exports.segment_change = function (req, res, next) {
-  console.log(req.body.segment);
-  Pipeline.updateOne({ _id: req.params.id },
-    { $set: { segment: req.body.segment } }, opts, function (err, theSegment) {
-      if (err) { return next(err); }
-      console.log("Changed segment: ", theSegment);
-      res.json('Segment changed!');
+    { $set: { [column]: req.body.record } }, opts, function (err, theRecord) {
+      // console.log(err/*, theRecord*/);
+      if (err) {
+        next(err);
+      } else {
+        res.json(`${column} changed!`);
+      }
+      console.log(`Changed ${column}: `, theRecord);
     });
 }

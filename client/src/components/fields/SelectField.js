@@ -3,7 +3,7 @@ import { ReactComponent as EditIcon } from '../../svg/edit-icon.svg';
 import { ReactComponent as CancelIcon } from '../../svg/cancel-icon.svg';
 import { ReactComponent as OkIcon } from '../../svg/ok-icon.svg';
 
-function TextField({ _id, record, columnName, regex, fetchPipelines }) {
+function SelectField({ _id, record, columnName, options, fetchPipelines }) {
   const [edit, setEdit] = useState(false);
   const [state, setState] = useState(record);
 
@@ -16,10 +16,6 @@ function TextField({ _id, record, columnName, regex, fetchPipelines }) {
     setState(e.target.value);
   };
 
-  const validateForm = () => {
-    return regex.test(state);
-  }
-
   const handleSubmit = (e) => {
     e.preventDefault();
     fetch("http://localhost:5002/pipeline/" + _id + "/column", {
@@ -30,13 +26,13 @@ function TextField({ _id, record, columnName, regex, fetchPipelines }) {
       body: JSON.stringify({ record: e.target.name, column: columnName }),
     })
       .then(response => {
-        if (!response.ok) {
-          console.log(response);
-          throw new Error('Network response was not ok');
-        } else {
+        if (response.ok) {
           fetchPipelines();
+        } else {
+          throw new Error("HTTP status " + response.status);
         }
-        return response.json();
+        console.log(response.ok);
+        return response.json()
       })
       .then(data => {
         console.log('Success:', data);
@@ -57,15 +53,19 @@ function TextField({ _id, record, columnName, regex, fetchPipelines }) {
           <div className="cell-left">
             <form className={`form-${columnName}`} name={state} onSubmit={handleSubmit}>
               <div className="cell-left">
-                <input
-                  className={validateForm() ? "valid" : "invalid"} type="text" autoComplete="off" name={columnName} value={state} onChange={handleChange}
-                />
+                <select name={columnName} value={state} onChange={handleChange}>
+                  {options.map(option => {
+                    return (
+                      <option key={option} value={option}>{option}</option>
+                    );
+                  })}
+                </select>
               </div>
               <div className="button-container cell-right">
-                <button type="submit" disabled={!validateForm()}><OkIcon /></button>
+                <button type="submit"><OkIcon /></button>
               </div>
             </form>
-          </div> : /*null*/
+          </div> :
           <div className="cell-left">
             <span>{record}</span>
           </div>}
@@ -74,5 +74,4 @@ function TextField({ _id, record, columnName, regex, fetchPipelines }) {
   );
 }
 
-
-export default TextField;
+export default SelectField;

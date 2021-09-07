@@ -1,7 +1,7 @@
-form.edit-text-form input {
+form.form-license input {
     -webkit-appearance: none;
     width: 80px;
-    display: inline-block;
+    /* display: inline-block; */
     /* width: 50%; */
     /* float: left; */
     border: 1px solid #333;
@@ -9,6 +9,8 @@ form.edit-text-form input {
     font-family: inherit;
     /* font-size: 90%; */
     box-sizing: border-box;
+    float: left;
+    /* width:fit-content; */
 }
 
 input.invalid {
@@ -29,19 +31,19 @@ form.edit-text-form button {
 }
 
 .cell-left {
-    width: 80px;
-    display: inline-block;
-    vertical-align: middle;
+    /* width: 50px; */
+    /*display: inline-block;
+    vertical-align: middle; */
     /* background-color: yellow; */
-    /* float: left; */
+    float: left;
     margin-right: 6px;
 }
 
 .cell-right {
-    display: inline-block;
-    vertical-align: middle;
+    /* display: inline-block; */
+    /* vertical-align: middle; */
     /* background-color: #900; */
-    /* float: right; */
+    float: right;
 }
 
 /* .cell-bottom {

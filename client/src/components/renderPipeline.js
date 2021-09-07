@@ -1,6 +1,7 @@
 import React from 'react';
 import InjectionPointForm from './InjectionPointForm';
 import TextField from './fields/TextField';
+import SelectField from './fields/SelectField';
 import { ModalDeletePipeline, ModalDuplicateInjectionPoint } from './Modal';
 import { ReactComponent as RemoveIcon } from '../svg/remove-pipeline.svg';
 import { ReactComponent as AddPipelineIcon } from '../svg/add-pipeline.svg';
@@ -169,7 +170,9 @@ class RenderPipeline extends React.Component {
     const pipeline = this.props.pipeline;
     const expandedPipelines = this.props.expandedPipelines;
     const modifiedInjectionPoints = this.state.modifiedInjectionPoints;
-    const { _id, created_at_formatted, license, segment, substance, from, to, injection_points: inj_pts, status } = pipeline;
+    const { _id, created_at_formatted, license, segment, substance, from, from_feature, to, to_feature, injection_points: inj_pts, status } = pipeline;
+
+    const {license: val_license, segment: val_segment, substance: val_substance, from_to: val_from_to, from_to_feature: val_from_to_feature, status: val_status} = this.props.validators;
 
     const modalDeletePipeline = this.state.showDeletePipelineModal ?
       <ModalDeletePipeline
@@ -207,11 +210,13 @@ class RenderPipeline extends React.Component {
         </td>
         <td><span>{_id}</span></td>
         <td><span>{created_at_formatted}</span></td>
-        <TextField _id={_id} field={license} columnName="license" regex={/*/^(AB|SK|BC)(\d{5}|\d{6})$/*/ /[A-Za-z0-9]/} fetchPipelines={this.props.fetchPipelines}/>
-        <TextField _id={_id} field={segment} columnName="segment" regex={/^((UL)(\d{1,2})|(\d{1,3}))$/} fetchPipelines={this.props.fetchPipelines}/>
-        <td><span>{substance}</span></td>
-        <td><span>{from}</span></td>
-        <td><span>{to}</span></td>
+        <TextField _id={_id} record={license} columnName="license" regex={RegExp(val_license)} fetchPipelines={this.props.fetchPipelines}/>
+        <TextField _id={_id} record={segment} columnName="segment" regex={RegExp(val_segment)} fetchPipelines={this.props.fetchPipelines}/>
+        <SelectField _id={_id} record={substance} columnName="substance" options={val_substance} fetchPipelines={this.props.fetchPipelines}/>
+        <TextField _id={_id} record={from} columnName="from" regex={RegExp(val_from_to)} fetchPipelines={this.props.fetchPipelines}/>
+        <SelectField _id={_id} record={from_feature} columnName="from_feature" options={val_from_to_feature} fetchPipelines={this.props.fetchPipelines}/>
+        <TextField _id={_id} record={to} columnName="to" regex={RegExp(val_from_to)} fetchPipelines={this.props.fetchPipelines}/>
+        <SelectField _id={_id} record={to_feature} columnName="to_feature" options={val_from_to_feature} fetchPipelines={this.props.fetchPipelines}/>
         <td>
           <div>
             <span>{inj_pts.length === 1 ? "1 well" : `${inj_pts.length} wells`}</span>
@@ -222,7 +227,8 @@ class RenderPipeline extends React.Component {
             </button>
           </div>
         </td>
-        <td><span>{status}</span></td>
+        <SelectField _id={_id} record={status} columnName="status" options={val_status} fetchPipelines={this.props.fetchPipelines}/>
+        {/* <td><span>{status}</span></td> */}
       </tr>
     ];
 

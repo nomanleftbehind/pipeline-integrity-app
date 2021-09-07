@@ -4,13 +4,22 @@
 }
 
 #pipelines {
-  table-layout: auto;
-  text-align: center;
+  table-layout: fixed;
+  /* width: 100%; */
+  /* text-align: center; */
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: small;
   border-collapse: collapse;
   border: 3px solid #ddd;
   /* width: 100%; */
   white-space: nowrap;
+  display: block;
+  overflow-x: auto;
+}
+
+table tbody thead {
+  display: table;
+  width: 100%;
 }
 
 #pipelines tr:hover {
@@ -24,8 +33,10 @@ tr[target="pipeline index is even"] {
 }
 
 #pipelines td, #pipelines th {
+  height: 10px;
   border: 1px dashed #ddd;
   padding: 6px;
+  overflow: hidden;
 }
 
 #pipelines th {
@@ -69,12 +80,11 @@ tr[target="pipeline index is even"] {
   margin-right: 10px;
   vertical-align: middle;
   /* vertical-align: bottom; */
-  display:table-cell;
+  display: table-cell;
 }
 
 .right {
   float: right;
-
   /* width: 100px; */
   /* vertical-align: middle; */
 }
@@ -98,7 +108,7 @@ tr[target="pipeline index is even"] {
 }
 
 .modal {
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
   height: 100%;
   width: 100%;
@@ -108,7 +118,7 @@ tr[target="pipeline index is even"] {
   align-items: center;
   justify-content: center;
 }
- 
+
 .modal-box {
   position: relative;
   width: 30%;
@@ -123,16 +133,14 @@ tr[target="pipeline index is even"] {
   overflow: auto;
 }
 
-/* .injection-point {
-  width: 1%;
-  white-space: nowrap;
-} */
 
-/* td {
-border: 1px solid black;} */
+/* table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  /* width: 100%; */
+/*}*/ 
 
-/* tr td::content {
-    text-align:right;
-    width: 1%;
-    white-space: nowrap;
+
+/* table:not(.sticky) {
+  margin-top: 40px;
 } */
