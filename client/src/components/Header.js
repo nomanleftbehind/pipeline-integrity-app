@@ -12,12 +12,14 @@ class Header extends React.Component {
 
   render() {
     return (
-      <thead>
-        <tr>
-          <th colSpan="3"></th>
+      <thead className="MuiTableHead-root">
+        <tr className="MuiTableRow-root MuiTableRow-head">
+          <th className=/*"expand-collapse-row"*/"MuiTableCell-root MuiTableCell-head"></th>
+          <th className=/*"add-delete-pipeline"*/"MuiTableCell-root MuiTableCell-head"></th>
+          <th className=/*"_id"*/"MuiTableCell-root MuiTableCell-head"></th>
           {Object.entries(this.props.filterText).map(([key, value], index) => {
             return (
-              <th scope="col" key={index} className={key}>
+              <th scope="col" key={index} className=/*{key}*/"MuiTableCell-root MuiTableCell-head  MuiTableCell-alignRight">
                 <div>{key.replace('_', ' ').toUpperCase()}</div>
                 <div>
                   <form className={`form-${key}`}>

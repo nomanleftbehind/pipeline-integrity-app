@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useStickyHeader from "./components/useStickyHeader";
-import RenderPipeline from './components/renderPipeline';
+import RenderPipeline from './components/row/renderPipeline';
 import Header from './components/Header';
 
 function PipelineDatabase() {
@@ -139,7 +139,6 @@ function PipelineDatabase() {
   } else {
     return (
       <div className="app" >
-        <h1 id='title'>Pipeline Database</h1>
         <div className="table-fix-header">
           {isSticky && (
             /*
@@ -152,7 +151,7 @@ function PipelineDatabase() {
                 onFilterTextChange={handleFilterTextChange} />
             </table>
           )}
-          <table id='pipelines' /*style={{ "table-layout": fixed, "border-collapse": collapse, width: "100%" }}*/ ref={tableRef}>
+          <table className="MuiTable-root" id='pipelines' ref={tableRef}>
             <Header
               filterText={filterText}
               onFilterTextChange={handleFilterTextChange} />

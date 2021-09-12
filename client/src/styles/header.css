@@ -1,4 +1,35 @@
+th.expand-collapse-row {
+    width: 12px;
+}
+th.add-delete-pipeline {
+    width: 12px;
+}
+th._id {
+    width: 100px;
+}
+th.created_at {
+    width: 95px;
+}
 th.license {
-    width: 1000;
-    overflow: hidden;
+    width: 108px;
+}
+th.segment {
+    width: 78px;
+}
+th.substance {
+    width: 157px;
+}
+th.from, th.to {
+    width: 140px;
+}
+th.from_feature, th.to_feature {
+    width: 178px;
+}
+
+th.injection_points {
+    width: 150px;
+}
+
+th.status {
+    width: auto;
 }

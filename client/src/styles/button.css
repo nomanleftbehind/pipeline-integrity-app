@@ -1,6 +1,5 @@
 .button-container button {
-    background-color: inherit;
-    border: 0;
+    border: 10px;
     cursor: pointer;
     display: flex;
     padding: 0;

@@ -3,7 +3,7 @@ import { ReactComponent as EditIcon } from '../../svg/edit-icon.svg';
 import { ReactComponent as CancelIcon } from '../../svg/cancel-icon.svg';
 import { ReactComponent as OkIcon } from '../../svg/ok-icon.svg';
 
-function TextField({ _id, record, columnName, regex, fetchPipelines }) {
+function TextField({ _id, record, columnName, validator, fetchPipelines }) {
   const [edit, setEdit] = useState(false);
   const [state, setState] = useState(record);
 
@@ -17,7 +17,11 @@ function TextField({ _id, record, columnName, regex, fetchPipelines }) {
   };
 
   const validateForm = () => {
-    return regex.test(state);
+    if (validator instanceof RegExp) {
+      return validator.test(state);
+    } else {
+      return true;
+    }
   }
 
   const handleSubmit = (e) => {
@@ -48,26 +52,32 @@ function TextField({ _id, record, columnName, regex, fetchPipelines }) {
   };
 
   return (
-    <td>
-      <div>
-        <div className="button-container cell-right">
-          <button onClick={toggleEdit}>{edit ? <CancelIcon /> : <EditIcon />}</button>
+    <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight">
+      <div className="cell-wrapper">
+        <div className="cell-r">
+          <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={toggleEdit}>{edit ? <CancelIcon /> : <EditIcon />}</button>
         </div>
         {edit ?
-          <div className="cell-left">
-            <form className={`form-${columnName}`} name={state} onSubmit={handleSubmit}>
-              <div className="cell-left">
+          <form className="cell-l" name={state} onSubmit={handleSubmit}>
+            <div className="form-l">
+              {validator instanceof RegExp ?
                 <input
                   className={validateForm() ? "valid" : "invalid"} type="text" autoComplete="off" name={columnName} value={state} onChange={handleChange}
-                />
-              </div>
-              <div className="button-container cell-right">
-                <button type="submit" disabled={!validateForm()}><OkIcon /></button>
-              </div>
-            </form>
-          </div> : /*null*/
-          <div className="cell-left">
-            <span>{record}</span>
+                /> :
+                <select name={columnName} value={state} onChange={handleChange}>
+                  {validator.map(option => {
+                    return (
+                      <option key={option} value={option}>{option}</option>
+                    );
+                  })}
+                </select>}
+            </div>
+            <div className="form-r">
+              <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" type="submit" disabled={!validateForm()}><OkIcon /></button>
+            </div>
+          </form> :
+          <div className="cell-l">
+            <div>{record}</div>
           </div>}
       </div>
     </td>
