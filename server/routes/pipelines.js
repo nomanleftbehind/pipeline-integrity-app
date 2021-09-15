@@ -7,8 +7,7 @@ router.get('/pipelines', pipeline_controller.pipeline_list);
 router.get('/injectionpoints', injection_point_controller.injection_point_list);
 router.get('/validators', pipeline_controller.validators);
 
-router.post('/pipeline/copy', pipeline_controller.pipeline_copy_post);
-router.post('/pipeline/update/:id', pipeline_controller.pipeline_update_post);
+router.post('/pipeline/:id/copy', pipeline_controller.pipeline_copy_post);
 router.delete('/pipeline/:id', pipeline_controller.pipeline_delete_post);
 
 router.post('/pipeline/:id/column', pipeline_controller.record_change);

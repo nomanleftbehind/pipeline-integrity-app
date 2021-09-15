@@ -1,5 +1,5 @@
 import React from 'react';
-import InjectionPoints from './InjectionPoints';
+import PipelineData from './PipelineData';
 import EntryField from '../fields/EntryField';
 import { ModalDeletePipeline } from '../Modal';
 import { ReactComponent as RemoveIcon } from '../../svg/remove-pipeline.svg';
@@ -30,14 +30,12 @@ class RenderPipeline extends React.Component {
     this.props.onPipelineClick();
   }
 
-  handleAddPipeline(e) {
-    // e.preventDefault();
-    fetch("http://localhost:5002/pipeline/copy", {
+  handleAddPipeline() {
+    fetch(`http://localhost:5002/pipeline/${this.props.pipeline._id}/copy`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(this.props.pipeline),
     })
       .then(response => { console.log(response); return response.json() })
       .then(data => {
@@ -127,7 +125,7 @@ class RenderPipeline extends React.Component {
 
     if (expandedPipelines.includes(_id)) {
       pipelineRows.push(
-        <InjectionPoints
+        <PipelineData
           key={`${_id} injection points`}
           _id={_id}
           isEven={isEven(ppl_idx)}
