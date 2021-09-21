@@ -6,7 +6,7 @@ const useStickyHeader = (defaultSticky = false) => {
 
   const toggleStickiness = useCallback(
     ({ top, bottom }) => {
-        console.log(tableRef);
+        // console.log(tableRef);
       if (
         top <= 0 &&
         // When scrolling from bottom to top when and

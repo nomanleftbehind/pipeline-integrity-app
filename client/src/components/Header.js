@@ -12,7 +12,7 @@ class Header extends React.Component {
 
   render() {
     return (
-      <thead className="MuiTableHead-root">
+      <thead className="MuiTableHead-root header-fixed-zzz">
         <tr className="MuiTableRow-root MuiTableRow-head">
           <th className=/*"expand-collapse-row"*/"MuiTableCell-root MuiTableCell-head"></th>
           <th className=/*"add-delete-pipeline"*/"MuiTableCell-root MuiTableCell-head"></th>

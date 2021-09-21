@@ -1,0 +1,16 @@
+.pipeline-database-wrapper {
+    display: flex;
+    /* flex-direction: row; */
+    gap: 5px;
+}
+
+.pipeline-database-side-bar {
+
+    flex: 0 0 300px;
+    background-color:darkcyan;
+}
+
+.pipeline-database-table {
+    flex: 0 0 1500px;
+    background-color: rgb(205, 224, 231);
+}

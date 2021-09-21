@@ -5,11 +5,11 @@ import { ReactComponent as OkIcon } from '../../svg/ok-icon.svg';
 
 function TextField({ _id, record, columnName, validator, fetchPipelines }) {
   const [edit, setEdit] = useState(false);
-  const [state, setState] = useState(record);
+  const [state, setState] = useState(typeof record === 'undefined' ? "" : record);
 
   const toggleEdit = () => {
     setEdit(!edit);
-    setState(record);
+    setState(typeof record === 'undefined' ? "" : record);
   }
 
   const handleChange = (e) => {
@@ -17,8 +17,10 @@ function TextField({ _id, record, columnName, validator, fetchPipelines }) {
   };
 
   const validateForm = () => {
-    if (validator instanceof RegExp) {
-      return validator.test(state);
+    console.log(state);
+    if (typeof validator === "string") {
+      const validator_regexp = new RegExp(validator)
+      return validator_regexp.test(state);
     } else {
       return true;
     }
@@ -52,7 +54,7 @@ function TextField({ _id, record, columnName, validator, fetchPipelines }) {
   };
 
   return (
-    <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight">
+    <td className="MuiTableCell-root MuiTableCell-body  MuiTableCell-sizeSmall MuiTableCell-alignRight">
       <div className="cell-wrapper">
         <div className="cell-r">
           <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={toggleEdit}>{edit ? <CancelIcon /> : <EditIcon />}</button>
@@ -60,7 +62,7 @@ function TextField({ _id, record, columnName, validator, fetchPipelines }) {
         {edit ?
           <form className="cell-l" name={state} onSubmit={handleSubmit}>
             <div className="form-l">
-              {validator instanceof RegExp ?
+              {typeof validator === "string" ?
                 <input
                   className={validateForm() ? "valid" : "invalid"} type="text" autoComplete="off" name={columnName} value={state} onChange={handleChange}
                 /> :

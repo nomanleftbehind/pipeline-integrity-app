@@ -1,13 +1,13 @@
 #! /usr/bin/env node
 
-console.log('This script populates some test books, authors, genres and bookinstances to your database. Specified database as argument - e.g.: populatedb mongodb+srv://cooluser:coolpassword@cluster0.a9azn.mongodb.net/local_library?retryWrites=true');
-
 // Get arguments passed on command line
 var userArgs = process.argv.slice(2);
 
 var async = require('async');
 const InjectionPoint = require('./models/injectionPoint');
-const Pipeline = require('./models/pipeline');
+const Facility = require('./models/facility');
+const Satellite = require('./models/satellite');
+const { Pipeline } = require('./models/pipeline');
 
 
 var mongoose = require('mongoose');
@@ -19,27 +19,30 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 var pipelines = [];
 var injectionpoints = [];
+var facilities = [];
+var satellites = [];
 
 
-function pipelineCreate({ license, segment, substance, from, from_feature, to, to_feature, status, length, type, grade, outside_diameter, wall_thickness, material, mop, internal_protection, injection_points }, cb) {
+function pipelineCreate({ license, segment, substance, from, from_feature, to, to_feature, status, length, type, grade, outside_diameter, wall_thickness, material, mop, internal_protection, injection_points, facility }, cb) {
   pipelinedetail = {
-    license: license,
-    segment: segment,
-    substance: substance,
-    from: from,
-    from_feature: from_feature,
-    to: to,
-    to_feature: to_feature,
-    status: status,
-    length: length,
-    type: type,
-    grade: grade,
-    outside_diameter: outside_diameter,
-    wall_thickness: wall_thickness,
-    material: material,
-    mop: mop,
-    internal_protection: internal_protection,
-    injection_points: injection_points
+    license,
+    segment,
+    substance,
+    from,
+    from_feature,
+    to,
+    to_feature,
+    status,
+    length,
+    type,
+    grade,
+    outside_diameter,
+    wall_thickness,
+    material,
+    mop,
+    internal_protection,
+    injection_points,
+    satellite
   }
 
   var pipeline = new Pipeline(pipelinedetail);
@@ -55,12 +58,18 @@ function pipelineCreate({ license, segment, substance, from, from_feature, to, t
 }
 
 
-function injectionPointCreate(source, oil, gas, water, cb) {
+function injectionPointCreate({ source, oil, gas, water, first_production, last_production, first_injection, last_injection, pv_unit_id, pv_node_id }, cb) {
   injectionpointdetail = {
-    source: source,
-    oil: oil,
-    water: water,
-    gas: gas
+    source,
+    oil,
+    water,
+    gas,
+    first_production,
+    last_production,
+    first_injection,
+    last_injection,
+    pv_unit_id,
+    pv_node_id
   }
 
   var injectionpoint = new InjectionPoint(injectionpointdetail);
@@ -75,64 +84,65 @@ function injectionPointCreate(source, oil, gas, water, cb) {
   });
 }
 
-function ipArray(...uwis) {
+
+function facilityCreate({ name }, cb) {
+  facilitydetail = {
+    name
+  }
+
+  var facility = new Facility(facilitydetail);
+  facility.save(function (err) {
+    if (err) {
+      cb(err, null)
+      return
+    }
+    console.log('New Facility: ' + facility);
+    facilities.push(facility)
+    cb(null, facility)
+  });
+}
+
+function satelliteCreate({ name, facility }, cb) {
+  satellitedetail = {
+    name,
+    facility
+  }
+
+  var satellite = new Satellite(satellitedetail);
+  satellite.save(function (err) {
+    if (err) {
+      cb(err, null)
+      return
+    }
+    console.log('New Satellite: ' + satellite);
+    satellites.push(satellite)
+    cb(null, satellite)
+  });
+}
+
+function ipArray(...sources) {
   arr = [];
-  uwis.forEach(uwi => arr.push(
-    injectionpoints[injectionpoints.findIndex(inj_pt => inj_pt.source === uwi)]
+  sources.forEach(source => arr.push(
+    injectionpoints[injectionpoints.findIndex(inj_pt => inj_pt.pv_unit_id === source.pv_unit_id && inj_pt.pv_node_id === source.pv_node_id)]
   ));
   return arr;
 }
 
+function identifyFacility(name) {
+  return facilities[facilities.findIndex(facility => facility.name === name)];
+}
+function identifySatellite(name) {
+  return satellites[satellites.findIndex(satellite => satellite.name === name)];
+}
+
 function createPipelines(cb) {
   async.parallel([
-    // function (callback) {
-    //   pipelineCreate({ license: 'A14488', segment: '60', substance: 'OE', '11-20-046-07W5', '14-20-046-07W5', ipArray('100/10-20-046-07W5/00'), 'Operating', callback);
-    // },
-    // function (callback) {
-    //   pipelineCreate('A14488', '68', 'OE', '13-20-046-07W5', '13-20-046-07W5', ipArray('102/06-32-046-07W5/00', '100/05-32-046-07W5/00'), 'Operating', callback);
-    // },
-    // function (callback) {
-    //   pipelineCreate('A62326', '05', 'SW', '06-29-046-07W5', '08-30-046-07W5', ipArray('100/08-30-046-07W5/00', '100/02-30-046-07W5/00'), 'Operating', callback);
-    // },
-    function (callback) {pipelineCreate({license: 'AB00035', segment: '3', substance: 'Natural Gas', from: '14-27-047-07W5', from_feature: 'Blind end', to: '04-27-047-07W5', to_feature: 'Blind end', status: 'Abandoned', length: 1.43, type: '5L', grade: 'A', outside_diameter: 114.3, wall_thickness: 3.4, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '4', substance: 'Natural Gas', from: '04-33-047-07W5', from_feature: 'Blind end', to: '11-28-047-07W5', to_feature: 'Blind end', status: 'Discontinued', length: 0.87, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '5', substance: 'Natural Gas', from: '11-28-047-07W5', from_feature: 'Battery', to: '11-28-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 0.1, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '6', substance: 'Natural Gas', from: '07-29-047-07W5', from_feature: 'Battery', to: '08-28-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 2.029, type: '5L', grade: 'A', outside_diameter: 114.3, wall_thickness: 3.4, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '7', substance: 'Natural Gas', from: '10-21-047-07W5', from_feature: 'Battery', to: '08-28-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 1, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '8', substance: 'Natural Gas', from: '08-28-047-07W5', from_feature: 'Pipeline', to: '05-27-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 0.41, type: '5L', grade: 'A', outside_diameter: 168.3, wall_thickness: 3.58, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '9', substance: 'Natural Gas', from: '14-22-047-07W5', from_feature: 'Battery', to: '15-22-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 0.1, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '11', substance: 'Natural Gas', from: '11-07-047-07W5', from_feature: 'Blind end', to: '12-07-047-07W5', to_feature: 'Blind end', status: 'Abandoned', length: 0.15, type: '5L', grade: 'A', outside_diameter: 168.3, wall_thickness: 3.58, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '12', substance: 'Natural Gas', from: '05-25-047-07W5', from_feature: 'Blind end', to: '05-25-047-07W5', to_feature: 'Blind end', status: 'Abandoned', length: 0.21, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '13', substance: 'Natural Gas', from: '04-25-047-07W5', from_feature: 'Blind end', to: '05-25-047-07W5', to_feature: 'Blind end', status: 'Abandoned', length: 0.06, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '15', substance: 'Natural Gas', from: '06-26-047-07W5', from_feature: 'Pipeline', to: '11-26-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 0.53, type: '5L', grade: 'A', outside_diameter: 114.3, wall_thickness: 3.4, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '16', substance: 'Natural Gas', from: '11-26-047-07W5', from_feature: 'Pipeline', to: '10-22-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 2.15, type: '5L', grade: 'A', outside_diameter: 168.3, wall_thickness: 3.58, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '17', substance: 'Natural Gas', from: '14-23-047-07W5', from_feature: 'Battery', to: '13-23-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 0.64, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '18', substance: 'Natural Gas', from: '10-22-047-07W5', from_feature: 'Blind end', to: '10-15-047-07W5', to_feature: 'Blind end', status: 'Abandoned', length: 1.6, type: '5L', grade: 'A', outside_diameter: 219.1, wall_thickness: 3.58, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '19', substance: 'Natural Gas', from: '06-08-047-06W5', from_feature: 'Blind end', to: '01-18-047-06W5', to_feature: 'Blind end', status: 'Abandoned', length: 1.51, type: '5L', grade: 'A', outside_diameter: 114.3, wall_thickness: 3.4, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '21', substance: 'Natural Gas', from: '07-18-047-06W5', from_feature: 'Battery', to: '07-13-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 1.48, type: '5L', grade: 'A', outside_diameter: 168.3, wall_thickness: 3.58, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '22', substance: 'Natural Gas', from: '13-07-047-06W5', from_feature: 'Satellite', to: '05-18-047-06W5', to_feature: 'Pipeline', status: 'Operating', length: 0.87, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '23', substance: 'Natural Gas', from: '10-13-047-07W5', from_feature: 'Battery', to: '07-13-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 0.12, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '24', substance: 'Natural Gas', from: '05-19-047-06W5', from_feature: 'Battery', to: '02-24-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 0.82, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '25', substance: 'Natural Gas', from: '08-24-047-07W5', from_feature: 'Battery', to: '08-24-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 0.15, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '26', substance: 'Natural Gas', from: '06-24-047-07W5', from_feature: 'Pipeline', to: '02-24-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 0.67, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '27', substance: 'Natural Gas', from: '02-24-047-07W5', from_feature: 'Pipeline', to: '06-13-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 1.27, type: '5L', grade: 'A', outside_diameter: 114.3, wall_thickness: 3.4, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '28', substance: 'Natural Gas', from: '07-13-047-07W5', from_feature: 'Pipeline', to: '10-15-047-07W5', to_feature: 'Compressor station', status: 'Operating', length: 3.09, type: '5L', grade: 'A', outside_diameter: 219.1, wall_thickness: 3.58, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '29', substance: 'Natural Gas', from: '10-14-047-07W5', from_feature: 'Blind end', to: '10-14-047-07W5', to_feature: 'Blind end', status: 'Discontinued', length: 0.25, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '30', substance: 'Natural Gas', from: '10-01-047-07W5', from_feature: 'Blind end', to: '03-12-047-07W5', to_feature: 'Blind end', status: 'Abandoned', length: 1.07, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '32', substance: 'Natural Gas', from: '03-12-047-07W5', from_feature: 'Blind end', to: '03-11-047-07W5', to_feature: 'Blind end', status: 'Abandoned', length: 1.01, type: '5L', grade: 'A', outside_diameter: 114.3, wall_thickness: 3.4, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '33', substance: 'Natural Gas', from: '06-11-047-07W5', from_feature: 'Blind end', to: '03-11-047-07W5', to_feature: 'Blind end', status: 'Abandoned', length: 0.16, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '34', substance: 'Natural Gas', from: '03-11-047-07W5', from_feature: 'Blind end', to: '10-10-047-07W5', to_feature: 'Blind end', status: 'Abandoned', length: 1.27, type: '5L', grade: 'A', outside_diameter: 168.3, wall_thickness: 3.58, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '35', substance: 'Natural Gas', from: '07-02-047-07W5', from_feature: 'Blind end', to: '06-11-047-07W5', to_feature: 'Blind end', status: 'Abandoned', length: 2, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '36', substance: 'Natural Gas', from: '16-33-046-07W5', from_feature: 'Pipeline', to: '06-03-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 0.53, type: '5L', grade: 'A', outside_diameter: 168.3, wall_thickness: 3.4, material: 'Steel', mop: 1970, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '37', substance: 'Natural Gas', from: '08-04-047-07W5', from_feature: 'Battery', to: '06-03-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 0.43, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', mop: 1970, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '38', substance: 'Natural Gas', from: '06-03-047-07W5', from_feature: 'Pipeline', to: '10-10-047-07W5', to_feature: 'Pipeline', status: 'Operating', length: 1.68, type: '5L', grade: 'A', outside_diameter: 168.3, wall_thickness: 3.58, material: 'Steel', mop: 1970, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '39', substance: 'Natural Gas', from: '06-10-047-07W5', from_feature: 'Blind end', to: '06-10-047-07W5', to_feature: 'Blind end', status: 'Abandoned', length: 0.17, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '40', substance: 'Natural Gas', from: '10-10-047-07W5', from_feature: 'Pipeline', to: '10-15-047-07W5', to_feature: 'Compressor station', status: 'Operating', length: 1.57, type: '5L', grade: 'A', outside_diameter: 219.1, wall_thickness: 3.58, material: 'Steel', mop: 1970, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '44', substance: 'Natural Gas', from: '06-16-047-08W5', from_feature: 'Battery', to: '07-09-047-08W5', to_feature: 'Pipeline', status: 'Operating', length: 1.6, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '47', substance: 'Natural Gas', from: '11-08-047-08W5', from_feature: 'Pipeline', to: '07-09-047-08W5', to_feature: 'Pipeline', status: 'Operating', length: 1.96, type: '5L', grade: 'A', outside_diameter: 168.3, wall_thickness: 3.58, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', segment: '48', substance: 'Natural Gas', from: '07-09-047-08W5', from_feature: 'Pipeline', to: '06-11-047-08W5', to_feature: 'Pipeline', status: 'Operating', length: 2.72, type: '5L', grade: 'A', outside_diameter: 219.1, wall_thickness: 3.58, material: 'Steel', mop: 410, internal_protection: 'Uncoated'} , callback); },
-function (callback) {pipelineCreate({license: 'AB00035', substance: 'Natural Gas', segment: '49', from: '08-10-047-08W5', from_feature: 'Blind end', to: '08-10-047-08W5', to_feature: 'Blind end', status: 'Discontinued', length: 0.24, type: '5L', grade: 'A', outside_diameter: 88.9, wall_thickness: 3.4, material: 'Steel', internal_protection: 'Uncoated'} , callback); },
-
+    function (callback) { pipelineCreate({ license: 'AB14631', segment: '59', substance: 'Oil Well Effluent', from: '06-27-046-07W5', from_feature: 'Well', to: '08-27-046-07W5', to_feature: 'Satellite', status: 'Operating', length: 1.03, type: 'Z245.1', grade: '3592', outside_diameter: 88.9, wall_thickness: 3.2, material: 'Steel', mop: 4960, internal_protection: 'Uncoated', injection_points: ipArray({ pv_unit_id: '85C3512C6881443492AE9A03EA903D9B', pv_node_id: '39DFC50F75BF4FB083A6A73679378466' }), satellite: identifySatellite('08-27-046-07W5'), }, callback); },
+    function (callback) { pipelineCreate({ license: 'AB14631', segment: '60', substance: 'Oil Well Effluent', from: '04-24-046-07W5', from_feature: 'Satellite', to: '04-24-046-07W5', to_feature: 'Pipeline', status: 'Operating', length: 0.11, type: 'Z245.1', grade: '3592', outside_diameter: 88.9, wall_thickness: 4, material: 'Steel', mop: 4960, internal_protection: 'Uncoated', injection_points: ipArray({ pv_unit_id: '929FF25772B4483094CFE2A65467F710', pv_node_id: '24040F3433524B008040F1D067932BD4' }), satellite: identifySatellite('04-24-046-07W5'), }, callback); },
+    function (callback) { pipelineCreate({ license: 'AB14631', segment: '61', substance: 'Oil Well Effluent', from: '14-24-046-07W5', from_feature: 'Satellite', to: '04-25-046-07W5', to_feature: 'Pipeline', status: 'Operating', length: 0.76, type: 'Z245.1', grade: '3592', outside_diameter: 88.9, wall_thickness: 4, material: 'Steel', mop: 4960, internal_protection: 'Uncoated', injection_points: ipArray({ pv_unit_id: 'AF5F44AA440A49CC97C868362C02F0F5', pv_node_id: 'BF2987EAAE3C4C72A6757F29B73074FF' }, { pv_unit_id: '4B56A9B2FA784EB4AEC8967F1242D821', pv_node_id: 'B334099A9212447DA53B8FBFD09A7DEF' }), satellite: identifySatellite('14-24-046-07W5'), }, callback); },
+    function (callback) { pipelineCreate({ license: 'AB14631', segment: '62', substance: 'Oil Well Effluent', from: '02-34-046-07W5', from_feature: 'Satellite', to: '16-27-046-07W5', to_feature: 'Pipeline', status: 'Operating', length: 1.36, type: 'Z245.1', grade: '3592', outside_diameter: 88.9, wall_thickness: 4, material: 'Steel', mop: 4960, internal_protection: 'Uncoated', injection_points: ipArray({ pv_unit_id: 'FE79D65A39DE46B9AA0C278D8B0E0608', pv_node_id: 'C99080133DCE47FDB84322CA553C83B2' }, { pv_unit_id: '1A10F08C66524977920C3F4CA54484E6', pv_node_id: 'ED900FC704674093A3E452675A7539D0' }, { pv_unit_id: 'BBD6B9BD78E14281B6E6BEB283C48B1D', pv_node_id: '947CF81AEFFD46C586110B464F06FC5D' }), satellite: identifySatellite('02-34-046-07W5'), }, callback); },
+    function (callback) { pipelineCreate({ license: 'AB14797', segment: '1', substance: 'Salt Water', from: '11-26-047-08W5', from_feature: 'Blind end', to: '14-26-047-08W5', to_feature: 'Blind end', status: 'Discontinued', length: 0.23, type: 'Z245.3', grade: '2901', outside_diameter: 60.3, wall_thickness: 3.91, material: 'Steel', mop: undefined, internal_protection: 'Unknown', injection_points: ipArray({ pv_unit_id: 'BDB34FD0025C40A290E48406FFD96A5E', pv_node_id: 'B102A914AF0D4506819E1568AA1F31B2' }), satellite: identifySatellite('11-26-047-08W5'), }, callback); },
+    function (callback) { pipelineCreate({ license: 'AB15033', segment: '1', substance: 'Oil Well Effluent', from: '02-05-047-07W5', from_feature: 'Well', to: '02-05-047-07W5', to_feature: 'Battery', status: 'Operating', length: 0.24, type: '5L', grade: 'B', outside_diameter: 88.9, wall_thickness: 4.78, material: 'Steel', mop: 10340, internal_protection: 'Uncoated', injection_points: ipArray({ pv_unit_id: '99FF955850C641B6A05C365921BD5196', pv_node_id: '6FE5291B35374A47A52E9462312333A0' }), satellite: identifySatellite('04-31-046-07W5'), }, callback); },
   ],
     // optional callback
     cb);
@@ -141,30 +151,351 @@ function (callback) {pipelineCreate({license: 'AB00035', substance: 'Natural Gas
 
 function createInjectionPoints(cb) {
   async.series([
-    function (callback) {
-      injectionPointCreate('103/12-33-048-04W5/00', 1.26, 0.89, "0", callback);
-    },
-    function (callback) {
-      injectionPointCreate('100/05-19-048-04W5/00', 1.55, 0.96, 0.04, callback);
-    },
-    function (callback) {
-      injectionPointCreate('100/10-20-046-07W5/00', 1, 0, 0.15, callback);
-    },
-    function (callback) {
-      injectionPointCreate('', 0, 0, 0, callback);
-    },
-    function (callback) {
-      injectionPointCreate('102/06-32-046-07W5/00', 1.92, 3.76, 0.62, callback);
-    },
-    function (callback) {
-      injectionPointCreate('100/05-32-046-07W5/00', 3.96, 6.27, 0.87, callback);
-    },
-    function (callback) {
-      injectionPointCreate('100/08-30-046-07W5/00', 0, 0, 0, callback);
-    },
-    function (callback) {
-      injectionPointCreate('100/02-30-046-07W5/00', 0, 0, 0, callback);
-    },
+    function (callback) { injectionPointCreate({ source: '', oil: 0, water: 0, gas: 0, first_production: undefined, last_production: undefined, first_injection: undefined, last_injection: undefined, pv_unit_id: '', pv_node_id: '', }, callback); },
+    function (callback) { injectionPointCreate({ source: '11-28-047-07W5 ARC - Sales Gas', oil: 0, water: 0, gas: 0, first_production: undefined, last_production: undefined, first_injection: undefined, last_injection: undefined, pv_unit_id: 'B99DA295BB1E4DD8950286AFD7F06CA7', pv_node_id: 'D87BF22EC2ED40CCAE96E1C38F43B78D', }, callback); },
+  ],
+    // optional callback
+    cb);
+}
+
+function createFacilities(cb) {
+  async.parallel([
+    function (callback) { facilityCreate({ name: '10-15-047-07W5 GP', }, callback); },
+    function (callback) { facilityCreate({ name: '07-12-049-07W5', }, callback); },
+    function (callback) { facilityCreate({ name: '06-31-047-06W5', }, callback); },
+    function (callback) { facilityCreate({ name: '16-07-048-05W5', }, callback); },
+    function (callback) { facilityCreate({ name: '08-02-048-06W5', }, callback); },
+    function (callback) { facilityCreate({ name: '14-16-048-06W5', }, callback); },
+    function (callback) { facilityCreate({ name: '09-25-048-07W5 GP', }, callback); },
+    function (callback) { facilityCreate({ name: '09-02-048-06W5 CS', }, callback); },
+    function (callback) { facilityCreate({ name: '11-17-049-04W5 GP', }, callback); },
+    function (callback) { facilityCreate({ name: '05-35-048-04W5 GP', }, callback); },
+    function (callback) { facilityCreate({ name: '11-17 & 5-35 COM. SUC.', }, callback); },
+    function (callback) { facilityCreate({ name: '01-15-048-07W5', }, callback); },
+    function (callback) { facilityCreate({ name: '15-12-048-07W5', }, callback); },
+    function (callback) { facilityCreate({ name: '02-21-047-02W5', }, callback); },
+    function (callback) { facilityCreate({ name: '03-01-050-05W5', }, callback); },
+    function (callback) { facilityCreate({ name: '04-25-047-03W5', }, callback); },
+    function (callback) { facilityCreate({ name: '04-30-048-04W5', }, callback); },
+    function (callback) { facilityCreate({ name: '08-24-048-05W5', }, callback); },
+    function (callback) { facilityCreate({ name: '05-35-048-04W5', }, callback); },
+    function (callback) { facilityCreate({ name: '06-24-048-04W5', }, callback); },
+    function (callback) { facilityCreate({ name: '14-32-048-04W5', }, callback); },
+    function (callback) { facilityCreate({ name: '02-13-047-09W5', }, callback); },
+    function (callback) { facilityCreate({ name: '16-28-046-09W5', }, callback); },
+    function (callback) { facilityCreate({ name: '06-07-047-07W5', }, callback); },
+    function (callback) { facilityCreate({ name: '08-22-046-07W5', }, callback); },
+    function (callback) { facilityCreate({ name: '10-11-047-08W5', }, callback); },
+    function (callback) { facilityCreate({ name: '14-28-046-07W5', }, callback); },
+    function (callback) { facilityCreate({ name: '06-15-047-07W5', }, callback); },
+    function (callback) { facilityCreate({ name: '02-23-047-08W5', }, callback); },
+    function (callback) { facilityCreate({ name: '07-08-047-07W5', }, callback); },
+    function (callback) { facilityCreate({ name: '14-25-046-08W5', }, callback); },
+    function (callback) { facilityCreate({ name: '08-06-047-07W5', }, callback); },
+    function (callback) { facilityCreate({ name: '07-01-047-08W5', }, callback); },
+    function (callback) { facilityCreate({ name: '15-36-046-08W5', }, callback); },
+    function (callback) { facilityCreate({ name: '08-04-047-07W5', }, callback); },
+    function (callback) { facilityCreate({ name: '10-13-047-07W5', }, callback); },
+    function (callback) { facilityCreate({ name: '14-22-047-07W5', }, callback); },
+    function (callback) { facilityCreate({ name: '01-28-050-12W5', }, callback); },
+    function (callback) { facilityCreate({ name: '06-11-056-20W4', }, callback); },
+    function (callback) { facilityCreate({ name: '06-24-047-08W5', }, callback); },
+    function (callback) { facilityCreate({ name: '15-04-048-07W5', }, callback); },
+    function (callback) { facilityCreate({ name: '11-26-047-08W5', }, callback); },
+    function (callback) { facilityCreate({ name: '04-21-048-09W5', }, callback); },
+    function (callback) { facilityCreate({ name: '06-03-048-09W5', }, callback); },
+    function (callback) { facilityCreate({ name: '07-04-048-08W5', }, callback); },
+    function (callback) { facilityCreate({ name: '08-12-048-09W5', }, callback); },
+    function (callback) { facilityCreate({ name: '01-23-047-11W5', }, callback); },
+    function (callback) { facilityCreate({ name: '14-30-047-08W5', }, callback); },
+    function (callback) { facilityCreate({ name: '16-22-047-10W5', }, callback); },
+    function (callback) { facilityCreate({ name: '14-14-047-10W5', }, callback); },
+    function (callback) { facilityCreate({ name: '06-03-050-09W5', }, callback); },
+    function (callback) { facilityCreate({ name: '09-22-048-08W5', }, callback); },
+    function (callback) { facilityCreate({ name: '10-10-048-08W5', }, callback); },
+    function (callback) { facilityCreate({ name: '10-33-049-08W5', }, callback); },
+    function (callback) { facilityCreate({ name: '06-16-048-09W5', }, callback); },
+    function (callback) { facilityCreate({ name: '04-34-047-09W5 Stn 7', }, callback); },
+    function (callback) { facilityCreate({ name: '06-19-040-05W5', }, callback); },
+    function (callback) { facilityCreate({ name: '03-36-043-09W5', }, callback); },
+    function (callback) { facilityCreate({ name: '07-18-047-06W5', }, callback); },
+    function (callback) { facilityCreate({ name: 'UMBACH', }, callback); },
+    function (callback) { facilityCreate({ name: 'BUICK', }, callback); },
+    function (callback) { facilityCreate({ name: 'SIRIUS', }, callback); },
+    function (callback) { facilityCreate({ name: 'SIRIUS', }, callback); },
+    function (callback) { facilityCreate({ name: 'SIRIUS', }, callback); },
+    function (callback) { facilityCreate({ name: 'SIRIUS', }, callback); },
+
+  ],
+    // optional callback
+    cb);
+}
+
+function createSatellites(cb) {
+  async.parallel([
+    function (callback) { satelliteCreate({ name: 'satellite', facility: identifyFacility('10-15-047-07W5 GP'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'WEST QUAD', facility: identifyFacility('10-15-047-07W5 GP'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'SOUTH QUAD', facility: identifyFacility('10-15-047-07W5 GP'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'EAST QUAD', facility: identifyFacility('10-15-047-07W5 GP'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'NORTH QUAD', facility: identifyFacility('06-31-047-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'N,N WEST QUAD', facility: identifyFacility('10-15-047-07W5 GP'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'NORTH WEST QUAD', facility: identifyFacility('10-15-047-07W5 GP'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-01-049-07W5', facility: identifyFacility('07-12-049-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '07-12-049-07W5', facility: identifyFacility('07-12-049-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-09-048-06W5', facility: identifyFacility('06-31-047-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-08-048-06W5', facility: identifyFacility('06-31-047-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-06-048-06W5', facility: identifyFacility('06-31-047-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-06-048-06W5', facility: identifyFacility('06-31-047-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '09-36-047-07W5', facility: identifyFacility('06-31-047-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '10-32-047-06W5', facility: identifyFacility('06-31-047-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-31-047-06W5', facility: identifyFacility('06-31-047-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-34-047-05W5', facility: identifyFacility('16-07-048-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-05-048-05W5', facility: identifyFacility('16-07-048-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'GL: 13-22&5-23-048-05W5', facility: identifyFacility('16-07-048-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '05-23-048-05W5', facility: identifyFacility('16-07-048-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '13-22-048-05W5', facility: identifyFacility('16-07-048-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-16-048-05W5', facility: identifyFacility('16-07-048-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-07-048-05W5', facility: identifyFacility('16-07-048-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-18-048-05W5', facility: identifyFacility('16-07-048-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-07-048-05W5', facility: identifyFacility('16-07-048-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'NORTH ', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'EAST', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'Deadleg', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-02-048-06W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'GL: 16-12,14-12,8-11', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-11-048-06W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-12-048-06W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-12-048-06W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '12-01-048-06W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'WEST NEW GL:', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'NORTH VOL INC.', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-02-048-06W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-15-048-06W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-10-048-06W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-03-048-06W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'GL: 16-10, 6-3 & 6-15', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-35-047-06W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'EAST GL:', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '11-01-048-06W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-06-048-05W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '05-05-048-05W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-05-048-05W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'GL: 16-33, 13-34,1-28,16-28&11-3', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-33-047-05W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '11-03-048-05W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-28-047-05W5', facility: identifyFacility('08-02-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-08-048-06W5', facility: identifyFacility('14-16-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-17-048-06W5', facility: identifyFacility('14-16-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-16-048-06W5', facility: identifyFacility('14-16-048-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '7-12 BA', facility: identifyFacility('09-25-048-07W5 GP'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'SUCTION', facility: identifyFacility('09-02-048-06W5 CS'), }, callback); },
+    function (callback) { satelliteCreate({ name: '1-15-48-7 SALES', facility: identifyFacility('09-02-048-06W5 CS'), }, callback); },
+    function (callback) { satelliteCreate({ name: '15-12 & 1-15-48-7 SALES', facility: identifyFacility('09-02-048-06W5 CS'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-16-48-6 SALES', facility: identifyFacility('09-02-048-06W5 CS'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-16, 15-12 & 1-15-48-7 SALES', facility: identifyFacility('09-02-048-06W5 CS'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-7 SALES', facility: identifyFacility('09-02-048-06W5 CS'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'Gl:for all including 8-2', facility: identifyFacility('09-02-048-06W5 CS'), }, callback); },
+    function (callback) { satelliteCreate({ name: '9-2 SALES  ', facility: identifyFacility('09-02-048-06W5 CS'), }, callback); },
+    function (callback) { satelliteCreate({ name: '9-2 SALES  13-16 S.S.', facility: identifyFacility('09-02-048-06W5 CS'), }, callback); },
+    function (callback) { satelliteCreate({ name: '11-17 SALES', facility: identifyFacility('11-17-049-04W5 GP'), }, callback); },
+    function (callback) { satelliteCreate({ name: '5-35 SALES', facility: identifyFacility('05-35-048-04W5 GP'), }, callback); },
+    function (callback) { satelliteCreate({ name: '11-17 INLET', facility: identifyFacility('11-17 & 5-35 COM. SUC.'), }, callback); },
+    function (callback) { satelliteCreate({ name: '5-35 WEST INLET', facility: identifyFacility('11-17 & 5-35 COM. SUC.'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'Jou/ecl/3-1', facility: identifyFacility('11-17 & 5-35 COM. SUC.'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'Paramount ', facility: identifyFacility('05-35-048-04W5 GP'), }, callback); },
+    function (callback) { satelliteCreate({ name: '01-15-048-07W5', facility: identifyFacility('01-15-048-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '13-02-048-07W5', facility: identifyFacility('01-15-048-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-14-048-07W5', facility: identifyFacility('01-15-048-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '02-15-048-07W5', facility: identifyFacility('01-15-048-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '15-12-048-07W5', facility: identifyFacility('15-12-048-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-02-048-07W5', facility: identifyFacility('15-12-048-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '02-21-047-02W5', facility: identifyFacility('02-21-047-02W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '03-01-050-05W5', facility: identifyFacility('03-01-050-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-24-047-03W5', facility: identifyFacility('04-25-047-03W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-25-047-03W5', facility: identifyFacility('04-25-047-03W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-26-047-03W5', facility: identifyFacility('04-25-047-03W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-25-047-03W5', facility: identifyFacility('04-25-047-03W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '03-25-048-05W5', facility: identifyFacility('04-30-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-30-048-04W5', facility: identifyFacility('04-30-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-24-048-05W5', facility: identifyFacility('08-24-048-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '13-15-049-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-09-049-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '02-09-049-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-04-049-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-03-049-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-03-049-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '13-13-049-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-11-049-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-02-049-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-01-049-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-31-048-03W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-35-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '13-18-048-03W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '01-14-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-10-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '01-15-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '13-08-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-17-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '12-22-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '05-20-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-29-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-28-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-28-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '11-27-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '15-26-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '05-35-048-04W5', facility: identifyFacility('05-35-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-13-048-04W5', facility: identifyFacility('06-24-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-14-048-04W5', facility: identifyFacility('06-24-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '10-19-049-04W5', facility: identifyFacility('14-32-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '01-24-049-05W5', facility: identifyFacility('14-32-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-20-049-04W5', facility: identifyFacility('14-32-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-19-049-04W5', facility: identifyFacility('14-32-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-17-049-04W5', facility: identifyFacility('14-32-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '07-08-049-04W5', facility: identifyFacility('14-32-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '05-08-049-04W5', facility: identifyFacility('14-32-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-05-049-04W5', facility: identifyFacility('14-32-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-04-049-04W5', facility: identifyFacility('14-32-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '09-30-048-04W5', facility: identifyFacility('14-32-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-32-048-04W5', facility: identifyFacility('14-32-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-32-048-04W5', facility: identifyFacility('14-32-048-04W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '12-05-047-08W5', facility: identifyFacility('02-13-047-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-07-047-08W5', facility: identifyFacility('02-13-047-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'GL FOR 08-07-& 12-05-047-08W5', facility: identifyFacility('02-13-047-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-06-047-08W5', facility: identifyFacility('02-13-047-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '11-07-047-08W5', facility: identifyFacility('02-13-047-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'Doesn\'t Exist?', facility: identifyFacility('02-13-047-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-01-047-09W5', facility: identifyFacility('02-13-047-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '15-36-046-09W5', facility: identifyFacility('02-13-047-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-28-046-09W5', facility: identifyFacility('16-28-046-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '02-34-046-09W5', facility: identifyFacility('16-28-046-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '02-33-046-09W5', facility: identifyFacility('16-28-046-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-28-046-09W5', facility: identifyFacility('16-28-046-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-28-046-09W5', facility: identifyFacility('16-28-046-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'OIL TRANSFER', facility: identifyFacility('16-28-046-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'FW MU', facility: identifyFacility('06-07-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-07-047-07W5', facility: identifyFacility('06-07-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-18-047-07W5', facility: identifyFacility('06-07-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'EAST QUAD.', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'SOUTH QUAD.', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'NORTH QUAD.', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'OIL TRANS. TO 14-28', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-22-046-07W5', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'GL 4,6,10-24-046-07W5', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '10-24-046-07W5', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-24-046-07W5', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-24-046-07W5', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'GL 4,7-25-046-07W5', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-25-046-07W5', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-24-046-07W5', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '07-25-046-07W5', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-27-046-07W5', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '02-34-046-07W5', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-15-046-07W5', facility: identifyFacility('08-22-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '10-11-047-08W5', facility: identifyFacility('10-11-047-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'SW M U', facility: identifyFacility('14-28-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'SW DIST', facility: identifyFacility('14-28-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'FW INJECT.', facility: identifyFacility('14-28-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'SW T.L.', facility: identifyFacility('14-28-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'SW INJECT', facility: identifyFacility('14-28-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'GL 8-30,08-19-046-07W5', facility: identifyFacility('14-28-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '02-05-047-07W5 Oil Transfer', facility: identifyFacility('14-28-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-04-047-07W5 ', facility: identifyFacility('14-28-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-19-046-07W5', facility: identifyFacility('14-28-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-30-046-07W5', facility: identifyFacility('14-28-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-28-046-07W5', facility: identifyFacility('14-28-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-21-046-07W5', facility: identifyFacility('14-28-046-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '10-14-047-07W5', facility: identifyFacility('06-15-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-15-047-07W5', facility: identifyFacility('06-15-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '10-16-047-07W5', facility: identifyFacility('06-15-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'GL: 06-09,10,11-047-07W5', facility: identifyFacility('06-15-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-09-047-07W5', facility: identifyFacility('06-15-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-10-047-07W5', facility: identifyFacility('06-15-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-11-047-07W5', facility: identifyFacility('06-15-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '07-15-047-07W5', facility: identifyFacility('06-15-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '02-23-047-08W5', facility: identifyFacility('02-23-047-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '07-08-047-07W5', facility: identifyFacility('07-08-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '07-18-046-07W5', facility: identifyFacility('14-25-046-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '03-19-046-07W5', facility: identifyFacility('14-25-046-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-25-046-08W5', facility: identifyFacility('14-25-046-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '07-25-046-08W5', facility: identifyFacility('14-25-046-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-34-046-08W5', facility: identifyFacility('14-25-046-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '07-02-047-08W5', facility: identifyFacility('14-25-046-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-35-046-08W5', facility: identifyFacility('14-25-046-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-25-046-08W5', facility: identifyFacility('14-25-046-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-06-047-07W5', facility: identifyFacility('08-06-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-31-046-07W5', facility: identifyFacility('08-06-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '07-01-047-08W5', facility: identifyFacility('07-01-047-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '15-36-046-08W5', facility: identifyFacility('15-36-046-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-04-047-07W5', facility: identifyFacility('08-04-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-33-046-07W5', facility: identifyFacility('08-04-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '07-02-047-07W5', facility: identifyFacility('08-04-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-35-046-07W5', facility: identifyFacility('08-04-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '10-13 GL', facility: identifyFacility('10-13-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'GL: 2,8-24-047-07W5', facility: identifyFacility('10-13-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '02-24-047-07W5', facility: identifyFacility('10-13-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-24-047-07W5', facility: identifyFacility('10-13-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '10-13-047-07W5', facility: identifyFacility('10-13-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'GL: 13-07,3-12-24-047-07W5', facility: identifyFacility('10-13-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '13-07-047-07W5', facility: identifyFacility('10-13-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '03-12-047-07W5', facility: identifyFacility('10-13-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-12-047-07W5 & 08-13-047-07W5', facility: identifyFacility('10-13-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-22-047-07W5', facility: identifyFacility('14-22-047-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '11-33-050-12W5', facility: identifyFacility('01-28-050-12W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-33-050-12W5', facility: identifyFacility('01-28-050-12W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-34-050-12W5', facility: identifyFacility('01-28-050-12W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '09-28-050-12W5', facility: identifyFacility('01-28-050-12W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-14-050-12W5', facility: identifyFacility('01-28-050-12W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '01-28-050-12W5', facility: identifyFacility('01-28-050-12W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-11-056-20W4', facility: identifyFacility('06-11-056-20W4'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-24-047-08W5', facility: identifyFacility('06-24-047-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '15-04-048-07W5', facility: identifyFacility('15-04-048-07W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '15-22-047-08W5', facility: identifyFacility('11-26-047-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '11-26-047-08W5', facility: identifyFacility('11-26-047-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-21-048-09W5', facility: identifyFacility('04-21-048-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-03-048-09W5', facility: identifyFacility('06-03-048-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '02-04-048-08W5', facility: identifyFacility('07-04-048-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-03-048-08W5', facility: identifyFacility('07-04-048-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-34-047-08W5', facility: identifyFacility('07-04-048-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '07-04-048-08W5', facility: identifyFacility('07-04-048-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '12-01-048-09W5', facility: identifyFacility('08-12-048-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-12-048-09W5', facility: identifyFacility('08-12-048-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '01-23-047-11W5', facility: identifyFacility('01-23-047-11W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-18-047-08W5', facility: identifyFacility('14-30-047-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '05-19-047-08W5', facility: identifyFacility('14-30-047-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '07-36-047-09W5', facility: identifyFacility('14-30-047-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-30-047-08W5', facility: identifyFacility('14-30-047-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-23-047-10W5', facility: identifyFacility('16-22-047-10W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '04-26-047-10W5', facility: identifyFacility('16-22-047-10W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '16-22-047-10W5', facility: identifyFacility('16-22-047-10W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '14-14-047-10W5', facility: identifyFacility('14-14-047-10W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '10-03-050-09W5', facility: identifyFacility('06-03-050-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-04-050-09W5', facility: identifyFacility('06-03-050-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-03-050-09W5', facility: identifyFacility('06-03-050-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '09-22-048-08W5', facility: identifyFacility('09-22-048-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '05-14-048-08W5', facility: identifyFacility('10-10-048-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '12-11-048-08W5', facility: identifyFacility('10-10-048-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '10-10-048-08W5', facility: identifyFacility('10-10-048-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '10-33-049-08W5', facility: identifyFacility('10-33-049-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-16-048-09W5', facility: identifyFacility('06-16-048-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '7-4 BATTERY', facility: identifyFacility('04-34-047-09W5 Stn 7'), }, callback); },
+    function (callback) { satelliteCreate({ name: '43748', facility: identifyFacility('10-10-048-08W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '7-4 & 10-10', facility: identifyFacility('04-34-047-09W5 Stn 7'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'Being ABD Sept 2 2021', facility: identifyFacility('04-34-047-09W5 Stn 7'), }, callback); },
+    function (callback) { satelliteCreate({ name: '9-22 bat', facility: identifyFacility('04-34-047-09W5 Stn 7'), }, callback); },
+    function (callback) { satelliteCreate({ name: '06-19-040-05W5', facility: identifyFacility('06-19-040-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '01-13-040-06W5', facility: identifyFacility('06-19-040-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '02-01-040-06W5', facility: identifyFacility('06-19-040-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '08-02-042-06W5', facility: identifyFacility('06-19-040-05W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '12-24-043-09W5', facility: identifyFacility('03-36-043-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '03-36-043-09W5', facility: identifyFacility('03-36-043-09W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '01-30-047-06W5', facility: identifyFacility('07-18-047-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: '07-18-047-06W5', facility: identifyFacility('07-18-047-06W5'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'UMBACH', facility: identifyFacility('UMBACH'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'Should be Discontinued?', facility: identifyFacility('BUICK'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'SIRIUS', facility: identifyFacility('SIRIUS'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'Should be ABND?', facility: identifyFacility('SIRIUS'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'Confirmed Never Constructed', facility: identifyFacility('SIRIUS'), }, callback); },
+    function (callback) { satelliteCreate({ name: 'Confimred never constructed', facility: identifyFacility('SIRIUS'), }, callback); },
   ],
     // optional callback
     cb);
@@ -172,8 +503,10 @@ function createInjectionPoints(cb) {
 
 
 async.series([
-  createInjectionPoints,
-  createPipelines,
+  createFacilities,
+  createSatellites,
+  // createInjectionPoints,
+  // createPipelines,
 ],
   // Optional callback
   function (err, results) {
@@ -181,7 +514,7 @@ async.series([
       console.log('FINAL ERR: ' + err);
     }
     else {
-      console.log('Injection Points final: ' + injectionpoints);
+      console.log('Injection Points final: ' + pipelines);
     }
     // All done, disconnect from database
     mongoose.connection.close();

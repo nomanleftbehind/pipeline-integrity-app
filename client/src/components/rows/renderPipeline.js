@@ -72,11 +72,10 @@ class RenderPipeline extends React.Component {
 
   render() {
     const ppl_idx = this.props.ppl_idx;
-    const pipeline = this.props.pipeline;
     const expandedPipelines = this.props.expandedPipelines;
-    const { _id, created_at_formatted, license, segment, substance, from, from_feature, to, to_feature, injection_points: inj_pts, status } = pipeline;
-
-    const { license: val_license, segment: val_segment, substance: val_substance, from_to: val_from_to, from_to_feature: val_from_to_feature, status: val_status } = this.props.validators;
+    const { _id, created_at_formatted, license, segment, substance, from, from_feature, to, to_feature, injection_points: inj_pts, status, length, type, grade, outside_diameter, wall_thickness, material, mop, internal_protection } = this.props.pipeline;
+    const { license: val_license, segment: val_segment, substance: val_substance, from_to: val_from_to, from_to_feature: val_from_to_feature, status: val_status, length: val_length, type: val_type, grade: val_grade, outside_diameter: val_outside_diameter, wall_thickness: val_wall_thickness, material: val_material, mop: val_mop, internal_protection: val_internal_protection } = this.props.validators;
+    const mechanical_properties = [[{ length }, val_length], [{ type }, val_type], [{ grade }, val_grade], [{ outside_diameter }, val_outside_diameter], [{ wall_thickness }, val_wall_thickness], [{ material }, val_material], [{ mop }, val_mop], [{ internal_protection }, val_internal_protection]];
 
     const modalDeletePipeline = this.state.showDeletePipelineModal ?
       <ModalDeletePipeline
@@ -111,12 +110,12 @@ class RenderPipeline extends React.Component {
         </td>
         <td className="MuiTableCell-root MuiTableCell-body">{_id}</td>
         <td className="MuiTableCell-root MuiTableCell-body">{created_at_formatted}</td>
-        <EntryField _id={_id} record={license} columnName="license" validator={RegExp(val_license)} fetchPipelines={this.props.fetchPipelines} />
-        <EntryField _id={_id} record={segment} columnName="segment" validator={RegExp(val_segment)} fetchPipelines={this.props.fetchPipelines} />
+        <EntryField _id={_id} record={license} columnName="license" validator={val_license} fetchPipelines={this.props.fetchPipelines} />
+        <EntryField _id={_id} record={segment} columnName="segment" validator={val_segment} fetchPipelines={this.props.fetchPipelines} />
         <EntryField _id={_id} record={substance} columnName="substance" validator={val_substance} fetchPipelines={this.props.fetchPipelines} />
-        <EntryField _id={_id} record={from} columnName="from" validator={RegExp(val_from_to)} fetchPipelines={this.props.fetchPipelines} />
+        <EntryField _id={_id} record={from} columnName="from" validator={val_from_to} fetchPipelines={this.props.fetchPipelines} />
         <EntryField _id={_id} record={from_feature} columnName="from_feature" validator={val_from_to_feature} fetchPipelines={this.props.fetchPipelines} />
-        <EntryField _id={_id} record={to} columnName="to" validator={RegExp(val_from_to)} fetchPipelines={this.props.fetchPipelines} />
+        <EntryField _id={_id} record={to} columnName="to" validator={val_from_to} fetchPipelines={this.props.fetchPipelines} />
         <EntryField _id={_id} record={to_feature} columnName="to_feature" validator={val_from_to_feature} fetchPipelines={this.props.fetchPipelines} />
         <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight">{inj_pts.length === 1 ? "1 well" : `${inj_pts.length} wells`}</td>
         <EntryField _id={_id} record={status} columnName="status" validator={val_status} fetchPipelines={this.props.fetchPipelines} />
@@ -128,6 +127,7 @@ class RenderPipeline extends React.Component {
         <PipelineData
           key={`${_id} injection points`}
           _id={_id}
+          mechanical_properties={mechanical_properties}
           isEven={isEven(ppl_idx)}
           inj_pts={inj_pts}
           injectionPointOptions={this.props.injectionPointOptions}
