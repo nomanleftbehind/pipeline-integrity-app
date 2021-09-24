@@ -1,84 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 // import useStickyHeader from "./components/useStickyHeader";
 import RenderPipeline from './components/rows/renderPipeline';
 import Header from './components/Header';
 import SideNavBar from './components/SideNavBar';
 
-function PipelineDatabase() {
+function PipelineDatabase({ pipelines, errorPipelines, arePipelinesLoaded, fetchPipelines, injectionPointOptions, validators, facilities, satellites }) {
 
-  const [errorPipelines, setErrorPipelines] = useState(null);
-  const [arePipelinesLoaded, setArePipelinesLoaded] = useState(false);
-  const [errorInjectionPoints, setErrorInjectionPoints] = useState(null);
-  const [areInjectionPointsLoaded, setAreInjectionPointsLoaded] = useState(false);
-
-  const [pipelines, setPipelines] = useState([]);
-  const [injectionPointOptions, setInjectionPointOptions] = useState([]);
-  const [validators, setValidators] = useState({});
   const [expandedPipelines, setExpandedPipelines] = useState([]);
   const [filterText, setFilterText] = useState({ created_at: "", "license": "", segment: "", substance: "", from: "", from_feature: "", to: "", to_feature: "", injection_points: "", status: "" });
-
+  const [filterSatellite, setFilterSatellite] = useState([]);
+  const [filterFacility, setFilterFacility] = useState([]);
   // const { tableRef, isSticky } = useStickyHeader();
 
-
-  const fetchPipelines = () => {
-    console.log("RUNNING FETCH PIPELINES!!!");
-    fetch("http://localhost:5002/pipelines")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          setArePipelinesLoaded(true);
-          setPipelines(result);
-        },
-        (error) => {
-          setArePipelinesLoaded(true);
-          setErrorPipelines(error);
-        }
-      );
+  function handleSatelliteClick(e) {
+    setFilterSatellite(e.target.value);
+    setFilterFacility([]);
   }
 
-  const fetchInjectionPoints = () => {
-    console.log("RUNNING FETCH INJECTION POINTS!!!");
-    fetch("http://localhost:5002/injectionpoints")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          setAreInjectionPointsLoaded(true);
-          setInjectionPointOptions(result);
-        },
-        (error) => {
-          setAreInjectionPointsLoaded(true);
-          setErrorInjectionPoints(error);
-        }
-      );
+  function handleFacilityClick(e) {
+    setFilterFacility(e.target.value);
+    setFilterSatellite([]);
   }
-
-  const injectionPointOptionsLoaded = () => {
-    if (errorInjectionPoints) {
-      return [{ _id: "0", source: `Failed to load: ${errorInjectionPoints.message}` }]
-    } else if (!areInjectionPointsLoaded) {
-      return [{ _id: "0", source: "Loading..." }]
-    } else {
-      return injectionPointOptions
-    }
-  }
-
-  const fetchValidators = () => {
-    console.log("RUNNING FETCH VALIDATORS!!!");
-    fetch("http://localhost:5002/validators")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          // console.log(RegExp(result.license));
-          setValidators(result);
-        }
-      );
-  }
-
-  useEffect(() => {
-    fetchPipelines();
-    fetchValidators();
-    fetchInjectionPoints();
-  }, []);
 
   const handleFilterTextChange = (e) => {
     const { name, value } = e.target;
@@ -99,7 +41,12 @@ function PipelineDatabase() {
     caseInsensitiveFilterText[i] = j.toUpperCase();
   }
 
-  const pipelines2 = pipelines.filter(pipeline => {
+  const sidebar_filter = pipelines.filter(pipeline => {
+    return pipeline.satellite.facility === filterFacility || pipeline.satellite._id === filterSatellite;
+  });
+
+  const header_filter = sidebar_filter.filter(pipeline => {
+    console.log(pipeline.satellite.facility, filterFacility, pipeline.satellite._id, filterSatellite);
     const caseInsensitivePipeline = {};
     for (const [i, j] of Object.entries(pipeline)) {
       if (typeof j === "string" && i !== "_id") {
@@ -133,16 +80,16 @@ function PipelineDatabase() {
   });
 
   if (errorPipelines) {
-    return <div>Error: {errorPipelines.message}</div>
+    return <div className="app">Error: {errorPipelines.message}</div>
   } else if (!arePipelinesLoaded) {
-    return <div>Loading...</div>
+    return <div className="app">Loading...</div>
   } else {
     return (
       <div className="app" >
         <div className="pipeline-database-wrapper">
           <div className="pipeline-database-side-bar">
             <div className="pipeline-database-side-bar-fixed">
-              <SideNavBar />
+              <SideNavBar facilities={facilities} satellites={satellites} onSatelliteClick={handleSatelliteClick} onFacilityClick={handleFacilityClick} />
             </div>
           </div>
           <div className="pipeline-database-table">
@@ -162,13 +109,13 @@ function PipelineDatabase() {
                 filterText={filterText}
                 onFilterTextChange={handleFilterTextChange} />
               <tbody>
-                {pipelines2.map((pipeline, ppl_idx) => {
+                {header_filter.map((pipeline, ppl_idx) => {
                   return (
                     <RenderPipeline
                       key={pipeline._id}
                       ppl_idx={ppl_idx}
                       pipeline={pipeline}
-                      injectionPointOptions={injectionPointOptionsLoaded()}
+                      injectionPointOptions={injectionPointOptions}
                       validators={validators}
                       expandedPipelines={expandedPipelines}
                       onPipelineClick={() => handlePipelineClick(pipeline._id)}

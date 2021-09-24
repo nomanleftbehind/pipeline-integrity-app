@@ -9,16 +9,17 @@ const { populate } = require('../models/pipeline');
 const opts = { runValidators: true };
 
 exports.pipeline_list = function (req, res, next) {
-  console.log(Pipeline.schema.paths.license.validators);
   Pipeline.find({})
     .sort({ license: 1, segment: 1, created_at: 1 })
     .populate("injection_points")
+    .populate("satellite")
     .exec(function (err, list_pipelines) {
       if (err) { return next(err); }
-      // console.log(list_pipelines);
+      console.log(list_pipelines);
       res.json(list_pipelines);
     });
 
+  // console.log(Pipeline.schema.paths.license.validators);
 };
 
 exports.validators = function (req, res, next) {

@@ -79,6 +79,7 @@ function InjectionPoints({ _id, inj_pts, injectionPointOptions, fetchPipelines }
             </thead>
             <tbody className="MuiTableBody-root">
               {inj_pts.map(inj_pt => {
+                console.log(inj_pt);
                 return (
                   <tr key={inj_pt._id} className="MuiTableRow-root">
                     <Source

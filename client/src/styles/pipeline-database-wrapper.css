@@ -1,16 +1,29 @@
 .pipeline-database-wrapper {
     display: flex;
     /* flex-direction: row; */
-    gap: 5px;
+    gap: 0px;
 }
 
 .pipeline-database-side-bar {
-
     flex: 0 0 300px;
-    background-color:darkcyan;
+    background-color: darkcyan;
+}
+
+.pipeline-database-side-bar button {
+    background: none!important;
+    border: none;
+    padding: 0!important;
+    /* font-family: arial, sans-serif; */
+    color: #069;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.pipeline-database-side-bar button:focus {
+    color: red;
 }
 
 .pipeline-database-table {
-    flex: 0 0 1500px;
+    flex: 0 0 auto;
     background-color: rgb(205, 224, 231);
 }

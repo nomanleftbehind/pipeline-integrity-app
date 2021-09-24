@@ -242,12 +242,14 @@ a {
     position: sticky;
     top: 50px;
     z-index: 999;
-    background-color:rgba(224, 224, 224, 1);
+    background-color:gold;
 }
 
 .pipeline-database-side-bar-fixed {
     position: sticky;
     top: 50px;
     left: 0px;
-    background-color:olive;
+    max-height: 100vh;
+    background-color: goldenrod;
+    overflow-y: auto;
 }
