@@ -6,7 +6,7 @@ import {
   Link
 } from "react-router-dom";
 
-import PipelineDatabase from './PipelineDatabase';
+import PipelineDatabase from './components/PipelineDatabase';
 import Facilities from './components/Facilities';
 import Satellites from './components/Satellites';
 
@@ -14,48 +14,52 @@ export interface IFacility { _id: string; name: string; created_at: Date }
 
 export interface ISatellite { _id: string; name: string; facility: IFacility; created_at: Date }
 
-interface IInjectionPoint { _id: string; source: string; oil: number; water: number; gas: number; first_production?: Date; last_production?: Date; first_injection?: Date; last_injection?: Date; pv_unit_id: string; pv_node_id: string }
+export interface IInjectionPoint { _id: string; source: string; oil: number; water: number; gas: number; first_production?: Date; last_production?: Date; first_injection?: Date; last_injection?: Date; pv_unit_id: string; pv_node_id: string }
+
+export interface IInjectionPointOptionsError { _id: string; source: string }
 
 export interface IPipeline {
-  license: string,
-  segment: string,
-  substance: string,
-  from: string,
-  from_feature: string,
-  to: string,
-  to_feature: string,
-  status: string,
-  length: string,
-  type: string,
-  grade: string,
-  outside_diameter: number,
-  wall_thickness: number,
-  material: string,
-  mop: number,
-  internal_protection: string,
-  injection_points: IInjectionPoint[],
-  satellite: ISatellite,
-  created_at: Date
+  _id: string;
+  license: string;
+  segment: string;
+  substance: string;
+  from: string;
+  from_feature: string;
+  to: string;
+  to_feature: string;
+  status: string;
+  length: string;
+  type: string;
+  grade: string;
+  outside_diameter: number;
+  wall_thickness: number;
+  material: string;
+  mop: number;
+  internal_protection: string;
+  injection_points: IInjectionPoint[];
+  satellite: ISatellite;
+  created_at: Date;
+  created_at_formatted: string
 }
 
-interface IValidators {
-  license: string,
-  segment: string,
-  substance: string[],
-  from_to: string,
-  from_to_feature: string[],
-  status: string[],
-  length: number,
-  type: string[],
-  grade: string[],
-  outside_diameter: number[],
-  wall_thickness: number,
-  material: string[],
-  mop: number,
+export interface IValidators {
+  license: string;
+  segment: string;
+  substance: string[];
+  from_to: string;
+  from_to_feature: string[];
+  status: string[];
+  length: string;
+  type: string[];
+  grade: string[];
+  outside_diameter: number[];
+  wall_thickness: string;
+  material: string[];
+  mop: string;
   internal_protection: string[]
 }
 
-interface IError { message: string }
+export interface IError { message: string }
 
 
 export default function App(): JSX.Element {
@@ -105,7 +109,7 @@ export default function App(): JSX.Element {
       );
   }
 
-  const injectionPointOptionsLoaded = () => {
+  const injectionPointOptionsLoaded = (): IInjectionPoint[] | IInjectionPointOptionsError[] => {
     if (errorInjectionPoints) {
       return [{ _id: "0", source: `Failed to load: ${errorInjectionPoints.message}` }]
     } else if (!areInjectionPointsLoaded) {

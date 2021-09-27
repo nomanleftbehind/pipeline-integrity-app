@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ReactComponent as EditIcon } from '../../../svg/edit-icon.svg';
 import { ReactComponent as CancelIcon } from '../../../svg/cancel-icon.svg';
 import { ReactComponent as RemoveIcon } from '../../../svg/remove-pipeline.svg';

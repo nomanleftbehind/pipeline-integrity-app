@@ -3,20 +3,28 @@ import { ReactComponent as EditIcon } from '../../svg/edit-icon.svg';
 import { ReactComponent as CancelIcon } from '../../svg/cancel-icon.svg';
 import { ReactComponent as OkIcon } from '../../svg/ok-icon.svg';
 
-function TextField({ _id, record, columnName, validator, fetchPipelines }) {
-  const [edit, setEdit] = useState(false);
-  const [state, setState] = useState(typeof record === 'undefined' ? "" : record);
+interface ITextFieldProps {
+  _id: string;
+  record: string | number;
+  columnName: string;
+  validator: string | string[] | number[];
+  fetchPipelines: () => void
+}
 
-  const toggleEdit = () => {
+export default function TextField({ _id, record, columnName, validator, fetchPipelines }: ITextFieldProps): JSX.Element {
+  const [edit, setEdit] = useState<boolean>(false);
+  const [state, setState] = useState<string>(typeof record === 'undefined' ? "" : record.toString());
+
+  const toggleEdit = (): void => {
     setEdit(!edit);
-    setState(typeof record === 'undefined' ? "" : record);
+    setState(typeof record === 'undefined' ? "" : record.toString());
   }
 
-  const handleChange = (e) => {
-    setState(e.target.value);
+  const handleChange = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement>): void => {
+    setState(e.currentTarget.value);
   };
 
-  const validateForm = () => {
+  const validateForm = (): boolean => {
     console.log(state);
     if (typeof validator === "string") {
       const validator_regexp = new RegExp(validator)
@@ -26,14 +34,14 @@ function TextField({ _id, record, columnName, validator, fetchPipelines }) {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     fetch("http://localhost:5002/pipeline/" + _id + "/column", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ record: e.target.name, column: columnName }),
+      body: JSON.stringify({ record: e.currentTarget.name, column: columnName }),
     })
       .then(response => {
         if (!response.ok) {
@@ -68,6 +76,8 @@ function TextField({ _id, record, columnName, validator, fetchPipelines }) {
                 /> :
                 <select name={columnName} value={state} onChange={handleChange}>
                   {validator.map(option => {
+                    console.log(option);
+
                     return (
                       <option key={option} value={option}>{option}</option>
                     );
@@ -85,6 +95,3 @@ function TextField({ _id, record, columnName, validator, fetchPipelines }) {
     </td>
   );
 }
-
-
-export default TextField;

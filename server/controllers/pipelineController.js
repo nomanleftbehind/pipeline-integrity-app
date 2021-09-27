@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const { Pipeline, validators } = require('../models/pipeline');
 const InjectionPoint = require('../models/injectionPoint');
-const { populate } = require('../models/pipeline');
+const Satellite = require('../models/satellite');
+const Facility = require('../models/facility');
 
 
 // const { body, validationResult } = require('express-validator');
@@ -12,7 +13,11 @@ exports.pipeline_list = function (req, res, next) {
   Pipeline.find({})
     .sort({ license: 1, segment: 1, created_at: 1 })
     .populate("injection_points")
-    .populate("satellite")
+    .populate({
+      path: "satellite", model: Satellite,
+      populate: { path: "facility", model: Facility }
+    })
+    // .populate("facility")
     .exec(function (err, list_pipelines) {
       if (err) { return next(err); }
       console.log(list_pipelines);

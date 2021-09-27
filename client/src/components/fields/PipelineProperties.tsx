@@ -1,10 +1,19 @@
-import React from 'react';
 import EntryField from './EntryField';
 
-function PipelineProperties({ _id, properties_name, pipeline_properties, fetchPipelines }) {
+import { IMechanicalProperties, IMechanicalPropertiesValidators } from '../rows/PipelineData';
+
+interface IPipelinePropertiesProps {
+  _id: string;
+  properties_name: string;
+  pipeline_properties: IMechanicalProperties;
+  pipeline_properties_validators: IMechanicalPropertiesValidators[];
+  fetchPipelines: () => void
+}
+
+export default function PipelineProperties({ _id, properties_name, pipeline_properties, pipeline_properties_validators, fetchPipelines }: IPipelinePropertiesProps): JSX.Element {
 
   return (
-    <td className="MuiTableCell-root MuiTableCell-body" colSpan="2">
+    <td className="MuiTableCell-root MuiTableCell-body" colSpan={2}>
       <div className="collapse-container">
         <div className="collapse-container-inner">
           <div className="injection-points-title">{properties_name}</div>
@@ -16,8 +25,8 @@ function PipelineProperties({ _id, properties_name, pipeline_properties, fetchPi
               </tr>
             </thead>
             <tbody className="MuiTableBody-root">
-              {pipeline_properties.map(([key, validator]) => {
-                const [[columnName, record]] = Object.entries(key);
+              {Object.entries(pipeline_properties).map(([columnName, record], index) => {
+                const validator = pipeline_properties_validators[index];
                 return (
                   <tr key={columnName} className="MuiTableRow-root">
                     <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall">{columnName.replace('_', ' ')}</td>
@@ -32,5 +41,3 @@ function PipelineProperties({ _id, properties_name, pipeline_properties, fetchPi
     </td>
   );
 }
-
-export default PipelineProperties;

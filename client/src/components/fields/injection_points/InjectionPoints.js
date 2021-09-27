@@ -1,20 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Source from './Source';
 import { ModalDuplicateInjectionPoint } from '../../Modal';
 import { ReactComponent as AddPipelineIcon } from '../../../svg/add-pipeline.svg';
 
 function InjectionPoints({ _id, inj_pts, injectionPointOptions, fetchPipelines }) {
   const [showDuplicateInjectionPointModal, setShowDuplicateInjectionPointModal] = useState(false);
-
-  const handleSubmit = (new_inj_pt_id, inj_pt_id) => {
-    inj_pts.map(({ _id }) => _id).includes(new_inj_pt_id) ?
-      setShowDuplicateInjectionPointModal(true) :
-      submitInjectionPointChange(new_inj_pt_id, inj_pt_id);
-  }
-
-  const hideDuplicateInjectionPointModal = () => {
-    setShowDuplicateInjectionPointModal(false);
-  }
 
   const submitInjectionPointChange = (new_inj_pt_id, inj_pt_id) => {
     fetch(`http://localhost:5002/pipeline/${_id}/${inj_pt_id}/${new_inj_pt_id}`, {
@@ -31,6 +21,16 @@ function InjectionPoints({ _id, inj_pts, injectionPointOptions, fetchPipelines }
       .catch((error) => {
         console.error('Error:', error);
       });
+  }
+
+  const handleSubmit = (new_inj_pt_id, inj_pt_id) => {
+    inj_pts.map(({ _id }) => _id).includes(new_inj_pt_id) ?
+      setShowDuplicateInjectionPointModal(true) :
+      submitInjectionPointChange(new_inj_pt_id, inj_pt_id);
+  }
+
+  const hideDuplicateInjectionPointModal = () => {
+    setShowDuplicateInjectionPointModal(false);
   }
 
   const handleAddInjectionPoint = () => {
@@ -79,7 +79,6 @@ function InjectionPoints({ _id, inj_pts, injectionPointOptions, fetchPipelines }
             </thead>
             <tbody className="MuiTableBody-root">
               {inj_pts.map(inj_pt => {
-                console.log(inj_pt);
                 return (
                   <tr key={inj_pt._id} className="MuiTableRow-root">
                     <Source

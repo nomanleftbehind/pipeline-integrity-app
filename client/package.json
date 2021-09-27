@@ -29,13 +29,18 @@
       "react-app",
       "react-app/jest"
     ],
-    "parser": "babel-eslint",
+    "parser": "@typescript-eslint/parser",
     "plugins": [
       "react-hooks"
     ],
     "rules": {
       "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": "warn"
+      "react-hooks/exhaustive-deps": "warn",
+      "no-use-before-define": "off",
+      "@typescript-eslint/no-use-before-declare": "off",
+      "@typescript-eslint/no-use-before-define": [
+        "error"
+      ]
     }
   },
   "browserslist": {
