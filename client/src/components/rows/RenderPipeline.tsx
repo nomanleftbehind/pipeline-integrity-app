@@ -7,7 +7,8 @@ import { ReactComponent as RemoveIcon } from '../../svg/remove-pipeline.svg';
 import { ReactComponent as AddPipelineIcon } from '../../svg/add-pipeline.svg';
 import { ReactComponent as ExpandIcon } from '../../svg/expand.svg';
 import { ReactComponent as CollapseIcon } from '../../svg/collapse.svg';
-import { IPipeline, IInjectionPoint, IInjectionPointOptionsError, IValidators } from '../../App';
+import { IPipeline, IInjectionPoint, IInjectionPointOptionsError } from '../../App';
+import { IValidators } from "../../../../server/models/pipeline";
 
 const isEven = (value: number): "even" | "odd" => {
   if (value % 2 === 0)

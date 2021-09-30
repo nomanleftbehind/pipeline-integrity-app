@@ -10,53 +10,27 @@ import PipelineDatabase from './components/PipelineDatabase';
 import Facilities from './components/Facilities';
 import Satellites from './components/Satellites';
 
-export interface IFacility { _id: string; name: string; created_at: Date }
+import { IFacility as IFacilityServer } from "../../server/models/facility";
+import { ISatellite as ISitelliteServer } from "../../server/models/satellite";
+import { IInjectionPoint as IInjectionPointServer } from "../../server/models/injectionPoint";
+import { IPipeline as IPipelineServer } from "../../server/models/pipeline";
+import {  IValidators } from "../../server/models/pipeline";
 
-export interface ISatellite { _id: string; name: string; facility: IFacility; created_at: Date }
+export interface IFacility extends Omit<IFacilityServer, "created_at"> { _id: string; created_at: Date }
 
-export interface IInjectionPoint { _id: string; source: string; oil: number; water: number; gas: number; first_production?: Date; last_production?: Date; first_injection?: Date; last_injection?: Date; pv_unit_id: string; pv_node_id: string }
+export interface ISatellite extends Omit<ISitelliteServer, "facility" | "created_at"> { _id: string; facility: IFacility; created_at: Date }
+
+export interface IInjectionPoint extends Omit<IInjectionPointServer, "created_at"> { _id: string; created_at: Date }
 
 export interface IInjectionPointOptionsError { _id: string; source: string }
 
-export interface IPipeline {
+export interface IPipeline extends Omit<IPipelineServer, "injection_points" | "satellite" | "created_at"> {
   _id: string;
-  license: string;
-  segment: string;
-  substance: string;
-  from: string;
-  from_feature: string;
-  to: string;
-  to_feature: string;
-  status: string;
-  length: string;
-  type: string;
-  grade: string;
-  outside_diameter: number;
-  wall_thickness: number;
-  material: string;
-  mop: number;
-  internal_protection: string;
   injection_points: IInjectionPoint[];
   satellite: ISatellite;
   created_at: Date;
-  created_at_formatted: string
-}
-
-export interface IValidators {
-  license: string;
-  segment: string;
-  substance: string[];
-  from_to: string;
-  from_to_feature: string[];
-  status: string[];
-  length: string;
-  type: string[];
-  grade: string[];
-  outside_diameter: number[];
-  wall_thickness: string;
-  material: string[];
-  mop: string;
-  internal_protection: string[]
+  created_at_formatted: string;
+  url: string
 }
 
 export interface IError { message: string }

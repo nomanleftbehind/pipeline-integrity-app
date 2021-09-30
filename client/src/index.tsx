@@ -1,7 +1,5 @@
-// eslint-disable-next-line
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import PipelineDatabase from './App';
 import App from './App';
 
 // import './app.css';

@@ -3,7 +3,7 @@ import PipelineProperties from '../fields/PipelineProperties';
 import { IInjectionPoint, IInjectionPointOptionsError } from '../../App';
 
 
-export type IMechanicalProperties = { length: string; type: string; grade: string; outside_diameter: number; wall_thickness: number; material: string; mop: number; internal_protection: string }
+export type IMechanicalProperties = { length: number; type: string; grade: string; outside_diameter: number; wall_thickness: number; material: string; mop: number; internal_protection: string }
 export type IMechanicalPropertiesValidators = string | string[] | number[]
 
 export interface IPipelineDataProps {

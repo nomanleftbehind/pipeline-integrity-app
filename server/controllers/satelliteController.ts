@@ -1,7 +1,8 @@
-const Satellite = require('../models/satellite');
+import Satellite from '../models/satellite';
+import { Request, Response, NextFunction } from "express";
 
 
-exports.satellite_list = function (req, res, next) {
+export default function satellite_list(req: Request, res: Response, next: NextFunction) {
   Satellite.find({})
     .sort({ facility: 1 })
     .populate("facility")

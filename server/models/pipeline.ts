@@ -1,8 +1,47 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
-const dateFormat = require("dateformat");
+import { Schema, Model, model, Document, PopulatedDoc, Types } from 'mongoose';
+import { IInjectionPointDocument } from './injectionPoint';
+import Satellite, { ISatelliteDocument } from './satellite';
+import Facility from './facility';
+import dateFormat = require("dateformat");
 
-const validators = {
+export interface IPipeline {
+  license: string;
+  segment: string;
+  substance: string;
+  from: string;
+  from_feature: string;
+  to: string;
+  to_feature: string;
+  status: string;
+  length: number;
+  type: string;
+  grade: string;
+  outside_diameter: number;
+  wall_thickness: number;
+  material: string;
+  mop: number;
+  internal_protection: string;
+  injection_points: PopulatedDoc<IInjectionPointDocument>[];
+  satellite: PopulatedDoc<ISatelliteDocument>;
+  created_at: number
+}
+
+interface IPipelineBaseDocument extends IPipeline, Document {
+  created_at_formatted: string;
+  url: string
+}
+
+export interface IPipelineDocument extends IPipelineBaseDocument {
+  injection_points: Types.Array<IInjectionPointDocument["_id"]>;
+  satellite: ISatelliteDocument["_id"]
+}
+
+export interface IPipelinePopulatedDocument extends IPipelineBaseDocument {
+  injection_points: Types.Array<IInjectionPointDocument>;
+  satellite: ISatelliteDocument
+}
+
+export const validators = {
   license: "^(AB|SK|BC)(\\d{5}|\\d{6})$",
   segment: "^((UL)(\\d{1,2})|(\\d{1,3}))$",
   substance: ['Natural Gas', 'Fresh Water', 'Salt Water', 'Crude Oil', 'Oil Well Effluent', 'LVP Products', 'Fuel Gas', 'Sour Natural Gas'],
@@ -19,7 +58,10 @@ const validators = {
   internal_protection: ['Uncoated', 'Free Standing (Slip Lined)', 'Unknown', 'Cement', 'Expanded Polyethylene', 'Thin Film']
 }
 
-const PipelineSchema = new Schema({
+export type IValidators = typeof validators;
+
+
+const PipelineSchema = new Schema<IPipelineDocument, IPipelineModel>({
   license: { type: String, match: RegExp(validators.license), required: true },
   segment: { type: String, match: RegExp(validators.segment), required: true },
   substance: { type: String, enum: validators.substance, required: true },
@@ -38,26 +80,38 @@ const PipelineSchema = new Schema({
   internal_protection: { type: String, enum: validators.internal_protection },
   injection_points: [{ type: Schema.Types.ObjectId, ref: 'InjectionPoints' }],
   satellite: { type: Schema.Types.ObjectId, ref: 'Satellites', required: true },
-  created_at: { type: Date, default: Date.now }
+  created_at: { type: Number, default: Date.now }
 });
 
 PipelineSchema.set('toJSON', { virtuals: true });
 
+
 PipelineSchema
   .virtual('created_at_formatted')
-  .get(function () {
+  .get(function (this: IPipelineBaseDocument) {
     return dateFormat(this.created_at, "mm-dd-yyyy, h:MM:ss TT");
   });
 
 // Virtual for pipeline's URL
 PipelineSchema
   .virtual('url')
-  .get(function () {
+  .get(function (this: IPipelineBaseDocument) {
     return '/pipeline/' + this._id;
   });
 
-//Export model
-module.exports = {
-  Pipeline: mongoose.model('Pipelines', PipelineSchema),
-  validators: validators
+export interface IPipelineModel extends Model<IPipelineDocument> {
+  findSatelliteAndInjectionPoints(id: string): Promise<IPipelinePopulatedDocument>
 }
+
+PipelineSchema.statics.findSatelliteAndInjectionPoints = async function (
+  this: Model<IPipelineDocument>,
+  id: string
+) {
+  return this.findById(id).populate("injection_points").populate({
+    path: "satellite", model: Satellite,
+    populate: { path: "facility", model: Facility }
+  }).exec()
+}
+
+//Export model
+export default model<IPipelineDocument, IPipelineModel>('Pipelines', PipelineSchema);

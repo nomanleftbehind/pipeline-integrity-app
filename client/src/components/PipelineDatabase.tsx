@@ -3,7 +3,8 @@ import RenderPipeline from './rows/RenderPipeline';
 import Header from './Header';
 import SideNavBar from './SideNavBar';
 
-import { IPipeline, IInjectionPoint, IInjectionPointOptionsError, IFacility, ISatellite, IError, IValidators } from '../App';
+import { IPipeline, IInjectionPoint, IInjectionPointOptionsError, IFacility, ISatellite, IError } from '../App';
+import { IValidators } from "../../../server/models/pipeline";
 
 type PipelineDatabaseProps = {
   pipelines: IPipeline[];

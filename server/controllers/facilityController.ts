@@ -1,7 +1,7 @@
-const Facility = require('../models/facility');
+import { Request, Response, NextFunction } from "express";
+import Facility from '../models/facility';
 
-
-exports.facility_list = function (req, res, next) {
+export default function facility_list(req: Request, res: Response, next: NextFunction) {
   Facility.find({})
     .sort({ name: 1 })
     .exec(function (err, list_facilities) {

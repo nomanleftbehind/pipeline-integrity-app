@@ -1,6 +1,6 @@
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
+import * as express from "express";
+import * as cors from 'cors';
+import { connect, connection } from 'mongoose';
 
 require('dotenv').config();
 
@@ -12,14 +12,17 @@ app.use(express.json());
 
 
 const uri = process.env.PIPELINE_DATABASE_URL;
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }
-);
-const connection = mongoose.connection;
+
+if (typeof uri === "string") {
+  connect(uri);
+}
+
 connection.once('open', () => {
   console.log("MongoDB database connection established successfully");
 })
 
-const pipelinesRouter = require('./routes/pipelines');
+// const pipelinesRouter = require('./routes/pipelines');
+import pipelinesRouter from './routes/pipelines';
 // const usersRouter = require('./routes/users');
 
 app.use('/', pipelinesRouter);
