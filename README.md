@@ -1,8 +1,20 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Pipeline Database
+
+Web app with simple user interface and intuitive functionality for tracking pipeline integrity
+
 ## Getting Started
 
-First, run the development server:
+First install dependencies by typing either of following comands in root directory:
+
+```bash
+npm i
+# or
+yarn i
+```
+
+Next, run the development server:
 
 ```bash
 npm run dev
