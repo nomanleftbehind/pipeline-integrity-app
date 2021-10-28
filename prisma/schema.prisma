@@ -1,0 +1,275 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(uuid())
+  email           String           @unique
+  password        String
+  firstName       String           @map("first_name")
+  lastName        String           @map("last_name")
+  role            Role             @default(USER)
+  facilities      Facility[]
+  satellites      Satellite[]
+  pipelines       Pipeline[]
+  injectionPoints InjectionPoint[]
+  // pipelineStream  PipelineStream[]
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Facility {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  satellites  Satellite[]
+  createdBy   User        @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("facilities")
+}
+
+model Satellite {
+  id              String           @id @default(uuid())
+  name            String           @unique
+  facility        Facility         @relation(fields: [facilityId], references: [id])
+  facilityId      String
+  pipelines       Pipeline[]
+  injectionPoints InjectionPoint[]
+  createdBy       User             @relation(fields: [createdById], references: [id])
+  createdById     String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@map("satellites")
+}
+
+model Pipeline {
+  id                 String                  @id @default(uuid())
+  index              Int                     @default(autoincrement())
+  satellite          Satellite               @relation(fields: [satelliteId], references: [id])
+  satelliteId        String
+  injectionPoints    InjectionPoint[]
+  license            String
+  segment            String
+  substance          SubstanceEnum
+  from               String
+  fromFeature        FromToFeatureEnum?      @map("from_feature")
+  to                 String
+  toFeature          FromToFeatureEnum?      @map("to_feature")
+  status             StatusEnum
+  length             Decimal                 @db.Decimal(6, 2)
+  type               TypeEnum?
+  grade              GradeEnum?
+  outsideDiameter    Decimal?                @map("outside_diameter") @db.Decimal(6, 2)
+  wallThickness      Decimal?                @map("wall_thickness") @db.Decimal(6, 2)
+  material           MaterialEnum?
+  mop                Int?
+  internalProtection InternalProtectionEnum? @map("internal_protection")
+  createdBy          User                    @relation(fields: [createdById], references: [id])
+  createdById        String
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  upstream           Pipeline[]              @relation("PipelineFollows", references: [id])
+  downstream         Pipeline[]              @relation("PipelineFollows", references: [id])
+  // upstream           PipelineStream[]   @relation("upstream")
+  // downstream         PipelineStream[]   @relation("downstream")
+
+  @@unique([license, segment])
+  @@map("pipelines")
+}
+
+// model PipelineStream {
+//   upstream     Pipeline? @relation("upstream", fields: [upstreamId], references: [id])
+//   upstreamId   Int
+//   downstream   Pipeline? @relation("downstream", fields: [downstreamId], references: [id])
+//   downstreamId Int
+//   createdBy    User     @relation(fields: [createdById], references: [id])
+//   createdById  Int
+//   createdAt    DateTime @default(now())
+//   updatedAt    DateTime @updatedAt
+
+//   @@id([upstreamId, downstreamId])
+//   @@map("pipeline_stream")
+// }
+
+model InjectionPoint {
+  id              String    @id @default(uuid())
+  satellite       Satellite @relation(fields: [satelliteId], references: [id])
+  satelliteId     String
+  source          String    @unique
+  oil             Decimal   @db.Decimal(6, 2)
+  water           Decimal   @db.Decimal(6, 2)
+  gas             Decimal   @db.Decimal(6, 2)
+  firstProduction DateTime? @map("first_production")
+  lastProduction  DateTime? @map("last_production")
+  firstInjection  DateTime? @map("first_injection")
+  lastInjection   DateTime? @map("last_injection")
+  pvUnitId        String?   @map("pv_unit_id")
+  pvNodeId        String?   @map("pv_node_id")
+  createdBy       User      @relation(fields: [createdById], references: [id])
+  createdById     String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  pipeline        Pipeline  @relation(fields: [pipelineId], references: [id])
+  pipelineId      String
+
+  @@unique([pvUnitId, pvNodeId])
+  @@map("injection_points")
+}
+
+enum SubstanceEnum {
+  NaturalGas       @map("Natural Gas")
+  FreshWater       @map("Fresh Water")
+  SaltWater        @map("Salt Water")
+  CrudeOil         @map("Crude Oil")
+  OilWellEffluent  @map("Oil Well Effluent")
+  LVPProducts      @map("LVP Products")
+  FuelGas          @map("Fuel Gas")
+  SourNaturalGas   @map("Sour Natural Gas")
+
+  @@map("substance")
+}
+
+enum FromToFeatureEnum {
+  BlindEnd               @map("Blind end")
+  Battery
+  Pipeline
+  Satellite
+  StorageTank            @map("Storage tank")
+  InjectionPlant         @map("Injection plant")
+  Well
+  CompressorStation      @map("Compressor station")
+  MeterStation           @map("Meter station")
+  PumpStation            @map("Pump station")
+  GasProcessingPlant     @map("Gas processing plant")
+  UndergroundCapOrTieIn  @map("Underground cap or tie-in")
+  Header
+
+  @@map("from_to_feature")
+}
+
+enum StatusEnum {
+  Operating
+  Discontinued
+  Abandoned
+  Removed
+  ToBeConstructed  @map("To Be Constructed")
+  Active
+  Cancelled
+  New
+  NotConstructed   @map("Not Constructed")
+
+  @@map("status")
+}
+
+enum TypeEnum {
+  Type515      @map("515")
+  Type2306     @map("2306")
+  Type3406     @map("3406")
+  Type3408     @map("3408")
+  Type6063     @map("6063")
+  Type6351     @map("6351")
+  Type5A       @map("5A")
+  Type5L       @map("5L")
+  Type5LX      @map("5LX")
+  TypeA106     @map("A106")
+  TypeA120     @map("A120")
+  TypeA53      @map("A53")
+  TypeAMERON   @map("AMERON")
+  TypeB515     @map("B515")
+  TypeB51S     @map("B51S")
+  TypeB5IS     @map("B5IS")
+  TypeCENTRON  @map("CENTRON")
+  TypeCIBA     @map("CIBA")
+  TypeFSLP     @map("FSLP")
+  TypeREDTHR   @map("REDTHR")
+  TypeSMITH    @map("SMITH")
+  TypeSTAR     @map("STAR")
+  TypeTBS      @map("TBS")
+  TypeWSLP     @map("WSLP")
+  TypeZ2451    @map("Z245.1")
+  TypeZ2453    @map("Z245.3")
+
+  @@map("type")
+}
+
+enum GradeEnum {
+  GradeA     @map("A")
+  Grade3592  @map("3592")
+  GradeB     @map("B")
+  GradeX42   @map("X42")
+  GradeBW1   @map("BW1")
+  Grade2500  @map("2500")
+  Grade3591  @map("3591")
+  Grade2901  @map("2901")
+  GradeT4    @map("T4")
+  Grade300   @map("300")
+  Grade3593  @map("3593")
+  Grade11    @map("11")
+  GradeJ55   @map("J55")
+  Grade2250  @map("2250")
+  GradeX52   @map("X52")
+  Grade2750  @map("2750")
+  Grade2902  @map("2902")
+  Grade25    @map("25")
+  Grade241   @map("241")
+  Grade2413  @map("2413")
+  Grade2411  @map("2411")
+  Grade155   @map("155")
+  Grade150   @map("150")
+  Grade1000  @map("1000")
+  Grade800   @map("800")
+  GradeT1A   @map("T1A")
+  Grade2010  @map("2010")
+  GradeT4A   @map("T4A")
+  Grade1250  @map("1250")
+  Grade17    @map("17")
+  Grade900   @map("900")
+  GradeT1B   @map("T1B")
+  Grade810   @map("810")
+  Grade35    @map("35")
+  Grade5     @map("5")
+  Grade9     @map("9")
+  Grade200   @map("200")
+  Grade1200  @map("1200")
+  Grade1103  @map("11.03")
+
+  @@map("grade")
+}
+
+enum MaterialEnum {
+  Steel
+  PolyvinylChloride         @map("Polyvinyl Chloride")
+  Composite
+  Fiberglass
+  Aluminum
+  Polyethylene
+  CelluloseAcetateButyrate  @map("Cellulose Acetate Butyrate")
+  Unknown
+  AsbestosCement            @map("Asbestos Cement")
+
+  @@map("material")
+}
+
+enum InternalProtectionEnum {
+  Uncoated
+  FreeStandingSlipLined  @map("Free Standing (Slip Lined)")
+  Unknown
+  Cement
+  ExpandedPolyethylene   @map("Expanded Polyethylene")
+  ThinFilm               @map("Thin Film")
+
+  @@map("internal_protection")
+}

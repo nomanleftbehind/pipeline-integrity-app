@@ -14,3 +14,72 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.pipeline-database-side-bar-fixed {
+  position: sticky;
+  top: 50px;
+  left: 0px;
+  max-height: 100vh;
+  background-color: goldenrod;
+  overflow-y: auto;
+}
+
+.pipeline-database-wrapper {
+  display: flex;
+  gap: 0px;
+}
+
+.pipeline-database-side-bar {
+  flex: 0 0 300px;
+  background-color: darkcyan;
+}
+
+.pipeline-database-side-bar button {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  /* font-family: arial, sans-serif; */
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.pipeline-database-side-bar button:focus {
+  color: red;
+}
+
+.app {
+  padding-top: 55px;
+}
+
+#modal-root {
+  position: relative;
+  z-index: 999;
+}
+
+
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  position: relative;
+  width: 30%;
+  margin: 0;
+  height: auto;
+  max-height: 70vh;
+  margin-top: calc(100vh - 85vh - 20px);
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid #999;
+  /* overflow: auto; */
+}
