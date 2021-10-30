@@ -22,13 +22,13 @@ type Facility {
   createdBy: User!
   id: String!
   name: String!
-  satellites: [Satellite!]!
+  satellites: [Satellite]
   updatedAt: DateTime!
 }
 
 input FacilityCreateInput {
   name: String!
-  satellites: [SatelliteCreateInput!]
+  satellites: [SatelliteCreateInput]
 }
 
 input FacilityUniqueInput {
@@ -107,7 +107,7 @@ type InjectionPoint {
   pipeline: Pipeline
   pvNodeId: String
   pvUnitId: String
-  satellite: Satellite!
+  satellite: Satellite
   source: String!
   updatedAt: DateTime!
   water: Float!
@@ -149,9 +149,12 @@ enum MaterialEnum {
 
 type Mutation {
   createFacility(data: FacilityCreateInput!): Facility
-  deletePipeline(id: String!): Pipeline!
+  deleteInjectionPointFromPipeline(id: String!): InjectionPoint
+  deletePipeline(id: String!): Pipeline
+  deleteSatellite(id: String!): Satellite
+  duplicatePipeline(id: String!): Pipeline
   editFacility(id: String!, name: String): Facility
-  editInjectionPoint(firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineUniqueInput: PipelineUniqueInput, pvNodeId: String, pvUnitId: String, satelliteUniqueInput: SatelliteUniqueInput, source: String, water: Float): InjectionPoint
+  editInjectionPoint(firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineId: String, pvNodeId: String, pvUnitId: String, satelliteId: String, source: String, water: Float): InjectionPoint
   editPipeline(from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, material: MaterialEnum, mop: Int, outsideDiameter: Float, satelliteUniqueInput: SatelliteUniqueInput, segment: String, status: StatusEnum, substance: SubstanceEnum, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float): Pipeline
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
   login(email: String!, password: String!): AuthPayload
@@ -166,20 +169,20 @@ type PageInfo {
 type Pipeline {
   createdAt: DateTime!
   createdBy: User!
-  downstream: [Pipeline!]!
+  downstream: [Pipeline]
   from: String!
   fromFeature: FromToFeatureEnum
   grade: GradeEnum
   id: String!
   index: Int
-  injectionPoints: [InjectionPoint!]!
+  injectionPoints: [InjectionPoint]
   internalProtection: InternalProtectionEnum
   length: Float!
   license: String!
   material: MaterialEnum
   mop: Int
   outsideDiameter: Float
-  satellite: Satellite!
+  satellite: Satellite
   segment: String!
   status: StatusEnum!
   substance: SubstanceEnum!
@@ -187,16 +190,16 @@ type Pipeline {
   toFeature: FromToFeatureEnum
   type: TypeEnum
   updatedAt: DateTime!
-  upstream: [Pipeline!]!
+  upstream: [Pipeline]
   wallThickness: Float
 }
 
 input PipelineCreateInput {
-  downstream: [PipelineCreateInput!]
+  downstream: [PipelineCreateInput]
   from: String!
   fromFeature: FromToFeatureEnum
   grade: GradeEnum
-  injectionPoints: [InjectionPointCreateInput!]
+  injectionPoints: [InjectionPointCreateInput]
   internalProtection: InternalProtectionEnum
   length: Float!
   license: String!
@@ -209,24 +212,23 @@ input PipelineCreateInput {
   to: String!
   toFeature: FromToFeatureEnum
   type: TypeEnum
-  upstream: [PipelineCreateInput!]
+  upstream: [PipelineCreateInput]
   wallThickness: Float
 }
 
 input PipelineUniqueInput {
   id: String
-  license: String!
-  segment: String!
+  license: String
+  segment: String
 }
 
 type Query {
-  allFacilities: [Facility!]!
-  allInjectionPoints: [InjectionPoint!]!
-  allPipelines: [Pipeline!]!
-  allSatellites: [Satellite!]!
-  allUsers: [User!]!
+  allFacilities: [Facility]
+  allInjectionPoints: [InjectionPoint]
+  allSatellites: [Satellite]
+  allUsers: [User]
   me: User
-  pipelines(after: String, first: Int): Response
+  pipelinesById(facilityId: String, satelliteId: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
 }
 
@@ -243,18 +245,18 @@ enum Role {
 type Satellite {
   createdAt: DateTime!
   createdBy: User!
-  facility: Facility!
+  facility: Facility
   id: String!
-  injectionPoints: [InjectionPoint!]!
+  injectionPoints: [InjectionPoint]
   name: String!
-  pipelines: [Pipeline!]!
+  pipelines: [Pipeline]
   updatedAt: DateTime!
 }
 
 input SatelliteCreateInput {
-  injectionPoints: [InjectionPointCreateInput!]
+  injectionPoints: [InjectionPointCreateInput]
   name: String!
-  pipelines: [PipelineCreateInput!]
+  pipelines: [PipelineCreateInput]
 }
 
 input SatelliteUniqueInput {
@@ -316,24 +318,24 @@ enum TypeEnum {
 
 type User {
   email: String!
-  facilities: [Facility!]!
+  facilities: [Facility]
   firstName: String!
   id: String!
-  injectionPoints: [InjectionPoint!]!
+  injectionPoints: [InjectionPoint]
   lastName: String!
-  pipelines: [Pipeline!]!
+  pipelines: [Pipeline]
   role: Role!
-  satellites: [Satellite!]!
+  satellites: [Satellite]
 }
 
 input UserCreateInput {
   email: String!
-  facilities: [FacilityCreateInput!]
+  facilities: [FacilityCreateInput]
   firstName: String!
-  injectionPoints: [InjectionPointCreateInput!]
+  injectionPoints: [InjectionPointCreateInput]
   lastName: String!
-  pipelines: [PipelineCreateInput!]
-  satellites: [SatelliteCreateInput!]
+  pipelines: [PipelineCreateInput]
+  satellites: [SatelliteCreateInput]
 }
 
 input UserUniqueInput {

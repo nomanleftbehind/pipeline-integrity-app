@@ -9,6 +9,7 @@ export interface FacilityData {
 }
 
 type SideNavBarProps = {
+  onAllPipelinesClick: () => void;
   onSatelliteClick: React.MouseEventHandler<HTMLButtonElement>;
   onFacilityClick: React.MouseEventHandler<HTMLButtonElement>
 };
@@ -27,36 +28,36 @@ const FACILITIES_QUERY = gql`
 `;
 
 
-export default function SideNavBar({ onFacilityClick, onSatelliteClick }: SideNavBarProps): JSX.Element {
+export default function SideNavBar({ onAllPipelinesClick, onFacilityClick, onSatelliteClick }: SideNavBarProps): JSX.Element {
 
   const { loading, error, data } = useQuery<FacilityData>(FACILITIES_QUERY);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error.message}</p>;
-  if (data) {
-    return (
-      <ul>
-        {data.allFacilities.map(facility => {
-          return (
-            <li key={facility.id}>
-              <div>
-                <button value={facility.id} onClick={onFacilityClick}>{facility.name}</button>
-              </div>
-              <ul>
-                {facility.satellites.map(satellite => {
-                  return (
-                    <li key={satellite.id}>
-                      <button value={satellite.id} onClick={onSatelliteClick}>{satellite.name}</button>
-                    </li>
-                  );
-                })}
-              </ul>
+
+  return (
+    loading ? <p>Loading...</p> :
+      error ? <p>{error.message}</p> :
+        data ?
+          <ul>
+            <li>
+              <button onClick={onAllPipelinesClick}>All Pipelines</button>
             </li>
-          );
-        })}
-      </ul>
-    );
-  } else {
-    return <div>Loading...</div>
-  }
+            {data.allFacilities.map(facility => {
+              return (
+                <li key={facility.id}>
+                    <button value={facility.id} onClick={onFacilityClick}>{facility.name}</button>
+                  <ul>
+                    {facility.satellites.map(satellite => {
+                      return (
+                        <li key={satellite.id}>
+                          <button value={satellite.id} onClick={onSatelliteClick}>{satellite.name}</button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </li>
+              );
+            })}
+          </ul> :
+          <div></div>
+  );
 }

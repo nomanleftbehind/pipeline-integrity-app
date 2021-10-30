@@ -3,6 +3,8 @@ import { User } from './User';
 import { Satellite, SatelliteUniqueInput } from './Satellite';
 import { InjectionPoint, InjectionPointCreateInput } from './InjectionPoint';
 import { Context } from '../context';
+import { Pipeline as IPipeline } from '@prisma/client';
+
 
 
 export const Pipeline = objectType({
@@ -14,7 +16,7 @@ export const Pipeline = objectType({
   definition(t) {
     t.nonNull.string('id')
     t.int('index')
-    t.nonNull.field('satellite', {
+    t.field('satellite', {
       type: Satellite,
       resolve: async (parent, _args, ctx: Context) => {
         const result = await ctx.prisma.pipeline
@@ -25,7 +27,7 @@ export const Pipeline = objectType({
         return result!
       },
     })
-    t.nonNull.list.nonNull.field('injectionPoints', {
+    t.list.field('injectionPoints', {
       type: InjectionPoint,
       resolve: (parent, _args, ctx: Context) => {
         return ctx.prisma.pipeline
@@ -120,7 +122,7 @@ export const Pipeline = objectType({
     })
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
-    t.nonNull.list.nonNull.field('upstream', {
+    t.list.field('upstream', {
       type: Pipeline,
       resolve: (parent, _args, ctx: Context) => {
         return ctx.prisma.pipeline
@@ -129,7 +131,7 @@ export const Pipeline = objectType({
           })
       },
     })
-    t.nonNull.list.nonNull.field('downstream', {
+    t.list.field('downstream', {
       type: Pipeline,
       resolve: (parent, _args, ctx: Context) => {
         return ctx.prisma.pipeline
@@ -370,80 +372,30 @@ export const Response = objectType({
 export const PipelineQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.nonNull.list.nonNull.field('allPipelines', {
-      type: Pipeline,
-      resolve: async (_parent, _args, context: Context) => {
-        const result = await context.prisma.pipeline.findMany()
-        return result;
-      },
-    })
-    t.field('pipelines', {
-      type: Response,
+    t.list.field('pipelinesById', {
+      type: 'Pipeline',
       args: {
-        first: intArg(),
-        after: stringArg(),
+        satelliteId: stringArg(),
+        facilityId: stringArg(),
       },
-      async resolve(_, args, ctx: Context) {
-        console.log("Argssss if", args);
-        let queryResults = null;
-        if (args.after) {
-          queryResults = await ctx.prisma.pipeline.findMany({
-            take: args.first,
-            skip: 1,
-            cursor: {
-              id: args.after,
-            },
-            orderBy: {
-              index: 'asc',
-            },
-          });
+      resolve: async (_parent, args, ctx: Context) => {
+        if (args.satelliteId) {
+          return ctx.prisma.pipeline.findMany({
+            where: { satelliteId: args.satelliteId }
+          })
+        } else if (args.facilityId) {
+          return ctx.prisma.pipeline.findMany({
+            where: {
+              satellite: {
+                facilityId: args.facilityId
+              }
+            }
+          })
         } else {
-          queryResults = await ctx.prisma.pipeline.findMany({
-            take: args.first,
-            orderBy: {
-              index: 'asc',
-            },
-          });
+          return ctx.prisma.pipeline.findMany()
         }
-
-        if (queryResults.length > 0) {
-          // last element
-          const lastPipelineInResults = queryResults[queryResults.length - 1];
-          // cursor we'll return
-          const myCursor = lastPipelineInResults.id;
-
-          // queries after the cursor to check if we have nextPage
-          const secondQueryResults = await ctx.prisma.pipeline.findMany({
-            take: args.first,
-            cursor: {
-              id: myCursor,
-            },
-            orderBy: {
-              index: 'asc',
-            },
-          });
-
-          const result = {
-            pageInfo: {
-              endCursor: myCursor,
-              hasNextPage: secondQueryResults.length >= args.first,
-            },
-            edges: queryResults.map((pipeline) => ({
-              cursor: pipeline.id,
-              node: pipeline,
-            })),
-          };
-          return result;
-        }
-        return {
-          pageInfo: {
-            endCursor: null,
-            hasNextPage: false,
-          },
-          edges: [],
-        };
-      },
-    });
+      }
+    })
   },
 });
 
@@ -452,15 +404,15 @@ export const PipelineUniqueInput = inputObjectType({
   name: 'PipelineUniqueInput',
   definition(t) {
     t.string('id')
-    t.nonNull.string('license')
-    t.nonNull.string('segment')
+    t.string('license')
+    t.string('segment')
   },
 })
 
 export const PipelineCreateInput = inputObjectType({
   name: 'PipelineCreateInput',
   definition(t) {
-    t.list.nonNull.field('injectionPoints', { type: InjectionPointCreateInput })
+    t.list.field('injectionPoints', { type: InjectionPointCreateInput })
     t.nonNull.string('license')
     t.nonNull.string('segment')
     t.nonNull.field('substance', { type: SubstanceEnum })
@@ -477,8 +429,8 @@ export const PipelineCreateInput = inputObjectType({
     t.field('material', { type: MaterialEnum })
     t.int('mop')
     t.field('internalProtection', { type: InternalProtectionEnum })
-    t.list.nonNull.field('upstream', { type: PipelineCreateInput })
-    t.list.nonNull.field('downstream', { type: PipelineCreateInput })
+    t.list.field('upstream', { type: PipelineCreateInput })
+    t.list.field('downstream', { type: PipelineCreateInput })
   },
 })
 
@@ -490,6 +442,12 @@ function databaseEnumToServerEnum<T extends Enums>(object: T, value: T[keyof T] 
   const result = keys.find(key => object[key] === value);
   return result;
 }
+
+
+
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+type IPipelinePartialBy = PartialBy<IPipeline, 'id' | 'index' | 'createdAt' | 'updatedAt'>
 
 export const PipelineMutation = extendType({
   type: 'Mutation',
@@ -552,25 +510,38 @@ export const PipelineMutation = extendType({
         }
       },
     })
-    t.nonNull.field('deletePipeline', {
+    t.field('deletePipeline', {
       type: 'Pipeline',
       args: {
         id: nonNull(stringArg()),
       },
       resolve: (_parent, args, ctx: Context) => {
-        
-        try {
-          
-          return ctx.prisma.pipeline.delete({
-            where: { id: args.id },
-          })
-        } catch (e) {
-          console.log(args.id);
-          throw new Error(
-            `Error ${e} Pipeline with ID ${args.id} is fucked.`,
-          )
-        }
+        return ctx.prisma.pipeline.delete({
+          where: { id: args.id },
+        })
       },
+    })
+    t.field('duplicatePipeline', {
+      type: 'Pipeline',
+      args: {
+        id: nonNull(stringArg()),
+      },
+      resolve: async (_parent, args, ctx: Context) => {
+        const p = await ctx.prisma.pipeline.findUnique({
+          where: { id: args.id }
+        }) as IPipelinePartialBy
+        if (p) {
+          p.license += '_copy';
+          p.segment += '_copy';
+          delete p.id;
+          delete p.index;
+          delete p.createdAt;
+          delete p.updatedAt;
+          return ctx.prisma.pipeline.create({
+            data: p
+          })
+        } else return null;
+      }
     })
   }
 })

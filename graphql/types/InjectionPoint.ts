@@ -13,7 +13,7 @@ export const InjectionPoint = objectType({
   },
   definition(t) {
     t.nonNull.string('id')
-    t.nonNull.field('satellite', {
+    t.field('satellite', {
       type: Satellite,
       resolve: async (parent, _args, ctx: Context) => {
         const result = await ctx.prisma.injectionPoint
@@ -21,7 +21,7 @@ export const InjectionPoint = objectType({
             where: { id: parent.id },
           })
           .satellite()
-        return result!
+        return result
       },
     })
     t.nonNull.string('source')
@@ -64,7 +64,7 @@ export const InjectionPoint = objectType({
 export const InjectionPointQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.nonNull.list.nonNull.field('allInjectionPoints', {
+    t.list.field('allInjectionPoints', {
       type: InjectionPoint,
       resolve: async (_parent, _args, context: Context) => {
         const result = await context.prisma.injectionPoint.findMany()
@@ -99,8 +99,8 @@ export const InjectionPointMutation = extendType({
       type: InjectionPoint,
       args: {
         id: nonNull(stringArg()),
-        satelliteUniqueInput: arg({ type: SatelliteUniqueInput }),
-        pipelineUniqueInput: arg({ type: PipelineUniqueInput }),
+        satelliteId: stringArg(),
+        pipelineId: stringArg(),
         source: stringArg(),
         oil: floatArg(),
         water: floatArg(),
@@ -117,21 +117,8 @@ export const InjectionPointMutation = extendType({
           return context.prisma.injectionPoint.update({
             where: { id: args.id },
             data: {
-              satellite: args.satelliteUniqueInput ? {
-                connect: {
-                  id: args.satelliteUniqueInput.id || undefined,
-                  name: args.satelliteUniqueInput.name || undefined,
-                }
-              } : undefined,
-              pipeline: args.pipelineUniqueInput ? {
-                connect: {
-                  id: args.pipelineUniqueInput.id || undefined,
-                  license_segment: {
-                    license: args.pipelineUniqueInput.license,
-                    segment: args.pipelineUniqueInput.segment
-                  }
-                }
-              } : undefined,
+              satelliteId: args.satelliteId || undefined,
+              pipelineId: args.pipelineId || undefined,
               source: args.source || undefined,
               oil: args.oil || undefined,
               water: args.water || undefined,
@@ -150,6 +137,18 @@ export const InjectionPointMutation = extendType({
           )
         }
       },
+    })
+    t.field('deleteInjectionPointFromPipeline', {
+      type: 'InjectionPoint',
+      args: {
+        id: nonNull(stringArg())
+      },
+      resolve: (_parent, args, ctx: Context) => {
+        return ctx.prisma.injectionPoint.update({
+          where: { id: args.id },
+          data: { pipelineId: null }
+        })
+      }
     })
   }
 })

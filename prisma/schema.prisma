@@ -43,8 +43,8 @@ model Facility {
 model Satellite {
   id              String           @id @default(uuid())
   name            String           @unique
-  facility        Facility         @relation(fields: [facilityId], references: [id])
-  facilityId      String
+  facility        Facility?        @relation(fields: [facilityId], references: [id])
+  facilityId      String?
   pipelines       Pipeline[]
   injectionPoints InjectionPoint[]
   createdBy       User             @relation(fields: [createdById], references: [id])
@@ -58,8 +58,8 @@ model Satellite {
 model Pipeline {
   id                 String                  @id @default(uuid())
   index              Int                     @default(autoincrement())
-  satellite          Satellite               @relation(fields: [satelliteId], references: [id])
-  satelliteId        String
+  satellite          Satellite?              @relation(fields: [satelliteId], references: [id])
+  satelliteId        String?
   injectionPoints    InjectionPoint[]
   license            String
   segment            String
@@ -105,25 +105,25 @@ model Pipeline {
 // }
 
 model InjectionPoint {
-  id              String    @id @default(uuid())
-  satellite       Satellite @relation(fields: [satelliteId], references: [id])
-  satelliteId     String
-  source          String    @unique
-  oil             Decimal   @db.Decimal(6, 2)
-  water           Decimal   @db.Decimal(6, 2)
-  gas             Decimal   @db.Decimal(6, 2)
-  firstProduction DateTime? @map("first_production")
-  lastProduction  DateTime? @map("last_production")
-  firstInjection  DateTime? @map("first_injection")
-  lastInjection   DateTime? @map("last_injection")
-  pvUnitId        String?   @map("pv_unit_id")
-  pvNodeId        String?   @map("pv_node_id")
-  createdBy       User      @relation(fields: [createdById], references: [id])
+  id              String     @id @default(uuid())
+  satellite       Satellite? @relation(fields: [satelliteId], references: [id])
+  satelliteId     String?
+  source          String     @unique
+  oil             Decimal    @db.Decimal(6, 2)
+  water           Decimal    @db.Decimal(6, 2)
+  gas             Decimal    @db.Decimal(6, 2)
+  firstProduction DateTime?  @map("first_production")
+  lastProduction  DateTime?  @map("last_production")
+  firstInjection  DateTime?  @map("first_injection")
+  lastInjection   DateTime?  @map("last_injection")
+  pvUnitId        String?    @map("pv_unit_id")
+  pvNodeId        String?    @map("pv_node_id")
+  createdBy       User       @relation(fields: [createdById], references: [id])
   createdById     String
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  pipeline        Pipeline  @relation(fields: [pipelineId], references: [id])
-  pipelineId      String
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  pipeline        Pipeline?  @relation(fields: [pipelineId], references: [id])
+  pipelineId      String?
 
   @@unique([pvUnitId, pvNodeId])
   @@map("injection_points")

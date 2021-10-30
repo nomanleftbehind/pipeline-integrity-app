@@ -1,9 +1,17 @@
 import { useState } from 'react';
 import Source from './Source';
 import { ModalDuplicateInjectionPoint } from '../../Modal';
-import { ReactComponent as AddPipelineIcon } from '../../../svg/add-pipeline.svg';
+import { InjectionPoint } from '@prisma/client';
+import { IInjectionPointQuery } from '../../../pages/pipelines';
+import AddIcon from '../../svg/add-pipeline';
 
-function InjectionPoints({ _id, inj_pts, injectionPointOptions, fetchPipelines }) {
+interface IInjectionPointsProps {
+  id: string;
+  injectionPoints: InjectionPoint[];
+  injectionPointOptions: IInjectionPointQuery[] | undefined;
+}
+
+export default function InjectionPoints({ id, injectionPoints, injectionPointOptions }: IInjectionPointsProps) {
   const [showDuplicateInjectionPointModal, setShowDuplicateInjectionPointModal] = useState(false);
 
   const submitInjectionPointChange = (new_inj_pt_id, inj_pt_id) => {
@@ -24,7 +32,7 @@ function InjectionPoints({ _id, inj_pts, injectionPointOptions, fetchPipelines }
   }
 
   const handleSubmit = (new_inj_pt_id, inj_pt_id) => {
-    inj_pts.map(({ _id }) => _id).includes(new_inj_pt_id) ?
+    injectionPoints.map(({ _id }) => _id).includes(new_inj_pt_id) ?
       setShowDuplicateInjectionPointModal(true) :
       submitInjectionPointChange(new_inj_pt_id, inj_pt_id);
   }
@@ -55,7 +63,7 @@ function InjectionPoints({ _id, inj_pts, injectionPointOptions, fetchPipelines }
       hideDuplicateInjectionPointModal={hideDuplicateInjectionPointModal} /> : null;
 
   return (
-    <td className="MuiTableCell-root MuiTableCell-body" colSpan="3">
+    <td className="MuiTableCell-root MuiTableCell-body" colSpan={3}>
       <div className="collapse-container">
         <div className="collapse-container-inner">
           <div className="injection-points-title">Injection Points</div>
@@ -67,7 +75,7 @@ function InjectionPoints({ _id, inj_pts, injectionPointOptions, fetchPipelines }
                     <div className="form-l">Source</div>
                     <div className="form-r">
                       <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={handleAddInjectionPoint} type="button">
-                        <AddPipelineIcon />
+                        <AddIcon />
                       </button>
                     </div>
                   </div>
@@ -78,16 +86,15 @@ function InjectionPoints({ _id, inj_pts, injectionPointOptions, fetchPipelines }
               </tr>
             </thead>
             <tbody className="MuiTableBody-root">
-              {inj_pts.map(inj_pt => {
+              {injectionPoints.map(inj_pt => {
                 return (
-                  <tr key={inj_pt._id} className="MuiTableRow-root">
+                  <tr key={inj_pt.id} className="MuiTableRow-root">
                     <Source
-                      ppl_id={_id}
-                      inj_pt_id={inj_pt._id}
+                      ppl_id={id}
+                      inj_pt_id={inj_pt.id}
                       source={inj_pt.source}
                       injectionPointOptions={injectionPointOptions}
                       onSubmit={handleSubmit}
-                      fetchPipelines={fetchPipelines}
                     />
                     <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeSmall">{inj_pt.oil}</td>
                     <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeSmall">{inj_pt.water}</td>
@@ -103,5 +110,3 @@ function InjectionPoints({ _id, inj_pts, injectionPointOptions, fetchPipelines }
     </td>
   );
 }
-
-export default InjectionPoints;

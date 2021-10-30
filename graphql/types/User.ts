@@ -25,7 +25,7 @@ export const User = objectType({
     t.nonNull.string('firstName')
     t.nonNull.string('lastName')
     t.nonNull.field('role', { type: Role })
-    t.nonNull.list.nonNull.field('pipelines', {
+    t.list.field('pipelines', {
       type: Pipeline,
       resolve: (parent, _args, ctx: Context) => {
         return ctx.prisma.user
@@ -35,7 +35,7 @@ export const User = objectType({
           .pipelines()
       },
     })
-    t.nonNull.list.nonNull.field('facilities', {
+    t.list.field('facilities', {
       type: Facility,
       resolve: (parent, _args, context: Context) => {
         return context.prisma.user
@@ -45,7 +45,7 @@ export const User = objectType({
           .facilities()
       },
     })
-    t.nonNull.list.nonNull.field('satellites', {
+    t.list.field('satellites', {
       type: Satellite,
       resolve: (parent, _args, context: Context) => {
         return context.prisma.user
@@ -55,7 +55,7 @@ export const User = objectType({
           .satellites()
       },
     })
-    t.nonNull.list.nonNull.field('injectionPoints', {
+    t.list.field('injectionPoints', {
       type: InjectionPoint,
       resolve: (parent, _args, context: Context) => {
         return context.prisma.user
@@ -76,7 +76,7 @@ export const Role = enumType({
 export const UserQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.nonNull.list.nonNull.field('allUsers', {
+    t.list.field('allUsers', {
       type: User,
       resolve: (_parent, _args, context: Context) => {
         return context.prisma.user.findMany()
@@ -129,10 +129,10 @@ export const UserCreateInput = inputObjectType({
     t.nonNull.string('email')
     t.nonNull.string('firstName')
     t.nonNull.string('lastName')
-    t.list.nonNull.field('facilities', { type: FacilityCreateInput })
-    t.list.nonNull.field('satellites', { type: SatelliteCreateInput })
-    t.list.nonNull.field('pipelines', { type: PipelineCreateInput })
-    t.list.nonNull.field('injectionPoints', { type: InjectionPointCreateInput })
+    t.list.field('facilities', { type: FacilityCreateInput })
+    t.list.field('satellites', { type: SatelliteCreateInput })
+    t.list.field('pipelines', { type: PipelineCreateInput })
+    t.list.field('injectionPoints', { type: InjectionPointCreateInput })
   },
 })
 

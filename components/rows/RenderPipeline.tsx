@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import PipelineData from './PipelineData';
 import EntryField from '../fields/EntryField';
@@ -7,7 +7,8 @@ import RemoveIcon from '../svg/remove-pipeline';
 import AddIcon from '../svg/add-pipeline';
 import ExpandIcon from '../svg/expand';
 import CollapseIcon from '../svg/collapse';
-import { IValidators, AllPipeline, AllInjectionPoint } from '../../pages/pipelines';
+import { IValidators, IPipelineQuery, IInjectionPointQuery, PIPELINES_BY_ID_QUERY } from '../../pages/pipelines';
+import { Pipeline } from '@prisma/client'
 
 const isEven = (value: number): "even" | "odd" => {
   if (value % 2 === 0)
@@ -17,61 +18,64 @@ const isEven = (value: number): "even" | "odd" => {
 
 interface IRenderPipelineProps {
   ppl_idx: number;
-  pipeline: AllPipeline;
-  injectionPointOptions: AllInjectionPoint[];
+  pipeline: IPipelineQuery;
+  injectionPointOptions: IInjectionPointQuery[] | undefined;
   validators: IValidators;
   expandedPipelines: string[];
   onPipelineClick: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-
-const DELETE_PIPELINE = gql`
-mutation deletePipeline($deletePipelineId: String!) {
-  deletePipeline(id: $deletePipelineId) {
-    license
-    segment
+const DUPLICATE_PIPELINE = gql`
+  mutation duplicatePipeline($id: String!) {
+    duplicatePipeline(id: $id) {
+      id
+      license
+      segment
+    }
   }
-}
 `;
 
+const DELETE_PIPELINE = gql`
+  mutation deletePipeline($id: String!) {
+    deletePipeline(id: $id) {
+      id
+      license
+      segment
+    }
+  }
+`;
+
+type IMutatePipeline = Pick<Pipeline, 'id' | 'license' | 'segment'>;
+
+interface IDuplicatePipeline {
+  duplicatePipeline: IMutatePipeline;
+}
+
 interface IDeletePipeline {
-  license: string;
-  segment: string;
+  deletePipeline: IMutatePipeline;
 }
 
-interface IDeletePipelineData {
-  deletePipeline: IDeletePipeline
-}
-
-interface IDeletePipelineVars {
-  id: string;
-}
+type IMutatePipelineVars = Pick<Pipeline, 'id'>;
 
 
 export default function RenderPipeline({ ppl_idx, pipeline, injectionPointOptions, validators, expandedPipelines, onPipelineClick }: IRenderPipelineProps): JSX.Element {
   const [showDeletePipelineModal, setShowDeletePipelineModal] = useState<boolean>(false);
 
-  const [deletePipeline, { error, data }] = useMutation<IDeletePipelineData, IDeletePipelineVars>(DELETE_PIPELINE, { variables: { id: pipeline.id } });
-  
-  console.log(data, error);
-  
+  const [deletePipeline, { data: dataDeletePipeline }] = useMutation<IDeletePipeline, IMutatePipelineVars>(
+    DELETE_PIPELINE, {
+    variables: { id: pipeline.id },
+    refetchQueries: [PIPELINES_BY_ID_QUERY, 'pipelinesByIdQuery']
+  });
 
-  function handleAddPipeline() {
-    fetch(`http://localhost:5002/pipeline/${pipeline.id}/copy`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => { console.log(response); return response.json() })
-      .then(data => {
-        fetchPipelines();
-        console.log('Success:', data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  }
+  const [duplicatePipeline, { data: dataDuplicatePipeline }] = useMutation<IDuplicatePipeline, IMutatePipelineVars>(
+    DUPLICATE_PIPELINE, {
+    variables: { id: pipeline.id },
+    refetchQueries: [PIPELINES_BY_ID_QUERY, 'pipelinesByIdQuery']
+  })
+
+  // useEffect(() => {
+  //   console.log(data);
+  // }, [data])
 
   function showModalDeletePipeline() {
     setShowDeletePipelineModal(true);
@@ -122,7 +126,7 @@ export default function RenderPipeline({ ppl_idx, pipeline, injectionPointOption
             </button>
           </div>
           <div className="form-l">
-            <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={handleAddPipeline} type="button">
+            <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={() => duplicatePipeline()} type="button">
               <AddIcon />
             </button>
           </div>

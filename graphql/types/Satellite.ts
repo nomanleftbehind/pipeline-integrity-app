@@ -15,7 +15,7 @@ export const Satellite = objectType({
   definition(t) {
     t.nonNull.string('id')
     t.nonNull.string('name')
-    t.nonNull.field('facility', {
+    t.field('facility', {
       type: Facility,
       resolve: async (parent, _args, ctx: Context) => {
         const result = await ctx.prisma.satellite
@@ -23,10 +23,10 @@ export const Satellite = objectType({
             where: { id: parent.id },
           })
           .facility()
-        return result!
+        return result
       },
     })
-    t.nonNull.list.nonNull.field('pipelines', {
+    t.list.field('pipelines', {
       type: Pipeline,
       resolve: (parent, _args, ctx: Context) => {
         return ctx.prisma.satellite
@@ -36,7 +36,7 @@ export const Satellite = objectType({
           .pipelines()
       },
     })
-    t.nonNull.list.nonNull.field('injectionPoints', {
+    t.list.field('injectionPoints', {
       type: InjectionPoint,
       resolve: (parent, _args, ctx: Context) => {
         return ctx.prisma.satellite
@@ -76,8 +76,8 @@ export const SatelliteCreateInput = inputObjectType({
   name: 'SatelliteCreateInput',
   definition(t) {
     t.nonNull.string('name')
-    t.list.nonNull.field('pipelines', { type: PipelineCreateInput })
-    t.list.nonNull.field('injectionPoints', { type: InjectionPointCreateInput })
+    t.list.field('pipelines', { type: PipelineCreateInput })
+    t.list.field('injectionPoints', { type: InjectionPointCreateInput })
   },
 })
 
@@ -85,7 +85,7 @@ export const SatelliteCreateInput = inputObjectType({
 export const SatelliteQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.nonNull.list.nonNull.field('allSatellites', {
+    t.list.field('allSatellites', {
       type: Satellite,
       resolve: async (_parent, _args, context: Context) => {
         const result = await context.prisma.satellite.findMany()
@@ -126,6 +126,17 @@ export const SatelliteMutation = extendType({
           )
         }
       },
+    })
+    t.field('deleteSatellite', {
+      type: 'Satellite',
+      args: {
+        id: nonNull(stringArg())
+      },
+      resolve: async (_parent, args, ctx: Context) => {
+        return ctx.prisma.satellite.delete({
+          where: { id: args.id }
+        })
+      }
     })
   }
 })

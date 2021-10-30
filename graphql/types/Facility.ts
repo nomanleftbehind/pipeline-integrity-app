@@ -13,7 +13,7 @@ export const Facility = objectType({
   definition(t) {
     t.nonNull.string('id')
     t.nonNull.string('name')
-    t.nonNull.list.nonNull.field('satellites', {
+    t.list.field('satellites', {
       type: Satellite,
       resolve: (parent, _args, ctx: Context) => {
         return ctx.prisma.facility
@@ -42,7 +42,7 @@ export const Facility = objectType({
 export const FacilityQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.nonNull.list.nonNull.field('allFacilities', {
+    t.list.field('allFacilities', {
       type: Facility,
       resolve: async (_parent, _args, context: Context) => {
         const result = await context.prisma.facility.findMany()
@@ -58,7 +58,7 @@ export const FacilityCreateInput = inputObjectType({
   name: 'FacilityCreateInput',
   definition(t) {
     t.nonNull.string('name')
-    t.list.nonNull.field('satellites', { type: SatelliteCreateInput })
+    t.list.field('satellites', { type: SatelliteCreateInput })
   },
 })
 

@@ -33,7 +33,7 @@ export const permissions = shield({
     // createFacility: rules.isAuthenticatedUser,
     // editFacility: rules.isAuthenticatedUser,
     // editSatellite: rules.isAuthenticatedUser
-    deletePipeline: rules.isAuthenticatedUser,
+    // deletePipeline: rules.isAuthenticatedUser,
     editPipeline: rules.isAuthenticatedUser,
     // incrementPostViewCount: rules.isAuthenticatedUser,
     // togglePublishPost: rules.hasMutationPrivileges,

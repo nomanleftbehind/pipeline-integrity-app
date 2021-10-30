@@ -2,10 +2,10 @@ import type { NextPage } from 'next';
 import Link from 'next/link';
 import Head from 'next/head';
 import Image from 'next/image';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery, useLazyQuery, ApolloError } from '@apollo/client';
 import Layout from '../components/layout';
 import MenuBar from '../components/menubar';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { ChildDataProps, graphql } from "@apollo/react-hoc";
 import styles from '../styles/Home.module.css'
 
@@ -41,13 +41,6 @@ export const validators = {
 
 export type IValidators = typeof validators;
 
-type PipelineDatabaseProps = {
-  injectionPointOptions: InjectionPoint[];
-  validators: IValidators;
-  facilities: Facility;
-  satellites: Satellite
-};
-
 export interface IHeader {
   createdAt: string;
   license: string;
@@ -61,50 +54,48 @@ export interface IHeader {
   status: string
 }
 
-export type AllPipeline = Pipeline & { satellite: SatelliteFacility } & { injectionPoints: InjectionPoint[] }
-export type AllInjectionPoint = InjectionPoint & { pipeline: Pipeline } & { satellite: Satellite }
+export type IPipelineQuery = Pipeline & { satellite: SatelliteFacility } & { injectionPoints: InjectionPoint[] };
+type IPipelinesByIdVars = Partial<Pick<Pipeline, 'satelliteId'> & Pick<Satellite, 'facilityId'>>;
 
-interface PipelineData {
-  allPipelines: AllPipeline[];
+export type IInjectionPointQuery = InjectionPoint & { pipeline: Pipeline } & { satellite: Satellite };
+
+interface IAllInjectionPoints {
+  allInjectionPoints: IInjectionPointQuery[];
 }
 
-interface InjectionPointData {
-  allInjectionPoints: AllInjectionPoint[];
-}
-
-const PIPELINES_QUERY = gql`
-  query allPipelinesQuery {
-    allPipelines {
+export const PIPELINES_BY_ID_QUERY = gql`
+  query pipelinesByIdQuery($satelliteId: String, $facilityId: String) {
+  pipelinesById(satelliteId: $satelliteId, facilityId: $facilityId) {
+    id
+    createdAt
+    license
+    segment
+    substance
+    from
+    fromFeature
+    to
+    toFeature
+    status
+    length
+    type
+    grade
+    outsideDiameter
+    wallThickness
+    material
+    mop
+    internalProtection
+    satellite {
       id
-      createdAt
-      license
-      segment
-      substance
-      from
-      fromFeature
-      to
-      toFeature
-      status
-      length
-      type
-      grade
-      outsideDiameter
-      wallThickness
-      material
-      mop
-      internalProtection
-      satellite {
+      facility {
         id
-        facility {
-          id
-        }
-      }
-      injectionPoints {
-        source
       }
     }
+    injectionPoints {
+      source
+    }
   }
-`;
+}
+`
 
 const INJECTION_POINTS_QUERY = gql`
   query allInjectionPointsQuery {
@@ -125,29 +116,28 @@ const INJECTION_POINTS_QUERY = gql`
 `;
 
 
-
 export default function PipelineDatabase(): JSX.Element {
-
-  const { data, error, loading } = useQuery<PipelineData>(PIPELINES_QUERY);
-  const { data: injectionPointData } = useQuery<InjectionPointData>(INJECTION_POINTS_QUERY);
 
   const header: IHeader = { createdAt: "", license: "", segment: "", substance: "", from: "", fromFeature: "", to: "", toFeature: "", injectionPoints: "", status: "" };
   const [expandedPipelines, setExpandedPipelines] = useState<string[]>([]);
   const [filterText, setFilterText] = useState<IHeader>(header);
   const [filterTextCaseInsensitive, setFilterTextCaseInsensitive] = useState<IHeader>(header);
-  const [filterSatellite, setFilterSatellite] = useState<string>();
-  const [filterFacility, setFilterFacility] = useState<string>();
+
+  const [pipelinesById, { data, error, loading }] = useLazyQuery<{ pipelinesById: IPipelineQuery[] }, IPipelinesByIdVars>(PIPELINES_BY_ID_QUERY);
+  const { data: injectionPointData } = useQuery<IAllInjectionPoints>(INJECTION_POINTS_QUERY);
 
 
   function handleSatelliteClick(e: React.MouseEvent<HTMLButtonElement>): void {
-    setFilterSatellite(e.currentTarget.value);
-    setFilterFacility(undefined);
+    pipelinesById({ variables: { satelliteId: e.currentTarget.value } })
   }
 
   function handleFacilityClick(e: React.MouseEvent<HTMLButtonElement>): void {
-    setFilterFacility(e.currentTarget.value);
-    setFilterSatellite(undefined);
+    pipelinesById({ variables: { facilityId: e.currentTarget.value } })
   }
+
+  useEffect(() => {
+    console.log(loading);
+  }, [loading])
 
   const handleFilterTextChange = (e: React.FormEvent<HTMLInputElement>): void => {
     const { name, value }: { name: string; value: string } = e.currentTarget;
@@ -167,78 +157,68 @@ export default function PipelineDatabase(): JSX.Element {
     });
   }
 
-  if (error) {
-    return <p>Oops, something went wrong {error.message}</p>;
-  } else if (loading) {
-    return <p>Loading...</p>;
-  } else {
-
-    const pipelines = data!.allPipelines;
-
-    const sidebar_filter = pipelines.filter(pipeline => {
-      return pipeline.satellite.facility.id === filterFacility || pipeline.satellite.id === filterSatellite;
-    });
-
-    const header_filter = sidebar_filter.filter(pipeline => {
-
-      const inj_pt_source = pipeline.injectionPoints.map(({ source }) => source);
-
-      return (
-        pipeline.license.toUpperCase().includes(filterTextCaseInsensitive.license) &&
-        pipeline.segment.toUpperCase().includes(filterTextCaseInsensitive.segment) &&
-        pipeline.substance.toUpperCase().includes(filterTextCaseInsensitive.substance) &&
-        pipeline.from.toUpperCase().includes(filterTextCaseInsensitive.from) &&
-        (pipeline.fromFeature ? pipeline.fromFeature.toUpperCase().includes(filterTextCaseInsensitive.fromFeature) : filterTextCaseInsensitive.fromFeature.length === 0) &&
-        pipeline.to.toUpperCase().includes(filterTextCaseInsensitive.to) &&
-        (pipeline.toFeature ? pipeline.toFeature.toUpperCase().includes(filterTextCaseInsensitive.toFeature) : filterTextCaseInsensitive.toFeature.length === 0) &&
-        (inj_pt_source === undefined ||
-          (inj_pt_source.length === 0 && filterTextCaseInsensitive.injectionPoints.length === 0) ||
-          inj_pt_source.some(i => {
-            switch (i) {
-              case undefined:
-                return filterTextCaseInsensitive.injectionPoints.length === 0;
-              default:
-                return i.toUpperCase().includes(filterTextCaseInsensitive.injectionPoints)
-            }
-          })) &&
-        pipeline.status.toUpperCase().includes(filterTextCaseInsensitive.status)
-      );
-    });
-
-    return (
-      <div className="app" >
-        <div className="pipeline-database-wrapper">
-          <div className="pipeline-database-side-bar">
-            <div className="pipeline-database-side-bar-fixed">
-              <SideNavBar onSatelliteClick={handleSatelliteClick} onFacilityClick={handleFacilityClick} />
-            </div>
-          </div>
-          <div className="pipeline-database-table">
-            <table className="MuiTable-root" id='pipelines'>
-              <Header
-                filterText={filterText}
-                onFilterTextChange={handleFilterTextChange} />
-              <tbody>
-                {header_filter.map((pipeline, ppl_idx) => {
-                  return (
-                    <RenderPipeline
-                      key={pipeline.id}
-                      ppl_idx={ppl_idx}
-                      pipeline={pipeline}
-                      injectionPointOptions={injectionPointData!.allInjectionPoints}
-                      validators={validators}
-                      expandedPipelines={expandedPipelines}
-                      onPipelineClick={() => handlePipelineClick(pipeline.id)}
-                    />
-                  );
-                })}
-              </tbody>
-            </table>
+  return (
+    <div className="app" >
+      <div className="pipeline-database-wrapper">
+        <div className="pipeline-database-side-bar">
+          <div className="pipeline-database-side-bar-fixed">
+            <SideNavBar
+              onAllPipelinesClick={pipelinesById}
+              onSatelliteClick={handleSatelliteClick}
+              onFacilityClick={handleFacilityClick}
+            />
           </div>
         </div>
+        <div className="pipeline-database-table">
+          <table className="MuiTable-root" id='pipelines'>
+            <Header
+              filterText={filterText}
+              onFilterTextChange={handleFilterTextChange} />
+            <tbody>
+              {loading ? <tr><td><p>Loading...</p></td></tr> :
+                error ? <tr><td><p>{error.message}</p></td></tr> :
+                  data ? data.pipelinesById.filter(pipeline => {
+                    const inj_pt_source = pipeline.injectionPoints.map(({ source }) => source);
+                    return (
+                      pipeline.license.toUpperCase().includes(filterTextCaseInsensitive.license) &&
+                      pipeline.segment.toUpperCase().includes(filterTextCaseInsensitive.segment) &&
+                      pipeline.substance.toUpperCase().includes(filterTextCaseInsensitive.substance) &&
+                      pipeline.from.toUpperCase().includes(filterTextCaseInsensitive.from) &&
+                      (pipeline.fromFeature ? pipeline.fromFeature.toUpperCase().includes(filterTextCaseInsensitive.fromFeature) : filterTextCaseInsensitive.fromFeature.length === 0) &&
+                      pipeline.to.toUpperCase().includes(filterTextCaseInsensitive.to) &&
+                      (pipeline.toFeature ? pipeline.toFeature.toUpperCase().includes(filterTextCaseInsensitive.toFeature) : filterTextCaseInsensitive.toFeature.length === 0) &&
+                      (inj_pt_source === undefined ||
+                        (inj_pt_source.length === 0 && filterTextCaseInsensitive.injectionPoints.length === 0) ||
+                        inj_pt_source.some(i => {
+                          switch (i) {
+                            case undefined:
+                              return filterTextCaseInsensitive.injectionPoints.length === 0;
+                            default:
+                              return i.toUpperCase().includes(filterTextCaseInsensitive.injectionPoints)
+                          }
+                        })) &&
+                      pipeline.status.toUpperCase().includes(filterTextCaseInsensitive.status)
+                    );
+                  }).map((pipeline, ppl_idx) => {
+                    return (
+                      <RenderPipeline
+                        key={pipeline.id}
+                        ppl_idx={ppl_idx}
+                        pipeline={pipeline}
+                        injectionPointOptions={injectionPointData?.allInjectionPoints}
+                        validators={validators}
+                        expandedPipelines={expandedPipelines}
+                        onPipelineClick={() => handlePipelineClick(pipeline.id)}
+                      />
+                    );
+                  }) :
+                    null}
+            </tbody>
+          </table>
+        </div>
       </div>
-    )
-  }
+    </div>
+  )
 }
 
 PipelineDatabase.getLayout = function getLayout(page: ReactNode) {

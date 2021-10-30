@@ -1,10 +1,19 @@
 import { useState } from 'react';
-import { ReactComponent as EditIcon } from '../../../svg/edit-icon.svg';
-import { ReactComponent as CancelIcon } from '../../../svg/cancel-icon.svg';
-import { ReactComponent as RemoveIcon } from '../../../svg/remove-pipeline.svg';
-import { ReactComponent as OkIcon } from '../../../svg/ok-icon.svg';
+import RemoveIcon from '../../svg/remove-pipeline';
+import EditIcon from '../../svg/edit-icon';
+import CancelIcon from '../../svg/cancel-icon';
+import OkIcon from '../../svg/ok-icon';
+import { IInjectionPointQuery } from '../../../pages/pipelines';
 
-function Source({ ppl_id, inj_pt_id, source, injectionPointOptions, onSubmit, fetchPipelines }) {
+interface ISourceProps {
+  ppl_id: string;
+  inj_pt_id: string;
+  source: string;
+  injectionPointOptions: IInjectionPointQuery[] | undefined;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+}
+
+export default function Source({ ppl_id, inj_pt_id, source, injectionPointOptions, onSubmit }: ISourceProps) {
   const [edit, setEdit] = useState(false);
   const [state, setState] = useState(inj_pt_id);
 
@@ -13,13 +22,13 @@ function Source({ ppl_id, inj_pt_id, source, injectionPointOptions, onSubmit, fe
     setState(inj_pt_id);
   }
 
-  const handleChange = (e) => {
-    setState(e.target.value);
+  const handleChange = (e: React.FormEvent<HTMLSelectElement>) => {
+    setState(e.currentTarget.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = ((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit(e.target.name, inj_pt_id);
+    onSubmit(e.currentTarget.name, inj_pt_id);
   }
 
   const deleteInjectionPoint = () => {
@@ -67,5 +76,3 @@ function Source({ ppl_id, inj_pt_id, source, injectionPointOptions, onSubmit, fe
     </th>
   );
 }
-
-export default Source;
