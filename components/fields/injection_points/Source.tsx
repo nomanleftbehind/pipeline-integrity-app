@@ -16,11 +16,11 @@ interface ISourceProps {
 export default function Source({ injectionPointId, source, injectionPointOptions, handleSubmit, deleteInjectionPoint }: ISourceProps) {
   const [showForm, setShowForm] = useState<boolean>(false);
 
-  function toggleEdit() {
+  function toggleShowForm() {
     setShowForm(!showForm);
   }
 
-  function handleSubmitAndHideEdit(newInjectionPointId: string) {
+  function handleSubmitAndHideForm(newInjectionPointId: string) {
     handleSubmit(newInjectionPointId, injectionPointId);
     setShowForm(false);
   }
@@ -29,7 +29,7 @@ export default function Source({ injectionPointId, source, injectionPointOptions
     <th className="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall" role="cell" scope="row">
       <div className="cell-wrapper">
         <div className="cell-r">
-          <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={toggleEdit}>{showForm ? <CancelIcon /> : <EditIcon />}</button>
+          <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={toggleShowForm}>{showForm ? <CancelIcon /> : <EditIcon />}</button>
         </div>
         <div className="cell-fr">
           <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={deleteInjectionPoint} type="button">
@@ -40,7 +40,7 @@ export default function Source({ injectionPointId, source, injectionPointOptions
           <InjectionPointForm
             injectionPointId={injectionPointId}
             injectionPointOptions={injectionPointOptions}
-            handleSubmit={handleSubmitAndHideEdit}
+            handleSubmit={handleSubmitAndHideForm}
           /> :
           <div className="cell-l no-wrap">{source}</div>}
       </div>

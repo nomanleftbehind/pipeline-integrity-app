@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import Source from './Source';
 import InjectionPointForm from './InjectionPointForm';
@@ -63,10 +63,6 @@ export default function InjectionPoints({ id, injectionPoints, injectionPointOpt
     changeInjectionPointToPipeline({ variables: { id: newInjectionPointId, pipelineId: id }, refetchQueries: [PIPELINES_BY_ID_QUERY, 'pipelinesByIdQuery'] });
     setShowForm(false);
   }
-
-  useEffect(() => {
-    console.log(data);
-  }, [data])
 
   return (
     <td className="MuiTableCell-root MuiTableCell-body" colSpan={3}>
