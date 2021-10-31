@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { gql, useMutation } from '@apollo/client';
 import Source from './Source';
-import { ModalDuplicateInjectionPoint } from '../../Modal';
-import { InjectionPoint } from '@prisma/client';
-import { IInjectionPointQuery } from '../../../pages/pipelines';
+import InjectionPointForm from './InjectionPointForm';
+import { InjectionPoint, Pipeline } from '@prisma/client';
+import { IInjectionPointQuery, PIPELINES_BY_ID_QUERY } from '../../../pages/pipelines';
 import AddIcon from '../../svg/add-pipeline';
+import CancelIcon from '../../svg/cancel-icon';
 
 interface IInjectionPointsProps {
   id: string;
@@ -11,56 +13,60 @@ interface IInjectionPointsProps {
   injectionPointOptions: IInjectionPointQuery[] | undefined;
 }
 
+
+type IMutateInjectionPoint = Pick<InjectionPoint, 'id' | 'source'> & { pipeline?: Pick<Pipeline, 'id' | 'license' | 'segment'> };
+
+interface IDeleteInjectionPointFromPipeline {
+  deleteInjectionPointFromPipeline: IMutateInjectionPoint;
+}
+
+type IMutateInjectionPointVars = Pick<InjectionPoint, 'id'> & Partial<Pick<InjectionPoint, 'pipelineId'>>;
+
+const DELETE_INJECTION_POINT_FROM_PIPELINE = gql`
+  mutation deleteInjectionPointFromPipeline($id: String!) {
+  deleteInjectionPointFromPipeline(id: $id) {
+    id
+    source
+  }
+}
+`
+
+const CHANGE_INJECTION_POINT_TO_PIPELINE = gql`
+  mutation changeInjectionPointToPipeline($id: String!, $pipelineId: String) {
+  editInjectionPoint(id: $id, pipelineId: $pipelineId) {
+    id
+    source
+    pipeline {
+      id
+      license
+      segment
+    }
+  }
+}
+`
+
+
 export default function InjectionPoints({ id, injectionPoints, injectionPointOptions }: IInjectionPointsProps) {
-  const [showDuplicateInjectionPointModal, setShowDuplicateInjectionPointModal] = useState(false);
+  const [showForm, setShowForm] = useState<boolean>(false);
 
-  const submitInjectionPointChange = (new_inj_pt_id, inj_pt_id) => {
-    fetch(`http://localhost:5002/pipeline/${_id}/${inj_pt_id}/${new_inj_pt_id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => { return response.json() })
-      .then(data => {
-        fetchPipelines();
-        console.log('Success:', data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+  const [deleteInjectionPoint, { data, error, loading }] = useMutation<IDeleteInjectionPointFromPipeline, IMutateInjectionPointVars>(DELETE_INJECTION_POINT_FROM_PIPELINE);
+  const [changeInjectionPointToPipeline, { data: dataChangeInjectionPointToPipeline }] = useMutation<{ editInjectionPoint: IMutateInjectionPoint }, IMutateInjectionPointVars>(CHANGE_INJECTION_POINT_TO_PIPELINE);
+
+  function toggleShowForm() {
+    setShowForm(!showForm);
   }
 
-  const handleSubmit = (new_inj_pt_id, inj_pt_id) => {
-    injectionPoints.map(({ _id }) => _id).includes(new_inj_pt_id) ?
-      setShowDuplicateInjectionPointModal(true) :
-      submitInjectionPointChange(new_inj_pt_id, inj_pt_id);
+  function handleSubmit(newInjectionPointId: string, oldnewInjectionPointId?: string) {
+    if (oldnewInjectionPointId) deleteInjectionPoint({ variables: { id: oldnewInjectionPointId } }); // Very important this is the first mutation called in this block,
+    // as otherwise if you click OK, while not having selected a different injection point,
+    // it would first override injection point with itself and then delete it.
+    changeInjectionPointToPipeline({ variables: { id: newInjectionPointId, pipelineId: id }, refetchQueries: [PIPELINES_BY_ID_QUERY, 'pipelinesByIdQuery'] });
+    setShowForm(false);
   }
 
-  const hideDuplicateInjectionPointModal = () => {
-    setShowDuplicateInjectionPointModal(false);
-  }
-
-  const handleAddInjectionPoint = () => {
-    fetch("http://localhost:5002/pipeline/" + _id + "/addinjpt", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => { console.log(response); return response.json() })
-      .then(data => {
-        fetchPipelines();
-        console.log('Success:', data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  }
-
-  const modalDuplicateInjectionPoint = showDuplicateInjectionPointModal ?
-    <ModalDuplicateInjectionPoint
-      hideDuplicateInjectionPointModal={hideDuplicateInjectionPointModal} /> : null;
+  useEffect(() => {
+    console.log(data);
+  }, [data])
 
   return (
     <td className="MuiTableCell-root MuiTableCell-body" colSpan={3}>
@@ -74,8 +80,8 @@ export default function InjectionPoints({ id, injectionPoints, injectionPointOpt
                   <div className="cell-wrapper">
                     <div className="form-l">Source</div>
                     <div className="form-r">
-                      <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={handleAddInjectionPoint} type="button">
-                        <AddIcon />
+                      <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={toggleShowForm} type="button">
+                        {showForm ? <CancelIcon /> : <AddIcon />}
                       </button>
                     </div>
                   </div>
@@ -86,19 +92,30 @@ export default function InjectionPoints({ id, injectionPoints, injectionPointOpt
               </tr>
             </thead>
             <tbody className="MuiTableBody-root">
-              {injectionPoints.map(inj_pt => {
-                return (
-                  <tr key={inj_pt.id} className="MuiTableRow-root">
-                    <Source
-                      ppl_id={id}
-                      inj_pt_id={inj_pt.id}
-                      source={inj_pt.source}
+              {showForm ?
+                <tr>
+                  <td colSpan={5}>
+                    <InjectionPointForm
+                      injectionPointId={injectionPointOptions ? injectionPointOptions[0].id : ''}
                       injectionPointOptions={injectionPointOptions}
-                      onSubmit={handleSubmit}
+                      handleSubmit={handleSubmit}
                     />
-                    <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeSmall">{inj_pt.oil}</td>
-                    <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeSmall">{inj_pt.water}</td>
-                    <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeSmall">{inj_pt.gas}</td>
+                  </td>
+                </tr> :
+                null}
+              {injectionPoints.map(injectionPoint => {
+                return (
+                  <tr key={injectionPoint.id} className="MuiTableRow-root">
+                    <Source
+                      injectionPointId={injectionPoint.id}
+                      source={injectionPoint.source}
+                      injectionPointOptions={injectionPointOptions}
+                      handleSubmit={handleSubmit}
+                      deleteInjectionPoint={() => deleteInjectionPoint({ variables: { id: injectionPoint.id }, refetchQueries: [PIPELINES_BY_ID_QUERY, 'pipelinesByIdQuery'] })}
+                    />
+                    <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeSmall">{injectionPoint.oil}</td>
+                    <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeSmall">{injectionPoint.water}</td>
+                    <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeSmall">{injectionPoint.gas}</td>
                   </tr>
                 );
               })}
@@ -106,7 +123,6 @@ export default function InjectionPoints({ id, injectionPoints, injectionPointOpt
           </table>
         </div>
       </div>
-      {modalDuplicateInjectionPoint}
     </td>
   );
 }

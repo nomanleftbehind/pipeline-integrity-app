@@ -8,7 +8,7 @@ import AddIcon from '../svg/add-pipeline';
 import ExpandIcon from '../svg/expand';
 import CollapseIcon from '../svg/collapse';
 import { IValidators, IPipelineQuery, IInjectionPointQuery, PIPELINES_BY_ID_QUERY } from '../../pages/pipelines';
-import { Pipeline } from '@prisma/client'
+import { Pipeline } from '@prisma/client';
 
 const isEven = (value: number): "even" | "odd" => {
   if (value % 2 === 0)

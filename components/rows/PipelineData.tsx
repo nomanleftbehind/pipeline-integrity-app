@@ -21,11 +21,11 @@ export default function PipelineData({ id, pipeline_properties, pipeline_propert
   return (
     <tr className="MuiTableRow-root" data-target={"pipeline index is " + isEven}>
       <td className="MuiTableCell-root MuiTableCell-body" colSpan={2}></td>
-      {/* <InjectionPoints
+      <InjectionPoints
         id={id}
         injectionPoints={injectionPoints}
         injectionPointOptions={injectionPointOptions}
-      /> */}
+      />
       <PipelineProperties
         id={id}
         properties_name="Mechanical Properties"

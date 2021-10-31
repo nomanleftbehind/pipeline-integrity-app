@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { gql, useQuery, useLazyQuery, ApolloError } from '@apollo/client';
 import Layout from '../components/layout';
 import MenuBar from '../components/menubar';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 import { ChildDataProps, graphql } from "@apollo/react-hoc";
 import styles from '../styles/Home.module.css'
 
@@ -57,7 +57,7 @@ export interface IHeader {
 export type IPipelineQuery = Pipeline & { satellite: SatelliteFacility } & { injectionPoints: InjectionPoint[] };
 type IPipelinesByIdVars = Partial<Pick<Pipeline, 'satelliteId'> & Pick<Satellite, 'facilityId'>>;
 
-export type IInjectionPointQuery = InjectionPoint & { pipeline: Pipeline } & { satellite: Satellite };
+export type IInjectionPointQuery = InjectionPoint & { pipeline?: Pipeline } & { satellite?: Satellite & { facility?: Facility } };
 
 interface IAllInjectionPoints {
   allInjectionPoints: IInjectionPointQuery[];
@@ -91,7 +91,11 @@ export const PIPELINES_BY_ID_QUERY = gql`
       }
     }
     injectionPoints {
+      id
       source
+      oil
+      gas
+      water
     }
   }
 }
@@ -110,6 +114,10 @@ const INJECTION_POINTS_QUERY = gql`
       satellite {
         id
         name
+        facility {
+          id
+          name
+        }
       }
     }
   }
@@ -134,10 +142,6 @@ export default function PipelineDatabase(): JSX.Element {
   function handleFacilityClick(e: React.MouseEvent<HTMLButtonElement>): void {
     pipelinesById({ variables: { facilityId: e.currentTarget.value } })
   }
-
-  useEffect(() => {
-    console.log(loading);
-  }, [loading])
 
   const handleFilterTextChange = (e: React.FormEvent<HTMLInputElement>): void => {
     const { name, value }: { name: string; value: string } = e.currentTarget;

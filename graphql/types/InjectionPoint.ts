@@ -66,8 +66,14 @@ export const InjectionPointQuery = extendType({
   definition(t) {
     t.list.field('allInjectionPoints', {
       type: InjectionPoint,
-      resolve: async (_parent, _args, context: Context) => {
-        const result = await context.prisma.injectionPoint.findMany()
+      resolve: async (_parent, _args, ctx: Context) => {
+        const result = await ctx.prisma.injectionPoint.findMany({
+          orderBy: [
+            { satellite: { facility: { name: 'asc' } } },
+            { satellite: { name: 'asc' } },
+            { source: 'asc' }
+          ]
+        })
         return result;
       },
     })
