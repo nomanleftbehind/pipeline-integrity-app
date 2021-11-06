@@ -4,6 +4,7 @@ import CancelIcon from '../svg/cancel-icon';
 import OkIcon from '../svg/ok-icon';
 import { IPipelineProperties, IPipelinePropertiesValidators } from '../rows/PipelineData';
 
+
 type Record = IPipelineProperties[keyof IPipelineProperties];
 
 interface ITextFieldProps {

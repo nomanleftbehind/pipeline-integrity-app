@@ -86,6 +86,7 @@ export const UserQuery = extendType({
       type: User,
       resolve: (_parent, _args, ctx: Context) => {
         const userId = getUserId(ctx)
+        
         return ctx.prisma.user.findUnique({
           where: {
             id: String(userId),
@@ -144,11 +145,20 @@ export const UserUniqueInput = inputObjectType({
   },
 })
 
+export const FieldError = objectType({
+  name: 'FieldError',
+  definition(t) {
+    t.string('field')
+    t.string('message')
+  }
+})
+
 export const AuthPayload = objectType({
   name: 'AuthPayload',
   definition(t) {
     t.string('token')
     t.field('user', { type: User })
+    t.list.field('errors', { type: FieldError })
   },
 })
 
@@ -164,6 +174,31 @@ export const AuthMutation = extendType({
         password: nonNull(stringArg()),
       },
       resolve: async (_parent, args, context: Context) => {
+        const userExists = await context.prisma.user.findUnique({
+          where: {
+            email: args.email
+          }
+        })
+        if (userExists) {
+          return {
+            errors: [
+              {
+                field: 'email',
+                message: 'user with specified email already exists'
+              }
+            ]
+          }
+        }
+        if (args.password.length < 8) {
+          return {
+            errors: [
+              {
+                field: 'password',
+                message: 'password must be at least 8 characters long'
+              }
+            ]
+          }
+        }
         const hashedPassword = await hash(args.password, 10)
         const user = await context.prisma.user.create({
           data: {
@@ -193,11 +228,27 @@ export const AuthMutation = extendType({
           },
         })
         if (!user) {
-          throw new Error(`No user found for email: ${email}`)
+          return {
+            errors: [
+              {
+                field: 'email',
+                message: "user with that email doesn't exist"
+              },
+            ]
+          }
+          // throw new Error(`No user found for email: ${email}`)
         }
         const passwordValid = await compare(password, user.password)
         if (!passwordValid) {
-          throw new Error('Invalid password')
+          return {
+            errors: [
+              {
+                field: 'password',
+                message: 'incorrect password'
+              },
+            ]
+            // throw new Error('Invalid password')
+          }
         }
         return {
           token: sign({ userId: user.id }, APP_SECRET),

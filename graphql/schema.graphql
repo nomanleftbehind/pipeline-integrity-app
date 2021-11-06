@@ -3,6 +3,7 @@
 
 
 type AuthPayload {
+  errors: [FieldError]
   token: String
   user: User
 }
@@ -34,6 +35,11 @@ input FacilityCreateInput {
 input FacilityUniqueInput {
   id: String
   name: String
+}
+
+type FieldError {
+  field: String
+  message: String
 }
 
 enum FromToFeatureEnum {

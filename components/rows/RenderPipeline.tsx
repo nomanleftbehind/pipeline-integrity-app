@@ -10,6 +10,7 @@ import CollapseIcon from '../svg/collapse';
 import { IValidators, IPipelineQuery, IInjectionPointQuery, PIPELINES_BY_ID_QUERY } from '../../pages/pipelines';
 import { Pipeline } from '@prisma/client';
 
+
 const isEven = (value: number): "even" | "odd" => {
   if (value % 2 === 0)
     return "even";
@@ -90,6 +91,7 @@ export default function RenderPipeline({ ppl_idx, pipeline, injectionPointOption
     setShowDeletePipelineModal(false);
   }
 
+
   const { id, createdAt, license, segment, substance, from, fromFeature, to, toFeature, injectionPoints, status, length, type, grade, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
 
   const { license: valLicense, segment: valSegment, substance: valSubstance, fromTo: valFromTo, fromToFeature: valFromToFeature, status: valStatus, length: valLength, type: valType, grade: valGrade, outsideDiameter: valOutsideDiameter, wallThickness: valWallThickness, material: valMaterial, mop: valMop, internalProtection: valInternalProtection } = validators;
@@ -137,7 +139,7 @@ export default function RenderPipeline({ ppl_idx, pipeline, injectionPointOption
       <td className="MuiTableCell-root MuiTableCell-body">{createdAt}</td>
       <EntryField id={id} record={license} columnName="license" validator={valLicense}/* fetchPipelines={fetchPipelines}*/ />
       <EntryField id={id} record={segment} columnName="segment" validator={valSegment}/* fetchPipelines={fetchPipelines}*/ />
-      <EntryField id={id} record={substance} columnName="substance" validator={valSubstance} /* fetchPipelines={fetchPipelines} */ />
+      <EntryField id={id} record={substance} columnName="substance" validator={valSubstance/*SubstanceEnumValidator*/} /* fetchPipelines={fetchPipelines} */ />
       <EntryField id={id} record={from} columnName="from" validator={valFromTo}/*  fetchPipelines={fetchPipelines} */ />
       <EntryField id={id} record={fromFeature} columnName="fromFeature" validator={valFromToFeature}/*  fetchPipelines={fetchPipelines} */ />
       <EntryField id={id} record={to} columnName="to" validator={valFromTo}/*  fetchPipelines={fetchPipelines} */ />

@@ -3,7 +3,7 @@ import { User } from './User';
 import { Satellite, SatelliteUniqueInput } from './Satellite';
 import { InjectionPoint, InjectionPointCreateInput } from './InjectionPoint';
 import { Context } from '../context';
-import { Pipeline as IPipeline } from '@prisma/client';
+import { Prisma, Pipeline as IPipeline } from '@prisma/client';
 
 
 
@@ -163,7 +163,6 @@ export const SubstanceEnum = enumType({
   name: 'SubstanceEnum',
   members: SubstanceEnumMembers
 });
-
 
 export const FromToFeatureEnumMembers = {
   BlindEnd: "Blind end",
@@ -474,9 +473,9 @@ export const PipelineMutation = extendType({
         mop: intArg(),
         internalProtection: arg({ type: InternalProtectionEnum })
       },
-      resolve: async (_, args, context: Context) => {
+      resolve: async (_, args, ctx: Context) => {
         try {
-          return context.prisma.pipeline.update({
+          return ctx.prisma.pipeline.update({
             where: { id: args.id },
             data: {
               satellite: args.satelliteUniqueInput ? {
