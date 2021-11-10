@@ -212,7 +212,7 @@ export const StatusEnum = enumType({
 });
 
 export const TypeEnumMembers = {
-  Type515: "To Be Constructed",
+  Type515: "515",
   Type2306: "2306",
   Type3406: "3406",
   Type3408: "3408",
@@ -337,35 +337,6 @@ export const InternalProtectionEnum = enumType({
   },
   name: 'InternalProtectionEnum',
   members: InternalProtectionEnumMembers
-});
-
-
-export const Edge = objectType({
-  name: 'Edge',
-  definition(t) {
-    t.string('cursor');
-    t.field('node', {
-      type: Pipeline,
-    });
-  },
-});
-
-export const PageInfo = objectType({
-  name: 'PageInfo',
-  definition(t) {
-    t.string('endCursor');
-    t.boolean('hasNextPage');
-  },
-});
-
-export const Response = objectType({
-  name: 'Response',
-  definition(t) {
-    t.field('pageInfo', { type: PageInfo });
-    t.list.field('edges', {
-      type: Edge,
-    });
-  },
 });
 
 export const PipelineQuery = extendType({
@@ -544,3 +515,114 @@ export const PipelineMutation = extendType({
     })
   }
 })
+
+
+export const licenseMatchPattern = "^(AB|SK|BC)(\\d{5}|\\d{6})$";
+export const segmentMatchPattern = "^((UL)(\\d{1,2})|(\\d{1,3}))$";
+export const fromToMatchPattern = "^((\\d{2}-\\d{2}-\\d{3}-\\d{2}W\\d{1})|([A-Z]{1}-\\d{3}-[A-Z]{1} \\d{3}-[A-Z]{1}-\\d{2}))$";
+export const lengthMatchPattern = "^\\d*\\.?\\d*$";
+
+export const SubstanceEnumObject = objectType({
+  name: 'SubstanceEnumObject',
+  definition(t) {
+    for (const iterator of Object.keys(SubstanceEnumMembers)) {
+      t.nonNull.string(iterator)
+    }
+  }
+})
+
+export const FromToFeatureEnumObject = objectType({
+  name: 'FromToFeatureEnumObject',
+  definition(t) {
+    for (const iterator of Object.keys(FromToFeatureEnumMembers)) {
+      console.log(iterator);
+      t.nonNull.string(iterator)
+    }
+  }
+})
+
+export const StatusEnumObject = objectType({
+  name: 'StatusEnumObject',
+  definition(t) {
+    for (const iterator of Object.keys(StatusEnumMembers)) {
+      t.nonNull.string(iterator)
+    }
+  }
+})
+
+export const TypeEnumObject = objectType({
+  name: 'TypeEnumObject',
+  definition(t) {
+    for (const iterator of Object.keys(TypeEnumMembers)) {
+      t.nonNull.string(iterator)
+    }
+  }
+})
+
+export const GradeEnumObject = objectType({
+  name: 'GradeEnumObject',
+  definition(t) {
+    for (const iterator of Object.keys(GradeEnumMembers)) {
+      t.nonNull.string(iterator)
+    }
+  }
+})
+
+export const MaterialEnumObject = objectType({
+  name: 'MaterialEnumObject',
+  definition(t) {
+    for (const iterator of Object.keys(MaterialEnumMembers)) {
+      t.nonNull.string(iterator)
+    }
+  }
+})
+
+export const InternalProtectionEnumObject = objectType({
+  name: 'InternalProtectionEnumObject',
+  definition(t) {
+    for (const iterator of Object.keys(InternalProtectionEnumMembers)) {
+      t.nonNull.string(iterator)
+    }
+  }
+})
+
+export const Validator = objectType({
+  name: 'Validator',
+  definition(t) {
+    t.nonNull.string('licenseMatchPattern')
+    t.nonNull.string('segmentMatchPattern')
+    t.nonNull.field('substanceEnum', { type: 'SubstanceEnumObject' })
+    t.nonNull.string('fromToMatchPattern')
+    t.nonNull.field('fromToFeatureEnum', { type: 'FromToFeatureEnumObject' })
+    t.nonNull.field('statusEnum', { type: 'StatusEnumObject' })
+    t.nonNull.string('lengthMatchPattern')
+    t.nonNull.field('typeEnum', { type: 'TypeEnumObject' })
+    t.nonNull.field('gradeEnum', { type: 'GradeEnumObject' })
+    t.nonNull.field('materialEnum', { type: 'MaterialEnumObject' })
+    t.nonNull.field('internalProtectionEnum', { type: 'InternalProtectionEnumObject' })
+  }
+})
+
+export const ValidatorQuery = extendType({
+  type: 'Query',
+  definition(t) {
+    t.field('validators', {
+      type: Validator,
+      resolve: (_parent, args, ctx: Context) => {
+        return {
+          licenseMatchPattern,
+          segmentMatchPattern,
+          substanceEnum: SubstanceEnumMembers,
+          fromToMatchPattern,
+          fromToFeatureEnum: FromToFeatureEnumMembers,
+          statusEnum: StatusEnumMembers,
+          lengthMatchPattern,
+          typeEnum: TypeEnumMembers,
+          gradeEnum: GradeEnumMembers,
+          materialEnum: MaterialEnumMembers,
+          internalProtectionEnum: InternalProtectionEnumMembers,
+        };
+      }
+    })
+  },
+});

@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { IInjectionPointQuery } from '../../../pages/pipelines';
-import OkIcon from '../../svg/ok-icon';
+import { IInjectionPointOptions } from '../../rows/RenderPipeline2';
+import IconButton from '@mui/material/IconButton';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 interface IInjectionPointFormProps {
   injectionPointId: string;
-  injectionPointOptions: IInjectionPointQuery[] | undefined;
+  injectionPointOptions: IInjectionPointOptions;
   handleSubmit: (newInjectionPointId: string) => void;
 }
 
@@ -25,16 +26,19 @@ export default function InjectionPointForm({ injectionPointId, injectionPointOpt
       <div className="form-l">
         <select value={state} onChange={handleChange}>
           {injectionPointOptions ? injectionPointOptions.map(option => {
-            return (
+            return option ? (
               <option key={option.id} value={option.id}>
                 {`${option.satellite?.facility?.name} - ${option.satellite?.name} - ${option.source}`}
               </option>
-            );
+            ) :
+              null;
           }) : null}
         </select>
       </div>
       <div className="form-r">
-        <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" type="submit"><OkIcon /></button>
+        <IconButton aria-label="expand row" size="small" type="submit">
+          <CheckCircleOutlineIcon />
+        </IconButton>
       </div>
     </form>
   )

@@ -1,56 +1,36 @@
-import { useState } from 'react';
-import { gql, useMutation } from '@apollo/client';
+import React from 'react';
+import Box from '@mui/material/Box';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import Source from './Source';
 import InjectionPointForm from './InjectionPointForm';
-import { InjectionPoint, Pipeline } from '@prisma/client';
-import { IInjectionPointQuery, PIPELINES_BY_ID_QUERY } from '../../../pages/pipelines';
-import AddIcon from '../../svg/add-pipeline';
-import CancelIcon from '../../svg/cancel-icon';
+import { IPipeline, IInjectionPointOptions } from '../../rows/RenderPipeline2';
+
+import { useDeleteInjectionPointFromPipelineMutation, useChangeInjectionPointToPipelineMutation, PipelinesByIdQueryDocument } from '../../../graphql/generated/graphql';
+
+type IInjectionPoints = IPipeline['injectionPoints']
 
 interface IInjectionPointsProps {
+  open: boolean;
   id: string;
-  injectionPoints: InjectionPoint[];
-  injectionPointOptions: IInjectionPointQuery[] | undefined;
+  injectionPoints: IInjectionPoints;
+  injectionPointOptions: IInjectionPointOptions;
 }
 
 
-type IMutateInjectionPoint = Pick<InjectionPoint, 'id' | 'source'> & { pipeline?: Pick<Pipeline, 'id' | 'license' | 'segment'> };
+export default function InjectionPoints({ open, id, injectionPoints, injectionPointOptions }: IInjectionPointsProps) {
+  const [showForm, setShowForm] = React.useState<boolean>(false);
 
-interface IDeleteInjectionPointFromPipeline {
-  deleteInjectionPointFromPipeline: IMutateInjectionPoint;
-}
-
-type IMutateInjectionPointVars = Pick<InjectionPoint, 'id'> & Partial<Pick<InjectionPoint, 'pipelineId'>>;
-
-const DELETE_INJECTION_POINT_FROM_PIPELINE = gql`
-  mutation deleteInjectionPointFromPipeline($id: String!) {
-  deleteInjectionPointFromPipeline(id: $id) {
-    id
-    source
-  }
-}
-`
-
-const CHANGE_INJECTION_POINT_TO_PIPELINE = gql`
-  mutation changeInjectionPointToPipeline($id: String!, $pipelineId: String) {
-  editInjectionPoint(id: $id, pipelineId: $pipelineId) {
-    id
-    source
-    pipeline {
-      id
-      license
-      segment
-    }
-  }
-}
-`
-
-
-export default function InjectionPoints({ id, injectionPoints, injectionPointOptions }: IInjectionPointsProps) {
-  const [showForm, setShowForm] = useState<boolean>(false);
-
-  const [deleteInjectionPoint, { data, error, loading }] = useMutation<IDeleteInjectionPointFromPipeline, IMutateInjectionPointVars>(DELETE_INJECTION_POINT_FROM_PIPELINE);
-  const [changeInjectionPointToPipeline, { data: dataChangeInjectionPointToPipeline }] = useMutation<{ editInjectionPoint: IMutateInjectionPoint }, IMutateInjectionPointVars>(CHANGE_INJECTION_POINT_TO_PIPELINE);
+  const [deleteInjectionPoint, { data, error, loading }] = useDeleteInjectionPointFromPipelineMutation();
+  const [changeInjectionPointToPipeline, { data: dataChangeInjectionPointToPipeline }] = useChangeInjectionPointToPipelineMutation();
 
   function toggleShowForm() {
     setShowForm(!showForm);
@@ -60,65 +40,69 @@ export default function InjectionPoints({ id, injectionPoints, injectionPointOpt
     if (oldnewInjectionPointId) deleteInjectionPoint({ variables: { id: oldnewInjectionPointId } }); // Very important this is the first mutation called in this block,
     // as otherwise if you click OK, while not having selected a different injection point,
     // it would first override injection point with itself and then delete it.
-    changeInjectionPointToPipeline({ variables: { id: newInjectionPointId, pipelineId: id }, refetchQueries: [PIPELINES_BY_ID_QUERY, 'pipelinesByIdQuery'] });
+    changeInjectionPointToPipeline({ variables: { id: newInjectionPointId, pipelineId: id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
     setShowForm(false);
   }
 
   return (
-    <td className="MuiTableCell-root MuiTableCell-body" colSpan={3}>
-      <div className="collapse-container">
-        <div className="collapse-container-inner">
-          <div className="injection-points-title">Injection Points</div>
-          <table className="MuiTable-root">
-            <thead className="MuiTableHead-root">
-              <tr className="MuiTableRow-root MuiTableRow-head">
-                <th className="MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall">
-                  <div className="cell-wrapper">
-                    <div className="form-l">Source</div>
-                    <div className="form-r">
-                      <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={toggleShowForm} type="button">
-                        {showForm ? <CancelIcon /> : <AddIcon />}
-                      </button>
-                    </div>
-                  </div>
-                </th>
-                <th className="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeSmall">Oil</th>
-                <th className="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeSmall">Gas</th>
-                <th className="MuiTableCell-root MuiTableCell-head MuiTableCell-alignRight MuiTableCell-sizeSmall">Water</th>
-              </tr>
-            </thead>
-            <tbody className="MuiTableBody-root">
+    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <Box sx={{ margin: 1 }}>
+          <Typography variant="h6" gutterBottom component="div">
+            Injection Points
+          </Typography>
+          <Table size="small" aria-label="purchases">
+            <TableHead>
+              <TableRow>
+                <TableCell>Source
+                  <IconButton aria-label="expand row" size="small" onClick={toggleShowForm}>
+                    {showForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
+                  </IconButton>
+                </TableCell>
+                <TableCell align="right">Oil</TableCell>
+                <TableCell align="right">Water</TableCell>
+                <TableCell align="right">Gas</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {showForm ?
-                <tr>
-                  <td colSpan={5}>
+                <TableRow>
+                  <TableCell colSpan={5}>
                     <InjectionPointForm
-                      injectionPointId={injectionPointOptions ? injectionPointOptions[0].id : ''}
+                      injectionPointId={injectionPointOptions ?
+                        injectionPointOptions[0] ?
+                          injectionPointOptions[0].id :
+                          '' :
+                        ''}
                       injectionPointOptions={injectionPointOptions}
                       handleSubmit={handleSubmit}
                     />
-                  </td>
-                </tr> :
+                  </TableCell>
+                </TableRow> :
                 null}
-              {injectionPoints.map(injectionPoint => {
-                return (
-                  <tr key={injectionPoint.id} className="MuiTableRow-root">
-                    <Source
-                      injectionPointId={injectionPoint.id}
-                      source={injectionPoint.source}
-                      injectionPointOptions={injectionPointOptions}
-                      handleSubmit={handleSubmit}
-                      deleteInjectionPoint={() => deleteInjectionPoint({ variables: { id: injectionPoint.id }, refetchQueries: [PIPELINES_BY_ID_QUERY, 'pipelinesByIdQuery'] })}
-                    />
-                    <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeSmall">{injectionPoint.oil}</td>
-                    <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeSmall">{injectionPoint.water}</td>
-                    <td className="MuiTableCell-root MuiTableCell-body MuiTableCell-alignRight MuiTableCell-sizeSmall">{injectionPoint.gas}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </td>
+              {injectionPoints ? injectionPoints.map(injectionPoint => {
+                return injectionPoint ?
+                  (
+                    <TableRow key={injectionPoint.id}>
+                      <Source
+                        injectionPointId={injectionPoint.id}
+                        source={injectionPoint.source}
+                        injectionPointOptions={injectionPointOptions}
+                        handleSubmit={handleSubmit}
+                        deleteInjectionPoint={() => deleteInjectionPoint({ variables: { id: injectionPoint.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
+                      />
+                      <TableCell align="right">{injectionPoint.oil}</TableCell>
+                      <TableCell align="right">{injectionPoint.water}</TableCell>
+                      <TableCell align="right">{injectionPoint.gas}</TableCell>
+                    </TableRow>
+                  ) :
+                  null;
+              }) :
+                null}
+            </TableBody>
+          </Table>
+        </Box>
+      </Collapse>
+    </TableCell>
   );
 }

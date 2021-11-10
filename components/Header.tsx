@@ -1,3 +1,6 @@
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
 import { IHeader } from '../pages/pipelines';
 
 type HeaderProps = {
@@ -8,11 +11,17 @@ type HeaderProps = {
 export default function Header({ onFilterTextChange, filterText }: HeaderProps): JSX.Element {
 
   return (
-    <thead className="MuiTableHead-root header-fixed-zzz">
-      <tr className="MuiTableRow-root MuiTableRow-head">
-        <th className=/*"expand-collapse-row"*/"MuiTableCell-root MuiTableCell-head"></th>
-        <th className=/*"add-delete-pipeline"*/"MuiTableCell-root MuiTableCell-head"></th>
-        <th className=/*"_id"*/"MuiTableCell-root MuiTableCell-head"></th>
+    // <thead className="MuiTableHead-root header-fixed-zzz">
+    // <tr className="MuiTableRow-root MuiTableRow-head">
+    <TableHead>
+      <TableRow>
+        <TableCell />
+        <TableCell />
+        <TableCell />
+        {//<th className=/*"expand-collapse-row"*/"MuiTableCell-root MuiTableCell-head"></th>
+          //<th className=/*"add-delete-pipeline"*/"MuiTableCell-root MuiTableCell-head"></th>
+          //<th className=/*"_id"*/"MuiTableCell-root MuiTableCell-head"></th>
+        }
         {Object.entries(filterText).map(([key, value], index) => {
           return (
             <th scope="col" key={index} className=/*{key}*/"MuiTableCell-root MuiTableCell-head  MuiTableCell-alignRight">
@@ -32,7 +41,9 @@ export default function Header({ onFilterTextChange, filterText }: HeaderProps):
             </th>
           );
         })}
-      </tr>
-    </thead>
+      </TableRow>
+    </TableHead>
+    // </tr>
+    // </thead>
   );
 }

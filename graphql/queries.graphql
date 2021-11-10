@@ -7,3 +7,59 @@ query Me {
     role
   }
 }
+
+query pipelinesByIdQuery($satelliteId: String, $facilityId: String) {
+  pipelinesById(satelliteId: $satelliteId, facilityId: $facilityId) {
+    id
+    createdAt
+    license
+    segment
+    substance
+    from
+    fromFeature
+    to
+    toFeature
+    status
+    length
+    type
+    grade
+    outsideDiameter
+    wallThickness
+    material
+    mop
+    internalProtection
+    satellite {
+      id
+      facility {
+        id
+      }
+    }
+    injectionPoints {
+      id
+      source
+      oil
+      gas
+      water
+    }
+  }
+}
+
+query allInjectionPointsQuery {
+    allInjectionPoints {
+      id
+      source
+      pipeline {
+        id
+        license
+        segment
+      }
+      satellite {
+        id
+        name
+        facility {
+          id
+          name
+        }
+      }
+    }
+  }

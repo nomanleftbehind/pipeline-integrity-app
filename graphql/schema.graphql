@@ -13,11 +13,6 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
-type Edge {
-  cursor: String
-  node: Pipeline
-}
-
 type Facility {
   createdAt: DateTime!
   createdBy: User!
@@ -56,6 +51,22 @@ enum FromToFeatureEnum {
   StorageTank
   UndergroundCapOrTieIn
   Well
+}
+
+type FromToFeatureEnumObject {
+  Battery: String!
+  BlindEnd: String!
+  CompressorStation: String!
+  GasProcessingPlant: String!
+  Header: String!
+  InjectionPlant: String!
+  MeterStation: String!
+  Pipeline: String!
+  PumpStation: String!
+  Satellite: String!
+  StorageTank: String!
+  UndergroundCapOrTieIn: String!
+  Well: String!
 }
 
 enum GradeEnum {
@@ -100,6 +111,48 @@ enum GradeEnum {
   GradeX52
 }
 
+type GradeEnumObject {
+  Grade5: String!
+  Grade9: String!
+  Grade11: String!
+  Grade17: String!
+  Grade25: String!
+  Grade35: String!
+  Grade150: String!
+  Grade155: String!
+  Grade200: String!
+  Grade241: String!
+  Grade300: String!
+  Grade800: String!
+  Grade810: String!
+  Grade900: String!
+  Grade1000: String!
+  Grade1103: String!
+  Grade1200: String!
+  Grade1250: String!
+  Grade2010: String!
+  Grade2250: String!
+  Grade2411: String!
+  Grade2413: String!
+  Grade2500: String!
+  Grade2750: String!
+  Grade2901: String!
+  Grade2902: String!
+  Grade3591: String!
+  Grade3592: String!
+  Grade3593: String!
+  GradeA: String!
+  GradeB: String!
+  GradeBW1: String!
+  GradeJ55: String!
+  GradeT1A: String!
+  GradeT1B: String!
+  GradeT4: String!
+  GradeT4A: String!
+  GradeX42: String!
+  GradeX52: String!
+}
+
 type InjectionPoint {
   createdAt: DateTime!
   createdBy: User!
@@ -141,6 +194,15 @@ enum InternalProtectionEnum {
   Unknown
 }
 
+type InternalProtectionEnumObject {
+  Cement: String!
+  ExpandedPolyethylene: String!
+  FreeStandingSlipLined: String!
+  ThinFilm: String!
+  Uncoated: String!
+  Unknown: String!
+}
+
 enum MaterialEnum {
   Aluminum
   AsbestosCement
@@ -151,6 +213,18 @@ enum MaterialEnum {
   PolyvinylChloride
   Steel
   Unknown
+}
+
+type MaterialEnumObject {
+  Aluminum: String!
+  AsbestosCement: String!
+  CelluloseAcetateButyrate: String!
+  Composite: String!
+  Fiberglass: String!
+  Polyethylene: String!
+  PolyvinylChloride: String!
+  Steel: String!
+  Unknown: String!
 }
 
 type Mutation {
@@ -165,11 +239,6 @@ type Mutation {
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
   login(email: String!, password: String!): AuthPayload
   signup(email: String!, firstName: String!, lastName: String!, password: String!): AuthPayload
-}
-
-type PageInfo {
-  endCursor: String
-  hasNextPage: Boolean
 }
 
 type Pipeline {
@@ -236,11 +305,7 @@ type Query {
   me: User
   pipelinesById(facilityId: String, satelliteId: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
-}
-
-type Response {
-  edges: [Edge]
-  pageInfo: PageInfo
+  validators: Validator
 }
 
 enum Role {
@@ -282,6 +347,18 @@ enum StatusEnum {
   ToBeConstructed
 }
 
+type StatusEnumObject {
+  Abandoned: String!
+  Active: String!
+  Cancelled: String!
+  Discontinued: String!
+  New: String!
+  NotConstructed: String!
+  Operating: String!
+  Removed: String!
+  ToBeConstructed: String!
+}
+
 enum SubstanceEnum {
   CrudeOil
   FreshWater
@@ -291,6 +368,17 @@ enum SubstanceEnum {
   OilWellEffluent
   SaltWater
   SourNaturalGas
+}
+
+type SubstanceEnumObject {
+  CrudeOil: String!
+  FreshWater: String!
+  FuelGas: String!
+  LVPProducts: String!
+  NaturalGas: String!
+  OilWellEffluent: String!
+  SaltWater: String!
+  SourNaturalGas: String!
 }
 
 enum TypeEnum {
@@ -322,6 +410,35 @@ enum TypeEnum {
   TypeZ2453
 }
 
+type TypeEnumObject {
+  Type5A: String!
+  Type5L: String!
+  Type5LX: String!
+  Type515: String!
+  Type2306: String!
+  Type3406: String!
+  Type3408: String!
+  Type6063: String!
+  Type6351: String!
+  TypeA53: String!
+  TypeA106: String!
+  TypeA120: String!
+  TypeAMERON: String!
+  TypeB5IS: String!
+  TypeB51S: String!
+  TypeB515: String!
+  TypeCENTRON: String!
+  TypeCIBA: String!
+  TypeFSLP: String!
+  TypeREDTHR: String!
+  TypeSMITH: String!
+  TypeSTAR: String!
+  TypeTBS: String!
+  TypeWSLP: String!
+  TypeZ2451: String!
+  TypeZ2453: String!
+}
+
 type User {
   email: String!
   facilities: [Facility]
@@ -347,4 +464,18 @@ input UserCreateInput {
 input UserUniqueInput {
   email: String
   id: String
+}
+
+type Validator {
+  fromToFeatureEnum: FromToFeatureEnumObject!
+  fromToMatchPattern: String!
+  gradeEnum: GradeEnumObject!
+  internalProtectionEnum: InternalProtectionEnumObject!
+  lengthMatchPattern: String!
+  licenseMatchPattern: String!
+  materialEnum: MaterialEnumObject!
+  segmentMatchPattern: String!
+  statusEnum: StatusEnumObject!
+  substanceEnum: SubstanceEnumObject!
+  typeEnum: TypeEnumObject!
 }

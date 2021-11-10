@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useContext } from 'react';
 import { UserContext } from '../pages/_app';
+import DropDown from './Dropdown';
 import styles from './sidebar.module.css';
 
 export default function ManuBar() {
@@ -16,7 +17,7 @@ export default function ManuBar() {
           <a>Home</a>
         </Link>
         </li>
-        {user && (
+        {!user && (
           <li>
             <Link href="/login">
               <a>Login</a>
@@ -31,6 +32,11 @@ export default function ManuBar() {
               </Link>
             </li>
             <li>
+              <Link href="/prettyPipelines">
+                <a>Pretty Pipelines</a>
+              </Link>
+            </li>
+            <li>
               <Link href="/satellites">
                 <a>Satellites</a>
               </Link>
@@ -39,6 +45,9 @@ export default function ManuBar() {
               <Link href="/facilities">
                 <a>Facilities</a>
               </Link>
+            </li>
+            <li>
+              <DropDown />
             </li>
           </>
         )

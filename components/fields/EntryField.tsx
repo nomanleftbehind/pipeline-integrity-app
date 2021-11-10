@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import EditIcon from '../svg/edit-icon';
-import CancelIcon from '../svg/cancel-icon';
-import OkIcon from '../svg/ok-icon';
-import { IPipelineProperties, IPipelinePropertiesValidators } from '../rows/PipelineData';
+import TableCell from '@mui/material/TableCell';
+import IconButton from '@mui/material/IconButton';
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import { IPipelineProperties, IPipelinePropertiesValidators } from '../rows/PipelineData2';
 
 
 type Record = IPipelineProperties[keyof IPipelineProperties];
@@ -11,11 +13,10 @@ interface ITextFieldProps {
   id: string;
   record: Record;
   columnName: string;
-  validator: IPipelinePropertiesValidators;
-  // fetchPipelines: () => void
+  validator: string | string[] | number[];
 }
 
-export default function TextField({ id, record, columnName, validator/*, fetchPipelines*/ }: ITextFieldProps): JSX.Element {
+export default function TextField({ id, record, columnName, validator }: ITextFieldProps): JSX.Element {
   const [edit, setEdit] = useState<boolean>(false);
   const [state, setState] = useState<string>(record ? record.toString() : "");
 
@@ -66,11 +67,13 @@ export default function TextField({ id, record, columnName, validator/*, fetchPi
   };
 
   return (
-    <td className="MuiTableCell-root MuiTableCell-body  MuiTableCell-sizeSmall MuiTableCell-alignRight">
+    <TableCell>
       <div className="cell-wrapper">
-        <div className="cell-r">
-          <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={toggleEdit}>{edit ? <CancelIcon /> : <EditIcon />}</button>
-        </div>
+        {<div className="cell-r">
+          <IconButton aria-label="edit cell" size="small" onClick={toggleEdit}>
+            {edit ? <BlockOutlinedIcon /> : <EditOutlinedIcon />}
+          </IconButton>
+        </div>}
         {edit ?
           <form className="cell-l" name={state} onSubmit={handleSubmit}>
             <div className="form-l">
@@ -89,13 +92,15 @@ export default function TextField({ id, record, columnName, validator/*, fetchPi
                 </select>}
             </div>
             <div className="form-r">
-              <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" type="submit" disabled={!validateForm()}><OkIcon /></button>
+              <IconButton aria-label="submit cell" size="small" type="submit" disabled={!validateForm()}>
+                <CheckCircleOutlineIcon />
+              </IconButton>
             </div>
           </form> :
           <div className="cell-l">
             <div>{record}</div>
           </div>}
       </div>
-    </td>
+    </TableCell>
   );
 }

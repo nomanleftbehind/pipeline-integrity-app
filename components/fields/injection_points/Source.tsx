@@ -1,14 +1,16 @@
 import { useState } from 'react';
+import IconButton from '@mui/material/IconButton';
+import TableCell from '@mui/material/TableCell';
 import InjectionPointForm from './InjectionPointForm';
-import RemoveIcon from '../../svg/remove-pipeline';
-import EditIcon from '../../svg/edit-icon';
-import CancelIcon from '../../svg/cancel-icon';
-import { IInjectionPointQuery } from '../../../pages/pipelines';
+import { IInjectionPointOptions } from '../../rows/RenderPipeline2';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
 interface ISourceProps {
   injectionPointId: string;
   source: string;
-  injectionPointOptions: IInjectionPointQuery[] | undefined;
+  injectionPointOptions: IInjectionPointOptions;
   handleSubmit: (newInjectionPointId: string, oldInjectionPointId: string) => void;
   deleteInjectionPoint: () => void;
 }
@@ -26,15 +28,17 @@ export default function Source({ injectionPointId, source, injectionPointOptions
   }
 
   return (
-    <th className="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall" role="cell" scope="row">
+    <TableCell component="th" scope="row">
       <div className="cell-wrapper">
         <div className="cell-r">
-          <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={toggleShowForm}>{showForm ? <CancelIcon /> : <EditIcon />}</button>
+          <IconButton aria-label="show form" size="small" onClick={toggleShowForm} type="button">
+            {showForm ? <BlockOutlinedIcon /> : <EditOutlinedIcon />}
+          </IconButton>
         </div>
         <div className="cell-fr">
-          <button className="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall" onClick={deleteInjectionPoint} type="button">
-            <RemoveIcon />
-          </button>
+          <IconButton aria-label="delete injection point" size="small" onClick={deleteInjectionPoint} type="button">
+            <DeleteOutlineOutlinedIcon />
+          </IconButton>
         </div>
         {showForm ?
           <InjectionPointForm
@@ -44,6 +48,6 @@ export default function Source({ injectionPointId, source, injectionPointOptions
           /> :
           <div className="cell-l no-wrap">{source}</div>}
       </div>
-    </th>
+    </TableCell>
   );
 }

@@ -74,9 +74,10 @@ export default function RenderPipeline({ ppl_idx, pipeline, injectionPointOption
     refetchQueries: [PIPELINES_BY_ID_QUERY, 'pipelinesByIdQuery']
   })
 
-  // useEffect(() => {
-  //   console.log(data);
-  // }, [data])
+  useEffect(() => {
+    console.log(pipeline);
+  }, [])
+  
 
   function showModalDeletePipeline() {
     setShowDeletePipelineModal(true);

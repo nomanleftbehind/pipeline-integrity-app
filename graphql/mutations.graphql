@@ -14,3 +14,38 @@ mutation Login($email: String!, $password: String!) {
     }
   }
 }
+
+mutation deletePipeline($id: String!) {
+  deletePipeline(id: $id) {
+    id
+    license
+    segment
+  }
+}
+
+mutation duplicatePipeline($id: String!) {
+duplicatePipeline(id: $id) {
+  id
+  license
+  segment
+}
+}
+
+mutation deleteInjectionPointFromPipeline($id: String!) {
+deleteInjectionPointFromPipeline(id: $id) {
+  id
+  source
+}
+}
+
+mutation changeInjectionPointToPipeline($id: String!, $pipelineId: String) {
+editInjectionPoint(id: $id, pipelineId: $pipelineId) {
+  id
+  source
+  pipeline {
+    id
+    license
+    segment
+  }
+}
+}
