@@ -1,7 +1,6 @@
 import InjectionPoints from '../fields/injection_points/InjectionPoints';
 import PipelineProperties2 from '../fields/PipelineProperties2';
-import { IPipeline, IInjectionPointOptions } from './RenderPipeline2';
-import { IValidators } from '../../pages/prettyPipelines';
+import { IPipeline, IInjectionPointOptions, IValidators } from './RenderPipeline2';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 
@@ -18,10 +17,24 @@ export default function PipelineData({ open, pipeline, validators, isEven, injec
 
   const { id, createdAt, license, segment, substance, from, fromFeature, to, toFeature, injectionPoints, status, length, type, grade, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
 
-  const { license: valLicense, segment: valSegment, substance: valSubstance, fromTo: valFromTo, fromToFeature: valFromToFeature, status: valStatus, length: valLength, type: valType, grade: valGrade, outsideDiameter: valOutsideDiameter, wallThickness: valWallThickness, material: valMaterial, mop: valMop, internalProtection: valInternalProtection } = validators;
+  const { licenseMatchPattern, segmentMatchPattern, substanceEnum, fromToMatchPattern, fromToFeatureEnum, statusEnum, lengthMatchPattern, typeEnum, gradeEnum, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
 
-  const pipeline_properties = { length, type, grade, outsideDiameter, wallThickness, material, mop, internalProtection } as Partial<IPipeline>;
-  const pipeline_properties_validators = [valLength, valType, valGrade, valOutsideDiameter, valWallThickness, valMaterial, valMop, valInternalProtection];
+  // const pipeline_properties = { length, type, grade, outsideDiameter, wallThickness, material, mop, internalProtection } as Partial<IPipeline>;
+  // const pipeline_properties_validators = [valLength, valType, valGrade, valOutsideDiameter, valWallThickness, valMaterial, valMop, valInternalProtection];
+  // const pipeline_properties_validators = [lengthMatchPattern, typeEnum, gradeEnum, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum];
+
+  const pipeline_properties = [
+    [{ length }, lengthMatchPattern],
+    [{ type }, typeEnum],
+    [{ grade }, gradeEnum],
+    [{ outsideDiameter }, outsideDiameterMatchPattern],
+    [{ wallThickness }, wallThicknessMatchPattern],
+    [{ material }, materialEnum],
+    [{ mop }, mopMatchPattern],
+    [{ internalProtection }, internalProtectionEnum]
+  ];
+
+  type a = typeof pipeline_properties
 
   return (
     <TableRow data-target={"pipeline index is " + isEven}>
@@ -37,7 +50,6 @@ export default function PipelineData({ open, pipeline, validators, isEven, injec
         id={id}
         properties_name="Mechanical Properties"
         pipeline_properties={pipeline_properties}
-        pipeline_properties_validators={pipeline_properties_validators}
       />
     </TableRow>
   );

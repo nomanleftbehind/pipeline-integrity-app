@@ -8,18 +8,40 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { IPipeline } from '../rows/RenderPipeline2';
+import { IPipeline, IValidators } from '../rows/RenderPipeline2';
+
+type ab = Partial<IPipeline>
 
 interface IPipelinePropertiesProps {
   open: boolean;
   id: string;
   properties_name: string;
-  pipeline_properties: Partial<IPipeline>;
-  pipeline_properties_validators: (string | string[] | number[])[];
+  pipeline_properties: a
 }
 
+type a = (
+  (string | { length: number; } | undefined)[] |
+  (string | { outsideDiameter: number | null | undefined; } | undefined)[] |
+  (string | { wallThickness: number | null | undefined; } | undefined)[] |
+  ({
+    __typename?: "MaterialEnumObject" | undefined;
+    Steel: string;
+    PolyvinylChloride: string;
+    Composite: string;
+    Fiberglass: string;
+    Aluminum: string;
+    Polyethylene: string;
+    CelluloseAcetateButyrate: string;
+    Unknown: string;
+    AsbestosCement: string;
+} | {} | undefined)[]
 
-export default function PipelineProperties({ open, id, properties_name, pipeline_properties, pipeline_properties_validators }: IPipelinePropertiesProps): JSX.Element {
+)[]
+
+
+
+
+export default function PipelineProperties({ open, id, properties_name, pipeline_properties }: IPipelinePropertiesProps): JSX.Element {
 
   return (
     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={2}>
@@ -36,8 +58,8 @@ export default function PipelineProperties({ open, id, properties_name, pipeline
               </TableRow>
             </TableHead>
             <TableBody>
-              {Object.entries(pipeline_properties).map(([columnName, record], index) => {
-                const validator = pipeline_properties_validators[index];
+              {pipeline_properties.map(([property, validator]) => {
+                const [[columnName, record]] = Object.entries(property)
                 return (
                   <TableRow key={columnName}>
                     <TableCell>{columnName}</TableCell>

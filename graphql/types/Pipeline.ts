@@ -351,7 +351,11 @@ export const PipelineQuery = extendType({
       resolve: async (_parent, args, ctx: Context) => {
         if (args.satelliteId) {
           return ctx.prisma.pipeline.findMany({
-            where: { satelliteId: args.satelliteId }
+            where: { satelliteId: args.satelliteId },
+            orderBy: [
+              { license: 'asc' },
+              { segment: 'asc' }
+            ]
           })
         } else if (args.facilityId) {
           return ctx.prisma.pipeline.findMany({
@@ -359,10 +363,19 @@ export const PipelineQuery = extendType({
               satellite: {
                 facilityId: args.facilityId
               }
-            }
+            },
+            orderBy: [
+              { license: 'asc' },
+              { segment: 'asc' }
+            ]
           })
         } else {
-          return ctx.prisma.pipeline.findMany()
+          return ctx.prisma.pipeline.findMany({
+            orderBy: [
+              { license: 'asc' },
+              { segment: 'asc' }
+            ]
+          })
         }
       }
     })
@@ -426,7 +439,7 @@ export const PipelineMutation = extendType({
       type: Pipeline,
       args: {
         id: nonNull(stringArg()),
-        satelliteUniqueInput: arg({ type: SatelliteUniqueInput }),
+        satelliteId: stringArg(),
         license: stringArg(),
         segment: stringArg(),
         substance: arg({ type: SubstanceEnum }),
@@ -449,12 +462,7 @@ export const PipelineMutation = extendType({
           return ctx.prisma.pipeline.update({
             where: { id: args.id },
             data: {
-              satellite: args.satelliteUniqueInput ? {
-                connect: {
-                  id: args.satelliteUniqueInput.id || undefined,
-                  name: args.satelliteUniqueInput.name || undefined,
-                }
-              } : undefined,
+              satelliteId: args.satelliteId || undefined,
               license: args.license || undefined,
               segment: args.segment || undefined,
               substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance),
@@ -521,6 +529,9 @@ export const licenseMatchPattern = "^(AB|SK|BC)(\\d{5}|\\d{6})$";
 export const segmentMatchPattern = "^((UL)(\\d{1,2})|(\\d{1,3}))$";
 export const fromToMatchPattern = "^((\\d{2}-\\d{2}-\\d{3}-\\d{2}W\\d{1})|([A-Z]{1}-\\d{3}-[A-Z]{1} \\d{3}-[A-Z]{1}-\\d{2}))$";
 export const lengthMatchPattern = "^\\d*\\.?\\d*$";
+export const wallThicknessMatchPattern = "^(\\d|1\\d|2[0-5])(\\.\\d{1,2})?$";
+export const mopMatchPattern = "^\\d{1,5}$"; // number between 0 and 99999
+export const outsideDiameterMatchPattern = "^4[3-9]$|^4[2-9]\\.[2-9]\\d?$|^([5-9]\\d)(\\.\\d\\d?)?$|^([1-2]\\d{2})(\\.\\d\\d?)?$|^(3[0-2][0-3])(\\.[0-8]\\d?)?$"; // number between 42.2 and 323.89
 
 export const SubstanceEnumObject = objectType({
   name: 'SubstanceEnumObject',
@@ -598,7 +609,10 @@ export const Validator = objectType({
     t.nonNull.string('lengthMatchPattern')
     t.nonNull.field('typeEnum', { type: 'TypeEnumObject' })
     t.nonNull.field('gradeEnum', { type: 'GradeEnumObject' })
+    t.nonNull.string('outsideDiameterMatchPattern')
+    t.nonNull.string('wallThicknessMatchPattern')
     t.nonNull.field('materialEnum', { type: 'MaterialEnumObject' })
+    t.nonNull.string('mopMatchPattern')
     t.nonNull.field('internalProtectionEnum', { type: 'InternalProtectionEnumObject' })
   }
 })
@@ -619,7 +633,10 @@ export const ValidatorQuery = extendType({
           lengthMatchPattern,
           typeEnum: TypeEnumMembers,
           gradeEnum: GradeEnumMembers,
+          outsideDiameterMatchPattern,
+          wallThicknessMatchPattern,
           materialEnum: MaterialEnumMembers,
+          mopMatchPattern,
           internalProtectionEnum: InternalProtectionEnumMembers,
         };
       }

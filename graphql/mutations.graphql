@@ -49,3 +49,11 @@ editInjectionPoint(id: $id, pipelineId: $pipelineId) {
   }
 }
 }
+
+mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $substance: SubstanceEnum, $from: String, $fromFeature: FromToFeatureEnum, $to: String, $toFeature: FromToFeatureEnum, $status: StatusEnum, $length: Float, $type: TypeEnum, $grade: GradeEnum, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum) {
+  editPipeline(id: $id, satelliteId: $satelliteId, license: $license, segment: $segment, substance: $substance, from: $from, fromFeature: $fromFeature, to: $to, toFeature: $toFeature, status: $status, length: $length, type: $type, grade: $grade, outsideDiameter: $outsideDiameter, wallThickness: $wallThickness, material: $material, mop: $mop, internalProtection: $internalProtection) {
+    id
+    license
+    segment
+  }
+}

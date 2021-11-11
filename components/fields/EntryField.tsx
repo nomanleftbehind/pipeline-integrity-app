@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { IPipelineProperties, IPipelinePropertiesValidators } from '../rows/PipelineData2';
+import { useEditPipelineMutation, PipelinesByIdQueryDocument } from '../../graphql/generated/graphql';
 
 
 type Record = IPipelineProperties[keyof IPipelineProperties];
@@ -18,51 +18,42 @@ interface ITextFieldProps {
 
 export default function TextField({ id, record, columnName, validator }: ITextFieldProps): JSX.Element {
   const [edit, setEdit] = useState<boolean>(false);
+  const [valid, setValid] = useState<boolean>(true);
   const [state, setState] = useState<string>(record ? record.toString() : "");
+
+  const [editPipeline, { data }] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
+
+  const validatorIsString = typeof validator === "string";
 
   const toggleEdit = (): void => {
     setEdit(!edit);
     setState(record ? record.toString() : "");
   }
 
-  const handleChange = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement>): void => {
-    setState(e.currentTarget.value);
-  };
-
-  const validateForm = (): boolean => {
-    console.log(state);
-    if (typeof validator === "string") {
-      const validator_regexp = new RegExp(validator)
-      return validator_regexp.test(state);
+  function validateForm() {
+    if (validatorIsString) {
+      const validator_regexp = new RegExp(validator);
+      const isValid = validator_regexp.test(state);
+      setValid(isValid)
     } else {
-      return true;
+      setValid(true);
     }
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  useEffect(() => { console.log(columnName, typeof state, typeof record, validatorIsString && typeof record === "number"); validateForm() }, [state]);
+
+  function handleChange(e: React.FormEvent<HTMLInputElement | HTMLSelectElement>) {
+    setState(e.currentTarget.value);
+  };
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    fetch("http://localhost:5002/pipeline/" + id + "/column", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ record: e.currentTarget.name, column: columnName }),
-    })
-      .then(response => {
-        if (!response.ok) {
-          console.log(response);
-          throw new Error('Network response was not ok');
-        } else {
-          // fetchPipelines();
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Success:', data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+    editPipeline({
+      variables: {
+        id: id,
+        [columnName]: validatorIsString && typeof record === "number" ? Number(e.currentTarget.name) : e.currentTarget.name
+      }
+    });
     toggleEdit();
   };
 
@@ -77,28 +68,26 @@ export default function TextField({ id, record, columnName, validator }: ITextFi
         {edit ?
           <form className="cell-l" name={state} onSubmit={handleSubmit}>
             <div className="form-l">
-              {typeof validator === "string" ?
+              {validatorIsString ?
                 <input
-                  className={validateForm() ? "valid" : "invalid"} type="text" autoComplete="off" name={columnName} value={state} onChange={handleChange}
+                  className={valid ? "valid" : "invalid"} type="text" autoComplete="off" name={columnName} value={state} onChange={handleChange}
                 /> :
                 <select name={columnName} value={state} onChange={handleChange}>
-                  {validator.map(option => {
-                    console.log(option);
-
+                  {Object.entries(validator).map(([serverEnum, dbEnum]) => {
                     return (
-                      <option key={option} value={option}>{option}</option>
+                      <option key={serverEnum} value={serverEnum}>{dbEnum}</option>
                     );
                   })}
                 </select>}
             </div>
             <div className="form-r">
-              <IconButton aria-label="submit cell" size="small" type="submit" disabled={!validateForm()}>
+              <IconButton aria-label="submit cell" size="small" type="submit" disabled={!valid}>
                 <CheckCircleOutlineIcon />
               </IconButton>
             </div>
           </form> :
           <div className="cell-l">
-            <div>{record}</div>
+            <div>{validatorIsString ? record : validator[record]}</div>
           </div>}
       </div>
     </TableCell>

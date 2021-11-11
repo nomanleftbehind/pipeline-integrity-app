@@ -9,10 +9,11 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 
-import { useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation, PipelinesByIdQueryQuery, AllInjectionPointsQueryQuery } from '../../graphql/generated/graphql';
-import { IValidators } from '../../pages/prettyPipelines';
+import { useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation, PipelinesByIdQueryQuery, GetValidatorsQuery, AllInjectionPointsQueryQuery } from '../../graphql/generated/graphql';
 
 export type IPipeline = PipelinesByIdQueryQuery['pipelinesById'] extends (infer U)[] | null | undefined ? NonNullable<U> : never;
+
+export type IValidators = GetValidatorsQuery['validators'];
 
 export type IInjectionPointOptions = AllInjectionPointsQueryQuery['allInjectionPoints'];
 
@@ -53,7 +54,7 @@ export default function RenderPipeline2({ ppl_idx, pipeline, injectionPointOptio
 
   const { id, createdAt, license, segment, substance, from, fromFeature, to, toFeature, injectionPoints, status } = pipeline;
 
-  const { license: valLicense, segment: valSegment, substance: valSubstance, fromTo: valFromTo, fromToFeature: valFromToFeature, status: valStatus, length: valLength, type: valType, grade: valGrade, outsideDiameter: valOutsideDiameter, wallThickness: valWallThickness, material: valMaterial, mop: valMop, internalProtection: valInternalProtection } = validators;
+  // const { license: valLicense, segment: valSegment, substance: valSubstance, fromTo: valFromTo, fromToFeature: valFromToFeature, status: valStatus, length: valLength, type: valType, grade: valGrade, outsideDiameter: valOutsideDiameter, wallThickness: valWallThickness, material: valMaterial, mop: valMop, internalProtection: valInternalProtection } = validators;
 
   const modalDeletePipeline = showDeletePipelineModal ?
     <ModalDeletePipeline

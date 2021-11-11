@@ -3,15 +3,7 @@ import { applyMiddleware } from 'graphql-middleware';
 import { makeSchema } from 'nexus';
 import { join } from 'path';
 import * as types from './types';
-// import {FromToFeatureEnumObject, SubstanceEnumObject, Validator, ValidatorQuery} from './types/Validatorss';
 
-
-const printTypes = (type: typeof types) => {
-  console.log(type);
-  return type
-}
-
-const a = printTypes(types)
 
 export const schemaWithoutPermissions = makeSchema({
   types,

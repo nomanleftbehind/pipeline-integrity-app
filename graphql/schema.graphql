@@ -235,7 +235,7 @@ type Mutation {
   duplicatePipeline(id: String!): Pipeline
   editFacility(id: String!, name: String): Facility
   editInjectionPoint(firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineId: String, pvNodeId: String, pvUnitId: String, satelliteId: String, source: String, water: Float): InjectionPoint
-  editPipeline(from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, material: MaterialEnum, mop: Int, outsideDiameter: Float, satelliteUniqueInput: SatelliteUniqueInput, segment: String, status: StatusEnum, substance: SubstanceEnum, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float): Pipeline
+  editPipeline(from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, material: MaterialEnum, mop: Int, outsideDiameter: Float, satelliteId: String, segment: String, status: StatusEnum, substance: SubstanceEnum, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float): Pipeline
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
   login(email: String!, password: String!): AuthPayload
   signup(email: String!, firstName: String!, lastName: String!, password: String!): AuthPayload
@@ -474,8 +474,11 @@ type Validator {
   lengthMatchPattern: String!
   licenseMatchPattern: String!
   materialEnum: MaterialEnumObject!
+  mopMatchPattern: String!
+  outsideDiameterMatchPattern: String!
   segmentMatchPattern: String!
   statusEnum: StatusEnumObject!
   substanceEnum: SubstanceEnumObject!
   typeEnum: TypeEnumObject!
+  wallThicknessMatchPattern: String!
 }
