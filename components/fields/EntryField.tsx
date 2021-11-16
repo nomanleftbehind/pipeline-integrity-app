@@ -10,12 +10,12 @@ import { IValidator, IRecord } from '../fields/PipelineProperties2';
 
 interface ITextFieldProps {
   id: string;
-  record: IRecord;
   columnName: string;
+  record: IRecord;
   validator: IValidator;
 }
 
-export default function TextField({ id, record, columnName, validator }: ITextFieldProps): JSX.Element {
+export default function TextField({ id, columnName, record, validator }: ITextFieldProps): JSX.Element {
   const [edit, setEdit] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(true);
   const [state, setState] = useState<string>(record ? record.toString() : "");
@@ -74,11 +74,13 @@ export default function TextField({ id, record, columnName, validator }: ITextFi
                   className={valid ? "valid" : "invalid"} type="text" autoComplete="off" name={columnName} value={state} onChange={handleChange}
                 /> :
                 <select name={columnName} value={state} onChange={handleChange}>
-                  {Object.entries(validator).map(([serverEnum, dbEnum]) => {
-                    return (
-                      <option key={serverEnum} value={serverEnum}>{dbEnum}</option>
-                    );
-                  })}
+                  {validator ?
+                    Object.entries(validator).map(([serverEnum, dbEnum]) => {
+                      return (
+                        <option key={serverEnum} value={serverEnum}>{dbEnum}</option>
+                      );
+                    }) :
+                    null}
                 </select>}
             </div>
             <div className="form-r">
@@ -88,11 +90,15 @@ export default function TextField({ id, record, columnName, validator }: ITextFi
             </div>
           </form> :
           <div className="cell-l">
-            <div>{record ?
-              validatorIsString ?
-                record :
-                validator[recordAsKey] :
-              null}</div>
+            <div>
+              {record ?
+                validatorIsString ?
+                  record :
+                  validator ?
+                    validator[recordAsKey] :
+                    null :
+                null}
+            </div>
           </div>}
       </div>
     </TableCell>

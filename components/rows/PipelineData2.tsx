@@ -23,22 +23,30 @@ export default function PipelineData({ open, pipeline, validators, isEven, injec
   // const pipeline_properties_validators = [valLength, valType, valGrade, valOutsideDiameter, valWallThickness, valMaterial, valMop, valInternalProtection];
   // const pipeline_properties_validators = [lengthMatchPattern, typeEnum, gradeEnum, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum];
 
+  // const mechanical_properties = [
+  //   [{ length }, lengthMatchPattern],
+  //   [{ type }, typeEnum],
+  //   [{ grade }, gradeEnum],
+  //   [{ outsideDiameter }, outsideDiameterMatchPattern],
+  //   [{ wallThickness }, wallThicknessMatchPattern],
+  //   [{ material }, materialEnum],
+  //   [{ mop }, mopMatchPattern],
+  //   [{ internalProtection }, internalProtectionEnum]
+  // ];
+
   const mechanical_properties = [
-    [{ length }, lengthMatchPattern],
-    [{ type }, typeEnum],
-    [{ grade }, gradeEnum],
-    [{ outsideDiameter }, outsideDiameterMatchPattern],
-    [{ wallThickness }, wallThicknessMatchPattern],
-    [{ material }, materialEnum],
-    [{ mop }, mopMatchPattern],
-    [{ internalProtection }, internalProtectionEnum]
+    { columnName: 'length', record: length, validator: lengthMatchPattern },
+    { columnName: 'type', record: type, validator: typeEnum },
+    { columnName: 'grade', record: grade, validator: gradeEnum },
+    { columnName: 'outsideDiameter', record: outsideDiameter, validator: outsideDiameterMatchPattern },
+    { columnName: 'wallThickness', record: wallThickness, validator: wallThicknessMatchPattern },
+    { columnName: 'material', record: material, validator: materialEnum },
+    { columnName: 'mop', record: mop, validator: mopMatchPattern },
+    { columnName: 'internalProtection', record: internalProtection, validator: internalProtectionEnum }
   ];
 
-  mechanical_properties.map(([property, validator]) => {
-    if (property) {
-      const [[columnName, record]] = Object.entries(property) as [[string, typeof lengthMatchPattern | typeof typeEnum]]
-      console.log('columnName:', columnName, ', record:', record, ', validator:', validator);
-    }
+  mechanical_properties.map(({columnName, record, validator}) => {
+
     return (
       'a'
     );
