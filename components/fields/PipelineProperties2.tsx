@@ -7,38 +7,56 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-
 import { IPipeline, IValidators } from '../rows/RenderPipeline2';
 
-type ab = Partial<IPipeline>
+
+type mechanical_property = (
+  ({ length: IPipeline['length'] } | NonNullable<IValidators>['lengthMatchPattern'] | undefined)[] |
+  ({ type: IPipeline['type'] } | NonNullable<IValidators>['typeEnum'] | undefined)[] |
+  ({ grade: IPipeline['grade'] } | NonNullable<IValidators>['gradeEnum'] | undefined)[] |
+  ({ outsideDiameter: IPipeline['outsideDiameter'] } | NonNullable<IValidators>['outsideDiameterMatchPattern'] | undefined)[] |
+  ({ wallThickness: IPipeline['wallThickness'] } | NonNullable<IValidators>['wallThicknessMatchPattern'] | undefined)[] |
+  ({ material: IPipeline['material'] } | NonNullable<IValidators>['materialEnum'] | undefined)[] |
+  ({ mop: IPipeline['mop'] } | NonNullable<IValidators>['mopMatchPattern'] | undefined)[] |
+  ({ internalProtection: IPipeline['internalProtection'] } | NonNullable<IValidators>['internalProtectionEnum'] | undefined)[]
+)
+
+type IProperty =
+  { length: IPipeline['length'] } |
+  { type: IPipeline['type'] } |
+  { grade: IPipeline['grade'] } |
+  { outsideDiameter: IPipeline['outsideDiameter'] } |
+  { wallThickness: IPipeline['wallThickness'] } |
+  { material: IPipeline['material'] } |
+  { mop: IPipeline['mop'] } |
+  { internalProtection: IPipeline['internalProtection'] }
+
+type IRecord =
+  IPipeline['length'] |
+  IPipeline['type'] |
+  IPipeline['grade'] |
+  IPipeline['outsideDiameter'] |
+  IPipeline['wallThickness'] |
+  IPipeline['material'] |
+  IPipeline['mop'] |
+  IPipeline['internalProtection']
+
+export type IValidator =
+  NonNullable<IValidators>['lengthMatchPattern'] |
+  NonNullable<IValidators>['typeEnum'] |
+  NonNullable<IValidators>['gradeEnum'] |
+  NonNullable<IValidators>['outsideDiameterMatchPattern'] |
+  NonNullable<IValidators>['wallThicknessMatchPattern'] |
+  NonNullable<IValidators>['materialEnum'] |
+  NonNullable<IValidators>['mopMatchPattern'] |
+  NonNullable<IValidators>['internalProtectionEnum']
 
 interface IPipelinePropertiesProps {
   open: boolean;
   id: string;
   properties_name: string;
-  pipeline_properties: a
+  pipeline_properties: mechanical_property[]
 }
-
-type a = (
-  (string | { length: number; } | undefined)[] |
-  (string | { outsideDiameter: number | null | undefined; } | undefined)[] |
-  (string | { wallThickness: number | null | undefined; } | undefined)[] |
-  ({
-    __typename?: "MaterialEnumObject" | undefined;
-    Steel: string;
-    PolyvinylChloride: string;
-    Composite: string;
-    Fiberglass: string;
-    Aluminum: string;
-    Polyethylene: string;
-    CelluloseAcetateButyrate: string;
-    Unknown: string;
-    AsbestosCement: string;
-} | {} | undefined)[]
-
-)[]
-
-
 
 
 export default function PipelineProperties({ open, id, properties_name, pipeline_properties }: IPipelinePropertiesProps): JSX.Element {
@@ -58,8 +76,9 @@ export default function PipelineProperties({ open, id, properties_name, pipeline
               </TableRow>
             </TableHead>
             <TableBody>
-              {pipeline_properties.map(([property, validator]) => {
-                const [[columnName, record]] = Object.entries(property)
+              {pipeline_properties.map(pipeline_property => {
+                const [property, validator] = pipeline_property as [IProperty, IValidator]
+                const [[columnName, record]] = Object.entries(property) as [[string, IRecord]]
                 return (
                   <TableRow key={columnName}>
                     <TableCell>{columnName}</TableCell>

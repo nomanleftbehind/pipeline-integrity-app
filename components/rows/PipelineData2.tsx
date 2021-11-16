@@ -23,7 +23,7 @@ export default function PipelineData({ open, pipeline, validators, isEven, injec
   // const pipeline_properties_validators = [valLength, valType, valGrade, valOutsideDiameter, valWallThickness, valMaterial, valMop, valInternalProtection];
   // const pipeline_properties_validators = [lengthMatchPattern, typeEnum, gradeEnum, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum];
 
-  const pipeline_properties = [
+  const mechanical_properties = [
     [{ length }, lengthMatchPattern],
     [{ type }, typeEnum],
     [{ grade }, gradeEnum],
@@ -34,7 +34,15 @@ export default function PipelineData({ open, pipeline, validators, isEven, injec
     [{ internalProtection }, internalProtectionEnum]
   ];
 
-  type a = typeof pipeline_properties
+  mechanical_properties.map(([property, validator]) => {
+    if (property) {
+      const [[columnName, record]] = Object.entries(property) as [[string, typeof lengthMatchPattern | typeof typeEnum]]
+      console.log('columnName:', columnName, ', record:', record, ', validator:', validator);
+    }
+    return (
+      'a'
+    );
+  })
 
   return (
     <TableRow data-target={"pipeline index is " + isEven}>
@@ -49,7 +57,7 @@ export default function PipelineData({ open, pipeline, validators, isEven, injec
         open={open}
         id={id}
         properties_name="Mechanical Properties"
-        pipeline_properties={pipeline_properties}
+        pipeline_properties={mechanical_properties}
       />
     </TableRow>
   );

@@ -5,21 +5,22 @@ import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { useEditPipelineMutation, PipelinesByIdQueryDocument } from '../../graphql/generated/graphql';
+import { IValidator, IRecord } from '../fields/PipelineProperties2';
 
-
-type Record = IPipelineProperties[keyof IPipelineProperties];
 
 interface ITextFieldProps {
   id: string;
-  record: Record;
+  record: IRecord;
   columnName: string;
-  validator: string | string[] | number[];
+  validator: IValidator;
 }
 
 export default function TextField({ id, record, columnName, validator }: ITextFieldProps): JSX.Element {
   const [edit, setEdit] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(true);
   const [state, setState] = useState<string>(record ? record.toString() : "");
+
+  const recordAsKey = record as keyof typeof validator;
 
   const [editPipeline, { data }] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
 
@@ -87,7 +88,11 @@ export default function TextField({ id, record, columnName, validator }: ITextFi
             </div>
           </form> :
           <div className="cell-l">
-            <div>{validatorIsString ? record : validator[record]}</div>
+            <div>{record ?
+              validatorIsString ?
+                record :
+                validator[recordAsKey] :
+              null}</div>
           </div>}
       </div>
     </TableCell>
