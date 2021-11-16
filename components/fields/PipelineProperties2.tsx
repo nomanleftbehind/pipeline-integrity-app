@@ -31,7 +31,7 @@ type IProperty =
   { mop: IPipeline['mop'] } |
   { internalProtection: IPipeline['internalProtection'] }
 
-type IRecord =
+export type IRecord =
   IPipeline['length'] |
   IPipeline['type'] |
   IPipeline['grade'] |
