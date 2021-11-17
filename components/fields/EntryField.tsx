@@ -26,6 +26,12 @@ export default function TextField({ id, columnName, record, validator }: ITextFi
 
   const validatorIsString = typeof validator === "string";
 
+  // if (!validatorIsString && validator) {
+  //   if (validator.__typename) {
+  //     delete validator.__typename;
+  //   }
+  // }
+
   const toggleEdit = (): void => {
     setEdit(!edit);
     setState(record ? record.toString() : "");

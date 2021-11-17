@@ -17,14 +17,12 @@ export type Scalars = {
 };
 
 export type AuthPayload = {
-  __typename?: 'AuthPayload';
   errors?: Maybe<Array<Maybe<FieldError>>>;
   token?: Maybe<Scalars['String']>;
   user?: Maybe<User>;
 };
 
 export type Facility = {
-  __typename?: 'Facility';
   createdAt: Scalars['DateTime'];
   createdBy: User;
   id: Scalars['String'];
@@ -44,7 +42,6 @@ export type FacilityUniqueInput = {
 };
 
 export type FieldError = {
-  __typename?: 'FieldError';
   field?: Maybe<Scalars['String']>;
   message?: Maybe<Scalars['String']>;
 };
@@ -66,7 +63,6 @@ export enum FromToFeatureEnum {
 }
 
 export type FromToFeatureEnumObject = {
-  __typename?: 'FromToFeatureEnumObject';
   Battery: Scalars['String'];
   BlindEnd: Scalars['String'];
   CompressorStation: Scalars['String'];
@@ -125,7 +121,6 @@ export enum GradeEnum {
 }
 
 export type GradeEnumObject = {
-  __typename?: 'GradeEnumObject';
   Grade5: Scalars['String'];
   Grade9: Scalars['String'];
   Grade11: Scalars['String'];
@@ -168,7 +163,6 @@ export type GradeEnumObject = {
 };
 
 export type InjectionPoint = {
-  __typename?: 'InjectionPoint';
   createdAt: Scalars['DateTime'];
   createdBy: User;
   firstInjection?: Maybe<Scalars['DateTime']>;
@@ -210,7 +204,6 @@ export enum InternalProtectionEnum {
 }
 
 export type InternalProtectionEnumObject = {
-  __typename?: 'InternalProtectionEnumObject';
   Cement: Scalars['String'];
   ExpandedPolyethylene: Scalars['String'];
   FreeStandingSlipLined: Scalars['String'];
@@ -232,7 +225,6 @@ export enum MaterialEnum {
 }
 
 export type MaterialEnumObject = {
-  __typename?: 'MaterialEnumObject';
   Aluminum: Scalars['String'];
   AsbestosCement: Scalars['String'];
   CelluloseAcetateButyrate: Scalars['String'];
@@ -245,7 +237,6 @@ export type MaterialEnumObject = {
 };
 
 export type Mutation = {
-  __typename?: 'Mutation';
   createFacility?: Maybe<Facility>;
   deleteInjectionPointFromPipeline?: Maybe<InjectionPoint>;
   deletePipeline?: Maybe<Pipeline>;
@@ -351,7 +342,6 @@ export type MutationSignupArgs = {
 };
 
 export type Pipeline = {
-  __typename?: 'Pipeline';
   createdAt: Scalars['DateTime'];
   createdBy: User;
   downstream?: Maybe<Array<Maybe<Pipeline>>>;
@@ -408,7 +398,6 @@ export type PipelineUniqueInput = {
 };
 
 export type Query = {
-  __typename?: 'Query';
   allFacilities?: Maybe<Array<Maybe<Facility>>>;
   allInjectionPoints?: Maybe<Array<Maybe<InjectionPoint>>>;
   allSatellites?: Maybe<Array<Maybe<Satellite>>>;
@@ -436,7 +425,6 @@ export enum Role {
 }
 
 export type Satellite = {
-  __typename?: 'Satellite';
   createdAt: Scalars['DateTime'];
   createdBy: User;
   facility?: Maybe<Facility>;
@@ -471,7 +459,6 @@ export enum StatusEnum {
 }
 
 export type StatusEnumObject = {
-  __typename?: 'StatusEnumObject';
   Abandoned: Scalars['String'];
   Active: Scalars['String'];
   Cancelled: Scalars['String'];
@@ -495,7 +482,6 @@ export enum SubstanceEnum {
 }
 
 export type SubstanceEnumObject = {
-  __typename?: 'SubstanceEnumObject';
   CrudeOil: Scalars['String'];
   FreshWater: Scalars['String'];
   FuelGas: Scalars['String'];
@@ -536,7 +522,6 @@ export enum TypeEnum {
 }
 
 export type TypeEnumObject = {
-  __typename?: 'TypeEnumObject';
   Type5A: Scalars['String'];
   Type5L: Scalars['String'];
   Type5LX: Scalars['String'];
@@ -566,7 +551,6 @@ export type TypeEnumObject = {
 };
 
 export type User = {
-  __typename?: 'User';
   email: Scalars['String'];
   facilities?: Maybe<Array<Maybe<Facility>>>;
   firstName: Scalars['String'];
@@ -594,7 +578,6 @@ export type UserUniqueInput = {
 };
 
 export type Validator = {
-  __typename?: 'Validator';
   fromToFeatureEnum: FromToFeatureEnumObject;
   fromToMatchPattern: Scalars['String'];
   gradeEnum: GradeEnumObject;
@@ -617,28 +600,28 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'AuthPayload', token?: string | null | undefined, user?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, role: Role } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field?: string | null | undefined, message?: string | null | undefined } | null | undefined> | null | undefined } | null | undefined };
+export type LoginMutation = { login?: { token?: string | null | undefined, user?: { id: string, email: string, firstName: string, lastName: string, role: Role } | null | undefined, errors?: Array<{ field?: string | null | undefined, message?: string | null | undefined } | null | undefined> | null | undefined } | null | undefined };
 
 export type DeletePipelineMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type DeletePipelineMutation = { __typename?: 'Mutation', deletePipeline?: { __typename?: 'Pipeline', id: string, license: string, segment: string } | null | undefined };
+export type DeletePipelineMutation = { deletePipeline?: { id: string, license: string, segment: string } | null | undefined };
 
 export type DuplicatePipelineMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type DuplicatePipelineMutation = { __typename?: 'Mutation', duplicatePipeline?: { __typename?: 'Pipeline', id: string, license: string, segment: string } | null | undefined };
+export type DuplicatePipelineMutation = { duplicatePipeline?: { id: string, license: string, segment: string } | null | undefined };
 
 export type DeleteInjectionPointFromPipelineMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type DeleteInjectionPointFromPipelineMutation = { __typename?: 'Mutation', deleteInjectionPointFromPipeline?: { __typename?: 'InjectionPoint', id: string, source: string } | null | undefined };
+export type DeleteInjectionPointFromPipelineMutation = { deleteInjectionPointFromPipeline?: { id: string, source: string } | null | undefined };
 
 export type ChangeInjectionPointToPipelineMutationVariables = Exact<{
   id: Scalars['String'];
@@ -646,7 +629,7 @@ export type ChangeInjectionPointToPipelineMutationVariables = Exact<{
 }>;
 
 
-export type ChangeInjectionPointToPipelineMutation = { __typename?: 'Mutation', editInjectionPoint?: { __typename?: 'InjectionPoint', id: string, source: string, pipeline?: { __typename?: 'Pipeline', id: string, license: string, segment: string } | null | undefined } | null | undefined };
+export type ChangeInjectionPointToPipelineMutation = { editInjectionPoint?: { id: string, source: string, pipeline?: { id: string, license: string, segment: string } | null | undefined } | null | undefined };
 
 export type EditPipelineMutationVariables = Exact<{
   id: Scalars['String'];
@@ -670,12 +653,12 @@ export type EditPipelineMutationVariables = Exact<{
 }>;
 
 
-export type EditPipelineMutation = { __typename?: 'Mutation', editPipeline?: { __typename?: 'Pipeline', id: string, license: string, segment: string } | null | undefined };
+export type EditPipelineMutation = { editPipeline?: { id: string, license: string, segment: string } | null | undefined };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, role: Role } | null | undefined };
+export type MeQuery = { me?: { id: string, email: string, firstName: string, lastName: string, role: Role } | null | undefined };
 
 export type PipelinesByIdQueryQueryVariables = Exact<{
   satelliteId?: Maybe<Scalars['String']>;
@@ -683,17 +666,17 @@ export type PipelinesByIdQueryQueryVariables = Exact<{
 }>;
 
 
-export type PipelinesByIdQueryQuery = { __typename?: 'Query', pipelinesById?: Array<{ __typename?: 'Pipeline', id: string, createdAt: any, license: string, segment: string, substance: SubstanceEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, satellite?: { __typename?: 'Satellite', id: string, facility?: { __typename?: 'Facility', id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ __typename?: 'InjectionPoint', id: string, source: string, oil: number, gas: number, water: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
+export type PipelinesByIdQueryQuery = { pipelinesById?: Array<{ id: string, createdAt: any, license: string, segment: string, substance: SubstanceEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, satellite?: { id: string, facility?: { id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ id: string, source: string, oil: number, gas: number, water: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
 
 export type AllInjectionPointsQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllInjectionPointsQueryQuery = { __typename?: 'Query', allInjectionPoints?: Array<{ __typename?: 'InjectionPoint', id: string, source: string, pipeline?: { __typename?: 'Pipeline', id: string, license: string, segment: string } | null | undefined, satellite?: { __typename?: 'Satellite', id: string, name: string, facility?: { __typename?: 'Facility', id: string, name: string } | null | undefined } | null | undefined } | null | undefined> | null | undefined };
+export type AllInjectionPointsQueryQuery = { allInjectionPoints?: Array<{ id: string, source: string, pipeline?: { id: string, license: string, segment: string } | null | undefined, satellite?: { id: string, name: string, facility?: { id: string, name: string } | null | undefined } | null | undefined } | null | undefined> | null | undefined };
 
 export type GetValidatorsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetValidatorsQuery = { __typename?: 'Query', validators?: { __typename?: 'Validator', licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { __typename?: 'SubstanceEnumObject', NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { __typename?: 'FromToFeatureEnumObject', BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { __typename?: 'StatusEnumObject', Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { __typename?: 'TypeEnumObject', Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { __typename?: 'GradeEnumObject', GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { __typename?: 'MaterialEnumObject', Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { __typename?: 'InternalProtectionEnumObject', Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string } } | null | undefined };
+export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string } } | null | undefined };
 
 
 export const LoginDocument = gql`

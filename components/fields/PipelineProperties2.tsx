@@ -11,7 +11,7 @@ import { IPipeline, IValidators } from '../rows/RenderPipeline2';
 
 
 
-type PipelinePropertyObject<T1, T2> = { columnName: string; record: T1[keyof T1], validator: T2[keyof T2] };
+type PipelinePropertyObject<T1, T2> = { columnName: string; record: T1[keyof T1], validator: T2[keyof T2] | undefined };
 
 type IPipelineProperty = PipelinePropertyObject<Omit<IPipeline, 'createdAt' | 'satellite' | 'injectionPoints'>, NonNullable<IValidators>>;
 
@@ -36,7 +36,7 @@ interface IPipelinePropertiesProps {
   open: boolean;
   id: string;
   properties_name: string;
-  pipeline_properties: IPipelineProperty[]//mechanical_property[]
+  pipeline_properties: IPipelineProperty[]
 }
 
 
@@ -57,7 +57,7 @@ export default function PipelineProperties({ open, id, properties_name, pipeline
               </TableRow>
             </TableHead>
             <TableBody>
-              {pipeline_properties.map(({columnName, record, validator}) => {
+              {pipeline_properties.map(({ columnName, record, validator }) => {
                 return (
                   <TableRow key={columnName}>
                     <TableCell>{columnName}</TableCell>

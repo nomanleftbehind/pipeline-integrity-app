@@ -26,7 +26,7 @@ export interface IHeader {
   status: string
 }
 
-export default function CollapsibleTable() {
+export default function PipelineDatabase() {
 
   const header: IHeader = { createdAt: "", license: "", segment: "", substance: "", from: "", fromFeature: "", to: "", toFeature: "", injectionPoints: "", status: "" };
   const [expandedPipelines, setExpandedPipelines] = React.useState<string[]>([]);
@@ -140,7 +140,7 @@ export default function CollapsibleTable() {
   );
 }
 
-CollapsibleTable.getLayout = function getLayout(page: React.ReactNode) {
+PipelineDatabase.getLayout = function getLayout(page: React.ReactNode) {
   return (
     <Layout>
       <MenuBar />

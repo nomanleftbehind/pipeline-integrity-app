@@ -19,21 +19,6 @@ export default function PipelineData({ open, pipeline, validators, isEven, injec
 
   const { licenseMatchPattern, segmentMatchPattern, substanceEnum, fromToMatchPattern, fromToFeatureEnum, statusEnum, lengthMatchPattern, typeEnum, gradeEnum, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
 
-  // const pipeline_properties = { length, type, grade, outsideDiameter, wallThickness, material, mop, internalProtection } as Partial<IPipeline>;
-  // const pipeline_properties_validators = [valLength, valType, valGrade, valOutsideDiameter, valWallThickness, valMaterial, valMop, valInternalProtection];
-  // const pipeline_properties_validators = [lengthMatchPattern, typeEnum, gradeEnum, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum];
-
-  // const mechanical_properties = [
-  //   [{ length }, lengthMatchPattern],
-  //   [{ type }, typeEnum],
-  //   [{ grade }, gradeEnum],
-  //   [{ outsideDiameter }, outsideDiameterMatchPattern],
-  //   [{ wallThickness }, wallThicknessMatchPattern],
-  //   [{ material }, materialEnum],
-  //   [{ mop }, mopMatchPattern],
-  //   [{ internalProtection }, internalProtectionEnum]
-  // ];
-
   const mechanical_properties = [
     { columnName: 'length', record: length, validator: lengthMatchPattern },
     { columnName: 'type', record: type, validator: typeEnum },
@@ -44,13 +29,6 @@ export default function PipelineData({ open, pipeline, validators, isEven, injec
     { columnName: 'mop', record: mop, validator: mopMatchPattern },
     { columnName: 'internalProtection', record: internalProtection, validator: internalProtectionEnum }
   ];
-
-  mechanical_properties.map(({columnName, record, validator}) => {
-
-    return (
-      'a'
-    );
-  })
 
   return (
     <TableRow data-target={"pipeline index is " + isEven}>
