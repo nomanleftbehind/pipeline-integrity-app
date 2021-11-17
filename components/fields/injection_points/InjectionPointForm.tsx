@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IInjectionPointOptions } from '../../rows/RenderPipeline2';
+import { IInjectionPointOptions } from '../../rows/RenderPipeline';
 import IconButton from '@mui/material/IconButton';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 

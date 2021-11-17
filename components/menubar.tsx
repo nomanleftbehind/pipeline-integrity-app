@@ -32,11 +32,6 @@ export default function ManuBar() {
               </Link>
             </li>
             <li>
-              <Link href="/prettyPipelines">
-                <a>Pretty Pipelines</a>
-              </Link>
-            </li>
-            <li>
               <Link href="/satellites">
                 <a>Satellites</a>
               </Link>

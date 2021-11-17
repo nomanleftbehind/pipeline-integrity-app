@@ -5,7 +5,7 @@ import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { useEditPipelineMutation, PipelinesByIdQueryDocument } from '../../graphql/generated/graphql';
-import { IValidator, IRecord } from '../fields/PipelineProperties2';
+import { IValidator, IRecord } from '../fields/PipelineProperties';
 
 
 interface ITextFieldProps {
@@ -25,12 +25,6 @@ export default function TextField({ id, columnName, record, validator }: ITextFi
   const [editPipeline, { data }] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
 
   const validatorIsString = typeof validator === "string";
-
-  // if (!validatorIsString && validator) {
-  //   if (validator.__typename) {
-  //     delete validator.__typename;
-  //   }
-  // }
 
   const toggleEdit = (): void => {
     setEdit(!edit);
@@ -65,7 +59,7 @@ export default function TextField({ id, columnName, record, validator }: ITextFi
   };
 
   return (
-    <TableCell>
+    <TableCell align="right">
       <div className="cell-wrapper">
         {<div className="cell-r">
           <IconButton aria-label="edit cell" size="small" onClick={toggleEdit}>
@@ -102,7 +96,7 @@ export default function TextField({ id, columnName, record, validator }: ITextFi
                   record :
                   validator ?
                     validator[recordAsKey] :
-                    null :
+                    record :
                 null}
             </div>
           </div>}

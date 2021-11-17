@@ -11,20 +11,13 @@ type HeaderProps = {
 export default function Header({ onFilterTextChange, filterText }: HeaderProps): JSX.Element {
 
   return (
-    // <thead className="MuiTableHead-root header-fixed-zzz">
-    // <tr className="MuiTableRow-root MuiTableRow-head">
-    <TableHead>
+    <TableHead style={{ position: "sticky", zIndex: 999, backgroundColor: "gold" }}>
       <TableRow>
         <TableCell />
         <TableCell />
-        <TableCell />
-        {//<th className=/*"expand-collapse-row"*/"MuiTableCell-root MuiTableCell-head"></th>
-          //<th className=/*"add-delete-pipeline"*/"MuiTableCell-root MuiTableCell-head"></th>
-          //<th className=/*"_id"*/"MuiTableCell-root MuiTableCell-head"></th>
-        }
         {Object.entries(filterText).map(([key, value], index) => {
           return (
-            <th scope="col" key={index} className=/*{key}*/"MuiTableCell-root MuiTableCell-head  MuiTableCell-alignRight">
+            <TableCell key={index} align="right" scope="col">
               <div>{key.replace('_', ' ').toUpperCase()}</div>
               <div>
                 <form className={`form-${key}`}>
@@ -38,12 +31,10 @@ export default function Header({ onFilterTextChange, filterText }: HeaderProps):
                   />
                 </form>
               </div>
-            </th>
+            </TableCell>
           );
         })}
       </TableRow>
     </TableHead>
-    // </tr>
-    // </thead>
   );
 }

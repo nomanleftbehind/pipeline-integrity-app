@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import React, { useEffect, useState, ReactNode } from 'react';
 import ReactDOM from 'react-dom';
 

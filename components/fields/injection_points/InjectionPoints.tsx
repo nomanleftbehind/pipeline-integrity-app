@@ -12,7 +12,7 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import Source from './Source';
 import InjectionPointForm from './InjectionPointForm';
-import { IPipeline, IInjectionPointOptions } from '../../rows/RenderPipeline2';
+import { IPipeline, IInjectionPointOptions } from '../../rows/RenderPipeline';
 
 import { useDeleteInjectionPointFromPipelineMutation, useChangeInjectionPointToPipelineMutation, PipelinesByIdQueryDocument } from '../../../graphql/generated/graphql';
 

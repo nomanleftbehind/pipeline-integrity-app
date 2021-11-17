@@ -2,7 +2,7 @@ import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import TableCell from '@mui/material/TableCell';
 import InjectionPointForm from './InjectionPointForm';
-import { IInjectionPointOptions } from '../../rows/RenderPipeline2';
+import { IInjectionPointOptions } from '../../rows/RenderPipeline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
