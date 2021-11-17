@@ -44,6 +44,51 @@ query pipelinesByIdQuery($satelliteId: String, $facilityId: String) {
   }
 }
 
+query PipelineById($id: String!) {
+  pipelineById(id: $id) {
+    id
+    license
+    segment
+    substance
+    from
+    fromFeature
+    to
+    toFeature
+    status
+    length
+    type
+    grade
+    outsideDiameter
+    wallThickness
+    material
+    mop
+    internalProtection
+    createdBy {
+      email
+    }
+    createdAt
+    updatedAt
+    upstream {
+      id
+      license
+      segment
+    }
+    downstream {
+      id
+      license
+      segment
+    }
+    satellite {
+      id
+      name
+    }
+    injectionPoints {
+      id
+      source
+    }
+  }
+}
+
 query allInjectionPointsQuery {
     allInjectionPoints {
       id

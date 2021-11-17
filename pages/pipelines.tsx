@@ -2,7 +2,6 @@ import * as React from 'react';
 import Layout from '../components/layout';
 import MenuBar from '../components/menubar';
 import RenderPipeline from '../components/rows/RenderPipeline';
-import TableHead from '@mui/material/TableHead';
 import Header from '../components/Header';
 import SideNavBar from '../components/SideNavBar';
 import Table from '@mui/material/Table';

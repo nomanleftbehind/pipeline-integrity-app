@@ -15,6 +15,7 @@ export default function Header({ onFilterTextChange, filterText }: HeaderProps):
       <TableRow>
         <TableCell />
         <TableCell />
+        <TableCell />
         {Object.entries(filterText).map(([key, value], index) => {
           return (
             <TableCell key={index} align="right" scope="col">

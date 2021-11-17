@@ -13,7 +13,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
-  DateTime: any;
+  DateTime: string;
 };
 
 export type AuthPayload = {
@@ -403,9 +403,15 @@ export type Query = {
   allSatellites?: Maybe<Array<Maybe<Satellite>>>;
   allUsers?: Maybe<Array<Maybe<User>>>;
   me?: Maybe<User>;
+  pipelineById?: Maybe<Pipeline>;
   pipelinesById?: Maybe<Array<Maybe<Pipeline>>>;
   pipelinesByUser?: Maybe<Array<Maybe<Pipeline>>>;
   validators?: Maybe<Validator>;
+};
+
+
+export type QueryPipelineByIdArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -666,7 +672,14 @@ export type PipelinesByIdQueryQueryVariables = Exact<{
 }>;
 
 
-export type PipelinesByIdQueryQuery = { pipelinesById?: Array<{ id: string, createdAt: any, license: string, segment: string, substance: SubstanceEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, satellite?: { id: string, facility?: { id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ id: string, source: string, oil: number, gas: number, water: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
+export type PipelinesByIdQueryQuery = { pipelinesById?: Array<{ id: string, createdAt: string, license: string, segment: string, substance: SubstanceEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, satellite?: { id: string, facility?: { id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ id: string, source: string, oil: number, gas: number, water: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
+
+export type PipelineByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type PipelineByIdQuery = { pipelineById?: { id: string, license: string, segment: string, substance: SubstanceEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, createdAt: string, updatedAt: string, createdBy: { email: string }, upstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, satellite?: { id: string, name: string } | null | undefined, injectionPoints?: Array<{ id: string, source: string } | null | undefined> | null | undefined } | null | undefined };
 
 export type AllInjectionPointsQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1043,6 +1056,80 @@ export function usePipelinesByIdQueryLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type PipelinesByIdQueryQueryHookResult = ReturnType<typeof usePipelinesByIdQueryQuery>;
 export type PipelinesByIdQueryLazyQueryHookResult = ReturnType<typeof usePipelinesByIdQueryLazyQuery>;
 export type PipelinesByIdQueryQueryResult = Apollo.QueryResult<PipelinesByIdQueryQuery, PipelinesByIdQueryQueryVariables>;
+export const PipelineByIdDocument = gql`
+    query PipelineById($id: String!) {
+  pipelineById(id: $id) {
+    id
+    license
+    segment
+    substance
+    from
+    fromFeature
+    to
+    toFeature
+    status
+    length
+    type
+    grade
+    outsideDiameter
+    wallThickness
+    material
+    mop
+    internalProtection
+    createdBy {
+      email
+    }
+    createdAt
+    updatedAt
+    upstream {
+      id
+      license
+      segment
+    }
+    downstream {
+      id
+      license
+      segment
+    }
+    satellite {
+      id
+      name
+    }
+    injectionPoints {
+      id
+      source
+    }
+  }
+}
+    `;
+
+/**
+ * __usePipelineByIdQuery__
+ *
+ * To run a query within a React component, call `usePipelineByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePipelineByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePipelineByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function usePipelineByIdQuery(baseOptions: Apollo.QueryHookOptions<PipelineByIdQuery, PipelineByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PipelineByIdQuery, PipelineByIdQueryVariables>(PipelineByIdDocument, options);
+      }
+export function usePipelineByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PipelineByIdQuery, PipelineByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PipelineByIdQuery, PipelineByIdQueryVariables>(PipelineByIdDocument, options);
+        }
+export type PipelineByIdQueryHookResult = ReturnType<typeof usePipelineByIdQuery>;
+export type PipelineByIdLazyQueryHookResult = ReturnType<typeof usePipelineByIdLazyQuery>;
+export type PipelineByIdQueryResult = Apollo.QueryResult<PipelineByIdQuery, PipelineByIdQueryVariables>;
 export const AllInjectionPointsQueryDocument = gql`
     query allInjectionPointsQuery {
   allInjectionPoints {

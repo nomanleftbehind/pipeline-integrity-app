@@ -342,6 +342,17 @@ export const InternalProtectionEnum = enumType({
 export const PipelineQuery = extendType({
   type: 'Query',
   definition(t) {
+    t.field('pipelineById', {
+      type: 'Pipeline',
+      args: {
+        id: nonNull(stringArg())
+      },
+      resolve: (_parent, args, ctx: Context) => {
+        return ctx.prisma.pipeline.findUnique({
+          where: { id: args.id }
+        })
+      }
+    })
     t.list.field('pipelinesById', {
       type: 'Pipeline',
       args: {

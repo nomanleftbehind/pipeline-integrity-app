@@ -9,6 +9,8 @@ generates:
       - "typescript-react-apollo"
     config:
       skipTypename: true
+      scalars:
+        DateTime: string
   ./graphql.schema.json:
     plugins:
       - "introspection"

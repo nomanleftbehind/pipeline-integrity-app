@@ -303,6 +303,7 @@ type Query {
   allSatellites: [Satellite]
   allUsers: [User]
   me: User
+  pipelineById(id: String!): Pipeline
   pipelinesById(facilityId: String, satelliteId: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
   validators: Validator

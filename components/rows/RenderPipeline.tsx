@@ -1,8 +1,10 @@
 import React from 'react';
 import EntryField from '../fields/EntryField';
+import { useRouter } from 'next/router';
 import { ModalDeletePipeline } from '../Modal';
 import PipelineData from './PipelineData';
 import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -33,12 +35,14 @@ const isEven = (value: number): "even" | "odd" => {
   else return "odd";
 }
 
-export default function RenderPipeline2({ ppl_idx, pipeline, injectionPointOptions, validators }: IRenderPipelineProps) {
+export default function RenderPipeline({ ppl_idx, pipeline, injectionPointOptions, validators }: IRenderPipelineProps) {
   const [open, setOpen] = React.useState(false);
   const [showDeletePipelineModal, setShowDeletePipelineModal] = React.useState<boolean>(false);
 
   const [deletePipeline, { data: dataDeletePipeline }] = useDeletePipelineMutation({ variables: { id: pipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
   const [duplicatePipeline, { data: dataDuplicatePipeline }] = useDuplicatePipelineMutation({ variables: { id: pipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })
+
+  const router = useRouter();
 
   function showModalDeletePipeline() {
     setShowDeletePipelineModal(true);
@@ -78,6 +82,11 @@ export default function RenderPipeline2({ ppl_idx, pipeline, injectionPointOptio
             <AddCircleOutlineOutlinedIcon />
           </IconButton>
           {modalDeletePipeline}
+        </TableCell>
+        <TableCell>
+          <Button  color="secondary" variant="outlined" sx={{ color: 'blue' }} aria-label="navigate to pipeline" size="small" onClick={() => router.push(`/pipeline/${id}`)}>
+            Details
+          </Button>
         </TableCell>
         <EntryField id={id} record={license} columnName="license" validator={validators?.licenseMatchPattern} />
         <EntryField id={id} record={segment} columnName="segment" validator={validators?.segmentMatchPattern} />
