@@ -13,7 +13,7 @@ import { IPipeline, IValidators } from '../rows/RenderPipeline';
 
 type PipelinePropertyObject<T1, T2> = { columnName: string; record: T1[keyof T1], validator: T2[keyof T2] | undefined };
 
-type IPipelineProperty = PipelinePropertyObject<Omit<IPipeline, 'createdAt' | 'satellite' | 'injectionPoints'>, NonNullable<IValidators>>;
+type IPipelineProperty = PipelinePropertyObject<Omit<IPipeline, 'satellite' | 'injectionPoints'>, NonNullable<IValidators>>;
 
 export type IRecord = IPipelineProperty['record'];
 

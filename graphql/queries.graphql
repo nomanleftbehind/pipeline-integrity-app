@@ -244,3 +244,14 @@ query allInjectionPointsQuery {
     }
   }
 }
+
+query FacilitiesSideBar {
+  allFacilities {
+    id
+    name
+    satellites {
+      id
+      name
+    }
+  }
+}

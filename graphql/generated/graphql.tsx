@@ -691,6 +691,11 @@ export type GetValidatorsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string } } | null | undefined };
 
+export type FacilitiesSideBarQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FacilitiesSideBarQuery = { allFacilities?: Array<{ id: string, name: string, satellites?: Array<{ id: string, name: string } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
+
 
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
@@ -1342,3 +1347,42 @@ export function useGetValidatorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetValidatorsQueryHookResult = ReturnType<typeof useGetValidatorsQuery>;
 export type GetValidatorsLazyQueryHookResult = ReturnType<typeof useGetValidatorsLazyQuery>;
 export type GetValidatorsQueryResult = Apollo.QueryResult<GetValidatorsQuery, GetValidatorsQueryVariables>;
+export const FacilitiesSideBarDocument = gql`
+    query FacilitiesSideBar {
+  allFacilities {
+    id
+    name
+    satellites {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useFacilitiesSideBarQuery__
+ *
+ * To run a query within a React component, call `useFacilitiesSideBarQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFacilitiesSideBarQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFacilitiesSideBarQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFacilitiesSideBarQuery(baseOptions?: Apollo.QueryHookOptions<FacilitiesSideBarQuery, FacilitiesSideBarQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FacilitiesSideBarQuery, FacilitiesSideBarQueryVariables>(FacilitiesSideBarDocument, options);
+      }
+export function useFacilitiesSideBarLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FacilitiesSideBarQuery, FacilitiesSideBarQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FacilitiesSideBarQuery, FacilitiesSideBarQueryVariables>(FacilitiesSideBarDocument, options);
+        }
+export type FacilitiesSideBarQueryHookResult = ReturnType<typeof useFacilitiesSideBarQuery>;
+export type FacilitiesSideBarLazyQueryHookResult = ReturnType<typeof useFacilitiesSideBarLazyQuery>;
+export type FacilitiesSideBarQueryResult = Apollo.QueryResult<FacilitiesSideBarQuery, FacilitiesSideBarQueryVariables>;

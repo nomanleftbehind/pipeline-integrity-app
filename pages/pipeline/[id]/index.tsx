@@ -22,7 +22,7 @@ export default function Pipeline() {
   const { id } = router.query;
   const { data, loading, error } = usePipelineByIdQuery({ variables: { id: typeof id === 'string' ? id : '' } });
 
-  function renderBValue(value: IPipelineValues) {
+  function renderValue(value: IPipelineValues) {
     if (Array.isArray(value)) {
       return (
         value.map((v, i) => {
@@ -105,7 +105,7 @@ export default function Pipeline() {
                               {a}
                             </TableCell>
                             <TableCell align="right">
-                              {renderBValue(b)}
+                              {renderValue(b)}
                             </TableCell>
                           </TableRow>
                         );
