@@ -20,18 +20,6 @@ export type IRecord = IPipelineProperty['record'];
 export type IValidator = IPipelineProperty['validator'];
 
 
-// type mechanical_property = (
-//   ({ length: IPipeline['length'] } | NonNullable<IValidators>['lengthMatchPattern'] | undefined)[] |
-//   ({ type: IPipeline['type'] } | NonNullable<IValidators>['typeEnum'] | undefined)[] |
-//   ({ grade: IPipeline['grade'] } | NonNullable<IValidators>['gradeEnum'] | undefined)[] |
-//   ({ outsideDiameter: IPipeline['outsideDiameter'] } | NonNullable<IValidators>['outsideDiameterMatchPattern'] | undefined)[] |
-//   ({ wallThickness: IPipeline['wallThickness'] } | NonNullable<IValidators>['wallThicknessMatchPattern'] | undefined)[] |
-//   ({ material: IPipeline['material'] } | NonNullable<IValidators>['materialEnum'] | undefined)[] |
-//   ({ mop: IPipeline['mop'] } | NonNullable<IValidators>['mopMatchPattern'] | undefined)[] |
-//   ({ internalProtection: IPipeline['internalProtection'] } | NonNullable<IValidators>['internalProtectionEnum'] | undefined)[]
-// )
-
-
 interface IPipelinePropertiesProps {
   open: boolean;
   id: string;

@@ -1,5 +1,5 @@
 import InjectionPoints from '../fields/injection_points/InjectionPoints';
-import PipelineProperties2 from '../fields/PipelineProperties';
+import PipelineProperties from '../fields/PipelineProperties';
 import { IPipeline, IInjectionPointOptions, IValidators } from './RenderPipeline';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
@@ -30,6 +30,11 @@ export default function PipelineData({ open, pipeline, validators, isEven, injec
     { columnName: 'internalProtection', record: internalProtection, validator: internalProtectionEnum }
   ];
 
+  const systemFields = [
+    { columnName: 'createdAt', record: createdAt, validator: undefined },
+    { columnName: 'id', record: id, validator: undefined },
+  ];
+
   return (
     <TableRow data-target={"pipeline index is " + isEven}>
       <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={2} />
@@ -39,11 +44,17 @@ export default function PipelineData({ open, pipeline, validators, isEven, injec
         injectionPoints={injectionPoints}
         injectionPointOptions={injectionPointOptions}
       />
-      <PipelineProperties2
+      <PipelineProperties
         open={open}
         id={id}
         properties_name="Mechanical Properties"
         pipeline_properties={mechanical_properties}
+      />
+      <PipelineProperties
+        open={open}
+        id={id}
+        properties_name="System Fields"
+        pipeline_properties={systemFields}
       />
     </TableRow>
   );
