@@ -20,14 +20,18 @@ query pipelinesByIdQuery($satelliteId: String, $facilityId: String) {
     to
     toFeature
     status
+    licenseDate
     length
     type
     grade
+    yieldStrength
     outsideDiameter
     wallThickness
     material
     mop
     internalProtection
+    piggable
+    piggingFrequency
     satellite {
       id
       facility {
@@ -55,14 +59,18 @@ query PipelineById($id: String!) {
     to
     toFeature
     status
+    licenseDate
     length
     type
     grade
+    yieldStrength
     outsideDiameter
     wallThickness
     material
     mop
     internalProtection
+    piggable
+    piggingFrequency
     createdBy {
       email
     }
@@ -220,6 +228,7 @@ query allInjectionPointsQuery {
       Grade1200
       Grade1103
     }
+    yieldStrengthMatchPattern
     outsideDiameterMatchPattern
     wallThicknessMatchPattern
     materialEnum {

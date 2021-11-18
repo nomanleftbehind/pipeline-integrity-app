@@ -66,14 +66,18 @@ model Pipeline {
   to                 String
   toFeature          FromToFeatureEnum?
   status             StatusEnum
+  licenseDate        DateTime?
   length             Decimal                 @db.Decimal(6, 2)
   type               TypeEnum?
   grade              GradeEnum?
+  yieldStrength      Int?
   outsideDiameter    Decimal?                @db.Decimal(6, 2)
   wallThickness      Decimal?                @db.Decimal(6, 2)
   material           MaterialEnum?
   mop                Int?
   internalProtection InternalProtectionEnum?
+  piggable           Boolean?
+  piggingFrequency   Int?
   createdBy          User                    @relation(fields: [createdById], references: [id])
   createdById        String
   createdAt          DateTime                @default(now())
@@ -267,4 +271,13 @@ enum InternalProtectionEnum {
   ThinFilm               @map("Thin Film")
 
   @@map("internalProtection")
+}
+
+enum PigTypeEnum {
+  GSCR
+  PSCR
+  Foam
+  Scrapper
+
+  @@map("pigType")
 }

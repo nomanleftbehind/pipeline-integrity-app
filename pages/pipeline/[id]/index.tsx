@@ -51,8 +51,7 @@ export default function Pipeline() {
           }
         })
       )
-    }
-    else if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
+    } else if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
       return (
         <Table>
           <TableBody>
@@ -98,7 +97,6 @@ export default function Pipeline() {
                   data ?
                     data.pipelineById ?
                       Object.entries(data.pipelineById).map(([a, b]) => {
-                        type a = typeof b;
                         return (
                           <TableRow hover role="checkbox" tabIndex={-1} key={a}>
                             <TableCell>

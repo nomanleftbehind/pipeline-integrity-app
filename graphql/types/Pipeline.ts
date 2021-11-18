@@ -1,4 +1,4 @@
-import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg } from 'nexus';
+import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg, booleanArg } from 'nexus';
 import { User } from './User';
 import { Satellite, SatelliteUniqueInput } from './Satellite';
 import { InjectionPoint, InjectionPointCreateInput } from './InjectionPoint';
@@ -73,6 +73,7 @@ export const Pipeline = objectType({
         return result;
       }
     })
+    t.field('licenseDate', { type: 'DateTime' })
     t.nonNull.float('length')
     t.field('type', {
       type: TypeEnum,
@@ -90,6 +91,7 @@ export const Pipeline = objectType({
         return result;
       }
     })
+    t.int('yieldStrength')
     t.float('outsideDiameter')
     t.float('wallThickness')
     t.field('material', {
@@ -109,6 +111,8 @@ export const Pipeline = objectType({
         return result;
       }
     })
+    t.boolean('piggable')
+    t.int('piggingFrequency')
     t.nonNull.field('createdBy', {
       type: User,
       resolve: async (parent, _args, ctx: Context) => {
@@ -459,14 +463,18 @@ export const PipelineMutation = extendType({
         to: stringArg(),
         toFeature: arg({ type: FromToFeatureEnum }),
         status: arg({ type: StatusEnum }),
+        licenseDate: arg({ type: 'DateTime' }),
         length: floatArg(),
         type: arg({ type: TypeEnum }),
         grade: arg({ type: GradeEnum }),
+        yieldStrength: intArg(),
         outsideDiameter: floatArg(),
         wallThickness: floatArg(),
         material: arg({ type: MaterialEnum }),
         mop: intArg(),
-        internalProtection: arg({ type: InternalProtectionEnum })
+        internalProtection: arg({ type: InternalProtectionEnum }),
+        piggable: booleanArg(),
+        piggingFrequency: intArg(),
       },
       resolve: async (_, args, ctx: Context) => {
         try {
@@ -485,11 +493,14 @@ export const PipelineMutation = extendType({
               length: args.length || undefined,
               type: databaseEnumToServerEnum(TypeEnumMembers, args.type),
               grade: databaseEnumToServerEnum(GradeEnumMembers, args.grade),
+              yieldStrength: args.yieldStrength || undefined,
               outsideDiameter: args.outsideDiameter || undefined,
               wallThickness: args.wallThickness || undefined,
               material: databaseEnumToServerEnum(MaterialEnumMembers, args.material),
               mop: args.mop || undefined,
               internalProtection: databaseEnumToServerEnum(InternalProtectionEnumMembers, args.internalProtection),
+              piggable: args.piggable || undefined,
+              piggingFrequency: args.piggingFrequency || undefined,
             },
           })
         } catch (e) {
@@ -540,6 +551,7 @@ export const licenseMatchPattern = "^(AB|SK|BC)(\\d{5}|\\d{6})$";
 export const segmentMatchPattern = "^((UL)(\\d{1,2})|(\\d{1,3}))$";
 export const fromToMatchPattern = "^((\\d{2}-\\d{2}-\\d{3}-\\d{2}W\\d{1})|([A-Z]{1}-\\d{3}-[A-Z]{1} \\d{3}-[A-Z]{1}-\\d{2}))$";
 export const lengthMatchPattern = "^\\d*\\.?\\d*$";
+export const yieldStrengthMatchPattern = "^(240|206|359|290|0|289|57|24|200|205|380|2875|241|358|360)$";
 export const wallThicknessMatchPattern = "^(\\d|1\\d|2[0-5])(\\.\\d{1,2})?$";
 export const mopMatchPattern = "^\\d{1,5}$"; // number between 0 and 99999
 export const outsideDiameterMatchPattern = "^4[3-9]$|^4[2-9]\\.[2-9]\\d?$|^([5-9]\\d)(\\.\\d\\d?)?$|^([1-2]\\d{2})(\\.\\d\\d?)?$|^(3[0-2][0-3])(\\.[0-8]\\d?)?$"; // number between 42.2 and 323.89
@@ -620,6 +632,7 @@ export const Validator = objectType({
     t.nonNull.string('lengthMatchPattern')
     t.nonNull.field('typeEnum', { type: 'TypeEnumObject' })
     t.nonNull.field('gradeEnum', { type: 'GradeEnumObject' })
+    t.nonNull.string('yieldStrengthMatchPattern')
     t.nonNull.string('outsideDiameterMatchPattern')
     t.nonNull.string('wallThicknessMatchPattern')
     t.nonNull.field('materialEnum', { type: 'MaterialEnumObject' })
@@ -644,6 +657,7 @@ export const ValidatorQuery = extendType({
           lengthMatchPattern,
           typeEnum: TypeEnumMembers,
           gradeEnum: GradeEnumMembers,
+          yieldStrengthMatchPattern,
           outsideDiameterMatchPattern,
           wallThicknessMatchPattern,
           materialEnum: MaterialEnumMembers,

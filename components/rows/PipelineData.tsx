@@ -15,14 +15,15 @@ export interface IPipelineDataProps {
 
 export default function PipelineData({ open, pipeline, validators, isEven, injectionPointOptions }: IPipelineDataProps): JSX.Element {
 
-  const { id, createdAt, license, segment, substance, from, fromFeature, to, toFeature, injectionPoints, status, length, type, grade, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
+  const { id, createdAt, license, segment, substance, from, fromFeature, to, toFeature, injectionPoints, status, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
 
-  const { licenseMatchPattern, segmentMatchPattern, substanceEnum, fromToMatchPattern, fromToFeatureEnum, statusEnum, lengthMatchPattern, typeEnum, gradeEnum, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
+  const { licenseMatchPattern, segmentMatchPattern, substanceEnum, fromToMatchPattern, fromToFeatureEnum, statusEnum, lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
 
   const mechanical_properties = [
     { columnName: 'length', record: length, validator: lengthMatchPattern },
     { columnName: 'type', record: type, validator: typeEnum },
     { columnName: 'grade', record: grade, validator: gradeEnum },
+    { columnName: 'yieldStrength', record: yieldStrength, validator: yieldStrengthMatchPattern },
     { columnName: 'outsideDiameter', record: outsideDiameter, validator: outsideDiameterMatchPattern },
     { columnName: 'wallThickness', record: wallThickness, validator: wallThicknessMatchPattern },
     { columnName: 'material', record: material, validator: materialEnum },

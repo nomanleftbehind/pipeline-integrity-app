@@ -307,9 +307,12 @@ export type MutationEditPipelineArgs = {
   internalProtection?: Maybe<InternalProtectionEnum>;
   length?: Maybe<Scalars['Float']>;
   license?: Maybe<Scalars['String']>;
+  licenseDate?: Maybe<Scalars['DateTime']>;
   material?: Maybe<MaterialEnum>;
   mop?: Maybe<Scalars['Int']>;
   outsideDiameter?: Maybe<Scalars['Float']>;
+  piggable?: Maybe<Scalars['Boolean']>;
+  piggingFrequency?: Maybe<Scalars['Int']>;
   satelliteId?: Maybe<Scalars['String']>;
   segment?: Maybe<Scalars['String']>;
   status?: Maybe<StatusEnum>;
@@ -318,6 +321,7 @@ export type MutationEditPipelineArgs = {
   toFeature?: Maybe<FromToFeatureEnum>;
   type?: Maybe<TypeEnum>;
   wallThickness?: Maybe<Scalars['Float']>;
+  yieldStrength?: Maybe<Scalars['Int']>;
 };
 
 
@@ -354,9 +358,12 @@ export type Pipeline = {
   internalProtection?: Maybe<InternalProtectionEnum>;
   length: Scalars['Float'];
   license: Scalars['String'];
+  licenseDate?: Maybe<Scalars['DateTime']>;
   material?: Maybe<MaterialEnum>;
   mop?: Maybe<Scalars['Int']>;
   outsideDiameter?: Maybe<Scalars['Float']>;
+  piggable?: Maybe<Scalars['Boolean']>;
+  piggingFrequency?: Maybe<Scalars['Int']>;
   satellite?: Maybe<Satellite>;
   segment: Scalars['String'];
   status: StatusEnum;
@@ -367,6 +374,7 @@ export type Pipeline = {
   updatedAt: Scalars['DateTime'];
   upstream?: Maybe<Array<Maybe<Pipeline>>>;
   wallThickness?: Maybe<Scalars['Float']>;
+  yieldStrength?: Maybe<Scalars['Int']>;
 };
 
 export type PipelineCreateInput = {
@@ -598,6 +606,7 @@ export type Validator = {
   substanceEnum: SubstanceEnumObject;
   typeEnum: TypeEnumObject;
   wallThicknessMatchPattern: Scalars['String'];
+  yieldStrengthMatchPattern: Scalars['String'];
 };
 
 export type LoginMutationVariables = Exact<{
@@ -648,14 +657,18 @@ export type EditPipelineMutationVariables = Exact<{
   to?: Maybe<Scalars['String']>;
   toFeature?: Maybe<FromToFeatureEnum>;
   status?: Maybe<StatusEnum>;
+  licenseDate?: Maybe<Scalars['DateTime']>;
   length?: Maybe<Scalars['Float']>;
   type?: Maybe<TypeEnum>;
   grade?: Maybe<GradeEnum>;
+  yieldStrength?: Maybe<Scalars['Int']>;
   outsideDiameter?: Maybe<Scalars['Float']>;
   wallThickness?: Maybe<Scalars['Float']>;
   material?: Maybe<MaterialEnum>;
   mop?: Maybe<Scalars['Int']>;
   internalProtection?: Maybe<InternalProtectionEnum>;
+  piggable?: Maybe<Scalars['Boolean']>;
+  piggingFrequency?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -672,14 +685,14 @@ export type PipelinesByIdQueryQueryVariables = Exact<{
 }>;
 
 
-export type PipelinesByIdQueryQuery = { pipelinesById?: Array<{ id: string, createdAt: string, license: string, segment: string, substance: SubstanceEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, satellite?: { id: string, facility?: { id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ id: string, source: string, oil: number, gas: number, water: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
+export type PipelinesByIdQueryQuery = { pipelinesById?: Array<{ id: string, createdAt: string, license: string, segment: string, substance: SubstanceEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, satellite?: { id: string, facility?: { id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ id: string, source: string, oil: number, gas: number, water: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
 
 export type PipelineByIdQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type PipelineByIdQuery = { pipelineById?: { id: string, license: string, segment: string, substance: SubstanceEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, createdAt: string, updatedAt: string, createdBy: { email: string }, upstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, satellite?: { id: string, name: string } | null | undefined, injectionPoints?: Array<{ id: string, source: string } | null | undefined> | null | undefined } | null | undefined };
+export type PipelineByIdQuery = { pipelineById?: { id: string, license: string, segment: string, substance: SubstanceEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, createdBy: { email: string }, upstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, satellite?: { id: string, name: string } | null | undefined, injectionPoints?: Array<{ id: string, source: string } | null | undefined> | null | undefined } | null | undefined };
 
 export type AllInjectionPointsQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -689,7 +702,7 @@ export type AllInjectionPointsQueryQuery = { allInjectionPoints?: Array<{ id: st
 export type GetValidatorsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string } } | null | undefined };
+export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string } } | null | undefined };
 
 export type FacilitiesSideBarQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -887,7 +900,7 @@ export type ChangeInjectionPointToPipelineMutationHookResult = ReturnType<typeof
 export type ChangeInjectionPointToPipelineMutationResult = Apollo.MutationResult<ChangeInjectionPointToPipelineMutation>;
 export type ChangeInjectionPointToPipelineMutationOptions = Apollo.BaseMutationOptions<ChangeInjectionPointToPipelineMutation, ChangeInjectionPointToPipelineMutationVariables>;
 export const EditPipelineDocument = gql`
-    mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $substance: SubstanceEnum, $from: String, $fromFeature: FromToFeatureEnum, $to: String, $toFeature: FromToFeatureEnum, $status: StatusEnum, $length: Float, $type: TypeEnum, $grade: GradeEnum, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum) {
+    mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $substance: SubstanceEnum, $from: String, $fromFeature: FromToFeatureEnum, $to: String, $toFeature: FromToFeatureEnum, $status: StatusEnum, $licenseDate: DateTime, $length: Float, $type: TypeEnum, $grade: GradeEnum, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
   editPipeline(
     id: $id
     satelliteId: $satelliteId
@@ -899,14 +912,18 @@ export const EditPipelineDocument = gql`
     to: $to
     toFeature: $toFeature
     status: $status
+    licenseDate: $licenseDate
     length: $length
     type: $type
     grade: $grade
+    yieldStrength: $yieldStrength
     outsideDiameter: $outsideDiameter
     wallThickness: $wallThickness
     material: $material
     mop: $mop
     internalProtection: $internalProtection
+    piggable: $piggable
+    piggingFrequency: $piggingFrequency
   ) {
     id
     license
@@ -939,14 +956,18 @@ export type EditPipelineMutationFn = Apollo.MutationFunction<EditPipelineMutatio
  *      to: // value for 'to'
  *      toFeature: // value for 'toFeature'
  *      status: // value for 'status'
+ *      licenseDate: // value for 'licenseDate'
  *      length: // value for 'length'
  *      type: // value for 'type'
  *      grade: // value for 'grade'
+ *      yieldStrength: // value for 'yieldStrength'
  *      outsideDiameter: // value for 'outsideDiameter'
  *      wallThickness: // value for 'wallThickness'
  *      material: // value for 'material'
  *      mop: // value for 'mop'
  *      internalProtection: // value for 'internalProtection'
+ *      piggable: // value for 'piggable'
+ *      piggingFrequency: // value for 'piggingFrequency'
  *   },
  * });
  */
@@ -1008,14 +1029,18 @@ export const PipelinesByIdQueryDocument = gql`
     to
     toFeature
     status
+    licenseDate
     length
     type
     grade
+    yieldStrength
     outsideDiameter
     wallThickness
     material
     mop
     internalProtection
+    piggable
+    piggingFrequency
     satellite {
       id
       facility {
@@ -1073,14 +1098,18 @@ export const PipelineByIdDocument = gql`
     to
     toFeature
     status
+    licenseDate
     length
     type
     grade
+    yieldStrength
     outsideDiameter
     wallThickness
     material
     mop
     internalProtection
+    piggable
+    piggingFrequency
     createdBy {
       email
     }
@@ -1295,6 +1324,7 @@ export const GetValidatorsDocument = gql`
       Grade1200
       Grade1103
     }
+    yieldStrengthMatchPattern
     outsideDiameterMatchPattern
     wallThicknessMatchPattern
     materialEnum {
