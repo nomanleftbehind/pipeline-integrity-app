@@ -230,15 +230,43 @@ type MaterialEnumObject {
 type Mutation {
   createFacility(data: FacilityCreateInput!): Facility
   deleteInjectionPointFromPipeline(id: String!): InjectionPoint
+  deletePigRun(id: String!): PigRun
   deletePipeline(id: String!): Pipeline
   deleteSatellite(id: String!): Satellite
   duplicatePipeline(id: String!): Pipeline
   editFacility(id: String!, name: String): Facility
   editInjectionPoint(firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineId: String, pvNodeId: String, pvUnitId: String, satelliteId: String, source: String, water: Float): InjectionPoint
+  editPigRun(comment: String, date: DateTime, id: String!, operatorId: String, pigType: PigTypeEnum, pipelineId: String): PigRun
   editPipeline(from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String, status: StatusEnum, substance: SubstanceEnum, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float, yieldStrength: Int): Pipeline
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
   login(email: String!, password: String!): AuthPayload
   signup(email: String!, firstName: String!, lastName: String!, password: String!): AuthPayload
+}
+
+type PigRun {
+  comment: String
+  createdAt: DateTime!
+  createdBy: User!
+  date: DateTime
+  id: String!
+  operator: User
+  pigType: PigTypeEnum
+  pipeline: Pipeline!
+  updatedAt: DateTime!
+}
+
+enum PigTypeEnum {
+  Foam
+  GSCR
+  PSCR
+  Scrapper
+}
+
+type PigTypeEnumObject {
+  Foam: String!
+  GSCR: String!
+  PSCR: String!
+  Scrapper: String!
 }
 
 type Pipeline {
@@ -307,6 +335,7 @@ type Query {
   allSatellites: [Satellite]
   allUsers: [User]
   me: User
+  pigRunByPipelineId(pipelineId: String!): [PigRun]
   pipelineById(id: String!): Pipeline
   pipelinesById(facilityId: String, satelliteId: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
@@ -481,6 +510,7 @@ type Validator {
   materialEnum: MaterialEnumObject!
   mopMatchPattern: String!
   outsideDiameterMatchPattern: String!
+  pigTypeEnum: PigTypeEnumObject!
   segmentMatchPattern: String!
   statusEnum: StatusEnumObject!
   substanceEnum: SubstanceEnumObject!

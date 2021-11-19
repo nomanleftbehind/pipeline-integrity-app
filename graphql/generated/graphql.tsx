@@ -239,11 +239,13 @@ export type MaterialEnumObject = {
 export type Mutation = {
   createFacility?: Maybe<Facility>;
   deleteInjectionPointFromPipeline?: Maybe<InjectionPoint>;
+  deletePigRun?: Maybe<PigRun>;
   deletePipeline?: Maybe<Pipeline>;
   deleteSatellite?: Maybe<Satellite>;
   duplicatePipeline?: Maybe<Pipeline>;
   editFacility?: Maybe<Facility>;
   editInjectionPoint?: Maybe<InjectionPoint>;
+  editPigRun?: Maybe<PigRun>;
   editPipeline?: Maybe<Pipeline>;
   editSatellite?: Maybe<Satellite>;
   login?: Maybe<AuthPayload>;
@@ -257,6 +259,11 @@ export type MutationCreateFacilityArgs = {
 
 
 export type MutationDeleteInjectionPointFromPipelineArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeletePigRunArgs = {
   id: Scalars['String'];
 };
 
@@ -296,6 +303,16 @@ export type MutationEditInjectionPointArgs = {
   satelliteId?: Maybe<Scalars['String']>;
   source?: Maybe<Scalars['String']>;
   water?: Maybe<Scalars['Float']>;
+};
+
+
+export type MutationEditPigRunArgs = {
+  comment?: Maybe<Scalars['String']>;
+  date?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  operatorId?: Maybe<Scalars['String']>;
+  pigType?: Maybe<PigTypeEnum>;
+  pipelineId?: Maybe<Scalars['String']>;
 };
 
 
@@ -343,6 +360,32 @@ export type MutationSignupArgs = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   password: Scalars['String'];
+};
+
+export type PigRun = {
+  comment?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  createdBy: User;
+  date?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  operator?: Maybe<User>;
+  pigType?: Maybe<PigTypeEnum>;
+  pipeline: Pipeline;
+  updatedAt: Scalars['DateTime'];
+};
+
+export enum PigTypeEnum {
+  Foam = 'Foam',
+  Gscr = 'GSCR',
+  Pscr = 'PSCR',
+  Scrapper = 'Scrapper'
+}
+
+export type PigTypeEnumObject = {
+  Foam: Scalars['String'];
+  GSCR: Scalars['String'];
+  PSCR: Scalars['String'];
+  Scrapper: Scalars['String'];
 };
 
 export type Pipeline = {
@@ -411,10 +454,16 @@ export type Query = {
   allSatellites?: Maybe<Array<Maybe<Satellite>>>;
   allUsers?: Maybe<Array<Maybe<User>>>;
   me?: Maybe<User>;
+  pigRunByPipelineId?: Maybe<Array<Maybe<PigRun>>>;
   pipelineById?: Maybe<Pipeline>;
   pipelinesById?: Maybe<Array<Maybe<Pipeline>>>;
   pipelinesByUser?: Maybe<Array<Maybe<Pipeline>>>;
   validators?: Maybe<Validator>;
+};
+
+
+export type QueryPigRunByPipelineIdArgs = {
+  pipelineId: Scalars['String'];
 };
 
 
@@ -601,6 +650,7 @@ export type Validator = {
   materialEnum: MaterialEnumObject;
   mopMatchPattern: Scalars['String'];
   outsideDiameterMatchPattern: Scalars['String'];
+  pigTypeEnum: PigTypeEnumObject;
   segmentMatchPattern: Scalars['String'];
   statusEnum: StatusEnumObject;
   substanceEnum: SubstanceEnumObject;
@@ -674,6 +724,18 @@ export type EditPipelineMutationVariables = Exact<{
 
 export type EditPipelineMutation = { editPipeline?: { id: string, license: string, segment: string } | null | undefined };
 
+export type MutationMutationVariables = Exact<{
+  id: Scalars['String'];
+  pipelineId?: Maybe<Scalars['String']>;
+  pigType?: Maybe<PigTypeEnum>;
+  date?: Maybe<Scalars['DateTime']>;
+  comment?: Maybe<Scalars['String']>;
+  operatorId?: Maybe<Scalars['String']>;
+}>;
+
+
+export type MutationMutation = { editPigRun?: { id: string } | null | undefined };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -698,6 +760,13 @@ export type AllInjectionPointsQueryQueryVariables = Exact<{ [key: string]: never
 
 
 export type AllInjectionPointsQueryQuery = { allInjectionPoints?: Array<{ id: string, source: string, pipeline?: { id: string, license: string, segment: string } | null | undefined, satellite?: { id: string, name: string, facility?: { id: string, name: string } | null | undefined } | null | undefined } | null | undefined> | null | undefined };
+
+export type PigRunByPipelineIdQueryVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type PigRunByPipelineIdQuery = { pigRunByPipelineId?: Array<{ id: string, pigType?: PigTypeEnum | null | undefined, date?: string | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, operator?: { firstName: string, lastName: string } | null | undefined, createdBy: { firstName: string, lastName: string } } | null | undefined> | null | undefined };
 
 export type GetValidatorsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -978,6 +1047,51 @@ export function useEditPipelineMutation(baseOptions?: Apollo.MutationHookOptions
 export type EditPipelineMutationHookResult = ReturnType<typeof useEditPipelineMutation>;
 export type EditPipelineMutationResult = Apollo.MutationResult<EditPipelineMutation>;
 export type EditPipelineMutationOptions = Apollo.BaseMutationOptions<EditPipelineMutation, EditPipelineMutationVariables>;
+export const MutationDocument = gql`
+    mutation Mutation($id: String!, $pipelineId: String, $pigType: PigTypeEnum, $date: DateTime, $comment: String, $operatorId: String) {
+  editPigRun(
+    id: $id
+    pipelineId: $pipelineId
+    pigType: $pigType
+    date: $date
+    comment: $comment
+    operatorId: $operatorId
+  ) {
+    id
+  }
+}
+    `;
+export type MutationMutationFn = Apollo.MutationFunction<MutationMutation, MutationMutationVariables>;
+
+/**
+ * __useMutationMutation__
+ *
+ * To run a mutation, you first call `useMutationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMutationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [mutationMutation, { data, loading, error }] = useMutationMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      pipelineId: // value for 'pipelineId'
+ *      pigType: // value for 'pigType'
+ *      date: // value for 'date'
+ *      comment: // value for 'comment'
+ *      operatorId: // value for 'operatorId'
+ *   },
+ * });
+ */
+export function useMutationMutation(baseOptions?: Apollo.MutationHookOptions<MutationMutation, MutationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MutationMutation, MutationMutationVariables>(MutationDocument, options);
+      }
+export type MutationMutationHookResult = ReturnType<typeof useMutationMutation>;
+export type MutationMutationResult = Apollo.MutationResult<MutationMutation>;
+export type MutationMutationOptions = Apollo.BaseMutationOptions<MutationMutation, MutationMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -1212,6 +1326,54 @@ export function useAllInjectionPointsQueryLazyQuery(baseOptions?: Apollo.LazyQue
 export type AllInjectionPointsQueryQueryHookResult = ReturnType<typeof useAllInjectionPointsQueryQuery>;
 export type AllInjectionPointsQueryLazyQueryHookResult = ReturnType<typeof useAllInjectionPointsQueryLazyQuery>;
 export type AllInjectionPointsQueryQueryResult = Apollo.QueryResult<AllInjectionPointsQueryQuery, AllInjectionPointsQueryQueryVariables>;
+export const PigRunByPipelineIdDocument = gql`
+    query PigRunByPipelineId($pipelineId: String!) {
+  pigRunByPipelineId(pipelineId: $pipelineId) {
+    id
+    pigType
+    date
+    comment
+    operator {
+      firstName
+      lastName
+    }
+    createdBy {
+      firstName
+      lastName
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __usePigRunByPipelineIdQuery__
+ *
+ * To run a query within a React component, call `usePigRunByPipelineIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePigRunByPipelineIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePigRunByPipelineIdQuery({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function usePigRunByPipelineIdQuery(baseOptions: Apollo.QueryHookOptions<PigRunByPipelineIdQuery, PigRunByPipelineIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PigRunByPipelineIdQuery, PigRunByPipelineIdQueryVariables>(PigRunByPipelineIdDocument, options);
+      }
+export function usePigRunByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PigRunByPipelineIdQuery, PigRunByPipelineIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PigRunByPipelineIdQuery, PigRunByPipelineIdQueryVariables>(PigRunByPipelineIdDocument, options);
+        }
+export type PigRunByPipelineIdQueryHookResult = ReturnType<typeof usePigRunByPipelineIdQuery>;
+export type PigRunByPipelineIdLazyQueryHookResult = ReturnType<typeof usePigRunByPipelineIdLazyQuery>;
+export type PigRunByPipelineIdQueryResult = Apollo.QueryResult<PigRunByPipelineIdQuery, PigRunByPipelineIdQueryVariables>;
 export const GetValidatorsDocument = gql`
     query getValidators {
   validators {

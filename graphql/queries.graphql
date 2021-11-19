@@ -117,7 +117,26 @@ query allInjectionPointsQuery {
     }
   }
 
-  query getValidators {
+query PigRunByPipelineId($pipelineId: String!) {
+  pigRunByPipelineId(pipelineId: $pipelineId) {
+    id
+    pigType
+    date
+    comment
+    operator {
+      firstName
+      lastName
+    }
+    createdBy {
+      firstName
+      lastName
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+query getValidators {
   validators {
     licenseMatchPattern
     segmentMatchPattern

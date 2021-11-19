@@ -1,9 +1,9 @@
 import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg, booleanArg } from 'nexus';
 import { User } from './User';
-import { Satellite, SatelliteUniqueInput } from './Satellite';
+import { Satellite } from './Satellite';
 import { InjectionPoint, InjectionPointCreateInput } from './InjectionPoint';
 import { Context } from '../context';
-import { Prisma, Pipeline as IPipeline } from '@prisma/client';
+import { Pipeline as IPipeline } from '@prisma/client';
 
 
 
@@ -545,126 +545,3 @@ export const PipelineMutation = extendType({
     })
   }
 })
-
-
-export const licenseMatchPattern = "^(AB|SK|BC)(\\d{5}|\\d{6})$";
-export const segmentMatchPattern = "^((UL)(\\d{1,2})|(\\d{1,3}))$";
-export const fromToMatchPattern = "^((\\d{2}-\\d{2}-\\d{3}-\\d{2}W\\d{1})|([A-Z]{1}-\\d{3}-[A-Z]{1} \\d{3}-[A-Z]{1}-\\d{2}))$";
-export const lengthMatchPattern = "^\\d*\\.?\\d*$";
-export const yieldStrengthMatchPattern = "^(240|206|359|290|0|289|57|24|200|205|380|2875|241|358|360)$";
-export const wallThicknessMatchPattern = "^(\\d|1\\d|2[0-5])(\\.\\d{1,2})?$";
-export const mopMatchPattern = "^\\d{1,5}$"; // number between 0 and 99999
-export const outsideDiameterMatchPattern = "^4[3-9]$|^4[2-9]\\.[2-9]\\d?$|^([5-9]\\d)(\\.\\d\\d?)?$|^([1-2]\\d{2})(\\.\\d\\d?)?$|^(3[0-2][0-3])(\\.[0-8]\\d?)?$"; // number between 42.2 and 323.89
-
-export const SubstanceEnumObject = objectType({
-  name: 'SubstanceEnumObject',
-  definition(t) {
-    for (const iterator of Object.keys(SubstanceEnumMembers)) {
-      t.nonNull.string(iterator)
-    }
-  }
-})
-
-export const FromToFeatureEnumObject = objectType({
-  name: 'FromToFeatureEnumObject',
-  definition(t) {
-    for (const iterator of Object.keys(FromToFeatureEnumMembers)) {
-      console.log(iterator);
-      t.nonNull.string(iterator)
-    }
-  }
-})
-
-export const StatusEnumObject = objectType({
-  name: 'StatusEnumObject',
-  definition(t) {
-    for (const iterator of Object.keys(StatusEnumMembers)) {
-      t.nonNull.string(iterator)
-    }
-  }
-})
-
-export const TypeEnumObject = objectType({
-  name: 'TypeEnumObject',
-  definition(t) {
-    for (const iterator of Object.keys(TypeEnumMembers)) {
-      t.nonNull.string(iterator)
-    }
-  }
-})
-
-export const GradeEnumObject = objectType({
-  name: 'GradeEnumObject',
-  definition(t) {
-    for (const iterator of Object.keys(GradeEnumMembers)) {
-      t.nonNull.string(iterator)
-    }
-  }
-})
-
-export const MaterialEnumObject = objectType({
-  name: 'MaterialEnumObject',
-  definition(t) {
-    for (const iterator of Object.keys(MaterialEnumMembers)) {
-      t.nonNull.string(iterator)
-    }
-  }
-})
-
-export const InternalProtectionEnumObject = objectType({
-  name: 'InternalProtectionEnumObject',
-  definition(t) {
-    for (const iterator of Object.keys(InternalProtectionEnumMembers)) {
-      t.nonNull.string(iterator)
-    }
-  }
-})
-
-export const Validator = objectType({
-  name: 'Validator',
-  definition(t) {
-    t.nonNull.string('licenseMatchPattern')
-    t.nonNull.string('segmentMatchPattern')
-    t.nonNull.field('substanceEnum', { type: 'SubstanceEnumObject' })
-    t.nonNull.string('fromToMatchPattern')
-    t.nonNull.field('fromToFeatureEnum', { type: 'FromToFeatureEnumObject' })
-    t.nonNull.field('statusEnum', { type: 'StatusEnumObject' })
-    t.nonNull.string('lengthMatchPattern')
-    t.nonNull.field('typeEnum', { type: 'TypeEnumObject' })
-    t.nonNull.field('gradeEnum', { type: 'GradeEnumObject' })
-    t.nonNull.string('yieldStrengthMatchPattern')
-    t.nonNull.string('outsideDiameterMatchPattern')
-    t.nonNull.string('wallThicknessMatchPattern')
-    t.nonNull.field('materialEnum', { type: 'MaterialEnumObject' })
-    t.nonNull.string('mopMatchPattern')
-    t.nonNull.field('internalProtectionEnum', { type: 'InternalProtectionEnumObject' })
-  }
-})
-
-export const ValidatorQuery = extendType({
-  type: 'Query',
-  definition(t) {
-    t.field('validators', {
-      type: Validator,
-      resolve: (_parent, args, ctx: Context) => {
-        return {
-          licenseMatchPattern,
-          segmentMatchPattern,
-          substanceEnum: SubstanceEnumMembers,
-          fromToMatchPattern,
-          fromToFeatureEnum: FromToFeatureEnumMembers,
-          statusEnum: StatusEnumMembers,
-          lengthMatchPattern,
-          typeEnum: TypeEnumMembers,
-          gradeEnum: GradeEnumMembers,
-          yieldStrengthMatchPattern,
-          outsideDiameterMatchPattern,
-          wallThicknessMatchPattern,
-          materialEnum: MaterialEnumMembers,
-          mopMatchPattern,
-          internalProtectionEnum: InternalProtectionEnumMembers,
-        };
-      }
-    })
-  },
-});

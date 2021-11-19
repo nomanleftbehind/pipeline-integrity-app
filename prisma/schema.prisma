@@ -18,8 +18,8 @@ model User {
   satellites      Satellite[]
   pipelines       Pipeline[]
   injectionPoints InjectionPoint[]
-  // pipelineStream  PipelineStream[]
-
+  pigRunsOperated PigRun[]         @relation("operator")
+  PigRunsCreated  PigRun[]         @relation("createdBy")
 }
 
 enum Role {
@@ -57,6 +57,7 @@ model Pipeline {
   index              Int                     @default(autoincrement())
   satellite          Satellite?              @relation(fields: [satelliteId], references: [id])
   satelliteId        String?
+  pigRuns            PigRun[]
   injectionPoints    InjectionPoint[]
   license            String
   segment            String
@@ -84,10 +85,23 @@ model Pipeline {
   updatedAt          DateTime                @updatedAt
   upstream           Pipeline[]              @relation("PipelineFollows", references: [id])
   downstream         Pipeline[]              @relation("PipelineFollows", references: [id])
-  // upstream           PipelineStream[]   @relation("upstream")
-  // downstream         PipelineStream[]   @relation("downstream")
 
   @@unique([license, segment])
+}
+
+model PigRun {
+  id          String       @id @default(uuid())
+  pipeline    Pipeline     @relation(fields: [pipelineId], references: [id])
+  pipelineId  String
+  pigType     PigTypeEnum?
+  date        DateTime
+  comment     String?
+  operator    User?        @relation("operator", fields: [operatorId], references: [id])
+  operatorId  String?
+  createdBy   User         @relation("createdBy", fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 // model PipelineStream {
