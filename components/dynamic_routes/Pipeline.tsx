@@ -11,67 +11,106 @@ import TableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-import { usePipelineByIdQuery, PipelineByIdQuery, usePigRunByPipelineIdQuery } from '../../graphql/generated/graphql';
+import { usePipelineByIdQuery, PipelineByIdQuery } from '../../graphql/generated/graphql';
 
 type IPipeline = NonNullable<PipelineByIdQuery['pipelineById']>;
 type IPipelineValues = IPipeline[keyof IPipeline] | undefined;
+
+type ArraysFromUnion<T> = T extends (infer U)[] ? U[] : never;
+type ArrayType = ArraysFromUnion<IPipelineValues>
+
+type InsideArray<T> = T extends (infer U)[] ? U : never
+type Element = InsideArray<ArrayType>
 
 export default function Pipeline() {
 	const router = useRouter();
 	const { id } = router.query;
 	const { data, loading, error } = usePipelineByIdQuery({ variables: { id: typeof id === 'string' ? id : '' } });
-	const { data: dataPigRun, loading: loadingPigRun, error: errorPigRun } = usePigRunByPipelineIdQuery({ variables: { pipelineId: typeof id === 'string' ? id : '' } });
 
-	function renderValue(value: IPipelineValues) {
-		if (Array.isArray(value)) {
+	// This function finds first object inside array that's not null or undefined.
+	// Can't use array.find(el => el) because compiler says that
+	// each member of the el union type has signatures, but none of those signatures are compatible with each other
+	function renderHeaderCells(array: ArrayType) {
+		let el: Element;
+		for (let i = 0; i < array.length; i++) {
+			el = array[i];
+			if (el) break;
+		}
+		if (el) {
 			return (
-				value.map((v, i) => {
-					if (typeof v === 'object' && !Array.isArray(v) && v !== null) {
-						return (
-							<Table key={i}>
-								<TableBody>
-									{Object.entries(v).map(([k, v]) => {
-										return (
-											<TableRow key={k}>
-												<TableCell>
-													{k}
-												</TableCell>
-												<TableCell align="right">
-													{v}
-												</TableCell>
-											</TableRow>
-										)
-									})
-									}
-								</TableBody>
-							</Table>
-						)
-					} else {
-						return v
-					}
+				Object.keys(el).map((subColumn, index, arr) => {
+					return (
+						<TableCell key={index} align={index !== 0 || arr.length === 1 ? 'right' : 'left'}>
+							{subColumn}
+						</TableCell>
+					)
 				})
 			)
-		} else if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
+		} else {
+			return null
+		}
+	}
+
+	function renderValue(value: IPipelineValues) {
+		if (!value) {
+			return null
+		} else if (typeof value === 'string' || typeof value === 'number' || value === true) {
+			return <div>{value}</div>
+		} else {
 			return (
 				<Table>
-					<TableBody>
-						{Object.entries(value).map(([k, v]) => {
-							return (
-								<TableRow key={k}>
-									<TableCell>
-										{k}
-									</TableCell>
-									<TableCell align="right">
-										{v}
-									</TableCell>
+					{Array.isArray(value) ?
+						<>
+							<TableHead>
+								<TableRow>
+									{renderHeaderCells(value)}
 								</TableRow>
-							)
-						})}
-					</TableBody>
+							</TableHead>
+							<TableBody>
+								{value.map((subValue, index) => {
+									return (
+										<TableRow key={index}>
+											{subValue ?
+												Object.values(subValue).map((subSubValue, subIndex, arr) => {
+													return (
+														<TableCell key={subIndex} align={subIndex !== 0 || arr.length === 1 ? 'right' : 'left'}>
+															{subSubValue}
+														</TableCell>
+													)
+												}) :
+												null
+											}
+										</TableRow>
+									)
+								})}
+							</TableBody>
+						</> :
+						<>
+							<TableHead>
+								<TableRow>
+									{Object.keys(value).map((subColumn, index, arr) => {
+										return (
+											<TableCell key={index} align={index !== 0 || arr.length === 1 ? 'right' : 'left'}>
+												{subColumn}
+											</TableCell>
+										)
+									})}
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								<TableRow>
+									{Object.values(value).map((subValue, index, arr) => {
+										return (
+											<TableCell key={index} align={index !== 0 || arr.length === 1 ? 'right' : 'left'}>
+												{subValue}
+											</TableCell>
+										)
+									})}
+								</TableRow>
+							</TableBody>
+						</>}
 				</Table>
 			)
-		} else {
-			return value
 		}
 	}
 

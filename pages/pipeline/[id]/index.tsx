@@ -60,27 +60,33 @@ function PigRuns() {
                         return pigRun ?
                           <TableRow hover role="checkbox" tabIndex={-1} key={pigRun.id}>
                             {Object.values(pigRun).map((value, index) => {
-                              console.log('value:', value);
                               return (
                                 <TableCell key={index} align={index === 0 ? 'left' : 'right'}>
                                   {typeof value === 'string' ?
                                     value :
                                     typeof value === 'object' && !Array.isArray(value) && value !== null ?
                                       <Table>
+                                        <TableHead>
+                                          <TableRow>
+                                            {Object.keys(value).map((subColumn, index) => {
+                                              return (
+                                                <TableCell key={index}>
+                                                  {subColumn}
+                                                </TableCell>
+                                              )
+                                            })}
+                                          </TableRow>
+                                        </TableHead>
                                         <TableBody>
-                                          {Object.entries(value).map(([k, v]) => {
-                                            return (
-                                              <TableRow key={k}>
-                                                <TableCell>
-                                                  {k}
+                                          <TableRow>
+                                            {Object.values(value).map((subValue, index) => {
+                                              return (
+                                                <TableCell key={index}>
+                                                  {subValue}
                                                 </TableCell>
-                                                <TableCell align="right">
-                                                  {v}
-                                                </TableCell>
-                                              </TableRow>
-                                            )
-                                          })
-                                          }
+                                              )
+                                            })}
+                                          </TableRow>
                                         </TableBody>
                                       </Table> :
                                       null
@@ -157,7 +163,6 @@ export default function VerticalTabs() {
         <Tab label="Item Seven" {...a11yProps(6)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-
         <Pipeline />
       </TabPanel>
       <TabPanel value={value} index={1}>
