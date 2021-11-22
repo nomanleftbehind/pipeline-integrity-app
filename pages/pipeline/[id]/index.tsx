@@ -1,111 +1,20 @@
 import * as React from 'react';
-import { useRouter } from 'next/router';
+
 import Layout from '../../../components/layout';
 import MenuBar from '../../../components/menubar';
-import Pipeline from '../../../components/dynamic_routes/Pipeline';
+import PipelineProperties from '../../../components/dynamic_routes/PipelineProperties';
+import PigRuns from '../../../components/dynamic_routes/PigRuns';
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-
-import { usePigRunByPipelineIdQuery } from '../../../graphql/generated/graphql';
 
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
-}
-
-
-function PigRuns() {
-  const router = useRouter();
-  const { id } = router.query;
-  const { data, loading, error } = usePigRunByPipelineIdQuery({ variables: { pipelineId: typeof id === 'string' ? id : '' } });
-
-
-  return (
-    <>
-      {loading ? 'Loading...' :
-        error ? <div>{error.message}</div> :
-          data ?
-            data.pigRunByPipelineId ?
-              <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                <TableContainer sx={{ maxHeight: 440 }}>
-                  <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                      <TableRow>
-                        {data.pigRunByPipelineId[0] ?
-                          Object.keys(data.pigRunByPipelineId[0]).map((column, index) => {
-                            return (
-                              <TableCell key={index}>
-                                {column}
-                              </TableCell>
-                            )
-                          }) :
-                          null
-                        }
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {data.pigRunByPipelineId.map((pigRun) => {
-                        return pigRun ?
-                          <TableRow hover role="checkbox" tabIndex={-1} key={pigRun.id}>
-                            {Object.values(pigRun).map((value, index) => {
-                              return (
-                                <TableCell key={index} align={index === 0 ? 'left' : 'right'}>
-                                  {typeof value === 'string' ?
-                                    value :
-                                    typeof value === 'object' && !Array.isArray(value) && value !== null ?
-                                      <Table>
-                                        <TableHead>
-                                          <TableRow>
-                                            {Object.keys(value).map((subColumn, index) => {
-                                              return (
-                                                <TableCell key={index}>
-                                                  {subColumn}
-                                                </TableCell>
-                                              )
-                                            })}
-                                          </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                          <TableRow>
-                                            {Object.values(value).map((subValue, index) => {
-                                              return (
-                                                <TableCell key={index}>
-                                                  {subValue}
-                                                </TableCell>
-                                              )
-                                            })}
-                                          </TableRow>
-                                        </TableBody>
-                                      </Table> :
-                                      null
-                                  }
-                                </TableCell>
-                              )
-                            })}
-                          </TableRow> :
-                          null;
-                      })}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Paper> :
-              null :
-            null
-      }
-    </>
-  )
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -156,32 +65,12 @@ export default function VerticalTabs() {
       >
         <Tab label="Pipeline Properties" {...a11yProps(0)} />
         <Tab label="Pig Runs" {...a11yProps(1)} />
-        <Tab label="Item Three" {...a11yProps(2)} />
-        <Tab label="Item Four" {...a11yProps(3)} />
-        <Tab label="Item Five" {...a11yProps(4)} />
-        <Tab label="Item Six" {...a11yProps(5)} />
-        <Tab label="Item Seven" {...a11yProps(6)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        <Pipeline />
+        <PipelineProperties />
       </TabPanel>
       <TabPanel value={value} index={1}>
         <PigRuns />
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        Item Three
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-        Item Four
-      </TabPanel>
-      <TabPanel value={value} index={4}>
-        Item Five
-      </TabPanel>
-      <TabPanel value={value} index={5}>
-        Item Six
-      </TabPanel>
-      <TabPanel value={value} index={6}>
-        Item Seven
       </TabPanel>
     </Box>
   );

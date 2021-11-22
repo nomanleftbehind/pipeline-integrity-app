@@ -5,10 +5,7 @@ import DropDown from './Dropdown';
 import styles from './sidebar.module.css';
 
 export default function ManuBar() {
-
   const { user } = useContext(UserContext);
-
-  console.log("Menubar context: ", user);
 
   return (
     <nav className={styles.nav}>
