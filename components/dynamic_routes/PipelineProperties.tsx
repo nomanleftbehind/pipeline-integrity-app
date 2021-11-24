@@ -11,6 +11,8 @@ import TableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+import EntryField from '../fields/EntryField';
+
 import { usePipelineByIdQuery, PipelineByIdQuery } from '../../graphql/generated/graphql';
 
 type IPipeline = NonNullable<PipelineByIdQuery['pipelineById']>;
@@ -51,11 +53,11 @@ export default function Pipeline() {
 		}
 	}
 
-	function renderValue(value: IPipelineValues) {
+	function renderValue(value: IPipelineValues, columnName: string) {
 		if (!value) {
 			return null
 		} else if (typeof value === 'string' || typeof value === 'number' || value === true) {
-			return <div>{value}</div>
+			return <EntryField id={id as string} record={value} columnName={columnName} />
 		} else {
 			return (
 				<Table>
@@ -135,14 +137,14 @@ export default function Pipeline() {
 								error ? <TableRow><TableCell>{error.message}</TableCell></TableRow> :
 									data ?
 										data.pipelineById ?
-											Object.entries(data.pipelineById).map(([a, b]) => {
+											Object.entries(data.pipelineById).map(([columnName, record]) => {
 												return (
-													<TableRow hover role="checkbox" tabIndex={-1} key={a}>
+													<TableRow hover role="checkbox" tabIndex={-1} key={columnName}>
 														<TableCell>
-															{a}
+															{columnName}
 														</TableCell>
 														<TableCell align="right">
-															{renderValue(b)}
+															{renderValue(record, columnName)}
 														</TableCell>
 													</TableRow>
 												);

@@ -12,7 +12,7 @@ interface ITextFieldProps {
   id: string;
   columnName: string;
   record: IRecord;
-  validator: IValidator;
+  validator?: IValidator;
 }
 
 export default function TextField({ id, columnName, record, validator }: ITextFieldProps): JSX.Element {
@@ -24,7 +24,16 @@ export default function TextField({ id, columnName, record, validator }: ITextFi
 
   const [editPipeline, { data }] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
 
+  const recordIsDate = typeof record === "string" && record.length === 24 && record.slice(-1) === 'Z';
+
   const validatorIsString = typeof validator === "string";
+
+  const recordDisplay = record ?
+    validatorIsString ?
+      recordIsDate ? record.slice(0, 10) : record :
+      validator ? validator[recordAsKey] :
+        recordIsDate ? record.slice(0, 10) : record :
+    null
 
   const toggleEdit = (): void => {
     setEdit(!edit);
@@ -41,7 +50,7 @@ export default function TextField({ id, columnName, record, validator }: ITextFi
     }
   }
 
-  useEffect(() => { console.log(columnName, typeof state, typeof record, validatorIsString && typeof record === "number"); validateForm() }, [state]);
+  useEffect(() => { console.log(columnName, typeof state, typeof record, typeof record === "string" ? record.length : 'no length', validatorIsString && typeof record === "number"); validateForm() }, [state]);
 
   function handleChange(e: React.FormEvent<HTMLInputElement | HTMLSelectElement>) {
     setState(e.currentTarget.value);
@@ -62,9 +71,12 @@ export default function TextField({ id, columnName, record, validator }: ITextFi
     <TableCell align="right">
       <div className="cell-wrapper">
         {<div className="cell-r">
-          <IconButton aria-label="edit cell" size="small" onClick={toggleEdit}>
-            {edit ? <BlockOutlinedIcon /> : <EditOutlinedIcon />}
-          </IconButton>
+          {validator ?
+            <IconButton aria-label="edit cell" size="small" onClick={toggleEdit}>
+              {edit ? <BlockOutlinedIcon /> : <EditOutlinedIcon />}
+            </IconButton> :
+            null
+          }
         </div>}
         {edit ?
           <form className="cell-l" name={state} onSubmit={handleSubmit}>
@@ -91,13 +103,7 @@ export default function TextField({ id, columnName, record, validator }: ITextFi
           </form> :
           <div className="cell-l">
             <div>
-              {record ?
-                validatorIsString ?
-                  record :
-                  validator ?
-                    validator[recordAsKey] :
-                    record :
-                null}
+              {recordDisplay}
             </div>
           </div>}
       </div>
