@@ -58,7 +58,7 @@ mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $seg
   }
 }
 
-mutation Mutation($id: String!, $pipelineId: String, $pigType: PigTypeEnum, $date: DateTime, $comment: String, $operatorId: String) {
+mutation EditPigRun($id: String!, $pipelineId: String, $pigType: PigTypeEnum, $date: DateTime, $comment: String, $operatorId: String) {
   editPigRun(id: $id, pipelineId: $pipelineId, pigType: $pigType, date: $date, comment: $comment, operatorId: $operatorId) {
     id
   }

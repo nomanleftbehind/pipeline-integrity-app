@@ -6,14 +6,17 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { useRouter } from 'next/router';
+import EntryField from '../fields/EntryField';
 
-import { usePigRunByPipelineIdQuery } from '../../graphql/generated/graphql';
+import { usePigRunByPipelineIdQuery, useGetValidatorsQuery } from '../../graphql/generated/graphql';
 
 export default function PigRuns() {
 	const router = useRouter();
 	const { id } = router.query;
 	const { data, loading, error } = usePigRunByPipelineIdQuery({ variables: { pipelineId: typeof id === 'string' ? id : '' } });
+	const { data: validatorsData } = useGetValidatorsQuery();
 
+	const { pigTypeEnum } = validatorsData?.validators || {}
 
 	return (
 		<>
@@ -42,41 +45,14 @@ export default function PigRuns() {
 											{data.pigRunByPipelineId.map((pigRun) => {
 												return pigRun ?
 													<TableRow hover role="checkbox" tabIndex={-1} key={pigRun.id}>
-														{Object.values(pigRun).map((value, index) => {
-															return (
-																<TableCell key={index} align={index === 0 ? 'left' : 'right'}>
-																	{typeof value === 'string' ?
-																		value :
-																		typeof value === 'object' && !Array.isArray(value) && value !== null ?
-																			<Table>
-																				<TableHead>
-																					<TableRow>
-																						{Object.keys(value).map((subColumn, index) => {
-																							return (
-																								<TableCell key={index}>
-																									{subColumn}
-																								</TableCell>
-																							)
-																						})}
-																					</TableRow>
-																				</TableHead>
-																				<TableBody>
-																					<TableRow>
-																						{Object.values(value).map((subValue, index) => {
-																							return (
-																								<TableCell key={index}>
-																									{subValue}
-																								</TableCell>
-																							)
-																						})}
-																					</TableRow>
-																				</TableBody>
-																			</Table> :
-																			null
-																	}
-																</TableCell>
-															)
-														})}
+														<EntryField table="pigRun" id={pigRun.id} record={pigRun.id} columnName="id" />
+														<EntryField table="pigRun" id={pigRun.id} record={pigRun.pigType} columnName="pigType" validator={pigTypeEnum} />
+														<EntryField table="pigRun" id={pigRun.id} record={pigRun.date} columnName="date" />
+														<EntryField table="pigRun" id={pigRun.id} record={pigRun.comment} columnName="comment" />
+														<EntryField table="pigRun" id={pigRun.id} record={pigRun.operator?.email} columnName="operator" />
+														<EntryField table="pigRun" id={pigRun.id} record={pigRun.createdBy?.email} columnName="createdBy" />
+														<EntryField table="pigRun" id={pigRun.id} record={pigRun.createdAt} columnName="createdAt" />
+														<EntryField table="pigRun" id={pigRun.id} record={pigRun.updatedAt} columnName="updatedAt" />
 													</TableRow> :
 													null;
 											})}

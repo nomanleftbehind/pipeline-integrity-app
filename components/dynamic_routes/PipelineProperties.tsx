@@ -60,58 +60,60 @@ export default function Pipeline() {
 			return <EntryField id={id as string} record={value} columnName={columnName} />
 		} else {
 			return (
-				<Table>
-					{Array.isArray(value) ?
-						<>
-							<TableHead>
-								<TableRow>
-									{renderHeaderCells(value)}
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{value.map((subValue, index) => {
-									return (
-										<TableRow key={index}>
-											{subValue ?
-												Object.values(subValue).map((subSubValue, subIndex, arr) => {
-													return (
-														<TableCell key={subIndex} align={subIndex !== 0 || arr.length === 1 ? 'right' : 'left'}>
-															{subSubValue}
-														</TableCell>
-													)
-												}) :
-												null
-											}
-										</TableRow>
-									)
-								})}
-							</TableBody>
-						</> :
-						<>
-							<TableHead>
-								<TableRow>
-									{Object.keys(value).map((subColumn, index, arr) => {
+				<TableCell align="right">
+					<Table>
+						{Array.isArray(value) ?
+							<>
+								<TableHead>
+									<TableRow>
+										{renderHeaderCells(value)}
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{value.map((subValue, index) => {
 										return (
-											<TableCell key={index} align={index !== 0 || arr.length === 1 ? 'right' : 'left'}>
-												{subColumn}
-											</TableCell>
+											<TableRow key={index}>
+												{subValue ?
+													Object.values(subValue).map((subSubValue, subIndex, arr) => {
+														return (
+															<TableCell key={subIndex} align={subIndex !== 0 || arr.length === 1 ? 'right' : 'left'}>
+																{subSubValue}
+															</TableCell>
+														)
+													}) :
+													null
+												}
+											</TableRow>
 										)
 									})}
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								<TableRow>
-									{Object.values(value).map((subValue, index, arr) => {
-										return (
-											<TableCell key={index} align={index !== 0 || arr.length === 1 ? 'right' : 'left'}>
-												{subValue}
-											</TableCell>
-										)
-									})}
-								</TableRow>
-							</TableBody>
-						</>}
-				</Table>
+								</TableBody>
+							</> :
+							<>
+								<TableHead>
+									<TableRow>
+										{Object.keys(value).map((subColumn, index, arr) => {
+											return (
+												<TableCell key={index} align={index !== 0 || arr.length === 1 ? 'right' : 'left'}>
+													{subColumn}
+												</TableCell>
+											)
+										})}
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									<TableRow>
+										{Object.values(value).map((subValue, index, arr) => {
+											return (
+												<TableCell key={index} align={index !== 0 || arr.length === 1 ? 'right' : 'left'}>
+													{subValue}
+												</TableCell>
+											)
+										})}
+									</TableRow>
+								</TableBody>
+							</>}
+					</Table>
+				</TableCell>
 			)
 		}
 	}
@@ -143,9 +145,7 @@ export default function Pipeline() {
 														<TableCell>
 															{columnName}
 														</TableCell>
-														<TableCell align="right">
-															{renderValue(record, columnName)}
-														</TableCell>
+														{renderValue(record, columnName)}
 													</TableRow>
 												);
 											}) :

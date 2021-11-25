@@ -49,7 +49,9 @@ export default function PipelineProperties({ open, id, properties_name, pipeline
                 return (
                   <TableRow key={columnName}>
                     <TableCell>{columnName}</TableCell>
-                    <EntryField id={id} record={record} columnName={columnName} validator={validator} />
+                    {/* <TableCell align="right"> */}
+                      <EntryField id={id} record={record} columnName={columnName} validator={validator} />
+                    {/* </TableCell> */}
                   </TableRow>
                 );
               })}

@@ -4,35 +4,37 @@ import IconButton from '@mui/material/IconButton';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { useEditPipelineMutation, PipelinesByIdQueryDocument } from '../../graphql/generated/graphql';
+import { useEditPipelineMutation, PipelinesByIdQueryDocument, useEditPigRunMutation, PigRunByPipelineIdDocument } from '../../graphql/generated/graphql';
 import { IValidator, IRecord } from '../fields/PipelineProperties';
 
 
 interface ITextFieldProps {
+  table?: string;
   id: string;
   columnName: string;
   record: IRecord;
   validator?: IValidator;
 }
 
-export default function TextField({ id, columnName, record, validator }: ITextFieldProps): JSX.Element {
+export default function TextField({ table, id, columnName, record, validator }: ITextFieldProps): JSX.Element {
   const [edit, setEdit] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(true);
   const [state, setState] = useState<string>(record ? record.toString() : "");
 
   const recordAsKey = record as keyof typeof validator;
 
-  const [editPipeline, { data }] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
+  const [editPipeline, { data: dataPipeline }] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
+  const [editPigRun, { data: dataPigRun }] = useEditPigRunMutation({ refetchQueries: [PigRunByPipelineIdDocument, 'PigRunByPipelineId'] });
 
-  const recordIsDate = typeof record === "string" && record.length === 24 && record.slice(-1) === 'Z';
+  const recordIfDateDisplay = typeof record === "string" && record.length === 24 && record.slice(-1) === 'Z' ? record.slice(0, 10) : record;
 
   const validatorIsString = typeof validator === "string";
 
   const recordDisplay = record ?
     validatorIsString ?
-      recordIsDate ? record.slice(0, 10) : record :
+      recordIfDateDisplay :
       validator ? validator[recordAsKey] :
-        recordIsDate ? record.slice(0, 10) : record :
+        recordIfDateDisplay :
     null
 
   const toggleEdit = (): void => {
@@ -50,7 +52,7 @@ export default function TextField({ id, columnName, record, validator }: ITextFi
     }
   }
 
-  useEffect(() => { console.log(columnName, typeof state, typeof record, typeof record === "string" ? record.length : 'no length', validatorIsString && typeof record === "number"); validateForm() }, [state]);
+  useEffect(() => { validateForm() }, [state]);
 
   function handleChange(e: React.FormEvent<HTMLInputElement | HTMLSelectElement>) {
     setState(e.currentTarget.value);
@@ -58,12 +60,15 @@ export default function TextField({ id, columnName, record, validator }: ITextFi
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    editPipeline({
-      variables: {
-        id: id,
-        [columnName]: validatorIsString && typeof record === "number" ? Number(e.currentTarget.name) : e.currentTarget.name
-      }
-    });
+    const mutationOptions = { variables: { id: id, [columnName]: validatorIsString && typeof record === "number" ? Number(e.currentTarget.name) : e.currentTarget.name } }
+    switch (table) {
+      case 'pigRun':
+        editPigRun(mutationOptions);
+        break;
+      default:
+        editPipeline(mutationOptions);
+        break;
+    }
     toggleEdit();
   };
 
