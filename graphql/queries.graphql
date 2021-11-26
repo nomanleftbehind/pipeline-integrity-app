@@ -45,6 +45,11 @@ query pipelinesByIdQuery($satelliteId: String, $facilityId: String) {
       gas
       water
     }
+    upstream {
+      id
+      license
+      segment
+    }
   }
 }
 
@@ -112,6 +117,54 @@ query allInjectionPointsQuery {
       }
     }
   }
+
+query sourceOptions {
+  allInjectionPoints {
+    id
+    source
+    pipeline {
+      id
+      license
+      segment
+    }
+    satellite {
+      id
+      name
+      facility {
+        id
+        name
+      }
+    }
+  }
+}
+
+query pipelineOptions {
+  pipelinesById {
+    id
+    license
+    segment
+    satellite {
+      id
+      name
+      facility {
+        id
+        name
+      }
+    }
+  }
+}
+
+query pipelineOptions2 {
+  allSatellites {
+    id
+    name
+    pipelines {
+      id
+      license
+      segment
+    }
+  }
+}
 
 query PigRunByPipelineId($pipelineId: String!) {
   pigRunByPipelineId(pipelineId: $pipelineId) {

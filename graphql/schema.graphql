@@ -273,6 +273,7 @@ type Pipeline {
   createdAt: DateTime!
   createdBy: User!
   downstream: [Pipeline]
+  facilityName: String
   from: String!
   fromFeature: FromToFeatureEnum
   grade: GradeEnum
@@ -289,6 +290,7 @@ type Pipeline {
   piggable: Boolean
   piggingFrequency: Int
   satellite: Satellite
+  satelliteName: String
   segment: String!
   status: StatusEnum!
   substance: SubstanceEnum!
@@ -337,6 +339,7 @@ type Query {
   me: User
   pigRunByPipelineId(pipelineId: String!): [PigRun]
   pipelineById(id: String!): Pipeline
+  pipelineOptions: [Pipeline]
   pipelinesById(facilityId: String, satelliteId: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
   validators: Validator

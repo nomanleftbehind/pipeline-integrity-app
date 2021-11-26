@@ -16,24 +16,31 @@ import { IPipeline, IInjectionPointOptions } from '../../rows/RenderPipeline';
 
 import { useDeleteInjectionPointFromPipelineMutation, useChangeInjectionPointToPipelineMutation, PipelinesByIdQueryDocument } from '../../../graphql/generated/graphql';
 
-type IInjectionPoints = IPipeline['injectionPoints']
+type IInjectionPoints = IPipeline['injectionPoints'];
+type IUpstream = IPipeline['upstream'];
 
 interface IInjectionPointsProps {
   open: boolean;
   id: string;
+  upstream: IUpstream;
   injectionPoints: IInjectionPoints;
   injectionPointOptions: IInjectionPointOptions;
 }
 
 
 export default function InjectionPoints({ open, id, injectionPoints, injectionPointOptions }: IInjectionPointsProps) {
-  const [showForm, setShowForm] = React.useState<boolean>(false);
+  const [showUpstreamPipelinesForm, setShowUpstreamPipelinesForm] = React.useState<boolean>(false);
+  const [showSourcesForm, setShowSourcesForm] = React.useState<boolean>(false);
 
   const [deleteInjectionPoint, { data, error, loading }] = useDeleteInjectionPointFromPipelineMutation();
   const [changeInjectionPointToPipeline, { data: dataChangeInjectionPointToPipeline }] = useChangeInjectionPointToPipelineMutation();
 
-  function toggleShowForm() {
-    setShowForm(!showForm);
+  function toggleShowUpstreamPipelinesForm() {
+    setShowUpstreamPipelinesForm(!showUpstreamPipelinesForm);
+  }
+
+  function toggleShowSourcesForm() {
+    setShowSourcesForm(!showSourcesForm);
   }
 
   function handleSubmit(newInjectionPointId: string, oldnewInjectionPointId?: string) {
@@ -41,7 +48,7 @@ export default function InjectionPoints({ open, id, injectionPoints, injectionPo
     // as otherwise if you click OK, while not having selected a different injection point,
     // it would first override injection point with itself and then delete it.
     changeInjectionPointToPipeline({ variables: { id: newInjectionPointId, pipelineId: id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
-    setShowForm(false);
+    setShowSourcesForm(false);
   }
 
   return (
@@ -54,9 +61,9 @@ export default function InjectionPoints({ open, id, injectionPoints, injectionPo
           <Table size="small" aria-label="purchases">
             <TableHead>
               <TableRow>
-                <TableCell>Source
-                  <IconButton aria-label="expand row" size="small" onClick={toggleShowForm}>
-                    {showForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
+                <TableCell>Upstream Pipelines
+                  <IconButton aria-label="expand row" size="small" onClick={toggleShowUpstreamPipelinesForm}>
+                    {showUpstreamPipelinesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
                   </IconButton>
                 </TableCell>
                 <TableCell align="right">Oil</TableCell>
@@ -65,16 +72,62 @@ export default function InjectionPoints({ open, id, injectionPoints, injectionPo
               </TableRow>
             </TableHead>
             <TableBody>
-              {showForm ?
+              {showUpstreamPipelinesForm ?
                 <TableRow>
-                  <TableCell colSpan={5}>
+                  <TableCell colSpan={4}>
                     <InjectionPointForm
+                      injectionPointType="upstream pipeline"
                       injectionPointId={injectionPointOptions ?
                         injectionPointOptions[0] ?
                           injectionPointOptions[0].id :
                           '' :
                         ''}
                       injectionPointOptions={injectionPointOptions}
+                      handleSubmit={handleSubmit}
+                    />
+                  </TableCell>
+                </TableRow> :
+                null}
+              {injectionPoints ? injectionPoints.map(injectionPoint => {
+                return injectionPoint ?
+                  (
+                    <TableRow key={injectionPoint.id}>
+                      <Source
+                        injectionPointId={injectionPoint.id}
+                        source={injectionPoint.source}
+                        injectionPointOptions={injectionPointOptions}
+                        handleSubmit={handleSubmit}
+                        deleteInjectionPoint={() => deleteInjectionPoint({ variables: { id: injectionPoint.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
+                      />
+                      <TableCell align="right">{injectionPoint.oil}</TableCell>
+                      <TableCell align="right">{injectionPoint.water}</TableCell>
+                      <TableCell align="right">{injectionPoint.gas}</TableCell>
+                    </TableRow>
+                  ) :
+                  null;
+              }) :
+                null}
+            </TableBody>
+            <TableHead>
+              <TableRow>
+                <TableCell colSpan={4}>Sources
+                  <IconButton aria-label="expand row" size="small" onClick={toggleShowSourcesForm}>
+                    {showSourcesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {showSourcesForm ?
+                <TableRow>
+                  <TableCell colSpan={4}>
+                    <InjectionPointForm
+                      injectionPointType="source"
+                      injectionPointId={injectionPointOptions ?
+                        injectionPointOptions[0] ?
+                          injectionPointOptions[0].id :
+                          '' :
+                        ''}
                       handleSubmit={handleSubmit}
                     />
                   </TableCell>

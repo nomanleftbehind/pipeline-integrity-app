@@ -747,7 +747,7 @@ export type PipelinesByIdQueryQueryVariables = Exact<{
 }>;
 
 
-export type PipelinesByIdQueryQuery = { pipelinesById?: Array<{ id: string, createdAt: string, license: string, segment: string, substance: SubstanceEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, satellite?: { id: string, facility?: { id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ id: string, source: string, oil: number, gas: number, water: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
+export type PipelinesByIdQueryQuery = { pipelinesById?: Array<{ id: string, createdAt: string, license: string, segment: string, substance: SubstanceEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, satellite?: { id: string, facility?: { id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ id: string, source: string, oil: number, gas: number, water: number } | null | undefined> | null | undefined, upstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
 
 export type PipelineByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -760,6 +760,21 @@ export type AllInjectionPointsQueryQueryVariables = Exact<{ [key: string]: never
 
 
 export type AllInjectionPointsQueryQuery = { allInjectionPoints?: Array<{ id: string, source: string, pipeline?: { id: string, license: string, segment: string } | null | undefined, satellite?: { id: string, name: string, facility?: { id: string, name: string } | null | undefined } | null | undefined } | null | undefined> | null | undefined };
+
+export type SourceOptionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SourceOptionsQuery = { allInjectionPoints?: Array<{ id: string, source: string, pipeline?: { id: string, license: string, segment: string } | null | undefined, satellite?: { id: string, name: string, facility?: { id: string, name: string } | null | undefined } | null | undefined } | null | undefined> | null | undefined };
+
+export type PipelineOptionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PipelineOptionsQuery = { pipelinesById?: Array<{ id: string, license: string, segment: string, satellite?: { id: string, name: string, facility?: { id: string, name: string } | null | undefined } | null | undefined } | null | undefined> | null | undefined };
+
+export type PipelineOptions2QueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PipelineOptions2Query = { allSatellites?: Array<{ id: string, name: string, pipelines?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
 
 export type PigRunByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -1168,6 +1183,11 @@ export const PipelinesByIdQueryDocument = gql`
       gas
       water
     }
+    upstream {
+      id
+      license
+      segment
+    }
   }
 }
     `;
@@ -1322,6 +1342,138 @@ export function useAllInjectionPointsQueryLazyQuery(baseOptions?: Apollo.LazyQue
 export type AllInjectionPointsQueryQueryHookResult = ReturnType<typeof useAllInjectionPointsQueryQuery>;
 export type AllInjectionPointsQueryLazyQueryHookResult = ReturnType<typeof useAllInjectionPointsQueryLazyQuery>;
 export type AllInjectionPointsQueryQueryResult = Apollo.QueryResult<AllInjectionPointsQueryQuery, AllInjectionPointsQueryQueryVariables>;
+export const SourceOptionsDocument = gql`
+    query sourceOptions {
+  allInjectionPoints {
+    id
+    source
+    pipeline {
+      id
+      license
+      segment
+    }
+    satellite {
+      id
+      name
+      facility {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSourceOptionsQuery__
+ *
+ * To run a query within a React component, call `useSourceOptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSourceOptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSourceOptionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSourceOptionsQuery(baseOptions?: Apollo.QueryHookOptions<SourceOptionsQuery, SourceOptionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SourceOptionsQuery, SourceOptionsQueryVariables>(SourceOptionsDocument, options);
+      }
+export function useSourceOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SourceOptionsQuery, SourceOptionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SourceOptionsQuery, SourceOptionsQueryVariables>(SourceOptionsDocument, options);
+        }
+export type SourceOptionsQueryHookResult = ReturnType<typeof useSourceOptionsQuery>;
+export type SourceOptionsLazyQueryHookResult = ReturnType<typeof useSourceOptionsLazyQuery>;
+export type SourceOptionsQueryResult = Apollo.QueryResult<SourceOptionsQuery, SourceOptionsQueryVariables>;
+export const PipelineOptionsDocument = gql`
+    query pipelineOptions {
+  pipelinesById {
+    id
+    license
+    segment
+    satellite {
+      id
+      name
+      facility {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __usePipelineOptionsQuery__
+ *
+ * To run a query within a React component, call `usePipelineOptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePipelineOptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePipelineOptionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePipelineOptionsQuery(baseOptions?: Apollo.QueryHookOptions<PipelineOptionsQuery, PipelineOptionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PipelineOptionsQuery, PipelineOptionsQueryVariables>(PipelineOptionsDocument, options);
+      }
+export function usePipelineOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PipelineOptionsQuery, PipelineOptionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PipelineOptionsQuery, PipelineOptionsQueryVariables>(PipelineOptionsDocument, options);
+        }
+export type PipelineOptionsQueryHookResult = ReturnType<typeof usePipelineOptionsQuery>;
+export type PipelineOptionsLazyQueryHookResult = ReturnType<typeof usePipelineOptionsLazyQuery>;
+export type PipelineOptionsQueryResult = Apollo.QueryResult<PipelineOptionsQuery, PipelineOptionsQueryVariables>;
+export const PipelineOptions2Document = gql`
+    query pipelineOptions2 {
+  allSatellites {
+    id
+    name
+    pipelines {
+      id
+      license
+      segment
+    }
+  }
+}
+    `;
+
+/**
+ * __usePipelineOptions2Query__
+ *
+ * To run a query within a React component, call `usePipelineOptions2Query` and pass it any options that fit your needs.
+ * When your component renders, `usePipelineOptions2Query` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePipelineOptions2Query({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePipelineOptions2Query(baseOptions?: Apollo.QueryHookOptions<PipelineOptions2Query, PipelineOptions2QueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PipelineOptions2Query, PipelineOptions2QueryVariables>(PipelineOptions2Document, options);
+      }
+export function usePipelineOptions2LazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PipelineOptions2Query, PipelineOptions2QueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PipelineOptions2Query, PipelineOptions2QueryVariables>(PipelineOptions2Document, options);
+        }
+export type PipelineOptions2QueryHookResult = ReturnType<typeof usePipelineOptions2Query>;
+export type PipelineOptions2LazyQueryHookResult = ReturnType<typeof usePipelineOptions2LazyQuery>;
+export type PipelineOptions2QueryResult = Apollo.QueryResult<PipelineOptions2Query, PipelineOptions2QueryVariables>;
 export const PigRunByPipelineIdDocument = gql`
     query PigRunByPipelineId($pipelineId: String!) {
   pigRunByPipelineId(pipelineId: $pipelineId) {

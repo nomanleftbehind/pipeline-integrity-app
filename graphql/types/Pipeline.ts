@@ -144,6 +144,8 @@ export const Pipeline = objectType({
           })
       },
     })
+    t.string('satelliteName')
+    t.string('facilityName')
   },
 });
 
@@ -392,6 +394,26 @@ export const PipelineQuery = extendType({
             ]
           })
         }
+      }
+    })
+    t.list.field('pipelineOptions', {
+      type: 'Pipeline',
+      resolve: async (_parent, args, ctx: Context) => {
+
+        const result = await ctx.prisma.$queryRaw<IPipeline[]>`
+        SELECT
+
+        f.name "facilityName",
+        s.name "satelliteName",
+        pip.id,
+        pip.license,
+        pip.segment
+
+        FROM "ppl_db"."Pipeline" pip
+        LEFT OUTER JOIN "ppl_db"."Satellite" s ON s."id" = pip."satelliteId"
+        LEFT OUTER JOIN "ppl_db"."Facility" f ON f."id" = s."facilityId"
+        `
+        return result;
       }
     })
   },

@@ -15,7 +15,7 @@ export interface IPipelineDataProps {
 
 export default function PipelineData({ open, pipeline, validators, isEven, injectionPointOptions }: IPipelineDataProps): JSX.Element {
 
-  const { id, createdAt, license, segment, substance, from, fromFeature, to, toFeature, injectionPoints, status, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
+  const { id, createdAt, license, segment, substance, from, fromFeature, to, toFeature, injectionPoints, upstream, status, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
 
   const { licenseMatchPattern, segmentMatchPattern, substanceEnum, fromToMatchPattern, fromToFeatureEnum, statusEnum, lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
 
@@ -42,6 +42,7 @@ export default function PipelineData({ open, pipeline, validators, isEven, injec
       <InjectionPoints
         open={open}
         id={id}
+        upstream={upstream}
         injectionPoints={injectionPoints}
         injectionPointOptions={injectionPointOptions}
       />
