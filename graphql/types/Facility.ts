@@ -45,7 +45,31 @@ export const FacilityQuery = extendType({
     t.list.field('allFacilities', {
       type: Facility,
       resolve: async (_parent, _args, context: Context) => {
-        const result = await context.prisma.facility.findMany()
+        const result = await context.prisma.facility.findMany({
+          orderBy:
+          {
+            name: 'asc'
+          },
+          include: {
+            satellites: {
+              orderBy: {
+                name: 'asc'
+              },
+              include: {
+                pipelines: {
+                  orderBy: [
+                    {
+                      license: 'asc'
+                    },
+                    {
+                      segment: 'asc'
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        })
         return result;
       },
     })

@@ -3510,6 +3510,18 @@
             "deprecationReason": null
           },
           {
+            "name": "facilityName",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "from",
             "description": null,
             "args": [],
@@ -3716,6 +3728,18 @@
             "type": {
               "kind": "OBJECT",
               "name": "Satellite",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "satelliteName",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "isDeprecated": false,
@@ -4336,6 +4360,22 @@
               "kind": "OBJECT",
               "name": "Pipeline",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pipelineOptions",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Pipeline",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { IInjectionPointOptions } from '../../rows/RenderPipeline';
 import IconButton from '@mui/material/IconButton';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { usePipelineOptionsLazyQuery, useSourceOptionsLazyQuery, usePipelineOptions2LazyQuery } from '../../../graphql/generated/graphql';
+import { usePipelineOptionsLazyQuery, useSourceOptionsLazyQuery, usePipelineOptions2LazyQuery, usePipelineOptions3LazyQuery } from '../../../graphql/generated/graphql';
 
 import * as React from 'react';
 import InputLabel from '@mui/material/InputLabel';
@@ -23,6 +23,7 @@ export default function InjectionPointForm({ injectionPointType, injectionPointI
 
   const [upstreamPipelineOptions, { data: dataUpstreamPipelineOptions }] = usePipelineOptionsLazyQuery();
   const [upstreamPipelineOptions2, { data: dataUpstreamPipelineOptions2 }] = usePipelineOptions2LazyQuery();
+  const [upstreamPipelineOptions3, { data: dataUpstreamPipelineOptions3 }] = usePipelineOptions3LazyQuery();
   const [sourceOptions, { data: dataSourceOptions }] = useSourceOptionsLazyQuery();
 
   function handleChange(e: React.FormEvent<HTMLSelectElement>) {
@@ -39,7 +40,7 @@ export default function InjectionPointForm({ injectionPointType, injectionPointI
   function loadOptions() {
     switch (injectionPointType) {
       case 'upstream pipeline':
-        upstreamPipelineOptions2();
+        upstreamPipelineOptions3();
         break;
       case 'source':
         sourceOptions();
@@ -49,40 +50,41 @@ export default function InjectionPointForm({ injectionPointType, injectionPointI
     }
   }
 
-  function groupBy<T extends Record<string, string | number | symbol>>(objectArray: T[], property: keyof T) {
-    const seed: Record<string | number | symbol, T[]> = {}; // notice that we change the seed type as well
-    return objectArray.reduce(function (acc, obj) {
-      let key = obj[property]
-      if (!acc[key]) {
-        acc[key] = [];
-      }
-      acc[key].push(obj);
-      return acc;
-    }, seed)
-  }
+  // function groupBy<T extends Record<string, string | number | symbol>>(objectArray: T[], property: keyof T) {
+  //   const seed: Record<string | number | symbol, T[]> = {}; // notice that we change the seed type as well
+  //   return objectArray.reduce(function (acc, obj) {
+  //     let key = obj[property]
+  //     if (!acc[key]) {
+  //       acc[key] = [];
+  //     }
+  //     acc[key].push(obj);
+  //     return acc;
+  //   }, seed)
+  // }
 
 
   function renderOptions() {
-    if (dataUpstreamPipelineOptions2 && dataUpstreamPipelineOptions2.allSatellites) {
-      // return dataUpstreamPipelineOptions.pipelinesById?.map(option => {
-      //   return (
-      //     <option key={option?.id} value={option?.id}>
-      //       {`${option?.satellite?.facility?.name} - ${option?.satellite?.name} - ${option?.license}-${option?.segment}`}
-      //     </option>
-      //   )
-      // })
-      return dataUpstreamPipelineOptions2.allSatellites.map(satellite => {
-        if (satellite) {
+    if (dataUpstreamPipelineOptions3 && dataUpstreamPipelineOptions3.allFacilities) {
+      return dataUpstreamPipelineOptions3.allFacilities.map(facility => {
+        if (facility) {
           return (
-            <optgroup key={satellite.id} label={satellite.name}>
-              {satellite.pipelines ? satellite.pipelines.map(pipeline => {
-                if (pipeline) {
-                  return (
-                    <option key={pipeline.id}>{`${pipeline.license}-${pipeline.segment}`}</option>
-                  )
+            <optgroup key={facility.id} label={facility.name}>
+              {facility.satellites ? facility.satellites.map(satellite => {
+                if (satellite) {
+                  return [
+                    <option key={satellite.id} disabled={true} style={{ color: '#000000', fontWeight: 'bold' }}>{satellite.name}</option>,
+                    satellite.pipelines ? satellite.pipelines.map(pipeline => {
+                      if (pipeline) {
+                        return (
+                          <option key={pipeline.id} value={pipeline.id}>&nbsp;&nbsp;&nbsp;&nbsp;{`${pipeline.license}-${pipeline.segment}`}</option>
+                        )
+                      }
+                    }) : null
+                  ]
                 }
-              }) :
-                null}
+
+              }) : null
+              }
             </optgroup>
           )
         }

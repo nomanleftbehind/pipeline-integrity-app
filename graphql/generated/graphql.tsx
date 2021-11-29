@@ -392,6 +392,7 @@ export type Pipeline = {
   createdAt: Scalars['DateTime'];
   createdBy: User;
   downstream?: Maybe<Array<Maybe<Pipeline>>>;
+  facilityName?: Maybe<Scalars['String']>;
   from: Scalars['String'];
   fromFeature?: Maybe<FromToFeatureEnum>;
   grade?: Maybe<GradeEnum>;
@@ -408,6 +409,7 @@ export type Pipeline = {
   piggable?: Maybe<Scalars['Boolean']>;
   piggingFrequency?: Maybe<Scalars['Int']>;
   satellite?: Maybe<Satellite>;
+  satelliteName?: Maybe<Scalars['String']>;
   segment: Scalars['String'];
   status: StatusEnum;
   substance: SubstanceEnum;
@@ -456,6 +458,7 @@ export type Query = {
   me?: Maybe<User>;
   pigRunByPipelineId?: Maybe<Array<Maybe<PigRun>>>;
   pipelineById?: Maybe<Pipeline>;
+  pipelineOptions?: Maybe<Array<Maybe<Pipeline>>>;
   pipelinesById?: Maybe<Array<Maybe<Pipeline>>>;
   pipelinesByUser?: Maybe<Array<Maybe<Pipeline>>>;
   validators?: Maybe<Validator>;
@@ -775,6 +778,11 @@ export type PipelineOptions2QueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type PipelineOptions2Query = { allSatellites?: Array<{ id: string, name: string, pipelines?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
+
+export type PipelineOptions3QueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PipelineOptions3Query = { allFacilities?: Array<{ id: string, name: string, satellites?: Array<{ id: string, name: string, pipelines?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
 
 export type PigRunByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -1474,6 +1482,50 @@ export function usePipelineOptions2LazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type PipelineOptions2QueryHookResult = ReturnType<typeof usePipelineOptions2Query>;
 export type PipelineOptions2LazyQueryHookResult = ReturnType<typeof usePipelineOptions2LazyQuery>;
 export type PipelineOptions2QueryResult = Apollo.QueryResult<PipelineOptions2Query, PipelineOptions2QueryVariables>;
+export const PipelineOptions3Document = gql`
+    query pipelineOptions3 {
+  allFacilities {
+    id
+    name
+    satellites {
+      id
+      name
+      pipelines {
+        id
+        license
+        segment
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __usePipelineOptions3Query__
+ *
+ * To run a query within a React component, call `usePipelineOptions3Query` and pass it any options that fit your needs.
+ * When your component renders, `usePipelineOptions3Query` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePipelineOptions3Query({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePipelineOptions3Query(baseOptions?: Apollo.QueryHookOptions<PipelineOptions3Query, PipelineOptions3QueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PipelineOptions3Query, PipelineOptions3QueryVariables>(PipelineOptions3Document, options);
+      }
+export function usePipelineOptions3LazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PipelineOptions3Query, PipelineOptions3QueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PipelineOptions3Query, PipelineOptions3QueryVariables>(PipelineOptions3Document, options);
+        }
+export type PipelineOptions3QueryHookResult = ReturnType<typeof usePipelineOptions3Query>;
+export type PipelineOptions3LazyQueryHookResult = ReturnType<typeof usePipelineOptions3LazyQuery>;
+export type PipelineOptions3QueryResult = Apollo.QueryResult<PipelineOptions3Query, PipelineOptions3QueryVariables>;
 export const PigRunByPipelineIdDocument = gql`
     query PigRunByPipelineId($pipelineId: String!) {
   pigRunByPipelineId(pipelineId: $pipelineId) {

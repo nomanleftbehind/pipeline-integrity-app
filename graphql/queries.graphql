@@ -166,6 +166,22 @@ query pipelineOptions2 {
   }
 }
 
+query pipelineOptions3 {
+  allFacilities {
+    id
+    name
+    satellites {
+      id
+      name
+      pipelines {
+        id
+        license
+        segment
+      }
+    }
+  }
+}
+
 query PigRunByPipelineId($pipelineId: String!) {
   pigRunByPipelineId(pipelineId: $pipelineId) {
     id
