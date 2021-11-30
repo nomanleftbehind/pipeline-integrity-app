@@ -99,24 +99,24 @@ query PipelineById($id: String!) {
 }
 
 query allInjectionPointsQuery {
-    allInjectionPoints {
+  allInjectionPoints {
+    id
+    source
+    pipeline {
       id
-      source
-      pipeline {
-        id
-        license
-        segment
-      }
-      satellite {
+      license
+      segment
+    }
+    satellite {
+      id
+      name
+      facility {
         id
         name
-        facility {
-          id
-          name
-        }
       }
     }
   }
+}
 
 query sourceOptions {
   allInjectionPoints {
@@ -138,35 +138,8 @@ query sourceOptions {
   }
 }
 
+
 query pipelineOptions {
-  pipelinesById {
-    id
-    license
-    segment
-    satellite {
-      id
-      name
-      facility {
-        id
-        name
-      }
-    }
-  }
-}
-
-query pipelineOptions2 {
-  allSatellites {
-    id
-    name
-    pipelines {
-      id
-      license
-      segment
-    }
-  }
-}
-
-query pipelineOptions3 {
   allFacilities {
     id
     name
@@ -177,6 +150,7 @@ query pipelineOptions3 {
         id
         license
         segment
+        substance
       }
     }
   }
@@ -338,6 +312,21 @@ query getValidators {
       PSCR
       Foam
       Scrapper
+    }
+  }
+}
+
+query validatorSubstance {
+  validators {
+    substanceEnum {
+      NaturalGas
+      FreshWater
+      SaltWater
+      CrudeOil
+      OilWellEffluent
+      LVPProducts
+      FuelGas
+      SourNaturalGas
     }
   }
 }

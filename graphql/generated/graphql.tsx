@@ -772,17 +772,7 @@ export type SourceOptionsQuery = { allInjectionPoints?: Array<{ id: string, sour
 export type PipelineOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type PipelineOptionsQuery = { pipelinesById?: Array<{ id: string, license: string, segment: string, satellite?: { id: string, name: string, facility?: { id: string, name: string } | null | undefined } | null | undefined } | null | undefined> | null | undefined };
-
-export type PipelineOptions2QueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type PipelineOptions2Query = { allSatellites?: Array<{ id: string, name: string, pipelines?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
-
-export type PipelineOptions3QueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type PipelineOptions3Query = { allFacilities?: Array<{ id: string, name: string, satellites?: Array<{ id: string, name: string, pipelines?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
+export type PipelineOptionsQuery = { allFacilities?: Array<{ id: string, name: string, satellites?: Array<{ id: string, name: string, pipelines?: Array<{ id: string, license: string, segment: string, substance: SubstanceEnum } | null | undefined> | null | undefined } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
 
 export type PigRunByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -795,6 +785,11 @@ export type GetValidatorsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string }, pigTypeEnum: { GSCR: string, PSCR: string, Foam: string, Scrapper: string } } | null | undefined };
+
+export type ValidatorSubstanceQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ValidatorSubstanceQuery = { validators?: { substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string } } | null | undefined };
 
 export type FacilitiesSideBarQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1400,16 +1395,17 @@ export type SourceOptionsLazyQueryHookResult = ReturnType<typeof useSourceOption
 export type SourceOptionsQueryResult = Apollo.QueryResult<SourceOptionsQuery, SourceOptionsQueryVariables>;
 export const PipelineOptionsDocument = gql`
     query pipelineOptions {
-  pipelinesById {
+  allFacilities {
     id
-    license
-    segment
-    satellite {
+    name
+    satellites {
       id
       name
-      facility {
+      pipelines {
         id
-        name
+        license
+        segment
+        substance
       }
     }
   }
@@ -1442,90 +1438,6 @@ export function usePipelineOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type PipelineOptionsQueryHookResult = ReturnType<typeof usePipelineOptionsQuery>;
 export type PipelineOptionsLazyQueryHookResult = ReturnType<typeof usePipelineOptionsLazyQuery>;
 export type PipelineOptionsQueryResult = Apollo.QueryResult<PipelineOptionsQuery, PipelineOptionsQueryVariables>;
-export const PipelineOptions2Document = gql`
-    query pipelineOptions2 {
-  allSatellites {
-    id
-    name
-    pipelines {
-      id
-      license
-      segment
-    }
-  }
-}
-    `;
-
-/**
- * __usePipelineOptions2Query__
- *
- * To run a query within a React component, call `usePipelineOptions2Query` and pass it any options that fit your needs.
- * When your component renders, `usePipelineOptions2Query` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePipelineOptions2Query({
- *   variables: {
- *   },
- * });
- */
-export function usePipelineOptions2Query(baseOptions?: Apollo.QueryHookOptions<PipelineOptions2Query, PipelineOptions2QueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<PipelineOptions2Query, PipelineOptions2QueryVariables>(PipelineOptions2Document, options);
-      }
-export function usePipelineOptions2LazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PipelineOptions2Query, PipelineOptions2QueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<PipelineOptions2Query, PipelineOptions2QueryVariables>(PipelineOptions2Document, options);
-        }
-export type PipelineOptions2QueryHookResult = ReturnType<typeof usePipelineOptions2Query>;
-export type PipelineOptions2LazyQueryHookResult = ReturnType<typeof usePipelineOptions2LazyQuery>;
-export type PipelineOptions2QueryResult = Apollo.QueryResult<PipelineOptions2Query, PipelineOptions2QueryVariables>;
-export const PipelineOptions3Document = gql`
-    query pipelineOptions3 {
-  allFacilities {
-    id
-    name
-    satellites {
-      id
-      name
-      pipelines {
-        id
-        license
-        segment
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __usePipelineOptions3Query__
- *
- * To run a query within a React component, call `usePipelineOptions3Query` and pass it any options that fit your needs.
- * When your component renders, `usePipelineOptions3Query` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePipelineOptions3Query({
- *   variables: {
- *   },
- * });
- */
-export function usePipelineOptions3Query(baseOptions?: Apollo.QueryHookOptions<PipelineOptions3Query, PipelineOptions3QueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<PipelineOptions3Query, PipelineOptions3QueryVariables>(PipelineOptions3Document, options);
-      }
-export function usePipelineOptions3LazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PipelineOptions3Query, PipelineOptions3QueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<PipelineOptions3Query, PipelineOptions3QueryVariables>(PipelineOptions3Document, options);
-        }
-export type PipelineOptions3QueryHookResult = ReturnType<typeof usePipelineOptions3Query>;
-export type PipelineOptions3LazyQueryHookResult = ReturnType<typeof usePipelineOptions3LazyQuery>;
-export type PipelineOptions3QueryResult = Apollo.QueryResult<PipelineOptions3Query, PipelineOptions3QueryVariables>;
 export const PigRunByPipelineIdDocument = gql`
     query PigRunByPipelineId($pipelineId: String!) {
   pigRunByPipelineId(pipelineId: $pipelineId) {
@@ -1743,6 +1655,49 @@ export function useGetValidatorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetValidatorsQueryHookResult = ReturnType<typeof useGetValidatorsQuery>;
 export type GetValidatorsLazyQueryHookResult = ReturnType<typeof useGetValidatorsLazyQuery>;
 export type GetValidatorsQueryResult = Apollo.QueryResult<GetValidatorsQuery, GetValidatorsQueryVariables>;
+export const ValidatorSubstanceDocument = gql`
+    query validatorSubstance {
+  validators {
+    substanceEnum {
+      NaturalGas
+      FreshWater
+      SaltWater
+      CrudeOil
+      OilWellEffluent
+      LVPProducts
+      FuelGas
+      SourNaturalGas
+    }
+  }
+}
+    `;
+
+/**
+ * __useValidatorSubstanceQuery__
+ *
+ * To run a query within a React component, call `useValidatorSubstanceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorSubstanceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatorSubstanceQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useValidatorSubstanceQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorSubstanceQuery, ValidatorSubstanceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorSubstanceQuery, ValidatorSubstanceQueryVariables>(ValidatorSubstanceDocument, options);
+      }
+export function useValidatorSubstanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorSubstanceQuery, ValidatorSubstanceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorSubstanceQuery, ValidatorSubstanceQueryVariables>(ValidatorSubstanceDocument, options);
+        }
+export type ValidatorSubstanceQueryHookResult = ReturnType<typeof useValidatorSubstanceQuery>;
+export type ValidatorSubstanceLazyQueryHookResult = ReturnType<typeof useValidatorSubstanceLazyQuery>;
+export type ValidatorSubstanceQueryResult = Apollo.QueryResult<ValidatorSubstanceQuery, ValidatorSubstanceQueryVariables>;
 export const FacilitiesSideBarDocument = gql`
     query FacilitiesSideBar {
   allFacilities {

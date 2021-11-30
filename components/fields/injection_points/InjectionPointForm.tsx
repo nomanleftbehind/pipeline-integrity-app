@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { IInjectionPointOptions } from '../../rows/RenderPipeline';
 import IconButton from '@mui/material/IconButton';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { usePipelineOptionsLazyQuery, useSourceOptionsLazyQuery, usePipelineOptions2LazyQuery, usePipelineOptions3LazyQuery } from '../../../graphql/generated/graphql';
+import { useSourceOptionsLazyQuery, usePipelineOptionsLazyQuery, useValidatorSubstanceLazyQuery } from '../../../graphql/generated/graphql';
 
 import * as React from 'react';
 import InputLabel from '@mui/material/InputLabel';
@@ -21,9 +21,9 @@ interface IInjectionPointFormProps {
 export default function InjectionPointForm({ injectionPointType, injectionPointId, handleSubmit }: IInjectionPointFormProps) {
   const [state, setState] = useState<string>(injectionPointId);
 
-  const [upstreamPipelineOptions, { data: dataUpstreamPipelineOptions }] = usePipelineOptionsLazyQuery();
-  const [upstreamPipelineOptions2, { data: dataUpstreamPipelineOptions2 }] = usePipelineOptions2LazyQuery();
-  const [upstreamPipelineOptions3, { data: dataUpstreamPipelineOptions3 }] = usePipelineOptions3LazyQuery();
+  const [upstreamPipelineOptions, { data: dataUpstreamPipelineOptions3 }] = usePipelineOptionsLazyQuery();
+  const [validatorSubstance, { data: dataValidatorSubstance }] = useValidatorSubstanceLazyQuery();
+
   const [sourceOptions, { data: dataSourceOptions }] = useSourceOptionsLazyQuery();
 
   function handleChange(e: React.FormEvent<HTMLSelectElement>) {
@@ -40,7 +40,8 @@ export default function InjectionPointForm({ injectionPointType, injectionPointI
   function loadOptions() {
     switch (injectionPointType) {
       case 'upstream pipeline':
-        upstreamPipelineOptions3();
+        upstreamPipelineOptions();
+        validatorSubstance();
         break;
       case 'source':
         sourceOptions();
@@ -72,17 +73,23 @@ export default function InjectionPointForm({ injectionPointType, injectionPointI
               {facility.satellites ? facility.satellites.map(satellite => {
                 if (satellite) {
                   return [
-                    <option key={satellite.id} disabled={true} style={{ color: '#000000', fontWeight: 'bold' }}>{satellite.name}</option>,
-                    satellite.pipelines ? satellite.pipelines.map(pipeline => {
-                      if (pipeline) {
-                        return (
-                          <option key={pipeline.id} value={pipeline.id}>&nbsp;&nbsp;&nbsp;&nbsp;{`${pipeline.license}-${pipeline.segment}`}</option>
-                        )
+                    <option key={satellite.id} disabled={true} style={{ fontWeight: 'bold' }}>{satellite.name}</option>,
+                    satellite.pipelines ? satellite.pipelines.map((pipeline, i, array) => {
+                      console.log(array[i - 1]?.substance, pipeline?.substance);
+
+                      if (pipeline && dataValidatorSubstance && dataValidatorSubstance.validators && dataValidatorSubstance.validators.substanceEnum) {
+                        const substanceEnum = dataValidatorSubstance.validators.substanceEnum;
+                        const substanceEnumKey = pipeline.substance as keyof typeof substanceEnum;
+                        const substance = substanceEnum[substanceEnumKey];
+                        return [
+                          i === 0 || array[i - 1]?.substance !== pipeline.substance ?
+                            <option key={pipeline.id + 'substance'} disabled={true} style={{ fontWeight: 'bold' }}>&nbsp;&nbsp;&nbsp;&nbsp;{substance}</option> : null,
+                          <option key={pipeline.id} value={pipeline.id}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{`${pipeline.license}-${pipeline.segment}`}</option>
+                        ]
                       }
                     }) : null
                   ]
                 }
-
               }) : null
               }
             </optgroup>
