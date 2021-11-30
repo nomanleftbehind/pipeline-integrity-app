@@ -16,7 +16,7 @@ import { IPipeline, IInjectionPointOptions } from '../../rows/RenderPipeline';
 
 import { useDeleteInjectionPointFromPipelineMutation, useChangeInjectionPointToPipelineMutation, PipelinesByIdQueryDocument } from '../../../graphql/generated/graphql';
 
-type IInjectionPoints = IPipeline['injectionPoints'];
+type IInjectionPoints = Pick<IPipeline, 'injectionPoints' | 'upstream'>  //IPipeline['injectionPoints'];
 type IUpstream = IPipeline['upstream'];
 
 interface IInjectionPointsProps {
@@ -24,16 +24,17 @@ interface IInjectionPointsProps {
   id: string;
   upstream: IUpstream;
   injectionPoints: IInjectionPoints;
-  injectionPointOptions: IInjectionPointOptions;
 }
 
 
-export default function InjectionPoints({ open, id, injectionPoints, injectionPointOptions }: IInjectionPointsProps) {
+export default function InjectionPoints({ open, id, injectionPoints: sources /* Need to change name in the database to sources instead of injectionPoints */ }: IInjectionPointsProps) {
   const [showUpstreamPipelinesForm, setShowUpstreamPipelinesForm] = React.useState<boolean>(false);
   const [showSourcesForm, setShowSourcesForm] = React.useState<boolean>(false);
 
   const [deleteInjectionPoint, { data, error, loading }] = useDeleteInjectionPointFromPipelineMutation();
   const [changeInjectionPointToPipeline, { data: dataChangeInjectionPointToPipeline }] = useChangeInjectionPointToPipelineMutation();
+
+  const { injectionPoints, upstream: upstreamPipelines } = sources;
 
   function toggleShowUpstreamPipelinesForm() {
     setShowUpstreamPipelinesForm(!showUpstreamPipelinesForm);
@@ -74,34 +75,25 @@ export default function InjectionPoints({ open, id, injectionPoints, injectionPo
             <TableBody>
               {showUpstreamPipelinesForm ?
                 <TableRow>
-                  <TableCell colSpan={4}>
+                  <TableCell colSpan={2}>
                     <InjectionPointForm
                       injectionPointType="upstream pipeline"
-                      injectionPointId={injectionPointOptions ?
-                        injectionPointOptions[0] ?
-                          injectionPointOptions[0].id :
-                          '' :
-                        ''}
-                      injectionPointOptions={injectionPointOptions}
                       handleSubmit={handleSubmit}
                     />
                   </TableCell>
                 </TableRow> :
                 null}
-              {injectionPoints ? injectionPoints.map(injectionPoint => {
-                return injectionPoint ?
+              {upstreamPipelines ? upstreamPipelines.map(upstreamPipeline => {
+                return upstreamPipeline ?
                   (
-                    <TableRow key={injectionPoint.id}>
+                    <TableRow key={upstreamPipeline.id}>
                       <Source
-                        injectionPointId={injectionPoint.id}
-                        source={injectionPoint.source}
-                        injectionPointOptions={injectionPointOptions}
+                        injectionPointId={upstreamPipeline.id}
+                        source={`${upstreamPipeline.license}-${upstreamPipeline.segment}`}
                         handleSubmit={handleSubmit}
-                        deleteInjectionPoint={() => deleteInjectionPoint({ variables: { id: injectionPoint.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
+                        deleteInjectionPoint={() => deleteInjectionPoint({ variables: { id: upstreamPipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
                       />
-                      <TableCell align="right">{injectionPoint.oil}</TableCell>
-                      <TableCell align="right">{injectionPoint.water}</TableCell>
-                      <TableCell align="right">{injectionPoint.gas}</TableCell>
+                      <TableCell align="right" colSpan={3} />
                     </TableRow>
                   ) :
                   null;
@@ -123,11 +115,6 @@ export default function InjectionPoints({ open, id, injectionPoints, injectionPo
                   <TableCell colSpan={4}>
                     <InjectionPointForm
                       injectionPointType="source"
-                      injectionPointId={injectionPointOptions ?
-                        injectionPointOptions[0] ?
-                          injectionPointOptions[0].id :
-                          '' :
-                        ''}
                       handleSubmit={handleSubmit}
                     />
                   </TableCell>
@@ -140,7 +127,6 @@ export default function InjectionPoints({ open, id, injectionPoints, injectionPo
                       <Source
                         injectionPointId={injectionPoint.id}
                         source={injectionPoint.source}
-                        injectionPointOptions={injectionPointOptions}
                         handleSubmit={handleSubmit}
                         deleteInjectionPoint={() => deleteInjectionPoint({ variables: { id: injectionPoint.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
                       />

@@ -10,12 +10,11 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 interface ISourceProps {
   injectionPointId: string;
   source: string;
-  injectionPointOptions: IInjectionPointOptions;
   handleSubmit: (newInjectionPointId: string, oldInjectionPointId: string) => void;
   deleteInjectionPoint: () => void;
 }
 
-export default function Source({ injectionPointId, source, injectionPointOptions, handleSubmit, deleteInjectionPoint }: ISourceProps) {
+export default function Source({ injectionPointId, source, handleSubmit, deleteInjectionPoint }: ISourceProps) {
   const [showForm, setShowForm] = useState<boolean>(false);
 
   function toggleShowForm() {
@@ -42,8 +41,6 @@ export default function Source({ injectionPointId, source, injectionPointOptions
         </div>
         {showForm ?
           <InjectionPointForm
-            injectionPointId={injectionPointId}
-            injectionPointOptions={injectionPointOptions}
             handleSubmit={handleSubmitAndHideForm}
           /> :
           <div className="cell-l no-wrap">{source}</div>}

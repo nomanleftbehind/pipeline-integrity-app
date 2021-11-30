@@ -43,8 +43,7 @@ export default function PipelineData({ open, pipeline, validators, isEven, injec
         open={open}
         id={id}
         upstream={upstream}
-        injectionPoints={injectionPoints}
-        injectionPointOptions={injectionPointOptions}
+        injectionPoints={{ injectionPoints, upstream }}
       />
       <PipelineProperties
         open={open}

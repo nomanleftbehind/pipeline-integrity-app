@@ -13,15 +13,14 @@ import Select from '@mui/material/Select';
 
 interface IInjectionPointFormProps {
   injectionPointType?: string;
-  injectionPointId: string;
   injectionPointOptions?: IInjectionPointOptions;
   handleSubmit: (newInjectionPointId: string) => void;
 }
 
-export default function InjectionPointForm({ injectionPointType, injectionPointId, handleSubmit }: IInjectionPointFormProps) {
-  const [state, setState] = useState<string>(injectionPointId);
+export default function InjectionPointForm({ injectionPointType, handleSubmit }: IInjectionPointFormProps) {
+  const [state, setState] = useState<string>('');
 
-  const [upstreamPipelineOptions, { data: dataUpstreamPipelineOptions3 }] = usePipelineOptionsLazyQuery();
+  const [upstreamPipelineOptions, { data: dataUpstreamPipelineOptions }] = usePipelineOptionsLazyQuery();
   const [validatorSubstance, { data: dataValidatorSubstance }] = useValidatorSubstanceLazyQuery();
 
   const [sourceOptions, { data: dataSourceOptions }] = useSourceOptionsLazyQuery();
@@ -35,7 +34,25 @@ export default function InjectionPointForm({ injectionPointType, injectionPointI
     handleSubmit(e.currentTarget.name);
   }
 
+  const upstreamPipelineInitialState =
+    dataUpstreamPipelineOptions &&
+      dataUpstreamPipelineOptions.allFacilities &&
+      dataUpstreamPipelineOptions.allFacilities[0] &&
+      dataUpstreamPipelineOptions.allFacilities[0].satellites &&
+      dataUpstreamPipelineOptions.allFacilities[0].satellites[0] &&
+      dataUpstreamPipelineOptions.allFacilities[0].satellites[0].pipelines &&
+      dataUpstreamPipelineOptions.allFacilities[0].satellites[0].pipelines[0] &&
+      dataUpstreamPipelineOptions.allFacilities[0].satellites[0].pipelines[0].id ? dataUpstreamPipelineOptions.allFacilities[0].satellites[0].pipelines[0].id : '';
+
+  const sourceInitialState =
+    dataSourceOptions && dataSourceOptions.allInjectionPoints && dataSourceOptions.allInjectionPoints[0] && dataSourceOptions.allInjectionPoints[0].id ? dataSourceOptions.allInjectionPoints[0].id : '';
+
+
   useEffect(() => { loadOptions(); }, []);
+
+  useEffect(() => {
+    setState(upstreamPipelineInitialState || sourceInitialState);
+  }, [upstreamPipelineInitialState, sourceInitialState]);
 
   function loadOptions() {
     switch (injectionPointType) {
@@ -65,8 +82,8 @@ export default function InjectionPointForm({ injectionPointType, injectionPointI
 
 
   function renderOptions() {
-    if (dataUpstreamPipelineOptions3 && dataUpstreamPipelineOptions3.allFacilities) {
-      return dataUpstreamPipelineOptions3.allFacilities.map(facility => {
+    if (dataUpstreamPipelineOptions && dataUpstreamPipelineOptions.allFacilities) {
+      return dataUpstreamPipelineOptions.allFacilities.map(facility => {
         if (facility) {
           return (
             <optgroup key={facility.id} label={facility.name}>
@@ -75,8 +92,6 @@ export default function InjectionPointForm({ injectionPointType, injectionPointI
                   return [
                     <option key={satellite.id} disabled={true} style={{ fontWeight: 'bold' }}>{satellite.name}</option>,
                     satellite.pipelines ? satellite.pipelines.map((pipeline, i, array) => {
-                      console.log(array[i - 1]?.substance, pipeline?.substance);
-
                       if (pipeline && dataValidatorSubstance && dataValidatorSubstance.validators && dataValidatorSubstance.validators.substanceEnum) {
                         const substanceEnum = dataValidatorSubstance.validators.substanceEnum;
                         const substanceEnumKey = pipeline.substance as keyof typeof substanceEnum;
@@ -97,13 +112,15 @@ export default function InjectionPointForm({ injectionPointType, injectionPointI
         }
       })
 
-    } else if (dataSourceOptions) {
-      return dataSourceOptions.allInjectionPoints?.map(option => {
-        return (
-          <option key={option?.id} value={option?.id}>
-            {`${option?.satellite?.facility?.name} - ${option?.satellite?.name} - ${option?.source}`}
-          </option>
-        )
+    } else if (dataSourceOptions && dataSourceOptions.allInjectionPoints) {
+      return dataSourceOptions.allInjectionPoints.map(option => {
+        if (option) {
+          return (
+            <option key={option.id} value={option.id}>
+              {`${option.satellite?.facility?.name} - ${option.satellite?.name} - ${option.source}`}
+            </option>
+          )
+        }
       })
     }
   }
