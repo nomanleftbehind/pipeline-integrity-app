@@ -98,26 +98,6 @@ query PipelineById($id: String!) {
   }
 }
 
-query allInjectionPointsQuery {
-  allInjectionPoints {
-    id
-    source
-    pipeline {
-      id
-      license
-      segment
-    }
-    satellite {
-      id
-      name
-      facility {
-        id
-        name
-      }
-    }
-  }
-}
-
 query pipelineOptions {
   pipelineOptions {
     facility

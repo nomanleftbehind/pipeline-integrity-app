@@ -12,18 +12,15 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 
-import { useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation, PipelinesByIdQueryQuery, GetValidatorsQuery, AllInjectionPointsQueryQuery } from '../../graphql/generated/graphql';
+import { useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation, PipelinesByIdQueryQuery, GetValidatorsQuery } from '../../graphql/generated/graphql';
 
 export type IPipeline = PipelinesByIdQueryQuery['pipelinesById'] extends (infer U)[] | null | undefined ? NonNullable<U> : never;
 
 export type IValidators = GetValidatorsQuery['validators'];
 
-export type IInjectionPointOptions = AllInjectionPointsQueryQuery['allInjectionPoints'];
-
 interface IRenderPipelineProps {
   ppl_idx: number;
   pipeline: IPipeline;
-  injectionPointOptions: IInjectionPointOptions;
   validators: IValidators;
   expandedPipelines: string[];
   onPipelineClick: React.MouseEventHandler<HTMLButtonElement>;
@@ -35,7 +32,7 @@ const isEven = (value: number): "even" | "odd" => {
   else return "odd";
 }
 
-export default function RenderPipeline({ ppl_idx, pipeline, injectionPointOptions, validators }: IRenderPipelineProps) {
+export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRenderPipelineProps) {
   const [open, setOpen] = React.useState(false);
   const [showDeletePipelineModal, setShowDeletePipelineModal] = React.useState<boolean>(false);
 
@@ -84,7 +81,7 @@ export default function RenderPipeline({ ppl_idx, pipeline, injectionPointOption
           {modalDeletePipeline}
         </TableCell>
         <TableCell>
-          <Button  color="secondary" variant="outlined" sx={{ color: 'blue' }} aria-label="navigate to pipeline" size="small" onClick={() => router.push(`/pipeline/${id}`)}>
+          <Button color="secondary" variant="outlined" sx={{ color: 'blue' }} aria-label="navigate to pipeline" size="small" onClick={() => router.push(`/pipeline/${id}`)}>
             Details
           </Button>
         </TableCell>
@@ -104,7 +101,6 @@ export default function RenderPipeline({ ppl_idx, pipeline, injectionPointOption
         pipeline={pipeline}
         validators={validators}
         isEven={isEven(ppl_idx)}
-        injectionPointOptions={injectionPointOptions}
       />
     </React.Fragment>
   );

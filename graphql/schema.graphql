@@ -166,7 +166,6 @@ type InjectionPoint {
   pipeline: Pipeline
   pvNodeId: String
   pvUnitId: String
-  satellite: Satellite
   source: String!
   updatedAt: DateTime!
   water: Float!
@@ -231,7 +230,6 @@ type Mutation {
   connectSource(id: String!, sourceId: String!): Pipeline
   connectUpstreamPipeline(id: String!, upstreamId: String!): Pipeline
   createFacility(data: FacilityCreateInput!): Facility
-  deleteInjectionPointFromPipeline(id: String!): InjectionPoint
   deletePigRun(id: String!): PigRun
   deletePipeline(id: String!): Pipeline
   deleteSatellite(id: String!): Satellite
@@ -239,7 +237,7 @@ type Mutation {
   disconnectUpstreamPipeline(id: String!, upstreamId: String!): Pipeline
   duplicatePipeline(id: String!): Pipeline
   editFacility(id: String!, name: String): Facility
-  editInjectionPoint(firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineId: String, pvNodeId: String, pvUnitId: String, satelliteId: String, source: String, water: Float): InjectionPoint
+  editInjectionPoint(firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineId: String, pvNodeId: String, pvUnitId: String, source: String, water: Float): InjectionPoint
   editPigRun(comment: String, date: DateTime, id: String!, operatorId: String, pigType: PigTypeEnum, pipelineId: String): PigRun
   editPipeline(from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String, status: StatusEnum, substance: SubstanceEnum, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float, yieldStrength: Int): Pipeline
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
@@ -367,7 +365,6 @@ type Satellite {
   createdBy: User!
   facility: Facility
   id: String!
-  injectionPoints: [InjectionPoint]
   name: String!
   pipelines: [Pipeline]
   updatedAt: DateTime!

@@ -13,17 +13,6 @@ export const InjectionPoint = objectType({
   },
   definition(t) {
     t.nonNull.string('id')
-    t.field('satellite', {
-      type: Satellite,
-      resolve: async (parent, _args, ctx: Context) => {
-        const result = await ctx.prisma.injectionPoint
-          .findUnique({
-            where: { id: parent.id },
-          })
-          .satellite()
-        return result
-      },
-    })
     t.nonNull.string('source')
     t.nonNull.float('oil')
     t.nonNull.float('water')
@@ -69,8 +58,8 @@ export const InjectionPointQuery = extendType({
       resolve: async (_parent, _args, ctx: Context) => {
         const result = await ctx.prisma.injectionPoint.findMany({
           orderBy: [
-            { satellite: { facility: { name: 'asc' } } },
-            { satellite: { name: 'asc' } },
+            { pipeline: { satellite: { facility: { name: 'asc' } } } },
+            { pipeline: { satellite: { name: 'asc' } } },
             { source: 'asc' }
           ]
         })
@@ -105,7 +94,6 @@ export const InjectionPointMutation = extendType({
       type: InjectionPoint,
       args: {
         id: nonNull(stringArg()),
-        satelliteId: stringArg(),
         pipelineId: stringArg(),
         source: stringArg(),
         oil: floatArg(),
@@ -123,7 +111,6 @@ export const InjectionPointMutation = extendType({
           return context.prisma.injectionPoint.update({
             where: { id: args.id },
             data: {
-              satelliteId: args.satelliteId || undefined,
               pipelineId: args.pipelineId || undefined,
               source: args.source || undefined,
               oil: args.oil || undefined,
@@ -143,18 +130,6 @@ export const InjectionPointMutation = extendType({
           )
         }
       },
-    })
-    t.field('deleteInjectionPointFromPipeline', {
-      type: 'InjectionPoint',
-      args: {
-        id: nonNull(stringArg())
-      },
-      resolve: (_parent, args, ctx: Context) => {
-        return ctx.prisma.injectionPoint.update({
-          where: { id: args.id },
-          data: { pipelineId: null }
-        })
-      }
     })
     // t.field('connectSource', {
     //   type: 'InjectionPoint',

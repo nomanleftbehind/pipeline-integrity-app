@@ -1,6 +1,6 @@
 import InjectionPoints from '../fields/injection_points/InjectionPoints';
 import PipelineProperties from '../fields/PipelineProperties';
-import { IPipeline, IInjectionPointOptions, IValidators } from './RenderPipeline';
+import { IPipeline, IValidators } from './RenderPipeline';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 
@@ -10,10 +10,9 @@ export interface IPipelineDataProps {
   pipeline: IPipeline;
   validators: IValidators;
   isEven: "even" | "odd";
-  injectionPointOptions: IInjectionPointOptions;
 }
 
-export default function PipelineData({ open, pipeline, validators, isEven, injectionPointOptions }: IPipelineDataProps): JSX.Element {
+export default function PipelineData({ open, pipeline, validators, isEven }: IPipelineDataProps): JSX.Element {
 
   const { id, createdAt, license, segment, substance, from, fromFeature, to, toFeature, injectionPoints, upstream, status, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
 

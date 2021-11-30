@@ -44,7 +44,6 @@ model Satellite {
   facility        Facility?        @relation(fields: [facilityId], references: [id])
   facilityId      String?
   pipelines       Pipeline[]
-  injectionPoints InjectionPoint[]
   createdBy       User             @relation(fields: [createdById], references: [id])
   createdById     String
   createdAt       DateTime         @default(now())
@@ -120,8 +119,6 @@ model PigRun {
 
 model InjectionPoint {
   id              String     @id @default(uuid())
-  satellite       Satellite? @relation(fields: [satelliteId], references: [id])
-  satelliteId     String?
   source          String     @unique
   oil             Decimal    @db.Decimal(6, 2)
   water           Decimal    @db.Decimal(6, 2)

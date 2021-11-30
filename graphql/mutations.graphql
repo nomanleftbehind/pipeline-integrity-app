@@ -67,25 +67,6 @@ mutation disconnectSource($id: String!, $sourceId: String!) {
   }
 }
 
-mutation deleteInjectionPointFromPipeline($id: String!) {
-  deleteInjectionPointFromPipeline(id: $id) {
-    id
-    source
-  }
-}
-
-mutation changeInjectionPointToPipeline($id: String!, $pipelineId: String) {
-  editInjectionPoint(id: $id, pipelineId: $pipelineId) {
-    id
-    source
-    pipeline {
-      id
-      license
-      segment
-    }
-  }
-}
-
 mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $substance: SubstanceEnum, $from: String, $fromFeature: FromToFeatureEnum, $to: String, $toFeature: FromToFeatureEnum, $status: StatusEnum, $licenseDate: DateTime, $length: Float, $type: TypeEnum, $grade: GradeEnum, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
   editPipeline(id: $id, satelliteId: $satelliteId, license: $license, segment: $segment, substance: $substance, from: $from, fromFeature: $fromFeature, to: $to, toFeature: $toFeature, status: $status, licenseDate: $licenseDate, length: $length, type: $type, grade: $grade, yieldStrength: $yieldStrength, outsideDiameter: $outsideDiameter, wallThickness: $wallThickness, material: $material, mop: $mop, internalProtection: $internalProtection, piggable: $piggable, piggingFrequency: $piggingFrequency) {
     id

@@ -36,16 +36,6 @@ export const Satellite = objectType({
           .pipelines()
       },
     })
-    t.list.field('injectionPoints', {
-      type: InjectionPoint,
-      resolve: (parent, _args, ctx: Context) => {
-        return ctx.prisma.satellite
-          .findUnique({
-            where: { id: parent.id || undefined },
-          })
-          .injectionPoints()
-      },
-    })
     t.nonNull.field('createdBy', {
       type: User,
       resolve: async (parent, _args, ctx: Context) => {

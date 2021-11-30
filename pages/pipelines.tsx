@@ -10,7 +10,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { usePipelinesByIdQueryLazyQuery, useGetValidatorsQuery, useAllInjectionPointsQueryQuery } from '../graphql/generated/graphql';
+import { usePipelinesByIdQueryLazyQuery, useGetValidatorsQuery } from '../graphql/generated/graphql';
 
 
 export interface IHeader {
@@ -34,7 +34,6 @@ export default function PipelineDatabase() {
 
   const [pipelinesById, { data, loading, error }] = usePipelinesByIdQueryLazyQuery();
   const { data: validatorsData } = useGetValidatorsQuery();
-  const { data: injectionPointData } = useAllInjectionPointsQueryQuery();
 
   function handleSatelliteClick(e: React.MouseEvent<HTMLButtonElement>): void {
     pipelinesById({ variables: { satelliteId: e.currentTarget.value } })
@@ -123,7 +122,6 @@ export default function PipelineDatabase() {
                             ppl_idx={ppl_idx}
                             pipeline={pipeline}
                             validators={validatorsData?.validators}
-                            injectionPointOptions={injectionPointData?.allInjectionPoints}
                             expandedPipelines={expandedPipelines}
                             onPipelineClick={() => handlePipelineClick(pipeline.id)}
                           />

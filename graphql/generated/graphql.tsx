@@ -175,7 +175,6 @@ export type InjectionPoint = {
   pipeline?: Maybe<Pipeline>;
   pvNodeId?: Maybe<Scalars['String']>;
   pvUnitId?: Maybe<Scalars['String']>;
-  satellite?: Maybe<Satellite>;
   source: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   water: Scalars['Float'];
@@ -240,7 +239,6 @@ export type Mutation = {
   connectSource?: Maybe<Pipeline>;
   connectUpstreamPipeline?: Maybe<Pipeline>;
   createFacility?: Maybe<Facility>;
-  deleteInjectionPointFromPipeline?: Maybe<InjectionPoint>;
   deletePigRun?: Maybe<PigRun>;
   deletePipeline?: Maybe<Pipeline>;
   deleteSatellite?: Maybe<Satellite>;
@@ -271,11 +269,6 @@ export type MutationConnectUpstreamPipelineArgs = {
 
 export type MutationCreateFacilityArgs = {
   data: FacilityCreateInput;
-};
-
-
-export type MutationDeleteInjectionPointFromPipelineArgs = {
-  id: Scalars['String'];
 };
 
 
@@ -328,7 +321,6 @@ export type MutationEditInjectionPointArgs = {
   pipelineId?: Maybe<Scalars['String']>;
   pvNodeId?: Maybe<Scalars['String']>;
   pvUnitId?: Maybe<Scalars['String']>;
-  satelliteId?: Maybe<Scalars['String']>;
   source?: Maybe<Scalars['String']>;
   water?: Maybe<Scalars['Float']>;
 };
@@ -531,7 +523,6 @@ export type Satellite = {
   createdBy: User;
   facility?: Maybe<Facility>;
   id: Scalars['String'];
-  injectionPoints?: Maybe<Array<Maybe<InjectionPoint>>>;
   name: Scalars['String'];
   pipelines?: Maybe<Array<Maybe<Pipeline>>>;
   updatedAt: Scalars['DateTime'];
@@ -759,21 +750,6 @@ export type DisconnectSourceMutationVariables = Exact<{
 
 export type DisconnectSourceMutation = { disconnectSource?: { id: string, injectionPoints?: Array<{ id: string } | null | undefined> | null | undefined } | null | undefined };
 
-export type DeleteInjectionPointFromPipelineMutationVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type DeleteInjectionPointFromPipelineMutation = { deleteInjectionPointFromPipeline?: { id: string, source: string } | null | undefined };
-
-export type ChangeInjectionPointToPipelineMutationVariables = Exact<{
-  id: Scalars['String'];
-  pipelineId?: Maybe<Scalars['String']>;
-}>;
-
-
-export type ChangeInjectionPointToPipelineMutation = { editInjectionPoint?: { id: string, source: string, pipeline?: { id: string, license: string, segment: string } | null | undefined } | null | undefined };
-
 export type EditPipelineMutationVariables = Exact<{
   id: Scalars['String'];
   satelliteId?: Maybe<Scalars['String']>;
@@ -833,11 +809,6 @@ export type PipelineByIdQueryVariables = Exact<{
 
 
 export type PipelineByIdQuery = { pipelineById?: { id: string, license: string, segment: string, substance: SubstanceEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, createdBy: { email: string }, upstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, satellite?: { name: string } | null | undefined, injectionPoints?: Array<{ source: string } | null | undefined> | null | undefined } | null | undefined };
-
-export type AllInjectionPointsQueryQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type AllInjectionPointsQueryQuery = { allInjectionPoints?: Array<{ id: string, source: string, pipeline?: { id: string, license: string, segment: string } | null | undefined, satellite?: { id: string, name: string, facility?: { id: string, name: string } | null | undefined } | null | undefined } | null | undefined> | null | undefined };
 
 export type PipelineOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1135,80 +1106,6 @@ export function useDisconnectSourceMutation(baseOptions?: Apollo.MutationHookOpt
 export type DisconnectSourceMutationHookResult = ReturnType<typeof useDisconnectSourceMutation>;
 export type DisconnectSourceMutationResult = Apollo.MutationResult<DisconnectSourceMutation>;
 export type DisconnectSourceMutationOptions = Apollo.BaseMutationOptions<DisconnectSourceMutation, DisconnectSourceMutationVariables>;
-export const DeleteInjectionPointFromPipelineDocument = gql`
-    mutation deleteInjectionPointFromPipeline($id: String!) {
-  deleteInjectionPointFromPipeline(id: $id) {
-    id
-    source
-  }
-}
-    `;
-export type DeleteInjectionPointFromPipelineMutationFn = Apollo.MutationFunction<DeleteInjectionPointFromPipelineMutation, DeleteInjectionPointFromPipelineMutationVariables>;
-
-/**
- * __useDeleteInjectionPointFromPipelineMutation__
- *
- * To run a mutation, you first call `useDeleteInjectionPointFromPipelineMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteInjectionPointFromPipelineMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteInjectionPointFromPipelineMutation, { data, loading, error }] = useDeleteInjectionPointFromPipelineMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteInjectionPointFromPipelineMutation(baseOptions?: Apollo.MutationHookOptions<DeleteInjectionPointFromPipelineMutation, DeleteInjectionPointFromPipelineMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteInjectionPointFromPipelineMutation, DeleteInjectionPointFromPipelineMutationVariables>(DeleteInjectionPointFromPipelineDocument, options);
-      }
-export type DeleteInjectionPointFromPipelineMutationHookResult = ReturnType<typeof useDeleteInjectionPointFromPipelineMutation>;
-export type DeleteInjectionPointFromPipelineMutationResult = Apollo.MutationResult<DeleteInjectionPointFromPipelineMutation>;
-export type DeleteInjectionPointFromPipelineMutationOptions = Apollo.BaseMutationOptions<DeleteInjectionPointFromPipelineMutation, DeleteInjectionPointFromPipelineMutationVariables>;
-export const ChangeInjectionPointToPipelineDocument = gql`
-    mutation changeInjectionPointToPipeline($id: String!, $pipelineId: String) {
-  editInjectionPoint(id: $id, pipelineId: $pipelineId) {
-    id
-    source
-    pipeline {
-      id
-      license
-      segment
-    }
-  }
-}
-    `;
-export type ChangeInjectionPointToPipelineMutationFn = Apollo.MutationFunction<ChangeInjectionPointToPipelineMutation, ChangeInjectionPointToPipelineMutationVariables>;
-
-/**
- * __useChangeInjectionPointToPipelineMutation__
- *
- * To run a mutation, you first call `useChangeInjectionPointToPipelineMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useChangeInjectionPointToPipelineMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [changeInjectionPointToPipelineMutation, { data, loading, error }] = useChangeInjectionPointToPipelineMutation({
- *   variables: {
- *      id: // value for 'id'
- *      pipelineId: // value for 'pipelineId'
- *   },
- * });
- */
-export function useChangeInjectionPointToPipelineMutation(baseOptions?: Apollo.MutationHookOptions<ChangeInjectionPointToPipelineMutation, ChangeInjectionPointToPipelineMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ChangeInjectionPointToPipelineMutation, ChangeInjectionPointToPipelineMutationVariables>(ChangeInjectionPointToPipelineDocument, options);
-      }
-export type ChangeInjectionPointToPipelineMutationHookResult = ReturnType<typeof useChangeInjectionPointToPipelineMutation>;
-export type ChangeInjectionPointToPipelineMutationResult = Apollo.MutationResult<ChangeInjectionPointToPipelineMutation>;
-export type ChangeInjectionPointToPipelineMutationOptions = Apollo.BaseMutationOptions<ChangeInjectionPointToPipelineMutation, ChangeInjectionPointToPipelineMutationVariables>;
 export const EditPipelineDocument = gql`
     mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $substance: SubstanceEnum, $from: String, $fromFeature: FromToFeatureEnum, $to: String, $toFeature: FromToFeatureEnum, $status: StatusEnum, $licenseDate: DateTime, $length: Float, $type: TypeEnum, $grade: GradeEnum, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
   editPipeline(
@@ -1520,54 +1417,6 @@ export function usePipelineByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type PipelineByIdQueryHookResult = ReturnType<typeof usePipelineByIdQuery>;
 export type PipelineByIdLazyQueryHookResult = ReturnType<typeof usePipelineByIdLazyQuery>;
 export type PipelineByIdQueryResult = Apollo.QueryResult<PipelineByIdQuery, PipelineByIdQueryVariables>;
-export const AllInjectionPointsQueryDocument = gql`
-    query allInjectionPointsQuery {
-  allInjectionPoints {
-    id
-    source
-    pipeline {
-      id
-      license
-      segment
-    }
-    satellite {
-      id
-      name
-      facility {
-        id
-        name
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useAllInjectionPointsQueryQuery__
- *
- * To run a query within a React component, call `useAllInjectionPointsQueryQuery` and pass it any options that fit your needs.
- * When your component renders, `useAllInjectionPointsQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAllInjectionPointsQueryQuery({
- *   variables: {
- *   },
- * });
- */
-export function useAllInjectionPointsQueryQuery(baseOptions?: Apollo.QueryHookOptions<AllInjectionPointsQueryQuery, AllInjectionPointsQueryQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AllInjectionPointsQueryQuery, AllInjectionPointsQueryQueryVariables>(AllInjectionPointsQueryDocument, options);
-      }
-export function useAllInjectionPointsQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllInjectionPointsQueryQuery, AllInjectionPointsQueryQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AllInjectionPointsQueryQuery, AllInjectionPointsQueryQueryVariables>(AllInjectionPointsQueryDocument, options);
-        }
-export type AllInjectionPointsQueryQueryHookResult = ReturnType<typeof useAllInjectionPointsQueryQuery>;
-export type AllInjectionPointsQueryLazyQueryHookResult = ReturnType<typeof useAllInjectionPointsQueryLazyQuery>;
-export type AllInjectionPointsQueryQueryResult = Apollo.QueryResult<AllInjectionPointsQueryQuery, AllInjectionPointsQueryQueryVariables>;
 export const PipelineOptionsDocument = gql`
     query pipelineOptions {
   pipelineOptions {
