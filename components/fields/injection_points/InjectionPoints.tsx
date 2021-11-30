@@ -12,9 +12,9 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import Source from './Source';
 import InjectionPointForm from './InjectionPointForm';
-import { IPipeline, IInjectionPointOptions } from '../../rows/RenderPipeline';
+import { IPipeline } from '../../rows/RenderPipeline';
 
-import { useConnectUpstreamPipelineMutation, useDisconnectUpstreamPipelineMutation, useConnectSourceMutation, useDisconnectSourceMutation, useDeleteInjectionPointFromPipelineMutation, useChangeInjectionPointToPipelineMutation, PipelinesByIdQueryDocument } from '../../../graphql/generated/graphql';
+import { useConnectUpstreamPipelineMutation, useDisconnectUpstreamPipelineMutation, useConnectSourceMutation, useDisconnectSourceMutation, PipelinesByIdQueryDocument } from '../../../graphql/generated/graphql';
 
 type IInjectionPoints = Pick<IPipeline, 'injectionPoints' | 'upstream'>;
 type IUpstream = IPipeline['upstream'];
@@ -36,9 +36,6 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
 
   const [connectSource, { data: dataConnectSource }] = useConnectSourceMutation();
   const [disconnectSource, { data: dataDisconnectSource }] = useDisconnectSourceMutation();
-
-  const [deleteInjectionPoint, { data, error, loading }] = useDeleteInjectionPointFromPipelineMutation();
-  const [changeInjectionPointToPipeline, { data: dataChangeInjectionPointToPipeline }] = useChangeInjectionPointToPipelineMutation();
 
   const { injectionPoints: sources, upstream: upstreamPipelines } = injectionPoints;
 
@@ -70,14 +67,6 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
     }
   }
 
-  function handleSubmit2(newInjectionPointId: string, oldInjectionPointId?: string) {
-    if (oldInjectionPointId) deleteInjectionPoint({ variables: { id: oldInjectionPointId } }); // Very important this is the first mutation called in this block,
-    // as otherwise if you click OK, while not having selected a different injection point,
-    // it would first override injection point with itself and then delete it.
-    changeInjectionPointToPipeline({ variables: { id: newInjectionPointId, pipelineId: id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
-    setShowSourcesForm(false);
-  }
-
   return (
     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
       <Collapse in={open} timeout="auto" unmountOnExit>
@@ -101,7 +90,7 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
             <TableBody>
               {showUpstreamPipelinesForm ?
                 <TableRow>
-                  <TableCell colSpan={2}>
+                  <TableCell>
                     <InjectionPointForm
                       injectionPointType="upstream pipeline"
                       handleSubmit={handleSubmit}
@@ -139,7 +128,7 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
             <TableBody>
               {showSourcesForm ?
                 <TableRow>
-                  <TableCell colSpan={4}>
+                  <TableCell>
                     <InjectionPointForm
                       injectionPointType="source"
                       handleSubmit={handleSubmit}

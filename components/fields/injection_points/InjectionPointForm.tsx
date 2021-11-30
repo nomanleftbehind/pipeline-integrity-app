@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { IInjectionPointOptions } from '../../rows/RenderPipeline';
 import IconButton from '@mui/material/IconButton';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { useSourceOptionsLazyQuery, usePipelineOptionsLazyQuery, useValidatorSubstanceLazyQuery } from '../../../graphql/generated/graphql';
+import { useSourceOptionsLazyQuery, usePipelineOptionsLazyQuery, PipelineOptionsQuery, useValidatorSubstanceLazyQuery, ValidatorSubstanceQuery } from '../../../graphql/generated/graphql';
 
 import * as React from 'react';
 import InputLabel from '@mui/material/InputLabel';
@@ -12,11 +11,17 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
 interface IInjectionPointFormProps {
+  injectionPointId?: string;
   injectionPointType: string;
   handleSubmit: (injectionPointType: string, newInjectionPointId: string) => void;
 }
 
-export default function InjectionPointForm({ injectionPointType, handleSubmit }: IInjectionPointFormProps) {
+type IPipelineOption = PipelineOptionsQuery['pipelineOptions'] extends (infer U | null | undefined)[] | null | undefined ? U : never;
+
+type ISubstanceEnum = NonNullable<ValidatorSubstanceQuery['validators']>['substanceEnum'] | undefined;
+
+
+export default function InjectionPointForm({ injectionPointId, injectionPointType, handleSubmit }: IInjectionPointFormProps) {
   const [state, setState] = useState<string>('');
 
   const [upstreamPipelineOptions, { data: dataUpstreamPipelineOptions }] = usePipelineOptionsLazyQuery();
@@ -33,18 +38,14 @@ export default function InjectionPointForm({ injectionPointType, handleSubmit }:
     handleSubmit(injectionPointType, e.currentTarget.name);
   }
 
-  const upstreamPipelineInitialState =
+  const upstreamPipelineInitialState = injectionPointId ||
     dataUpstreamPipelineOptions &&
-      dataUpstreamPipelineOptions.allFacilities &&
-      dataUpstreamPipelineOptions.allFacilities[0] &&
-      dataUpstreamPipelineOptions.allFacilities[0].satellites &&
-      dataUpstreamPipelineOptions.allFacilities[0].satellites[0] &&
-      dataUpstreamPipelineOptions.allFacilities[0].satellites[0].pipelines &&
-      dataUpstreamPipelineOptions.allFacilities[0].satellites[0].pipelines[0] &&
-      dataUpstreamPipelineOptions.allFacilities[0].satellites[0].pipelines[0].id ? dataUpstreamPipelineOptions.allFacilities[0].satellites[0].pipelines[0].id : '';
+    dataUpstreamPipelineOptions.pipelineOptions &&
+    dataUpstreamPipelineOptions.pipelineOptions[0] &&
+    dataUpstreamPipelineOptions.pipelineOptions[0].id || ''
 
-  const sourceInitialState =
-    dataSourceOptions && dataSourceOptions.allInjectionPoints && dataSourceOptions.allInjectionPoints[0] && dataSourceOptions.allInjectionPoints[0].id ? dataSourceOptions.allInjectionPoints[0].id : '';
+  const sourceInitialState = injectionPointId ||
+    dataSourceOptions && dataSourceOptions.sourceOptions && dataSourceOptions.sourceOptions[0] && dataSourceOptions.sourceOptions[0].id || '';
 
 
   useEffect(() => { loadOptions(); }, []);
@@ -67,58 +68,38 @@ export default function InjectionPointForm({ injectionPointType, handleSubmit }:
     }
   }
 
-  // function groupBy<T extends Record<string, string | number | symbol>>(objectArray: T[], property: keyof T) {
-  //   const seed: Record<string | number | symbol, T[]> = {}; // notice that we change the seed type as well
-  //   return objectArray.reduce(function (acc, obj) {
-  //     let key = obj[property]
-  //     if (!acc[key]) {
-  //       acc[key] = [];
-  //     }
-  //     acc[key].push(obj);
-  //     return acc;
-  //   }, seed)
-  // }
 
 
   function renderOptions() {
-    if (dataUpstreamPipelineOptions && dataUpstreamPipelineOptions.allFacilities) {
-      return dataUpstreamPipelineOptions.allFacilities.map(facility => {
-        if (facility) {
-          return (
-            <optgroup key={facility.id} label={facility.name}>
-              {facility.satellites ? facility.satellites.map(satellite => {
-                if (satellite) {
-                  return [
-                    <option key={satellite.id} disabled={true} style={{ fontWeight: 'bold' }}>{satellite.name}</option>,
-                    satellite.pipelines ? satellite.pipelines.map((pipeline, i, array) => {
-                      if (pipeline && dataValidatorSubstance && dataValidatorSubstance.validators && dataValidatorSubstance.validators.substanceEnum) {
-                        const substanceEnum = dataValidatorSubstance.validators.substanceEnum;
-                        const substanceEnumKey = pipeline.substance as keyof typeof substanceEnum;
-                        const substance = substanceEnum[substanceEnumKey];
-                        return [
-                          i === 0 || array[i - 1]?.substance !== pipeline.substance ?
-                            <option key={pipeline.id + 'substance'} disabled={true} style={{ fontWeight: 'bold' }}>&nbsp;&nbsp;&nbsp;&nbsp;{substance}</option> : null,
-                          <option key={pipeline.id} value={pipeline.id}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{`${pipeline.license}-${pipeline.segment}`}</option>
-                        ]
-                      }
-                    }) : null
-                  ]
-                }
-              }) : null
-              }
-            </optgroup>
-          )
+    function substanceValue(substance: IPipelineOption['substance'], substanceEnum: ISubstanceEnum) {
+      return substanceEnum ? substanceEnum[substance] : substance;
+    }
+
+    if (dataUpstreamPipelineOptions && dataUpstreamPipelineOptions.pipelineOptions) {
+
+      return dataUpstreamPipelineOptions.pipelineOptions.map((pipelineOption, i, array) => {
+        if (pipelineOption) {
+          return [
+            array[i - 1]?.facility !== pipelineOption.facility ?
+              <option key={pipelineOption.id + 'facility'} disabled={true} style={{ fontWeight: 'bold' }}>{pipelineOption.facility}</option> : null,
+            array[i - 1]?.satellite !== pipelineOption.satellite || array[i - 1]?.facility !== pipelineOption.facility ?
+              <option key={pipelineOption.id + 'satellite'} disabled={true} style={{ fontWeight: 'bold' }}>&nbsp;&nbsp;&nbsp;&nbsp;{pipelineOption.satellite}</option> : null,
+            array[i - 1]?.substance !== pipelineOption.substance || array[i - 1]?.satellite !== pipelineOption.satellite || array[i - 1]?.facility !== pipelineOption.facility ?
+              <option key={pipelineOption.id + 'substance'} disabled={true} style={{ fontWeight: 'bold' }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{substanceValue(pipelineOption.substance, dataValidatorSubstance?.validators?.substanceEnum)}</option> : null,
+            <option key={pipelineOption.id} value={pipelineOption.id}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{`${pipelineOption.license}-${pipelineOption.segment}`}</option>
+          ]
         }
       })
-
-    } else if (dataSourceOptions && dataSourceOptions.allInjectionPoints) {
-      return dataSourceOptions.allInjectionPoints.map(option => {
-        if (option) {
-          return (
-            <option key={option.id} value={option.id}>
-              {`${option.satellite?.facility?.name} - ${option.satellite?.name} - ${option.source}`}
-            </option>
-          )
+    } else if (dataSourceOptions && dataSourceOptions.sourceOptions) {
+      return dataSourceOptions.sourceOptions.map((source, i, array) => {
+        if (source) {
+          return [
+            array[i - 1]?.facility !== source.facility ?
+              <option key={source.id + 'facility'} disabled={true} style={{ fontWeight: 'bold' }}>{source.facility}</option> : null,
+            array[i - 1]?.satellite !== source.satellite || array[i - 1]?.facility !== source.facility ?
+              <option key={source.id + 'satellite'} disabled={true} style={{ fontWeight: 'bold' }}>&nbsp;&nbsp;&nbsp;&nbsp;{source.satellite}</option> : null,
+            <option key={source.id} value={source.id}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{source.source}</option>
+          ]
         }
       })
     }
@@ -154,41 +135,3 @@ export default function InjectionPointForm({ injectionPointType, handleSubmit }:
     </form>
   )
 }
-
-
-
-
-// export default function GroupedSelect() {
-//   return (
-//     <div>
-//       <FormControl sx={{ m: 1, minWidth: 120 }}>
-//         <InputLabel htmlFor="grouped-native-select">Grouping</InputLabel>
-//         <Select native defaultValue="" id="grouped-native-select" label="Grouping">
-//           <option aria-label="None" value="" />
-//           <optgroup label="Category 1">
-//             <option value={1}>Option 1</option>
-//             <option value={2}>Option 2</option>
-//           </optgroup>
-//           <optgroup label="Category 2">
-//             <option value={3}>Option 3</option>
-//             <option value={4}>Option 4</option>
-//           </optgroup>
-//         </Select>
-//       </FormControl>
-//       <FormControl sx={{ m: 1, minWidth: 120 }}>
-//         <InputLabel htmlFor="grouped-select">Grouping</InputLabel>
-//         <Select defaultValue="" id="grouped-select" label="Grouping">
-//           <MenuItem value="">
-//             <em>None</em>
-//           </MenuItem>
-//           <ListSubheader>Category 1</ListSubheader>
-//           <MenuItem value={1}>Option 1</MenuItem>
-//           <MenuItem value={2}>Option 2</MenuItem>
-//           <ListSubheader>Category 2</ListSubheader>
-//           <MenuItem value={3}>Option 3</MenuItem>
-//           <MenuItem value={4}>Option 4</MenuItem>
-//         </Select>
-//       </FormControl>
-//     </div>
-//   );
-// }

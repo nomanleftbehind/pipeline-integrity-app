@@ -41,6 +41,7 @@ export default function InjectionPointEntry({ injectionPointType, injectionPoint
         </div>
         {showForm ?
           <InjectionPointForm
+            injectionPointId={injectionPointId}
             injectionPointType={injectionPointType}
             handleSubmit={handleSubmitAndHideForm}
           /> :

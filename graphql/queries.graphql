@@ -118,41 +118,23 @@ query allInjectionPointsQuery {
   }
 }
 
-query sourceOptions {
-  allInjectionPoints {
+query pipelineOptions {
+  pipelineOptions {
+    facility
+    satellite
+    substance
     id
-    source
-    pipeline {
-      id
-      license
-      segment
-    }
-    satellite {
-      id
-      name
-      facility {
-        id
-        name
-      }
-    }
+    license
+    segment
   }
 }
 
-
-query pipelineOptions {
-  allFacilities {
+query sourceOptions {
+  sourceOptions {
+    facility
+    satellite
     id
-    name
-    satellites {
-      id
-      name
-      pipelines {
-        id
-        license
-        segment
-        substance
-      }
-    }
+    source
   }
 }
 
