@@ -156,5 +156,40 @@ export const InjectionPointMutation = extendType({
         })
       }
     })
+    // t.field('connectSource', {
+    //   type: 'InjectionPoint',
+    //   args: {
+    //     id: nonNull(stringArg()),
+    //     pipelineId: nonNull(stringArg()),
+    //   },
+    //   resolve: (_parent, { id, pipelineId }, ctx: Context) => {
+    //     return ctx.prisma.injectionPoint.update({
+    //       where: { id },
+    //       data: {
+    //         pipeline: {
+    //           connect: {
+    //             id: pipelineId
+    //           }
+    //         }
+    //       }
+    //     })
+    //   }
+    // })
+    // t.field('disconnectSource', {
+    //   type: 'InjectionPoint',
+    //   args: {
+    //     id: nonNull(stringArg())
+    //   },
+    //   resolve: (_parent, { id }, ctx: Context) => {
+    //     return ctx.prisma.injectionPoint.update({
+    //       where: { id },
+    //       data: {
+    //         pipeline: {
+    //           disconnect: true
+    //         }
+    //       }
+    //     })
+    //   }
+    // })
   }
 })

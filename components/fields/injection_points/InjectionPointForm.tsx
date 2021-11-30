@@ -12,9 +12,8 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
 interface IInjectionPointFormProps {
-  injectionPointType?: string;
-  injectionPointOptions?: IInjectionPointOptions;
-  handleSubmit: (newInjectionPointId: string) => void;
+  injectionPointType: string;
+  handleSubmit: (injectionPointType: string, newInjectionPointId: string) => void;
 }
 
 export default function InjectionPointForm({ injectionPointType, handleSubmit }: IInjectionPointFormProps) {
@@ -31,7 +30,7 @@ export default function InjectionPointForm({ injectionPointType, handleSubmit }:
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    handleSubmit(e.currentTarget.name);
+    handleSubmit(injectionPointType, e.currentTarget.name);
   }
 
   const upstreamPipelineInitialState =

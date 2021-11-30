@@ -237,11 +237,15 @@ export type MaterialEnumObject = {
 };
 
 export type Mutation = {
+  connectSource?: Maybe<Pipeline>;
+  connectUpstreamPipeline?: Maybe<Pipeline>;
   createFacility?: Maybe<Facility>;
   deleteInjectionPointFromPipeline?: Maybe<InjectionPoint>;
   deletePigRun?: Maybe<PigRun>;
   deletePipeline?: Maybe<Pipeline>;
   deleteSatellite?: Maybe<Satellite>;
+  disconnectSource?: Maybe<Pipeline>;
+  disconnectUpstreamPipeline?: Maybe<Pipeline>;
   duplicatePipeline?: Maybe<Pipeline>;
   editFacility?: Maybe<Facility>;
   editInjectionPoint?: Maybe<InjectionPoint>;
@@ -250,6 +254,18 @@ export type Mutation = {
   editSatellite?: Maybe<Satellite>;
   login?: Maybe<AuthPayload>;
   signup?: Maybe<AuthPayload>;
+};
+
+
+export type MutationConnectSourceArgs = {
+  id: Scalars['String'];
+  sourceId: Scalars['String'];
+};
+
+
+export type MutationConnectUpstreamPipelineArgs = {
+  id: Scalars['String'];
+  upstreamId: Scalars['String'];
 };
 
 
@@ -275,6 +291,18 @@ export type MutationDeletePipelineArgs = {
 
 export type MutationDeleteSatelliteArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationDisconnectSourceArgs = {
+  id: Scalars['String'];
+  sourceId: Scalars['String'];
+};
+
+
+export type MutationDisconnectUpstreamPipelineArgs = {
+  id: Scalars['String'];
+  upstreamId: Scalars['String'];
 };
 
 
@@ -684,6 +712,38 @@ export type DuplicatePipelineMutationVariables = Exact<{
 
 export type DuplicatePipelineMutation = { duplicatePipeline?: { id: string, license: string, segment: string } | null | undefined };
 
+export type ConnectUpstreamPipelineMutationVariables = Exact<{
+  id: Scalars['String'];
+  upstreamId: Scalars['String'];
+}>;
+
+
+export type ConnectUpstreamPipelineMutation = { connectUpstreamPipeline?: { id: string, upstream?: Array<{ id: string } | null | undefined> | null | undefined } | null | undefined };
+
+export type DisconnectUpstreamPipelineMutationVariables = Exact<{
+  id: Scalars['String'];
+  upstreamId: Scalars['String'];
+}>;
+
+
+export type DisconnectUpstreamPipelineMutation = { disconnectUpstreamPipeline?: { id: string, upstream?: Array<{ id: string } | null | undefined> | null | undefined } | null | undefined };
+
+export type ConnectSourceMutationVariables = Exact<{
+  id: Scalars['String'];
+  sourceId: Scalars['String'];
+}>;
+
+
+export type ConnectSourceMutation = { connectSource?: { id: string, injectionPoints?: Array<{ id: string } | null | undefined> | null | undefined } | null | undefined };
+
+export type DisconnectSourceMutationVariables = Exact<{
+  id: Scalars['String'];
+  sourceId: Scalars['String'];
+}>;
+
+
+export type DisconnectSourceMutation = { disconnectSource?: { id: string, injectionPoints?: Array<{ id: string } | null | undefined> | null | undefined } | null | undefined };
+
 export type DeleteInjectionPointFromPipelineMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -912,6 +972,154 @@ export function useDuplicatePipelineMutation(baseOptions?: Apollo.MutationHookOp
 export type DuplicatePipelineMutationHookResult = ReturnType<typeof useDuplicatePipelineMutation>;
 export type DuplicatePipelineMutationResult = Apollo.MutationResult<DuplicatePipelineMutation>;
 export type DuplicatePipelineMutationOptions = Apollo.BaseMutationOptions<DuplicatePipelineMutation, DuplicatePipelineMutationVariables>;
+export const ConnectUpstreamPipelineDocument = gql`
+    mutation connectUpstreamPipeline($id: String!, $upstreamId: String!) {
+  connectUpstreamPipeline(id: $id, upstreamId: $upstreamId) {
+    id
+    upstream {
+      id
+    }
+  }
+}
+    `;
+export type ConnectUpstreamPipelineMutationFn = Apollo.MutationFunction<ConnectUpstreamPipelineMutation, ConnectUpstreamPipelineMutationVariables>;
+
+/**
+ * __useConnectUpstreamPipelineMutation__
+ *
+ * To run a mutation, you first call `useConnectUpstreamPipelineMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConnectUpstreamPipelineMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [connectUpstreamPipelineMutation, { data, loading, error }] = useConnectUpstreamPipelineMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      upstreamId: // value for 'upstreamId'
+ *   },
+ * });
+ */
+export function useConnectUpstreamPipelineMutation(baseOptions?: Apollo.MutationHookOptions<ConnectUpstreamPipelineMutation, ConnectUpstreamPipelineMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ConnectUpstreamPipelineMutation, ConnectUpstreamPipelineMutationVariables>(ConnectUpstreamPipelineDocument, options);
+      }
+export type ConnectUpstreamPipelineMutationHookResult = ReturnType<typeof useConnectUpstreamPipelineMutation>;
+export type ConnectUpstreamPipelineMutationResult = Apollo.MutationResult<ConnectUpstreamPipelineMutation>;
+export type ConnectUpstreamPipelineMutationOptions = Apollo.BaseMutationOptions<ConnectUpstreamPipelineMutation, ConnectUpstreamPipelineMutationVariables>;
+export const DisconnectUpstreamPipelineDocument = gql`
+    mutation disconnectUpstreamPipeline($id: String!, $upstreamId: String!) {
+  disconnectUpstreamPipeline(id: $id, upstreamId: $upstreamId) {
+    id
+    upstream {
+      id
+    }
+  }
+}
+    `;
+export type DisconnectUpstreamPipelineMutationFn = Apollo.MutationFunction<DisconnectUpstreamPipelineMutation, DisconnectUpstreamPipelineMutationVariables>;
+
+/**
+ * __useDisconnectUpstreamPipelineMutation__
+ *
+ * To run a mutation, you first call `useDisconnectUpstreamPipelineMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDisconnectUpstreamPipelineMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [disconnectUpstreamPipelineMutation, { data, loading, error }] = useDisconnectUpstreamPipelineMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      upstreamId: // value for 'upstreamId'
+ *   },
+ * });
+ */
+export function useDisconnectUpstreamPipelineMutation(baseOptions?: Apollo.MutationHookOptions<DisconnectUpstreamPipelineMutation, DisconnectUpstreamPipelineMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DisconnectUpstreamPipelineMutation, DisconnectUpstreamPipelineMutationVariables>(DisconnectUpstreamPipelineDocument, options);
+      }
+export type DisconnectUpstreamPipelineMutationHookResult = ReturnType<typeof useDisconnectUpstreamPipelineMutation>;
+export type DisconnectUpstreamPipelineMutationResult = Apollo.MutationResult<DisconnectUpstreamPipelineMutation>;
+export type DisconnectUpstreamPipelineMutationOptions = Apollo.BaseMutationOptions<DisconnectUpstreamPipelineMutation, DisconnectUpstreamPipelineMutationVariables>;
+export const ConnectSourceDocument = gql`
+    mutation connectSource($id: String!, $sourceId: String!) {
+  connectSource(id: $id, sourceId: $sourceId) {
+    id
+    injectionPoints {
+      id
+    }
+  }
+}
+    `;
+export type ConnectSourceMutationFn = Apollo.MutationFunction<ConnectSourceMutation, ConnectSourceMutationVariables>;
+
+/**
+ * __useConnectSourceMutation__
+ *
+ * To run a mutation, you first call `useConnectSourceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConnectSourceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [connectSourceMutation, { data, loading, error }] = useConnectSourceMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      sourceId: // value for 'sourceId'
+ *   },
+ * });
+ */
+export function useConnectSourceMutation(baseOptions?: Apollo.MutationHookOptions<ConnectSourceMutation, ConnectSourceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ConnectSourceMutation, ConnectSourceMutationVariables>(ConnectSourceDocument, options);
+      }
+export type ConnectSourceMutationHookResult = ReturnType<typeof useConnectSourceMutation>;
+export type ConnectSourceMutationResult = Apollo.MutationResult<ConnectSourceMutation>;
+export type ConnectSourceMutationOptions = Apollo.BaseMutationOptions<ConnectSourceMutation, ConnectSourceMutationVariables>;
+export const DisconnectSourceDocument = gql`
+    mutation disconnectSource($id: String!, $sourceId: String!) {
+  disconnectSource(id: $id, sourceId: $sourceId) {
+    id
+    injectionPoints {
+      id
+    }
+  }
+}
+    `;
+export type DisconnectSourceMutationFn = Apollo.MutationFunction<DisconnectSourceMutation, DisconnectSourceMutationVariables>;
+
+/**
+ * __useDisconnectSourceMutation__
+ *
+ * To run a mutation, you first call `useDisconnectSourceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDisconnectSourceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [disconnectSourceMutation, { data, loading, error }] = useDisconnectSourceMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      sourceId: // value for 'sourceId'
+ *   },
+ * });
+ */
+export function useDisconnectSourceMutation(baseOptions?: Apollo.MutationHookOptions<DisconnectSourceMutation, DisconnectSourceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DisconnectSourceMutation, DisconnectSourceMutationVariables>(DisconnectSourceDocument, options);
+      }
+export type DisconnectSourceMutationHookResult = ReturnType<typeof useDisconnectSourceMutation>;
+export type DisconnectSourceMutationResult = Apollo.MutationResult<DisconnectSourceMutation>;
+export type DisconnectSourceMutationOptions = Apollo.BaseMutationOptions<DisconnectSourceMutation, DisconnectSourceMutationVariables>;
 export const DeleteInjectionPointFromPipelineDocument = gql`
     mutation deleteInjectionPointFromPipeline($id: String!) {
   deleteInjectionPointFromPipeline(id: $id) {

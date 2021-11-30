@@ -228,11 +228,15 @@ type MaterialEnumObject {
 }
 
 type Mutation {
+  connectSource(id: String!, sourceId: String!): Pipeline
+  connectUpstreamPipeline(id: String!, upstreamId: String!): Pipeline
   createFacility(data: FacilityCreateInput!): Facility
   deleteInjectionPointFromPipeline(id: String!): InjectionPoint
   deletePigRun(id: String!): PigRun
   deletePipeline(id: String!): Pipeline
   deleteSatellite(id: String!): Satellite
+  disconnectSource(id: String!, sourceId: String!): Pipeline
+  disconnectUpstreamPipeline(id: String!, upstreamId: String!): Pipeline
   duplicatePipeline(id: String!): Pipeline
   editFacility(id: String!, name: String): Facility
   editInjectionPoint(firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineId: String, pvNodeId: String, pvUnitId: String, satelliteId: String, source: String, water: Float): InjectionPoint

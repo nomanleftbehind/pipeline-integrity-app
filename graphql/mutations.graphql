@@ -31,23 +31,59 @@ duplicatePipeline(id: $id) {
 }
 }
 
-mutation deleteInjectionPointFromPipeline($id: String!) {
-deleteInjectionPointFromPipeline(id: $id) {
-  id
-  source
+mutation connectUpstreamPipeline($id: String!, $upstreamId: String!) {
+  connectUpstreamPipeline(id: $id, upstreamId: $upstreamId) {
+    id
+    upstream {
+      id
+    }
+  }
 }
+
+mutation disconnectUpstreamPipeline($id: String!, $upstreamId: String!) {
+  disconnectUpstreamPipeline(id: $id, upstreamId: $upstreamId) {
+    id
+    upstream {
+      id
+    }
+  }
+}
+
+mutation connectSource($id: String!, $sourceId: String!) {
+  connectSource(id: $id, sourceId: $sourceId) {
+    id
+    injectionPoints {
+      id
+    }
+  }
+}
+
+mutation disconnectSource($id: String!, $sourceId: String!) {
+  disconnectSource(id: $id, sourceId: $sourceId) {
+    id
+    injectionPoints {
+      id
+    }
+  }
+}
+
+mutation deleteInjectionPointFromPipeline($id: String!) {
+  deleteInjectionPointFromPipeline(id: $id) {
+    id
+    source
+  }
 }
 
 mutation changeInjectionPointToPipeline($id: String!, $pipelineId: String) {
-editInjectionPoint(id: $id, pipelineId: $pipelineId) {
-  id
-  source
-  pipeline {
+  editInjectionPoint(id: $id, pipelineId: $pipelineId) {
     id
-    license
-    segment
+    source
+    pipeline {
+      id
+      license
+      segment
+    }
   }
-}
 }
 
 mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $substance: SubstanceEnum, $from: String, $fromFeature: FromToFeatureEnum, $to: String, $toFeature: FromToFeatureEnum, $status: StatusEnum, $licenseDate: DateTime, $length: Float, $type: TypeEnum, $grade: GradeEnum, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum, $piggable: Boolean, $piggingFrequency: Int) {

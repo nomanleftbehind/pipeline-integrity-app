@@ -565,5 +565,77 @@ export const PipelineMutation = extendType({
         } else return null;
       }
     })
+    t.field('connectUpstreamPipeline', {
+      type: 'Pipeline',
+      args: {
+        id: nonNull(stringArg()),
+        upstreamId: nonNull(stringArg()),
+      },
+      resolve: async (_parent, { id, upstreamId }, ctx: Context) => {
+        return ctx.prisma.pipeline.update({
+          where: { id },
+          data: {
+            upstream: {
+              connect: {
+                id: upstreamId
+              }
+            }
+          }
+        })
+      }
+    })
+    t.field('disconnectUpstreamPipeline', {
+      type: 'Pipeline',
+      args: {
+        id: nonNull(stringArg()),
+        upstreamId: nonNull(stringArg()),
+      },
+      resolve: async (_parent, { id, upstreamId }, ctx: Context) => {
+        return ctx.prisma.pipeline.update({
+          where: { id },
+          data: {
+            upstream: {
+              disconnect: { id: upstreamId }
+            }
+          }
+        })
+      }
+    })
+    t.field('connectSource', {
+      type: 'Pipeline',
+      args: {
+        id: nonNull(stringArg()),
+        sourceId: nonNull(stringArg()),
+      },
+      resolve: async (_parent, { id, sourceId }, ctx: Context) => {
+        return ctx.prisma.pipeline.update({
+          where: { id },
+          data: {
+            injectionPoints: {
+              connect: {
+                id: sourceId
+              }
+            }
+          }
+        })
+      }
+    })
+    t.field('disconnectSource', {
+      type: 'Pipeline',
+      args: {
+        id: nonNull(stringArg()),
+        sourceId: nonNull(stringArg()),
+      },
+      resolve: async (_parent, { id, sourceId }, ctx: Context) => {
+        return ctx.prisma.pipeline.update({
+          where: { id },
+          data: {
+            injectionPoints: {
+              disconnect: { id: sourceId }
+            }
+          }
+        })
+      }
+    })
   }
 })

@@ -2,27 +2,27 @@ import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import TableCell from '@mui/material/TableCell';
 import InjectionPointForm from './InjectionPointForm';
-import { IInjectionPointOptions } from '../../rows/RenderPipeline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
-interface ISourceProps {
+interface IInjectionPointEnrtyProps {
+  injectionPointType: string;
   injectionPointId: string;
   source: string;
-  handleSubmit: (newInjectionPointId: string, oldInjectionPointId: string) => void;
-  deleteInjectionPoint: () => void;
+  handleSubmit: (injectionPointType: string, newInjectionPointId: string, oldInjectionPointId: string) => void;
+  disconnectInjectionPoint: () => void;
 }
 
-export default function Source({ injectionPointId, source, handleSubmit, deleteInjectionPoint }: ISourceProps) {
+export default function InjectionPointEntry({ injectionPointType, injectionPointId, source, handleSubmit, disconnectInjectionPoint }: IInjectionPointEnrtyProps) {
   const [showForm, setShowForm] = useState<boolean>(false);
 
   function toggleShowForm() {
     setShowForm(!showForm);
   }
 
-  function handleSubmitAndHideForm(newInjectionPointId: string) {
-    handleSubmit(newInjectionPointId, injectionPointId);
+  function handleSubmitAndHideForm(injectionPointType: string, newInjectionPointId: string) {
+    handleSubmit(injectionPointType, newInjectionPointId, injectionPointId);
     setShowForm(false);
   }
 
@@ -35,12 +35,13 @@ export default function Source({ injectionPointId, source, handleSubmit, deleteI
           </IconButton>
         </div>
         <div className="cell-fr">
-          <IconButton aria-label="delete injection point" size="small" onClick={deleteInjectionPoint} type="button">
+          <IconButton aria-label="delete injection point" size="small" onClick={disconnectInjectionPoint} type="button">
             <DeleteOutlineOutlinedIcon />
           </IconButton>
         </div>
         {showForm ?
           <InjectionPointForm
+            injectionPointType={injectionPointType}
             handleSubmit={handleSubmitAndHideForm}
           /> :
           <div className="cell-l no-wrap">{source}</div>}

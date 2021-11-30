@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
@@ -14,9 +14,9 @@ import Source from './Source';
 import InjectionPointForm from './InjectionPointForm';
 import { IPipeline, IInjectionPointOptions } from '../../rows/RenderPipeline';
 
-import { useDeleteInjectionPointFromPipelineMutation, useChangeInjectionPointToPipelineMutation, PipelinesByIdQueryDocument } from '../../../graphql/generated/graphql';
+import { useConnectUpstreamPipelineMutation, useDisconnectUpstreamPipelineMutation, useConnectSourceMutation, useDisconnectSourceMutation, useDeleteInjectionPointFromPipelineMutation, useChangeInjectionPointToPipelineMutation, PipelinesByIdQueryDocument } from '../../../graphql/generated/graphql';
 
-type IInjectionPoints = Pick<IPipeline, 'injectionPoints' | 'upstream'>  //IPipeline['injectionPoints'];
+type IInjectionPoints = Pick<IPipeline, 'injectionPoints' | 'upstream'>;
 type IUpstream = IPipeline['upstream'];
 
 interface IInjectionPointsProps {
@@ -27,14 +27,20 @@ interface IInjectionPointsProps {
 }
 
 
-export default function InjectionPoints({ open, id, injectionPoints: sources /* Need to change name in the database to sources instead of injectionPoints */ }: IInjectionPointsProps) {
+export default function InjectionPoints({ open, id, injectionPoints }: IInjectionPointsProps) {
   const [showUpstreamPipelinesForm, setShowUpstreamPipelinesForm] = React.useState<boolean>(false);
   const [showSourcesForm, setShowSourcesForm] = React.useState<boolean>(false);
+
+  const [connectUpstreamPipeline, { data: dataConnectUpstreamPipeline }] = useConnectUpstreamPipelineMutation();
+  const [disconnectUpstreamPipeline, { data: dataDisconnectUpstreamPipeline }] = useDisconnectUpstreamPipelineMutation();
+
+  const [connectSource, { data: dataConnectSource }] = useConnectSourceMutation();
+  const [disconnectSource, { data: dataDisconnectSource }] = useDisconnectSourceMutation();
 
   const [deleteInjectionPoint, { data, error, loading }] = useDeleteInjectionPointFromPipelineMutation();
   const [changeInjectionPointToPipeline, { data: dataChangeInjectionPointToPipeline }] = useChangeInjectionPointToPipelineMutation();
 
-  const { injectionPoints, upstream: upstreamPipelines } = sources;
+  const { injectionPoints: sources, upstream: upstreamPipelines } = injectionPoints;
 
   function toggleShowUpstreamPipelinesForm() {
     setShowUpstreamPipelinesForm(!showUpstreamPipelinesForm);
@@ -44,8 +50,28 @@ export default function InjectionPoints({ open, id, injectionPoints: sources /* 
     setShowSourcesForm(!showSourcesForm);
   }
 
-  function handleSubmit(newInjectionPointId: string, oldnewInjectionPointId?: string) {
-    if (oldnewInjectionPointId) deleteInjectionPoint({ variables: { id: oldnewInjectionPointId } }); // Very important this is the first mutation called in this block,
+  function handleSubmit(injectionPointType: string, newInjectionPointId: string, oldInjectionPointId?: string) {
+    switch (injectionPointType) {
+      case 'upstream pipeline':
+        // Very important this is the first mutation called in this block,
+        // as otherwise if you click OK, while not having selected a different injection point,
+        // it would first override injection point with itself and then delete it.
+        if (oldInjectionPointId) disconnectUpstreamPipeline({ variables: { id, upstreamId: oldInjectionPointId } });
+        connectUpstreamPipeline({ variables: { id, upstreamId: newInjectionPointId }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
+        setShowUpstreamPipelinesForm(false);
+        break;
+      case 'source':
+        if (oldInjectionPointId) disconnectSource({ variables: { id, sourceId: oldInjectionPointId } });
+        connectSource({ variables: { id, sourceId: newInjectionPointId }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
+        setShowSourcesForm(false);
+        break;
+      default:
+        break;
+    }
+  }
+
+  function handleSubmit2(newInjectionPointId: string, oldInjectionPointId?: string) {
+    if (oldInjectionPointId) deleteInjectionPoint({ variables: { id: oldInjectionPointId } }); // Very important this is the first mutation called in this block,
     // as otherwise if you click OK, while not having selected a different injection point,
     // it would first override injection point with itself and then delete it.
     changeInjectionPointToPipeline({ variables: { id: newInjectionPointId, pipelineId: id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
@@ -88,10 +114,11 @@ export default function InjectionPoints({ open, id, injectionPoints: sources /* 
                   (
                     <TableRow key={upstreamPipeline.id}>
                       <Source
+                        injectionPointType="upstream pipeline"
                         injectionPointId={upstreamPipeline.id}
                         source={`${upstreamPipeline.license}-${upstreamPipeline.segment}`}
                         handleSubmit={handleSubmit}
-                        deleteInjectionPoint={() => deleteInjectionPoint({ variables: { id: upstreamPipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
+                        disconnectInjectionPoint={() => disconnectUpstreamPipeline({ variables: { id: id, upstreamId: upstreamPipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
                       />
                       <TableCell align="right" colSpan={3} />
                     </TableRow>
@@ -120,19 +147,20 @@ export default function InjectionPoints({ open, id, injectionPoints: sources /* 
                   </TableCell>
                 </TableRow> :
                 null}
-              {injectionPoints ? injectionPoints.map(injectionPoint => {
-                return injectionPoint ?
+              {sources ? sources.map(source => {
+                return source ?
                   (
-                    <TableRow key={injectionPoint.id}>
+                    <TableRow key={source.id}>
                       <Source
-                        injectionPointId={injectionPoint.id}
-                        source={injectionPoint.source}
+                        injectionPointType="source"
+                        injectionPointId={source.id}
+                        source={source.source}
                         handleSubmit={handleSubmit}
-                        deleteInjectionPoint={() => deleteInjectionPoint({ variables: { id: injectionPoint.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
+                        disconnectInjectionPoint={() => disconnectSource({ variables: { id: id, sourceId: source.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
                       />
-                      <TableCell align="right">{injectionPoint.oil}</TableCell>
-                      <TableCell align="right">{injectionPoint.water}</TableCell>
-                      <TableCell align="right">{injectionPoint.gas}</TableCell>
+                      <TableCell align="right">{source.oil}</TableCell>
+                      <TableCell align="right">{source.water}</TableCell>
+                      <TableCell align="right">{source.gas}</TableCell>
                     </TableRow>
                   ) :
                   null;
