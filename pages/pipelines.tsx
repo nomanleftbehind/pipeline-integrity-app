@@ -10,8 +10,10 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { usePipelinesByIdQueryLazyQuery, useGetValidatorsQuery } from '../graphql/generated/graphql';
+import { usePipelinesByIdQueryLazyQuery, useGetValidatorsQuery, PipelinesByIdQueryQuery, GetValidatorsQuery } from '../graphql/generated/graphql';
 
+export type IPipeline = PipelinesByIdQueryQuery['pipelinesById'] extends (infer U)[] | null | undefined ? NonNullable<U> : never;
+export type IValidators = GetValidatorsQuery['validators'];
 
 export interface IHeader {
   license: string;
@@ -28,7 +30,6 @@ export interface IHeader {
 export default function PipelineDatabase() {
 
   const header: IHeader = { license: "", segment: "", substance: "", from: "", fromFeature: "", to: "", toFeature: "", injectionPoints: "", status: "" };
-  const [expandedPipelines, setExpandedPipelines] = React.useState<string[]>([]);
   const [filterText, setFilterText] = React.useState<IHeader>(header);
   const [filterTextCaseInsensitive, setFilterTextCaseInsensitive] = React.useState<IHeader>(header);
 
@@ -55,10 +56,9 @@ export default function PipelineDatabase() {
     console.log(filterTextCaseInsensitive[myHeader]);
   }
 
-  const handlePipelineClick = (id: string): void => {
-    setExpandedPipelines((prevState) => {
-      return prevState.includes(id) ? prevState.filter(ppl_id => ppl_id !== id) : prevState.concat(id);
-    });
+  const validators = validatorsData?.validators;
+  function valuesFromEnum<T>(property: keyof T, validator: T | undefined) {
+    return validator ? validator[property] : property;
   }
 
   return (
@@ -80,55 +80,49 @@ export default function PipelineDatabase() {
           <TableBody>
             {loading ? <TableRow><TableCell>Loading...</TableCell></TableRow> :
               error ? <TableRow><TableCell>{error.message}</TableCell></TableRow> :
-                data ?
-                  data.pipelinesById ?
-                    data.pipelinesById.filter(pipeline => {
-                      const inj_pt_source =
-                        pipeline ?
-                          pipeline.injectionPoints ?
-                            pipeline.injectionPoints.map(injectionPoints =>
-                              injectionPoints ? injectionPoints.source : undefined) :
-                            undefined :
-                          undefined;
-                      return (
-                        pipeline ?
-                          (
-                            pipeline.license.toUpperCase().includes(filterTextCaseInsensitive.license) &&
-                            pipeline.segment.toUpperCase().includes(filterTextCaseInsensitive.segment) &&
-                            pipeline.substance.toUpperCase().includes(filterTextCaseInsensitive.substance) &&
-                            pipeline.from.toUpperCase().includes(filterTextCaseInsensitive.from) &&
-                            (pipeline.fromFeature ? pipeline.fromFeature.toUpperCase().includes(filterTextCaseInsensitive.fromFeature) : filterTextCaseInsensitive.fromFeature.length === 0) &&
-                            pipeline.to.toUpperCase().includes(filterTextCaseInsensitive.to) &&
-                            (pipeline.toFeature ? pipeline.toFeature.toUpperCase().includes(filterTextCaseInsensitive.toFeature) : filterTextCaseInsensitive.toFeature.length === 0) &&
-                            (inj_pt_source === undefined ||
-                              (inj_pt_source.length === 0 && filterTextCaseInsensitive.injectionPoints.length === 0) ||
-                              inj_pt_source.some(i => {
-                                switch (i) {
-                                  case undefined:
-                                    return filterTextCaseInsensitive.injectionPoints.length === 0;
-                                  default:
-                                    return i.toUpperCase().includes(filterTextCaseInsensitive.injectionPoints)
-                                }
-                              })) &&
-                            pipeline.status.toUpperCase().includes(filterTextCaseInsensitive.status)
-                          ) :
-                          undefined
-                      );
-                    }).map((pipeline, ppl_idx) => {
-                      return pipeline ?
+                data && data.pipelinesById && validatorsData && validatorsData.validators ?
+                  data.pipelinesById.filter(pipeline => {
+                    const inj_pt_source =
+                      pipeline && pipeline.injectionPoints ?
+                        pipeline.injectionPoints.map(injectionPoints =>
+                          injectionPoints ? injectionPoints.source : undefined) :
+                        undefined;
+                    return (
+                      pipeline ?
                         (
-                          <RenderPipeline
-                            key={pipeline.id}
-                            ppl_idx={ppl_idx}
-                            pipeline={pipeline}
-                            validators={validatorsData?.validators}
-                            expandedPipelines={expandedPipelines}
-                            onPipelineClick={() => handlePipelineClick(pipeline.id)}
-                          />
+                          pipeline.license.toUpperCase().includes(filterTextCaseInsensitive.license) &&
+                          pipeline.segment.toUpperCase().includes(filterTextCaseInsensitive.segment) &&
+                          valuesFromEnum(pipeline.substance, validators?.substanceEnum).toUpperCase().includes(filterTextCaseInsensitive.substance) &&
+                          pipeline.from.toUpperCase().includes(filterTextCaseInsensitive.from) &&
+                          (pipeline.fromFeature ? valuesFromEnum(pipeline.fromFeature, validators?.fromToFeatureEnum).toUpperCase().includes(filterTextCaseInsensitive.fromFeature) : filterTextCaseInsensitive.fromFeature.length === 0) &&
+                          pipeline.to.toUpperCase().includes(filterTextCaseInsensitive.to) &&
+                          (pipeline.toFeature ? valuesFromEnum(pipeline.toFeature, validators?.fromToFeatureEnum).toUpperCase().includes(filterTextCaseInsensitive.toFeature) : filterTextCaseInsensitive.toFeature.length === 0) &&
+                          (inj_pt_source === undefined ||
+                            (inj_pt_source.length === 0 && filterTextCaseInsensitive.injectionPoints.length === 0) ||
+                            inj_pt_source.some(i => {
+                              switch (i) {
+                                case undefined:
+                                  return filterTextCaseInsensitive.injectionPoints.length === 0;
+                                default:
+                                  return i.toUpperCase().includes(filterTextCaseInsensitive.injectionPoints)
+                              }
+                            })) &&
+                          valuesFromEnum(pipeline.status, validators?.statusEnum).toUpperCase().includes(filterTextCaseInsensitive.status)
                         ) :
-                        null;
-                    }) :
-                    null :
+                        undefined
+                    );
+                  }).map((pipeline, ppl_idx) => {
+                    return pipeline ?
+                      (
+                        <RenderPipeline
+                          key={pipeline.id}
+                          ppl_idx={ppl_idx}
+                          pipeline={pipeline}
+                          validators={validators}
+                        />
+                      ) :
+                      null;
+                  }) :
                   null}
           </TableBody>
         </Table>

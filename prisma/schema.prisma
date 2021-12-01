@@ -39,15 +39,15 @@ model Facility {
 }
 
 model Satellite {
-  id              String           @id @default(uuid())
-  name            String           @unique
-  facility        Facility?        @relation(fields: [facilityId], references: [id])
-  facilityId      String?
-  pipelines       Pipeline[]
-  createdBy       User             @relation(fields: [createdById], references: [id])
-  createdById     String
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id          String     @id @default(uuid())
+  name        String     @unique
+  facility    Facility?  @relation(fields: [facilityId], references: [id])
+  facilityId  String?
+  pipelines   Pipeline[]
+  createdBy   User       @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
 }
 
@@ -103,37 +103,23 @@ model PigRun {
   updatedAt   DateTime     @updatedAt
 }
 
-// model PipelineStream {
-//   upstream     Pipeline? @relation("upstream", fields: [upstreamId], references: [id])
-//   upstreamId   Int
-//   downstream   Pipeline? @relation("downstream", fields: [downstreamId], references: [id])
-//   downstreamId Int
-//   createdBy    User     @relation(fields: [createdById], references: [id])
-//   createdById  Int
-//   createdAt    DateTime @default(now())
-//   updatedAt    DateTime @updatedAt
-
-//   @@id([upstreamId, downstreamId])
-//   @@map("pipeline_stream")
-// }
-
 model InjectionPoint {
-  id              String     @id @default(uuid())
-  source          String     @unique
-  oil             Decimal    @db.Decimal(6, 2)
-  water           Decimal    @db.Decimal(6, 2)
-  gas             Decimal    @db.Decimal(6, 2)
+  id              String    @id @default(uuid())
+  source          String    @unique
+  oil             Decimal   @db.Decimal(6, 2)
+  water           Decimal   @db.Decimal(6, 2)
+  gas             Decimal   @db.Decimal(6, 2)
   firstProduction DateTime?
   lastProduction  DateTime?
   firstInjection  DateTime?
   lastInjection   DateTime?
   pvUnitId        String?
   pvNodeId        String?
-  createdBy       User       @relation(fields: [createdById], references: [id])
+  createdBy       User      @relation(fields: [createdById], references: [id])
   createdById     String
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  pipeline        Pipeline?  @relation(fields: [pipelineId], references: [id])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  pipeline        Pipeline? @relation(fields: [pipelineId], references: [id])
   pipelineId      String?
 
   @@unique([pvUnitId, pvNodeId])
