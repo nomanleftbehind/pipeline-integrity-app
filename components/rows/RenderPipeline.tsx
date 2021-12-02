@@ -11,12 +11,11 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-
-import { useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation } from '../../graphql/generated/graphql';
-
-import { IPipeline, IValidators } from '../../pages/pipelines';
+import { useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation, PipelinesByIdQueryQuery, GetValidatorsQuery } from '../../graphql/generated/graphql';
 
 
+export type IPipeline = PipelinesByIdQueryQuery['pipelinesById'] extends (infer U)[] | null | undefined ? NonNullable<U> : never;
+export type IValidators = GetValidatorsQuery['validators'];
 
 interface IRenderPipelineProps {
   ppl_idx: number;

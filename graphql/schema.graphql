@@ -202,6 +202,11 @@ type InternalProtectionEnumObject {
   Unknown: String!
 }
 
+enum LimitingSpecEnum {
+  ANSI300
+  ANSI600
+}
+
 enum MaterialEnum {
   Aluminum
   AsbestosCement
@@ -340,6 +345,21 @@ input PipelineUniqueInput {
   segment: String
 }
 
+type PressureTest {
+  comment: String
+  createdAt: DateTime!
+  createdBy: User!
+  ddsDate: DateTime
+  id: String!
+  infoSentOutDate: DateTime
+  integritySheetUpdated: DateTime
+  limitingSpec: LimitingSpecEnum
+  pipeline: Pipeline!
+  pressureTestDate: DateTime
+  pressureTestReceivedDate: DateTime
+  updatedAt: DateTime!
+}
+
 type Query {
   allFacilities: [Facility]
   allInjectionPoints: [InjectionPoint]
@@ -351,6 +371,7 @@ type Query {
   pipelineOptions: [PipelineOptions]
   pipelinesById(facilityId: String, satelliteId: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
+  pressureTestsById(pipelineId: String): [PressureTest]
   sourceOptions: [SourceOptions]
   validators: Validator
 }

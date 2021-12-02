@@ -12,8 +12,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { usePipelinesByIdQueryLazyQuery, useGetValidatorsQuery, PipelinesByIdQueryQuery, GetValidatorsQuery } from '../graphql/generated/graphql';
 
-export type IPipeline = PipelinesByIdQueryQuery['pipelinesById'] extends (infer U)[] | null | undefined ? NonNullable<U> : never;
-export type IValidators = GetValidatorsQuery['validators'];
 
 export interface IHeader {
   license: string;
@@ -80,7 +78,7 @@ export default function PipelineDatabase() {
           <TableBody>
             {loading ? <TableRow><TableCell>Loading...</TableCell></TableRow> :
               error ? <TableRow><TableCell>{error.message}</TableCell></TableRow> :
-                data && data.pipelinesById && validatorsData && validatorsData.validators ?
+                data && data.pipelinesById ?
                   data.pipelinesById.filter(pipeline => {
                     const inj_pt_source =
                       pipeline && pipeline.injectionPoints ?

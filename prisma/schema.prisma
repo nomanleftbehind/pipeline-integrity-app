@@ -19,7 +19,8 @@ model User {
   pipelines       Pipeline[]
   injectionPoints InjectionPoint[]
   pigRunsOperated PigRun[]         @relation("operator")
-  PigRunsCreated  PigRun[]         @relation("createdBy")
+  pigRunsCreated  PigRun[]         @relation("createdBy")
+  pressureTests   PressureTest[]
 }
 
 enum Role {
@@ -84,6 +85,7 @@ model Pipeline {
   updatedAt          DateTime                @updatedAt
   upstream           Pipeline[]              @relation("PipelineFollows", references: [id])
   downstream         Pipeline[]              @relation("PipelineFollows", references: [id])
+  pressureTests      PressureTest[]
 
   @@unique([license, segment])
 }
@@ -101,6 +103,23 @@ model PigRun {
   createdById String
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+}
+
+model PressureTest {
+  id                       String            @id @default(uuid())
+  pipeline                 Pipeline          @relation(fields: [pipelineId], references: [id])
+  pipelineId               String
+  limitingSpec             LimitingSpecEnum?
+  infoSentOutDate          DateTime?
+  ddsDate                  DateTime?
+  pressureTestDate         DateTime?
+  pressureTestReceivedDate DateTime?
+  integritySheetUpdated    DateTime?
+  comment                  String?
+  createdBy                User              @relation(fields: [createdById], references: [id])
+  createdById              String
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
 }
 
 model InjectionPoint {
@@ -277,4 +296,11 @@ enum PigTypeEnum {
   Scrapper
 
   @@map("pigType")
+}
+
+enum LimitingSpecEnum {
+  ANSI300  @map("ANSI 300")
+  ANSI600  @map("ANSI 600")
+
+  @@map("limitingSpec")
 }
