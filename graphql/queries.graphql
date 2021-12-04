@@ -303,3 +303,25 @@ query FacilitiesSideBar {
     }
   }
 }
+
+query pressureTestsById($pipelineId: String) {
+  pressureTestsById(pipelineId: $pipelineId) {
+    id
+    pipeline {
+      license
+      segment
+    }
+    limitingSpec
+    infoSentOutDate
+    ddsDate
+    pressureTestDate
+    pressureTestReceivedDate
+    integritySheetUpdated
+    comment
+    createdBy {
+      email
+    }
+    createdAt
+    updatedAt
+  }
+}

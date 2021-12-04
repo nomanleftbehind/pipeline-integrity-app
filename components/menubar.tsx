@@ -29,6 +29,11 @@ export default function ManuBar() {
               </Link>
             </li>
             <li>
+              <Link href="/pressuretests">
+                <a>Pressure Tests</a>
+              </Link>
+            </li>
+            <li>
               <Link href="/satellites">
                 <a>Satellites</a>
               </Link>

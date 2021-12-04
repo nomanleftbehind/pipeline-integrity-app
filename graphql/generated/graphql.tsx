@@ -211,6 +211,11 @@ export type InternalProtectionEnumObject = {
   Unknown: Scalars['String'];
 };
 
+export enum LimitingSpecEnum {
+  Ansi300 = 'ANSI300',
+  Ansi600 = 'ANSI600'
+}
+
 export enum MaterialEnum {
   Aluminum = 'Aluminum',
   AsbestosCement = 'AsbestosCement',
@@ -477,6 +482,21 @@ export type PipelineUniqueInput = {
   segment?: Maybe<Scalars['String']>;
 };
 
+export type PressureTest = {
+  comment?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  createdBy: User;
+  ddsDate?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  infoSentOutDate?: Maybe<Scalars['DateTime']>;
+  integritySheetUpdated?: Maybe<Scalars['DateTime']>;
+  limitingSpec?: Maybe<LimitingSpecEnum>;
+  pipeline: Pipeline;
+  pressureTestDate?: Maybe<Scalars['DateTime']>;
+  pressureTestReceivedDate?: Maybe<Scalars['DateTime']>;
+  updatedAt: Scalars['DateTime'];
+};
+
 export type Query = {
   allFacilities?: Maybe<Array<Maybe<Facility>>>;
   allInjectionPoints?: Maybe<Array<Maybe<InjectionPoint>>>;
@@ -488,6 +508,7 @@ export type Query = {
   pipelineOptions?: Maybe<Array<Maybe<PipelineOptions>>>;
   pipelinesById?: Maybe<Array<Maybe<Pipeline>>>;
   pipelinesByUser?: Maybe<Array<Maybe<Pipeline>>>;
+  pressureTestsById?: Maybe<Array<Maybe<PressureTest>>>;
   sourceOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   validators?: Maybe<Validator>;
 };
@@ -511,6 +532,11 @@ export type QueryPipelinesByIdArgs = {
 
 export type QueryPipelinesByUserArgs = {
   userUniqueInput: UserUniqueInput;
+};
+
+
+export type QueryPressureTestsByIdArgs = {
+  pipelineId?: Maybe<Scalars['String']>;
 };
 
 export enum Role {
@@ -841,6 +867,13 @@ export type FacilitiesSideBarQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type FacilitiesSideBarQuery = { allFacilities?: Array<{ id: string, name: string, satellites?: Array<{ id: string, name: string } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
+
+export type PressureTestsByIdQueryVariables = Exact<{
+  pipelineId?: Maybe<Scalars['String']>;
+}>;
+
+
+export type PressureTestsByIdQuery = { pressureTestsById?: Array<{ id: string, limitingSpec?: LimitingSpecEnum | null | undefined, infoSentOutDate?: string | null | undefined, ddsDate?: string | null | undefined, pressureTestDate?: string | null | undefined, pressureTestReceivedDate?: string | null | undefined, integritySheetUpdated?: string | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, pipeline: { license: string, segment: string }, createdBy: { email: string } } | null | undefined> | null | undefined };
 
 
 export const LoginDocument = gql`
@@ -1792,3 +1825,54 @@ export function useFacilitiesSideBarLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type FacilitiesSideBarQueryHookResult = ReturnType<typeof useFacilitiesSideBarQuery>;
 export type FacilitiesSideBarLazyQueryHookResult = ReturnType<typeof useFacilitiesSideBarLazyQuery>;
 export type FacilitiesSideBarQueryResult = Apollo.QueryResult<FacilitiesSideBarQuery, FacilitiesSideBarQueryVariables>;
+export const PressureTestsByIdDocument = gql`
+    query pressureTestsById($pipelineId: String) {
+  pressureTestsById(pipelineId: $pipelineId) {
+    id
+    pipeline {
+      license
+      segment
+    }
+    limitingSpec
+    infoSentOutDate
+    ddsDate
+    pressureTestDate
+    pressureTestReceivedDate
+    integritySheetUpdated
+    comment
+    createdBy {
+      email
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __usePressureTestsByIdQuery__
+ *
+ * To run a query within a React component, call `usePressureTestsByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePressureTestsByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePressureTestsByIdQuery({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function usePressureTestsByIdQuery(baseOptions?: Apollo.QueryHookOptions<PressureTestsByIdQuery, PressureTestsByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PressureTestsByIdQuery, PressureTestsByIdQueryVariables>(PressureTestsByIdDocument, options);
+      }
+export function usePressureTestsByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PressureTestsByIdQuery, PressureTestsByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PressureTestsByIdQuery, PressureTestsByIdQueryVariables>(PressureTestsByIdDocument, options);
+        }
+export type PressureTestsByIdQueryHookResult = ReturnType<typeof usePressureTestsByIdQuery>;
+export type PressureTestsByIdLazyQueryHookResult = ReturnType<typeof usePressureTestsByIdLazyQuery>;
+export type PressureTestsByIdQueryResult = Apollo.QueryResult<PressureTestsByIdQuery, PressureTestsByIdQueryVariables>;
