@@ -275,6 +275,11 @@ query getValidators {
       Foam
       Scrapper
     }
+    limitingSpecEnum {
+      ANSI150
+      ANSI300
+      ANSI600
+    }
   }
 }
 
@@ -289,6 +294,16 @@ query validatorSubstance {
       LVPProducts
       FuelGas
       SourNaturalGas
+    }
+  }
+}
+
+query validatorLimitingSpec {
+  validators {
+    limitingSpecEnum {
+      ANSI150
+      ANSI300
+      ANSI600
     }
   }
 }

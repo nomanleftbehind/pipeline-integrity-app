@@ -203,8 +203,15 @@ type InternalProtectionEnumObject {
 }
 
 enum LimitingSpecEnum {
+  ANSI150
   ANSI300
   ANSI600
+}
+
+type LimitingSpecEnumObject {
+  ANSI150: String!
+  ANSI300: String!
+  ANSI600: String!
 }
 
 enum MaterialEnum {
@@ -237,6 +244,7 @@ type Mutation {
   createFacility(data: FacilityCreateInput!): Facility
   deletePigRun(id: String!): PigRun
   deletePipeline(id: String!): Pipeline
+  deletePressureTest(id: String!): PressureTest
   deleteSatellite(id: String!): Satellite
   disconnectSource(id: String!, sourceId: String!): Pipeline
   disconnectUpstreamPipeline(id: String!, upstreamId: String!): Pipeline
@@ -245,6 +253,7 @@ type Mutation {
   editInjectionPoint(firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineId: String, pvNodeId: String, pvUnitId: String, source: String, water: Float): InjectionPoint
   editPigRun(comment: String, date: DateTime, id: String!, operatorId: String, pigType: PigTypeEnum, pipelineId: String): PigRun
   editPipeline(from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String, status: StatusEnum, substance: SubstanceEnum, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float, yieldStrength: Int): Pipeline
+  editPressureTest(comment: String, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pipelineId: String, pressureTestDate: DateTime, pressureTestReceivedDate: DateTime): PressureTest
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
   login(email: String!, password: String!): AuthPayload
   signup(email: String!, firstName: String!, lastName: String!, password: String!): AuthPayload
@@ -547,6 +556,7 @@ type Validator {
   internalProtectionEnum: InternalProtectionEnumObject!
   lengthMatchPattern: String!
   licenseMatchPattern: String!
+  limitingSpecEnum: LimitingSpecEnumObject!
   materialEnum: MaterialEnumObject!
   mopMatchPattern: String!
   outsideDiameterMatchPattern: String!

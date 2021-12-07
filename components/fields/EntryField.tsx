@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { useEditPipelineMutation, PipelinesByIdQueryDocument, useEditPigRunMutation, PigRunByPipelineIdDocument } from '../../graphql/generated/graphql';
+import { useEditPipelineMutation, PipelinesByIdQueryDocument, useEditPigRunMutation, PigRunByPipelineIdDocument, useEditPressureTestMutation, PressureTestsByIdDocument } from '../../graphql/generated/graphql';
 import { IValidator, IRecord } from '../fields/PipelineProperties';
 
 
@@ -25,6 +25,7 @@ export default function TextField({ table, id, columnName, record, validator }: 
 
   const [editPipeline, { data: dataPipeline }] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
   const [editPigRun, { data: dataPigRun }] = useEditPigRunMutation({ refetchQueries: [PigRunByPipelineIdDocument, 'PigRunByPipelineId'] });
+  const [editPressureTest, { data: dataPressureTest }] = useEditPressureTestMutation({ refetchQueries: [PressureTestsByIdDocument, 'pressureTestsById'] });
 
   const recordIfDateDisplay = typeof record === "string" && record.length === 24 && record.slice(-1) === 'Z' ? record.slice(0, 10) : record;
 
@@ -39,7 +40,7 @@ export default function TextField({ table, id, columnName, record, validator }: 
 
   const toggleEdit = (): void => {
     setEdit(!edit);
-    setState(record ? record.toString() : "");
+    setState(record ? record.toString() : (!validatorIsString && validator) ? Object.keys(validator)[0] : "");
   }
 
   function validateForm() {
@@ -63,7 +64,12 @@ export default function TextField({ table, id, columnName, record, validator }: 
     const mutationOptions = { variables: { id: id, [columnName]: validatorIsString && typeof record === "number" ? Number(e.currentTarget.name) : e.currentTarget.name } }
     switch (table) {
       case 'pigRun':
+        console.log(table)
         editPigRun(mutationOptions);
+        break;
+      case 'pressureTest':
+        console.log(table)
+        editPressureTest(mutationOptions);
         break;
       default:
         editPipeline(mutationOptions);

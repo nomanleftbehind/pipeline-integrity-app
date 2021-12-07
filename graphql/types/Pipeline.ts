@@ -433,9 +433,7 @@ export const PipelineCreateInput = inputObjectType({
 })
 
 
-type Enums = typeof SubstanceEnumMembers | typeof FromToFeatureEnumMembers | typeof StatusEnumMembers | typeof TypeEnumMembers | typeof GradeEnumMembers | typeof MaterialEnumMembers | typeof InternalProtectionEnumMembers
-
-function databaseEnumToServerEnum<T extends Enums>(object: T, value: T[keyof T] | null | undefined) {
+export function databaseEnumToServerEnum<T>(object: T, value: T[keyof T] | null | undefined) {
   const keys = Object.keys(object) as (keyof T)[];
   const result = keys.find(key => object[key] === value);
   return result;
@@ -457,22 +455,22 @@ export const PipelineMutation = extendType({
         satelliteId: stringArg(),
         license: stringArg(),
         segment: stringArg(),
-        substance: arg({ type: SubstanceEnum }),
+        substance: arg({ type: 'SubstanceEnum' }),
         from: stringArg(),
-        fromFeature: arg({ type: FromToFeatureEnum }),
+        fromFeature: arg({ type: 'FromToFeatureEnum' }),
         to: stringArg(),
-        toFeature: arg({ type: FromToFeatureEnum }),
-        status: arg({ type: StatusEnum }),
+        toFeature: arg({ type: 'FromToFeatureEnum' }),
+        status: arg({ type: 'StatusEnum' }),
         licenseDate: arg({ type: 'DateTime' }),
         length: floatArg(),
-        type: arg({ type: TypeEnum }),
-        grade: arg({ type: GradeEnum }),
+        type: arg({ type: 'TypeEnum' }),
+        grade: arg({ type: 'GradeEnum' }),
         yieldStrength: intArg(),
         outsideDiameter: floatArg(),
         wallThickness: floatArg(),
-        material: arg({ type: MaterialEnum }),
+        material: arg({ type: 'MaterialEnum' }),
         mop: intArg(),
-        internalProtection: arg({ type: InternalProtectionEnum }),
+        internalProtection: arg({ type: 'InternalProtectionEnum' }),
         piggable: booleanArg(),
         piggingFrequency: intArg(),
       },

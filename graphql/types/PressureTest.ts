@@ -1,4 +1,5 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
+import { databaseEnumToServerEnum } from './Pipeline';
 import { Context } from '../context';
 
 
@@ -77,49 +78,56 @@ export const PressureTestQuery = extendType({
 })
 
 
-// export const PigRunMutation = extendType({
-// 	type: 'Mutation',
-// 	definition(t) {
-// 		t.field('editPigRun', {
-// 			type: 'PigRun',
-// 			args: {
-// 				id: nonNull(stringArg()),
-// 				pipelineId: stringArg(),
-// 				pigType: arg({ type: 'PigTypeEnum' }),
-// 				date: arg({ type: 'DateTime' }),
-// 				comment: stringArg(),
-// 				operatorId: stringArg(),
-// 			},
-// 			resolve: async (_, args, context: Context) => {
-// 				return context.prisma.pigRun.update({
-// 					where: { id: args.id },
-// 					data: {
-// 						pipelineId: args.pipelineId || undefined,
-// 						pigType: args.pigType || undefined,
-// 						date: args.date || undefined,
-// 						comment: args.comment || undefined,
-// 						operatorId: args.operatorId || undefined,
-// 					},
-// 				})
+export const PressureTestMutation = extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.field('editPressureTest', {
+      type: 'PressureTest',
+      args: {
+        id: nonNull(stringArg()),
+        pipelineId: stringArg(),
+        limitingSpec: arg({ type: 'LimitingSpecEnum' }),
+        infoSentOutDate: arg({ type: 'DateTime' }),
+        ddsDate: arg({ type: 'DateTime' }),
+        pressureTestDate: arg({ type: 'DateTime' }),
+        pressureTestReceivedDate: arg({ type: 'DateTime' }),
+        integritySheetUpdated: arg({ type: 'DateTime' }),
+        comment: stringArg(),
+      },
+      resolve: async (_, args, context: Context) => {
+        return context.prisma.pressureTest.update({
+          where: { id: args.id },
+          data: {
+            pipelineId: args.pipelineId || undefined,
+            limitingSpec: databaseEnumToServerEnum(LimitingSpecEnumMembers, args.limitingSpec),
+            infoSentOutDate: args.infoSentOutDate || undefined,
+            ddsDate: args.ddsDate || undefined,
+            pressureTestDate: args.pressureTestDate || undefined,
+            pressureTestReceivedDate: args.pressureTestReceivedDate || undefined,
+            integritySheetUpdated: args.integritySheetUpdated || undefined,
+            comment: args.comment || undefined,
+          },
+        })
 
-// 			},
-// 		})
-// 		t.field('deletePigRun', {
-// 			type: 'PigRun',
-// 			args: {
-// 				id: nonNull(stringArg())
-// 			},
-// 			resolve: (_parent, args, ctx: Context) => {
-// 				return ctx.prisma.pigRun.delete({
-// 					where: { id: args.id }
-// 				})
-// 			}
-// 		})
-// 	}
-// })
+      },
+    })
+    t.field('deletePressureTest', {
+      type: 'PressureTest',
+      args: {
+        id: nonNull(stringArg())
+      },
+      resolve: (_parent, args, ctx: Context) => {
+        return ctx.prisma.pressureTest.delete({
+          where: { id: args.id }
+        })
+      }
+    })
+  }
+})
 
 
 export const LimitingSpecEnumMembers = {
+  ANSI150: "ANSI 150",
   ANSI300: "ANSI 300",
   ANSI600: "ANSI 600"
 }

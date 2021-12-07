@@ -1,6 +1,7 @@
 import { objectType, extendType } from 'nexus';
 import { SubstanceEnumMembers, FromToFeatureEnumMembers, StatusEnumMembers, TypeEnumMembers, GradeEnumMembers, MaterialEnumMembers, InternalProtectionEnumMembers } from './Pipeline';
 import { PigTypeEnumMembers } from './PigRun';
+import { LimitingSpecEnumMembers } from './PressureTest';
 import { Context } from '../context';
 
 
@@ -86,6 +87,15 @@ export const PigTypeEnumObject = objectType({
 	}
 })
 
+export const LimitingSpecEnumObject = objectType({
+	name: 'LimitingSpecEnumObject',
+	definition(t) {
+		for (const iterator of Object.keys(LimitingSpecEnumMembers)) {
+			t.nonNull.string(iterator)
+		}
+	}
+})
+
 export const Validator = objectType({
 	name: 'Validator',
 	definition(t) {
@@ -105,6 +115,7 @@ export const Validator = objectType({
 		t.nonNull.string('mopMatchPattern')
 		t.nonNull.field('internalProtectionEnum', { type: 'InternalProtectionEnumObject' })
 		t.nonNull.field('pigTypeEnum', { type: 'PigTypeEnumObject' })
+		t.nonNull.field('limitingSpecEnum', { type: 'LimitingSpecEnumObject' })
 	}
 })
 
@@ -131,6 +142,7 @@ export const ValidatorQuery = extendType({
 					mopMatchPattern,
 					internalProtectionEnum: InternalProtectionEnumMembers,
 					pigTypeEnum: PigTypeEnumMembers,
+					limitingSpecEnum: LimitingSpecEnumMembers
 				};
 			}
 		})

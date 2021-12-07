@@ -299,6 +299,7 @@ enum PigTypeEnum {
 }
 
 enum LimitingSpecEnum {
+  ANSI150  @map("ANSI 150")
   ANSI300  @map("ANSI 300")
   ANSI600  @map("ANSI 600")
 
