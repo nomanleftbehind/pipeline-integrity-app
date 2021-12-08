@@ -550,6 +550,7 @@ input UserUniqueInput {
 }
 
 type Validator {
+  anyTextMatchPattern: String!
   fromToFeatureEnum: FromToFeatureEnumObject!
   fromToMatchPattern: String!
   gradeEnum: GradeEnumObject!

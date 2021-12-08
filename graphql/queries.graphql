@@ -298,13 +298,14 @@ query validatorSubstance {
   }
 }
 
-query validatorLimitingSpec {
+query validatorsPressureTest {
   validators {
     limitingSpecEnum {
       ANSI150
       ANSI300
       ANSI600
     }
+    anyTextMatchPattern
   }
 }
 

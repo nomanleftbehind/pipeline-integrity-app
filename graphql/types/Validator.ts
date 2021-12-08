@@ -4,7 +4,7 @@ import { PigTypeEnumMembers } from './PigRun';
 import { LimitingSpecEnumMembers } from './PressureTest';
 import { Context } from '../context';
 
-
+export const anyTextMatchPattern = "^[\\s\\S]*$";
 export const licenseMatchPattern = "^(AB|SK|BC)(\\d{5}|\\d{6})$";
 export const segmentMatchPattern = "^((UL)(\\d{1,2})|(\\d{1,3}))$";
 export const fromToMatchPattern = "^((\\d{2}-\\d{2}-\\d{3}-\\d{2}W\\d{1})|([A-Z]{1}-\\d{3}-[A-Z]{1} \\d{3}-[A-Z]{1}-\\d{2}))$";
@@ -99,6 +99,7 @@ export const LimitingSpecEnumObject = objectType({
 export const Validator = objectType({
 	name: 'Validator',
 	definition(t) {
+		t.nonNull.string('anyTextMatchPattern')
 		t.nonNull.string('licenseMatchPattern')
 		t.nonNull.string('segmentMatchPattern')
 		t.nonNull.field('substanceEnum', { type: 'SubstanceEnumObject' })
@@ -126,6 +127,7 @@ export const ValidatorQuery = extendType({
 			type: Validator,
 			resolve: (_parent, args, ctx: Context) => {
 				return {
+					anyTextMatchPattern,
 					licenseMatchPattern,
 					segmentMatchPattern,
 					substanceEnum: SubstanceEnumMembers,

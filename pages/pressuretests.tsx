@@ -12,14 +12,14 @@ import TableRow from '@mui/material/TableRow';
 
 import { useContext, ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { usePressureTestsByIdQuery, useValidatorLimitingSpecQuery } from '../graphql/generated/graphql';
+import { usePressureTestsByIdQuery, useValidatorsPressureTestQuery } from '../graphql/generated/graphql';
 
 
 
 export default function PressureTests() {
 
   const { data } = usePressureTestsByIdQuery();
-  const { data: dataLimitingSpec } = useValidatorLimitingSpecQuery();
+  const { data: dataValidatorsPressureTest } = useValidatorsPressureTestQuery();
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -27,8 +27,7 @@ export default function PressureTests() {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <TableCell>License</TableCell>
-              <TableCell>Segment</TableCell>
+              <TableCell>Pipeline</TableCell>
               <TableCell align="right">Limiting Spec</TableCell>
               <TableCell align="right">Info Sent Out</TableCell>
               <TableCell align="right">DDS Date</TableCell>
@@ -44,15 +43,14 @@ export default function PressureTests() {
                 return pressureTest ?
                   (
                     <TableRow hover role="checkbox" tabIndex={-1} key={pressureTest.id}>
-                      <TableCell align="right">{pressureTest.pipeline.license}</TableCell>
-                      <TableCell align="right">{pressureTest.pipeline.segment}</TableCell>
-                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.limitingSpec} columnName="limitingSpec" validator={dataLimitingSpec?.validators?.limitingSpecEnum} />
+                      <TableCell>{`${pressureTest.pipeline.license}-${pressureTest.pipeline.segment}`}</TableCell>
+                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.limitingSpec} columnName="limitingSpec" validator={dataValidatorsPressureTest?.validators?.limitingSpecEnum} />
                       <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.infoSentOutDate} columnName="infoSentOutDate" validator="date" />
                       <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.ddsDate} columnName="ddsDate" validator="date" />
                       <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.pressureTestDate} columnName="pressureTestDate" validator="date" />
                       <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.pressureTestReceivedDate} columnName="pressureTestReceivedDate" validator="date" />
                       <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.integritySheetUpdated} columnName="integritySheetUpdated" validator="date" />
-                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.comment} columnName="comment" />
+                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.comment} columnName="comment" validator={dataValidatorsPressureTest?.validators?.anyTextMatchPattern} />
                     </TableRow>
                   ) : null
               }) : null}

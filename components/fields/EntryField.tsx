@@ -103,7 +103,7 @@ export default function EntryField({ table, id, columnName, record, validator }:
       return (
         <LocalizationProvider dateAdapter={DateAdapter}>
           <DesktopDatePicker
-            label="Date desktop"
+            label={columnName}
             inputFormat="MM/dd/yyyy"
             value={state}
             onChange={handleChange}

@@ -731,6 +731,7 @@ export type UserUniqueInput = {
 };
 
 export type Validator = {
+  anyTextMatchPattern: Scalars['String'];
   fromToFeatureEnum: FromToFeatureEnumObject;
   fromToMatchPattern: Scalars['String'];
   gradeEnum: GradeEnumObject;
@@ -906,10 +907,10 @@ export type ValidatorSubstanceQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ValidatorSubstanceQuery = { validators?: { substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string } } | null | undefined };
 
-export type ValidatorLimitingSpecQueryVariables = Exact<{ [key: string]: never; }>;
+export type ValidatorsPressureTestQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorLimitingSpecQuery = { validators?: { limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string } } | null | undefined };
+export type ValidatorsPressureTestQuery = { validators?: { anyTextMatchPattern: string, limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string } } | null | undefined };
 
 export type FacilitiesSideBarQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1890,44 +1891,45 @@ export function useValidatorSubstanceLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type ValidatorSubstanceQueryHookResult = ReturnType<typeof useValidatorSubstanceQuery>;
 export type ValidatorSubstanceLazyQueryHookResult = ReturnType<typeof useValidatorSubstanceLazyQuery>;
 export type ValidatorSubstanceQueryResult = Apollo.QueryResult<ValidatorSubstanceQuery, ValidatorSubstanceQueryVariables>;
-export const ValidatorLimitingSpecDocument = gql`
-    query validatorLimitingSpec {
+export const ValidatorsPressureTestDocument = gql`
+    query validatorsPressureTest {
   validators {
     limitingSpecEnum {
       ANSI150
       ANSI300
       ANSI600
     }
+    anyTextMatchPattern
   }
 }
     `;
 
 /**
- * __useValidatorLimitingSpecQuery__
+ * __useValidatorsPressureTestQuery__
  *
- * To run a query within a React component, call `useValidatorLimitingSpecQuery` and pass it any options that fit your needs.
- * When your component renders, `useValidatorLimitingSpecQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useValidatorsPressureTestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorsPressureTestQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useValidatorLimitingSpecQuery({
+ * const { data, loading, error } = useValidatorsPressureTestQuery({
  *   variables: {
  *   },
  * });
  */
-export function useValidatorLimitingSpecQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorLimitingSpecQuery, ValidatorLimitingSpecQueryVariables>) {
+export function useValidatorsPressureTestQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorsPressureTestQuery, ValidatorsPressureTestQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ValidatorLimitingSpecQuery, ValidatorLimitingSpecQueryVariables>(ValidatorLimitingSpecDocument, options);
+        return Apollo.useQuery<ValidatorsPressureTestQuery, ValidatorsPressureTestQueryVariables>(ValidatorsPressureTestDocument, options);
       }
-export function useValidatorLimitingSpecLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorLimitingSpecQuery, ValidatorLimitingSpecQueryVariables>) {
+export function useValidatorsPressureTestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorsPressureTestQuery, ValidatorsPressureTestQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ValidatorLimitingSpecQuery, ValidatorLimitingSpecQueryVariables>(ValidatorLimitingSpecDocument, options);
+          return Apollo.useLazyQuery<ValidatorsPressureTestQuery, ValidatorsPressureTestQueryVariables>(ValidatorsPressureTestDocument, options);
         }
-export type ValidatorLimitingSpecQueryHookResult = ReturnType<typeof useValidatorLimitingSpecQuery>;
-export type ValidatorLimitingSpecLazyQueryHookResult = ReturnType<typeof useValidatorLimitingSpecLazyQuery>;
-export type ValidatorLimitingSpecQueryResult = Apollo.QueryResult<ValidatorLimitingSpecQuery, ValidatorLimitingSpecQueryVariables>;
+export type ValidatorsPressureTestQueryHookResult = ReturnType<typeof useValidatorsPressureTestQuery>;
+export type ValidatorsPressureTestLazyQueryHookResult = ReturnType<typeof useValidatorsPressureTestLazyQuery>;
+export type ValidatorsPressureTestQueryResult = Apollo.QueryResult<ValidatorsPressureTestQuery, ValidatorsPressureTestQueryVariables>;
 export const FacilitiesSideBarDocument = gql`
     query FacilitiesSideBar {
   allFacilities {
