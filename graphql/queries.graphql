@@ -12,6 +12,10 @@ query pipelinesByIdQuery($satelliteId: String, $facilityId: String) {
   pipelinesById(satelliteId: $satelliteId, facilityId: $facilityId) {
     id
     createdAt
+    updatedAt
+    createdBy {
+      email
+    }
     license
     segment
     substance

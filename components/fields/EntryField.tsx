@@ -118,8 +118,6 @@ export default function EntryField({ table, id, columnName, record, validator }:
         />
       )
     } else if (validator) {
-      console.log('validator', state);
-
       return (
         <select name={columnName} value={state} onChange={handleChange}>
           {Object.entries(validator).map(([serverEnum, dbEnum]) => {
@@ -134,32 +132,30 @@ export default function EntryField({ table, id, columnName, record, validator }:
 
   return (
     <TableCell align="right">
-      <div className="cell-wrapper">
-        {<div className="cell-r">
-          {validator ?
+      {validator ?
+        <div className="cell-wrapper">
+          <div className="cell-r">
             <IconButton aria-label="edit cell" size="small" onClick={toggleEdit}>
               {edit ? <BlockOutlinedIcon /> : <EditOutlinedIcon />}
-            </IconButton> :
-            null
-          }
-        </div>}
-        {edit ?
-          <form className="cell-l" name={state} onSubmit={handleSubmit}>
-            <div className="form-l">
-              {renderForm()}
-            </div>
-            <div className="form-r">
-              <IconButton aria-label="submit cell" size="small" type="submit" disabled={!valid}>
-                <CheckCircleOutlineIcon />
-              </IconButton>
-            </div>
-          </form> :
-          <div className="cell-l">
-            <div>
+            </IconButton>
+          </div>
+          {edit ?
+            <form className="cell-l" name={state} onSubmit={handleSubmit}>
+              <div className="form-l">
+                {renderForm()}
+              </div>
+              <div className="form-r">
+                <IconButton aria-label="submit cell" size="small" type="submit" disabled={!valid}>
+                  <CheckCircleOutlineIcon />
+                </IconButton>
+              </div>
+            </form> :
+            <div className={"cell-l"}>
               {recordDisplay}
-            </div>
-          </div>}
-      </div>
+            </div>}
+        </div> :
+        recordDisplay
+      }
     </TableCell>
   );
 }

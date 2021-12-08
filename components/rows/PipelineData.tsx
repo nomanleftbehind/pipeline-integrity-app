@@ -14,7 +14,7 @@ export interface IPipelineDataProps {
 
 export default function PipelineData({ open, pipeline, validators, isEven }: IPipelineDataProps): JSX.Element {
 
-  const { id, createdAt, license, segment, substance, from, fromFeature, to, toFeature, injectionPoints, upstream, status, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
+  const { id, createdAt, updatedAt, createdBy, license, segment, substance, from, fromFeature, to, toFeature, injectionPoints, upstream, status, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
 
   const { licenseMatchPattern, segmentMatchPattern, substanceEnum, fromToMatchPattern, fromToFeatureEnum, statusEnum, lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
 
@@ -31,7 +31,9 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
   ];
 
   const systemFields = [
+    { columnName: 'createdBy', record: createdBy.email, validator: undefined },
     { columnName: 'createdAt', record: createdAt, validator: undefined },
+    { columnName: 'updatedAt', record: updatedAt, validator: undefined },
     { columnName: 'id', record: id, validator: undefined },
   ];
 

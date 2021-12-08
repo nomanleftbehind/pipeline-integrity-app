@@ -46,9 +46,15 @@ export default function PipelineProperties({ open, id, properties_name, pipeline
             </TableHead>
             <TableBody>
               {pipeline_properties.map(({ columnName, record, validator }) => {
+                const columnNameArray = columnName.split(/(?=[A-Z])/);
+                for (let i = 0; i < columnNameArray.length; i++) {
+                  columnNameArray[i] = columnNameArray[i].charAt(0).toUpperCase() + columnNameArray[i].slice(1);
+                }
+                const columnNamePretty = columnNameArray.join(' ')
+
                 return (
                   <TableRow key={columnName}>
-                    <TableCell>{columnName}</TableCell>
+                    <TableCell>{columnNamePretty}</TableCell>
                     <EntryField id={id} record={record} columnName={columnName} validator={validator} />
                   </TableRow>
                 );
