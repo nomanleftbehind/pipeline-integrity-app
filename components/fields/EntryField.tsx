@@ -6,6 +6,12 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { useEditPipelineMutation, PipelinesByIdQueryDocument, useEditPigRunMutation, PigRunByPipelineIdDocument, useEditPressureTestMutation, PressureTestsByIdDocument } from '../../graphql/generated/graphql';
 import { IValidator, IRecord } from '../fields/PipelineProperties';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DateAdapter from '@mui/lab/AdapterDateFns';
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import MobileDatePicker from '@mui/lab/MobileDatePicker';
+import TextField from '@mui/material/TextField';
+
 
 
 interface ITextFieldProps {
@@ -16,7 +22,7 @@ interface ITextFieldProps {
   validator?: IValidator;
 }
 
-export default function TextField({ table, id, columnName, record, validator }: ITextFieldProps): JSX.Element {
+export default function EntryField({ table, id, columnName, record, validator }: ITextFieldProps): JSX.Element {
   const [edit, setEdit] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(true);
   const [state, setState] = useState<string>(record ? record.toString() : "");
@@ -44,7 +50,7 @@ export default function TextField({ table, id, columnName, record, validator }: 
   }
 
   function validateForm() {
-    if (validatorIsString) {
+    if (validatorIsString && validator !== 'date') {
       const validator_regexp = new RegExp(validator);
       const isValid = validator_regexp.test(state);
       setValid(isValid)
@@ -55,8 +61,22 @@ export default function TextField({ table, id, columnName, record, validator }: 
 
   useEffect(() => { validateForm() }, [state]);
 
-  function handleChange(e: React.FormEvent<HTMLInputElement | HTMLSelectElement>) {
-    setState(e.currentTarget.value);
+  function handleChange(e: React.FormEvent<HTMLInputElement | HTMLSelectElement> | Date | null) {
+
+    if (e instanceof Date && !isNaN(e.valueOf())) {
+      console.log('event', e);
+      console.log('event valueOf', e.valueOf());
+      console.log('event toISOString', e.toISOString());
+      console.log('event toUTCString', e.toUTCString());
+      console.log('event toDateString', e.toDateString());
+      console.log('event toString', e.toString());
+      console.log('event toLocaleDateString', e.toLocaleDateString());
+      console.log('event toLocaleString', e.toLocaleString());
+
+      setState(e.toISOString())
+    } else if (e && !(e instanceof Date)) {
+      setState(e.currentTarget.value)
+    }
   };
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -78,6 +98,40 @@ export default function TextField({ table, id, columnName, record, validator }: 
     toggleEdit();
   };
 
+  function renderForm() {
+    if (validator === 'date') {
+      return (
+        <LocalizationProvider dateAdapter={DateAdapter}>
+          <DesktopDatePicker
+            label="Date desktop"
+            inputFormat="MM/dd/yyyy"
+            value={state}
+            onChange={handleChange}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+      )
+    } else if (validatorIsString) {
+      return (
+        <input
+          className={valid ? "valid" : "invalid"} type="text" autoComplete="off" name={columnName} value={state} onChange={handleChange}
+        />
+      )
+    } else if (validator) {
+      console.log('validator', state);
+
+      return (
+        <select name={columnName} value={state} onChange={handleChange}>
+          {Object.entries(validator).map(([serverEnum, dbEnum]) => {
+            return (
+              <option key={serverEnum} value={serverEnum}>{dbEnum}</option>
+            );
+          })}
+        </select>
+      )
+    }
+  }
+
   return (
     <TableCell align="right">
       <div className="cell-wrapper">
@@ -92,19 +146,7 @@ export default function TextField({ table, id, columnName, record, validator }: 
         {edit ?
           <form className="cell-l" name={state} onSubmit={handleSubmit}>
             <div className="form-l">
-              {validatorIsString ?
-                <input
-                  className={valid ? "valid" : "invalid"} type="text" autoComplete="off" name={columnName} value={state} onChange={handleChange}
-                /> :
-                <select name={columnName} value={state} onChange={handleChange}>
-                  {validator ?
-                    Object.entries(validator).map(([serverEnum, dbEnum]) => {
-                      return (
-                        <option key={serverEnum} value={serverEnum}>{dbEnum}</option>
-                      );
-                    }) :
-                    null}
-                </select>}
+              {renderForm()}
             </div>
             <div className="form-r">
               <IconButton aria-label="submit cell" size="small" type="submit" disabled={!valid}>

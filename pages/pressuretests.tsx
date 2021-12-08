@@ -27,7 +27,6 @@ export default function PressureTests() {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
               <TableCell>License</TableCell>
               <TableCell>Segment</TableCell>
               <TableCell align="right">Limiting Spec</TableCell>
@@ -45,16 +44,15 @@ export default function PressureTests() {
                 return pressureTest ?
                   (
                     <TableRow hover role="checkbox" tabIndex={-1} key={pressureTest.id}>
-                      <TableCell align="right">{pressureTest.id}</TableCell>
                       <TableCell align="right">{pressureTest.pipeline.license}</TableCell>
                       <TableCell align="right">{pressureTest.pipeline.segment}</TableCell>
                       <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.limitingSpec} columnName="limitingSpec" validator={dataLimitingSpec?.validators?.limitingSpecEnum} />
-                      <TableCell align="right">{pressureTest.infoSentOutDate}</TableCell>
-                      <TableCell align="right">{pressureTest.ddsDate}</TableCell>
-                      <TableCell align="right">{pressureTest.pressureTestDate}</TableCell>
-                      <TableCell align="right">{pressureTest.pressureTestReceivedDate}</TableCell>
-                      <TableCell align="right">{pressureTest.integritySheetUpdated}</TableCell>
-                      <TableCell align="right">{pressureTest.comment}</TableCell>
+                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.infoSentOutDate} columnName="infoSentOutDate" validator="date" />
+                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.ddsDate} columnName="ddsDate" validator="date" />
+                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.pressureTestDate} columnName="pressureTestDate" validator="date" />
+                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.pressureTestReceivedDate} columnName="pressureTestReceivedDate" validator="date" />
+                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.integritySheetUpdated} columnName="integritySheetUpdated" validator="date" />
+                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.comment} columnName="comment" />
                     </TableRow>
                   ) : null
               }) : null}
