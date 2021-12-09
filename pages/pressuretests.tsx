@@ -18,7 +18,7 @@ import { usePressureTestsByIdQuery, useValidatorsPressureTestQuery } from '../gr
 
 export default function PressureTests() {
 
-  const { data } = usePressureTestsByIdQuery();
+  const { data, loading, error } = usePressureTestsByIdQuery();
   const { data: dataValidatorsPressureTest } = useValidatorsPressureTestQuery();
 
   return (
@@ -38,22 +38,24 @@ export default function PressureTests() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data && data.pressureTestsById ?
-              data.pressureTestsById.map(pressureTest => {
-                return pressureTest ?
-                  (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={pressureTest.id}>
-                      <TableCell>{`${pressureTest.pipeline.license}-${pressureTest.pipeline.segment}`}</TableCell>
-                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.limitingSpec} columnName="limitingSpec" validator={dataValidatorsPressureTest?.validators?.limitingSpecEnum} />
-                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.infoSentOutDate} columnName="infoSentOutDate" validator="date" />
-                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.ddsDate} columnName="ddsDate" validator="date" />
-                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.pressureTestDate} columnName="pressureTestDate" validator="date" />
-                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.pressureTestReceivedDate} columnName="pressureTestReceivedDate" validator="date" />
-                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.integritySheetUpdated} columnName="integritySheetUpdated" validator="date" />
-                      <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.comment} columnName="comment" validator={dataValidatorsPressureTest?.validators?.anyTextMatchPattern} />
-                    </TableRow>
-                  ) : null
-              }) : null}
+            {loading ? <TableRow><TableCell>Loading...</TableCell></TableRow> :
+              error ? <TableRow><TableCell>{error.message}</TableCell></TableRow> :
+                data && data.pressureTestsById ?
+                  data.pressureTestsById.map(pressureTest => {
+                    return pressureTest ?
+                      (
+                        <TableRow hover role="checkbox" tabIndex={-1} key={pressureTest.id}>
+                          <TableCell>{`${pressureTest.pipeline.license}-${pressureTest.pipeline.segment}`}</TableCell>
+                          <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.limitingSpec} columnName="limitingSpec" validator={dataValidatorsPressureTest?.validators?.limitingSpecEnum} />
+                          <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.infoSentOutDate} columnName="infoSentOutDate" validator="date" />
+                          <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.ddsDate} columnName="ddsDate" validator="date" />
+                          <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.pressureTestDate} columnName="pressureTestDate" validator="date" />
+                          <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.pressureTestReceivedDate} columnName="pressureTestReceivedDate" validator="date" />
+                          <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.integritySheetUpdated} columnName="integritySheetUpdated" validator="date" />
+                          <EntryField table="pressureTest" id={pressureTest.id} record={pressureTest.comment} columnName="comment" validator={dataValidatorsPressureTest?.validators?.anyTextMatchPattern} />
+                        </TableRow>
+                      ) : null
+                  }) : null}
           </TableBody>
         </Table>
       </TableContainer>

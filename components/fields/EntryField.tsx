@@ -46,6 +46,8 @@ export default function EntryField({ table, id, columnName, record, validator }:
 
   const toggleEdit = (): void => {
     setEdit(!edit);
+    console.log('record:', record);
+    
     setState(record ? record.toString() : (!validatorIsString && validator) ? Object.keys(validator)[0] : "");
   }
 
@@ -61,21 +63,19 @@ export default function EntryField({ table, id, columnName, record, validator }:
 
   useEffect(() => { validateForm() }, [state]);
 
-  function handleChange(e: React.FormEvent<HTMLInputElement | HTMLSelectElement> | Date | null) {
-
-    if (e instanceof Date && !isNaN(e.valueOf())) {
-      console.log('event', e);
-      console.log('event valueOf', e.valueOf());
-      console.log('event toISOString', e.toISOString());
-      console.log('event toUTCString', e.toUTCString());
-      console.log('event toDateString', e.toDateString());
-      console.log('event toString', e.toString());
-      console.log('event toLocaleDateString', e.toLocaleDateString());
-      console.log('event toLocaleString', e.toLocaleString());
-
-      setState(e.toISOString())
-    } else if (e && !(e instanceof Date)) {
-      setState(e.currentTarget.value)
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> /*.FormEvent<HTMLInputElement | HTMLSelectElement> | Date | null*/) {
+    if (e.currentTarget.type === 'date') {
+      const date = new Date(e.currentTarget.value);
+      try {
+        // GraphQL will only accept date stored in ISOString format
+        setState(date.toISOString());
+      } catch {
+        // If we try to type the date, state will change with every keystroke
+        // and toISOString() will throw an error until we fully type the proper date format.
+        setState(e.currentTarget.value);
+      }
+    } else {
+      setState(e.currentTarget.value);
     }
   };
 
@@ -99,22 +99,21 @@ export default function EntryField({ table, id, columnName, record, validator }:
   };
 
   function renderForm() {
-    if (validator === 'date') {
-      return (
-        <LocalizationProvider dateAdapter={DateAdapter}>
-          <DesktopDatePicker
-            label={columnName}
-            inputFormat="MM/dd/yyyy"
-            value={state}
-            onChange={handleChange}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </LocalizationProvider>
-      )
-    } else if (validatorIsString) {
+    if (validatorIsString) {
       return (
         <input
-          className={valid ? "valid" : "invalid"} type="text" autoComplete="off" name={columnName} value={state} onChange={handleChange}
+          className={valid ? "valid" : "invalid"} autoComplete="off" name={columnName}
+          type={validator === 'date' ? 'date' : typeof record === "number" ? 'number' : 'text'}
+          // <input type="date"> can only accept date as string in yyyy-MM-dd format
+          // But we set state as ISOString date since that's the only format GraphQL will accept
+          // Because of that we are taking a slice of first 10 characters to get the yyyy-MM-dd format
+          value={validator === 'date' ? state.slice(0, 10) : state}
+          onChange={handleChange}
+          required
+          // In case browser doesn't support <input type="date"> it will fallback to type="text".
+          // Text input will use the pattern attribute to highlight the input as invalid if entry doesn't match the pattern ####-##-## (where # is a digit from 0 to 9).
+          pattern={validator === 'date' ? "\d{4}-\d{2}-\d{2}" : undefined}
+          placeholder={validator === 'date' ? "####-##-##" : undefined}
         />
       )
     } else if (validator) {
