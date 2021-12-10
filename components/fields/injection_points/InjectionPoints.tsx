@@ -99,19 +99,16 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                 </TableRow> :
                 null}
               {upstreamPipelines ? upstreamPipelines.map(upstreamPipeline => {
-                return upstreamPipeline ?
-                  (
-                    <TableRow key={upstreamPipeline.id}>
-                      <Source
-                        injectionPointType="upstream pipeline"
-                        injectionPointId={upstreamPipeline.id}
-                        source={`${upstreamPipeline.license}-${upstreamPipeline.segment}`}
-                        handleSubmit={handleSubmit}
-                        disconnectInjectionPoint={() => disconnectUpstreamPipeline({ variables: { id: id, upstreamId: upstreamPipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
-                      />
-                      <TableCell align="right" colSpan={3} />
-                    </TableRow>
-                  ) :
+                return upstreamPipeline ? (
+                  <Source
+                    key={upstreamPipeline.id}
+                    injectionPointType="upstream pipeline"
+                    injectionPointId={upstreamPipeline.id}
+                    source={`${upstreamPipeline.license}-${upstreamPipeline.segment}`}
+                    handleSubmit={handleSubmit}
+                    disconnectInjectionPoint={() => disconnectUpstreamPipeline({ variables: { id: id, upstreamId: upstreamPipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
+                  />
+                ) :
                   null;
               }) :
                 null}
@@ -137,21 +134,17 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                 </TableRow> :
                 null}
               {sources ? sources.map(source => {
-                return source ?
-                  (
-                    <TableRow key={source.id}>
-                      <Source
-                        injectionPointType="source"
-                        injectionPointId={source.id}
-                        source={source.source}
-                        handleSubmit={handleSubmit}
-                        disconnectInjectionPoint={() => disconnectSource({ variables: { id: id, sourceId: source.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
-                      />
-                      <TableCell align="right">{source.oil}</TableCell>
-                      <TableCell align="right">{source.water}</TableCell>
-                      <TableCell align="right">{source.gas}</TableCell>
-                    </TableRow>
-                  ) :
+                return source ? (
+                  <Source
+                    key={source.id}
+                    injectionPointType="source"
+                    injectionPointId={source.id}
+                    source={source.source}
+                    handleSubmit={handleSubmit}
+                    disconnectInjectionPoint={() => disconnectSource({ variables: { id: id, sourceId: source.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
+                    sourceFlow={{ sourceOil: source.oil, sourceWater: source.water, sourceGas: source.gas }}
+                  />
+                ) :
                   null;
               }) :
                 null}
@@ -162,3 +155,16 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
     </TableCell>
   );
 }
+
+
+// <TableRow key={upstreamPipeline.id}>
+// <TableCell align="right" colSpan={3} />
+// </TableRow> 
+
+
+//<TableRow key={source.id}>
+
+//<TableCell align="right">{source.oil}</TableCell>
+//                      <TableCell align="right">{source.water}</TableCell>
+//                     <TableCell align="right">{source.gas}</TableCell>
+//                    </TableRow>

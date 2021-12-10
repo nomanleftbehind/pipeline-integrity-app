@@ -494,6 +494,17 @@ export type PipelineCreateInput = {
   wallThickness?: Maybe<Scalars['Float']>;
 };
 
+export type PipelineFlow = {
+  firstInjection?: Maybe<Scalars['DateTime']>;
+  firstProduction?: Maybe<Scalars['DateTime']>;
+  gas: Scalars['Float'];
+  id: Scalars['String'];
+  lastInjection?: Maybe<Scalars['DateTime']>;
+  lastProduction?: Maybe<Scalars['DateTime']>;
+  oil: Scalars['Float'];
+  water: Scalars['Float'];
+};
+
 export type PipelineOptions = {
   facility: Scalars['String'];
   id: Scalars['String'];
@@ -532,6 +543,7 @@ export type Query = {
   me?: Maybe<User>;
   pigRunByPipelineId?: Maybe<Array<Maybe<PigRun>>>;
   pipelineById?: Maybe<Pipeline>;
+  pipelineFlow?: Maybe<Array<Maybe<PipelineFlow>>>;
   pipelineOptions?: Maybe<Array<Maybe<PipelineOptions>>>;
   pipelinesById?: Maybe<Array<Maybe<Pipeline>>>;
   pipelinesByUser?: Maybe<Array<Maybe<Pipeline>>>;
@@ -547,6 +559,11 @@ export type QueryPigRunByPipelineIdArgs = {
 
 
 export type QueryPipelineByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryPipelineFlowArgs = {
   id: Scalars['String'];
 };
 
@@ -923,6 +940,13 @@ export type PressureTestsByIdQueryVariables = Exact<{
 
 
 export type PressureTestsByIdQuery = { pressureTestsById?: Array<{ id: string, limitingSpec?: LimitingSpecEnum | null | undefined, infoSentOutDate?: string | null | undefined, ddsDate?: string | null | undefined, pressureTestDate?: string | null | undefined, pressureTestReceivedDate?: string | null | undefined, integritySheetUpdated?: string | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, pipeline: { license: string, segment: string }, createdBy: { email: string } } | null | undefined> | null | undefined };
+
+export type PipelineFlowQueryVariables = Exact<{
+  pipelineFlowId: Scalars['String'];
+}>;
+
+
+export type PipelineFlowQuery = { pipelineFlow?: Array<{ id: string, oil: number, water: number, gas: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined };
 
 
 export const LoginDocument = gql`
@@ -2024,3 +2048,45 @@ export function usePressureTestsByIdLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type PressureTestsByIdQueryHookResult = ReturnType<typeof usePressureTestsByIdQuery>;
 export type PressureTestsByIdLazyQueryHookResult = ReturnType<typeof usePressureTestsByIdLazyQuery>;
 export type PressureTestsByIdQueryResult = Apollo.QueryResult<PressureTestsByIdQuery, PressureTestsByIdQueryVariables>;
+export const PipelineFlowDocument = gql`
+    query PipelineFlow($pipelineFlowId: String!) {
+  pipelineFlow(id: $pipelineFlowId) {
+    id
+    oil
+    water
+    gas
+    firstProduction
+    lastProduction
+    firstInjection
+    lastInjection
+  }
+}
+    `;
+
+/**
+ * __usePipelineFlowQuery__
+ *
+ * To run a query within a React component, call `usePipelineFlowQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePipelineFlowQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePipelineFlowQuery({
+ *   variables: {
+ *      pipelineFlowId: // value for 'pipelineFlowId'
+ *   },
+ * });
+ */
+export function usePipelineFlowQuery(baseOptions: Apollo.QueryHookOptions<PipelineFlowQuery, PipelineFlowQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PipelineFlowQuery, PipelineFlowQueryVariables>(PipelineFlowDocument, options);
+      }
+export function usePipelineFlowLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PipelineFlowQuery, PipelineFlowQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PipelineFlowQuery, PipelineFlowQueryVariables>(PipelineFlowDocument, options);
+        }
+export type PipelineFlowQueryHookResult = ReturnType<typeof usePipelineFlowQuery>;
+export type PipelineFlowLazyQueryHookResult = ReturnType<typeof usePipelineFlowLazyQuery>;
+export type PipelineFlowQueryResult = Apollo.QueryResult<PipelineFlowQuery, PipelineFlowQueryVariables>;

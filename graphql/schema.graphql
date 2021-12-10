@@ -339,6 +339,17 @@ input PipelineCreateInput {
   wallThickness: Float
 }
 
+type PipelineFlow {
+  firstInjection: DateTime
+  firstProduction: DateTime
+  gas: Float!
+  id: String!
+  lastInjection: DateTime
+  lastProduction: DateTime
+  oil: Float!
+  water: Float!
+}
+
 type PipelineOptions {
   facility: String!
   id: String!
@@ -377,6 +388,7 @@ type Query {
   me: User
   pigRunByPipelineId(pipelineId: String!): [PigRun]
   pipelineById(id: String!): Pipeline
+  pipelineFlow(id: String!): [PipelineFlow]
   pipelineOptions: [PipelineOptions]
   pipelinesById(facilityId: String, satelliteId: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]

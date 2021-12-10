@@ -345,3 +345,16 @@ query pressureTestsById($pipelineId: String) {
     updatedAt
   }
 }
+
+query PipelineFlow($pipelineFlowId: String!) {
+  pipelineFlow(id: $pipelineFlowId) {
+    id
+    oil
+    water
+    gas
+    firstProduction
+    lastProduction
+    firstInjection
+    lastInjection
+  }
+}
