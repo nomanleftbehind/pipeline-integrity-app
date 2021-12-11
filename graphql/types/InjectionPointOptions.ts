@@ -1,4 +1,5 @@
-import { objectType, extendType, nonNull, stringArg } from 'nexus';
+import { objectType, extendType, nonNull, stringArg, list } from 'nexus';
+import { Prisma } from '@prisma/client'
 import { Context } from '../context';
 import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
 
@@ -90,10 +91,9 @@ export const InjectionPointOptionsQuery = extendType({
     t.list.field('pipelineFlow', {
       type: 'PipelineFlow',
       args: {
-        id: nonNull(stringArg()),
+        id: nonNull(list(stringArg())),
       },
       resolve: async (_parent, { id }, ctx: Context) => {
-
         const result = await ctx.prisma.$queryRaw<NexusGenObjects['PipelineFlow'][]>`
         WITH pipeline_volume as (
           SELECT
@@ -353,7 +353,7 @@ export const InjectionPointOptionsQuery = extendType({
           LEFT OUTER JOIN "ppl_db"."_PipelineFollows" fl10 ON fl10."B" = pv10.id
           LEFT OUTER JOIN pipeline_volume pv11 ON pv11.id = fl10."A" AND pv11.id NOT IN (pv1.id, pv2.id, pv3.id, pv4.id, pv5.id, pv6.id, pv7.id, pv8.id, pv9.id, pv10.id)
 
-          WHERE pv1.id = ${id}
+          WHERE pv1.id IN (${Prisma.join(id)})
           ) pv
           
           GROUP BY 

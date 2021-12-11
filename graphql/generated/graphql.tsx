@@ -564,7 +564,7 @@ export type QueryPipelineByIdArgs = {
 
 
 export type QueryPipelineFlowArgs = {
-  id: Scalars['String'];
+  id: Array<Maybe<Scalars['String']>>;
 };
 
 
@@ -942,7 +942,7 @@ export type PressureTestsByIdQueryVariables = Exact<{
 export type PressureTestsByIdQuery = { pressureTestsById?: Array<{ id: string, limitingSpec?: LimitingSpecEnum | null | undefined, infoSentOutDate?: string | null | undefined, ddsDate?: string | null | undefined, pressureTestDate?: string | null | undefined, pressureTestReceivedDate?: string | null | undefined, integritySheetUpdated?: string | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, pipeline: { license: string, segment: string }, createdBy: { email: string } } | null | undefined> | null | undefined };
 
 export type PipelineFlowQueryVariables = Exact<{
-  pipelineFlowId: Scalars['String'];
+  pipelineFlowId: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
 }>;
 
 
@@ -2049,7 +2049,7 @@ export type PressureTestsByIdQueryHookResult = ReturnType<typeof usePressureTest
 export type PressureTestsByIdLazyQueryHookResult = ReturnType<typeof usePressureTestsByIdLazyQuery>;
 export type PressureTestsByIdQueryResult = Apollo.QueryResult<PressureTestsByIdQuery, PressureTestsByIdQueryVariables>;
 export const PipelineFlowDocument = gql`
-    query PipelineFlow($pipelineFlowId: String!) {
+    query PipelineFlow($pipelineFlowId: [String]!) {
   pipelineFlow(id: $pipelineFlowId) {
     id
     oil

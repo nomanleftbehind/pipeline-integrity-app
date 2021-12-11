@@ -388,7 +388,7 @@ type Query {
   me: User
   pigRunByPipelineId(pipelineId: String!): [PigRun]
   pipelineById(id: String!): Pipeline
-  pipelineFlow(id: String!): [PipelineFlow]
+  pipelineFlow(id: [String]!): [PipelineFlow]
   pipelineOptions: [PipelineOptions]
   pipelinesById(facilityId: String, satelliteId: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]

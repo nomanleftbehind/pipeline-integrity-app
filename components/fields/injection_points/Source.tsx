@@ -7,7 +7,8 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
-import { usePipelineFlowLazyQuery, usePipelineFlowQuery } from '../../../graphql/generated/graphql';
+// import { usePipelineFlowLazyQuery, usePipelineFlowQuery } from '../../../graphql/generated/graphql';
+// import { ICollectFlowDataProps } from './InjectionPoints';
 
 interface IInjectionPointEnrtyProps {
   injectionPointType: string;
@@ -15,14 +16,15 @@ interface IInjectionPointEnrtyProps {
   source: string;
   handleSubmit: (injectionPointType: string, newInjectionPointId: string, oldInjectionPointId: string) => void;
   disconnectInjectionPoint: () => void;
-  sourceFlow?: { sourceOil: number; sourceWater: number; sourceGas: number };
+  injectionPointFlow: { injectionPointOil?: number; injectionPointWater?: number; injectionPointGas?: number };
+  // collectUpstreamPipelineFlowData?: (arg0: ICollectFlowDataProps, increment?: number) => void;
 }
 
-export default function InjectionPointEntry({ injectionPointType, injectionPointId, source, handleSubmit, disconnectInjectionPoint, sourceFlow }: IInjectionPointEnrtyProps) {
+export default function InjectionPointEntry({ injectionPointType, injectionPointId, source, handleSubmit, disconnectInjectionPoint, injectionPointFlow/*, collectUpstreamPipelineFlowData*/ }: IInjectionPointEnrtyProps) {
   const [showForm, setShowForm] = useState<boolean>(false);
 
   // This function calls Prisma raw query
-  const [pipelineFlow, { data: dataPipelineFlow }] = usePipelineFlowLazyQuery({ variables: { pipelineFlowId: injectionPointId } });
+  // const [pipelineFlow, { data: dataPipelineFlow }] = usePipelineFlowLazyQuery({ variables: { pipelineFlowId: injectionPointId } });
 
   function toggleShowForm() {
     setShowForm(!showForm);
@@ -33,14 +35,36 @@ export default function InjectionPointEntry({ injectionPointType, injectionPoint
     setShowForm(false);
   }
 
-  const { oil: upstreamPipelineOil, gas: upstreamPipelineGas, water: upstreamPipelineWater, firstProduction: upstreamPipelineFirstProduction, lastProduction: upstreamPipelineLastProduction, firstInjection: upstreamPipelineFirstInjection, lastInjection: upstreamPipelineLastInjection } = dataPipelineFlow && dataPipelineFlow.pipelineFlow && dataPipelineFlow.pipelineFlow[0] && dataPipelineFlow.pipelineFlow[0] || {};
-  const { sourceOil, sourceWater, sourceGas } = sourceFlow || {};
+  // const dataUpstreamPipelineFlow = dataPipelineFlow && dataPipelineFlow.pipelineFlow && dataPipelineFlow.pipelineFlow[0] && dataPipelineFlow.pipelineFlow[0];
+
+  // const { oil: upstreamPipelineOil, gas: upstreamPipelineGas, water: upstreamPipelineWater, firstProduction: upstreamPipelineFirstProduction, lastProduction: upstreamPipelineLastProduction, firstInjection: upstreamPipelineFirstInjection, lastInjection: upstreamPipelineLastInjection } = dataUpstreamPipelineFlow || {};
+  const { injectionPointOil, injectionPointWater, injectionPointGas } = injectionPointFlow || {};
+
+  // function collectFlowData() {
+  //   const obj = {
+  //     oil: upstreamPipelineOil,
+  //     water: upstreamPipelineWater,
+  //     gas: upstreamPipelineGas,
+  //     firstProduction: upstreamPipelineFirstProduction,
+  //     lastProduction: upstreamPipelineLastProduction,
+  //     firstInjection: upstreamPipelineFirstInjection,
+  //     lastInjection: upstreamPipelineLastInjection,
+  //   }
+
+  //   if (collectUpstreamPipelineFlowData) {
+  //     collectUpstreamPipelineFlowData(obj, increment);
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   collectFlowData();
+  // }, [dataUpstreamPipelineFlow])
 
   // This component can represent either source or upstream pipeline.
   // We will call pipelineFlow query only if it represents upstream pipeline.
-  useEffect(() => {
-    if (injectionPointType === 'upstream pipeline') { pipelineFlow(); }
-  }, []);
+  // useEffect(() => {
+  //   if (injectionPointType === 'upstream pipeline') { pipelineFlow(); }
+  // }, []);
 
   return (
     <TableRow>
@@ -67,9 +91,9 @@ export default function InjectionPointEntry({ injectionPointType, injectionPoint
       </TableCell>
       {/* Rounding to two decimal places because Prisma raw query sometimes returns what should be a two decimal places number,
           showing gazillion trailing zeros and 1 after a decimal point */}
-      <TableCell align="right">{Math.round((upstreamPipelineOil || sourceOil || 0) * 100) / 100}</TableCell>
-      <TableCell align="right">{Math.round((upstreamPipelineWater || sourceWater || 0) * 100) / 100}</TableCell>
-      <TableCell align="right">{Math.round((upstreamPipelineGas || sourceGas || 0) * 100) / 100}</TableCell>
+      <TableCell align="right">{injectionPointOil ? Math.round((injectionPointOil) * 100) / 100 : injectionPointOil}</TableCell>
+      <TableCell align="right">{injectionPointWater ? Math.round((injectionPointWater) * 100) / 100 : injectionPointWater}</TableCell>
+      <TableCell align="right">{injectionPointGas ? Math.round((injectionPointGas) * 100) / 100 : injectionPointGas}</TableCell>
     </TableRow>
   );
 }

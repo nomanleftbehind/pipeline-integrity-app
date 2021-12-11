@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
@@ -14,10 +14,16 @@ import Source from './Source';
 import InjectionPointForm from './InjectionPointForm';
 import { IPipeline } from '../../rows/RenderPipeline';
 
-import { useConnectUpstreamPipelineMutation, useDisconnectUpstreamPipelineMutation, useConnectSourceMutation, useDisconnectSourceMutation, PipelinesByIdQueryDocument } from '../../../graphql/generated/graphql';
+import { usePipelineFlowQuery, PipelineFlowQuery, useConnectUpstreamPipelineMutation, useDisconnectUpstreamPipelineMutation, useConnectSourceMutation, useDisconnectSourceMutation, PipelinesByIdQueryDocument } from '../../../graphql/generated/graphql';
 
 type IInjectionPoints = Pick<IPipeline, 'injectionPoints' | 'upstream'>;
 type IUpstream = IPipeline['upstream'];
+
+type IInferFromArray<T> = T extends (infer U)[] ? U : never;
+
+type IUpstreamPipelineFlow = IInferFromArray<PipelineFlowQuery['pipelineFlow']>;
+type ISourceFlow = IInferFromArray<IInjectionPoints['injectionPoints']>;
+
 
 interface IInjectionPointsProps {
   open: boolean;
@@ -27,9 +33,37 @@ interface IInjectionPointsProps {
 }
 
 
+export interface ICollectFlowDataProps {
+  oil?: number;
+  water?: number;
+  gas?: number;
+  firstProduction?: string | null;
+  lastProduction?: string | null;
+  firstInjection?: string | null;
+  lastInjection?: string | null;
+}
+
+
 export default function InjectionPoints({ open, id, injectionPoints }: IInjectionPointsProps) {
   const [showUpstreamPipelinesForm, setShowUpstreamPipelinesForm] = React.useState<boolean>(false);
   const [showSourcesForm, setShowSourcesForm] = React.useState<boolean>(false);
+
+  const { injectionPoints: sources, upstream: upstreamPipelines } = injectionPoints;
+
+  const args = upstreamPipelines ? upstreamPipelines.map(upstreamPipeline => upstreamPipeline ? upstreamPipeline.id : null) : [];
+
+  // This function calls Prisma raw query that calculates total flow volume through each upstream pipeline.
+  const { data: dataPipelineFlow } = usePipelineFlowQuery({ variables: { pipelineFlowId: args } });
+
+  // Upstream pipelines object was being passed as a prop all the way from pipelines page.
+  // However, it didn't contain volume flow data. We had to write raw SQL query to return object with calculated total flow through each upstream pipeline.
+  // We are now merging those two objects on their common key, which is id.
+  const mergedUpstreamPipelines = upstreamPipelines ? upstreamPipelines.map(us => (us ? { ...us, ...dataPipelineFlow?.pipelineFlow?.find(pf => (pf ? pf.id === us.id : null)) } : null)) : null;
+
+  useEffect(() => {
+    console.log('dataPipelineFlow', dataPipelineFlow?.pipelineFlow, upstreamPipelines, mergedUpstreamPipelines);
+
+  }, [dataPipelineFlow])
 
   const [connectUpstreamPipeline, { data: dataConnectUpstreamPipeline }] = useConnectUpstreamPipelineMutation();
   const [disconnectUpstreamPipeline, { data: dataDisconnectUpstreamPipeline }] = useDisconnectUpstreamPipelineMutation();
@@ -37,7 +71,6 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
   const [connectSource, { data: dataConnectSource }] = useConnectSourceMutation();
   const [disconnectSource, { data: dataDisconnectSource }] = useDisconnectSourceMutation();
 
-  const { injectionPoints: sources, upstream: upstreamPipelines } = injectionPoints;
 
   function toggleShowUpstreamPipelinesForm() {
     setShowUpstreamPipelinesForm(!showUpstreamPipelinesForm);
@@ -45,6 +78,19 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
 
   function toggleShowSourcesForm() {
     setShowSourcesForm(!showSourcesForm);
+  }
+
+  function sumFlow<T extends IUpstreamPipelineFlow | ISourceFlow>(arr: T[] | null | undefined, prop: keyof Pick<NonNullable<T>, 'oil' | 'water' | 'gas'>) {
+    if (arr) {
+      let n = 0;
+      for (let i = 0; i < arr.length; i++) {
+        const item = arr[i];
+        if (item) {
+          n += item[prop];
+        }
+      }
+      return n;
+    }
   }
 
   function handleSubmit(injectionPointType: string, newInjectionPointId: string, oldInjectionPointId?: string) {
@@ -82,9 +128,9 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                     {showUpstreamPipelinesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
                   </IconButton>
                 </TableCell>
-                <TableCell align="right">Oil</TableCell>
-                <TableCell align="right">Water</TableCell>
-                <TableCell align="right">Gas</TableCell>
+                <TableCell align="right">{sumFlow(dataPipelineFlow?.pipelineFlow, 'oil')}</TableCell>
+                <TableCell align="right">{sumFlow(dataPipelineFlow?.pipelineFlow, 'water')}</TableCell>
+                <TableCell align="right">{sumFlow(dataPipelineFlow?.pipelineFlow, 'gas')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -98,7 +144,7 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                   </TableCell>
                 </TableRow> :
                 null}
-              {upstreamPipelines ? upstreamPipelines.map(upstreamPipeline => {
+              {mergedUpstreamPipelines ? mergedUpstreamPipelines.map(upstreamPipeline => {
                 return upstreamPipeline ? (
                   <Source
                     key={upstreamPipeline.id}
@@ -107,6 +153,7 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                     source={`${upstreamPipeline.license}-${upstreamPipeline.segment}`}
                     handleSubmit={handleSubmit}
                     disconnectInjectionPoint={() => disconnectUpstreamPipeline({ variables: { id: id, upstreamId: upstreamPipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
+                    injectionPointFlow={{ injectionPointOil: upstreamPipeline.oil, injectionPointWater: upstreamPipeline.water, injectionPointGas: upstreamPipeline.gas }}
                   />
                 ) :
                   null;
@@ -115,11 +162,14 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
             </TableBody>
             <TableHead>
               <TableRow>
-                <TableCell colSpan={4}>Sources
+                <TableCell>Sources
                   <IconButton aria-label="expand row" size="small" onClick={toggleShowSourcesForm}>
                     {showSourcesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
                   </IconButton>
                 </TableCell>
+                <TableCell align="right">{sumFlow(sources, 'oil')}</TableCell>
+                <TableCell align="right">{sumFlow(sources, 'water')}</TableCell>
+                <TableCell align="right">{sumFlow(sources, 'gas')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -142,7 +192,7 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                     source={source.source}
                     handleSubmit={handleSubmit}
                     disconnectInjectionPoint={() => disconnectSource({ variables: { id: id, sourceId: source.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
-                    sourceFlow={{ sourceOil: source.oil, sourceWater: source.water, sourceGas: source.gas }}
+                    injectionPointFlow={{ injectionPointOil: source.oil, injectionPointWater: source.water, injectionPointGas: source.gas }}
                   />
                 ) :
                   null;
@@ -155,16 +205,3 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
     </TableCell>
   );
 }
-
-
-// <TableRow key={upstreamPipeline.id}>
-// <TableCell align="right" colSpan={3} />
-// </TableRow> 
-
-
-//<TableRow key={source.id}>
-
-//<TableCell align="right">{source.oil}</TableCell>
-//                      <TableCell align="right">{source.water}</TableCell>
-//                     <TableCell align="right">{source.gas}</TableCell>
-//                    </TableRow>
