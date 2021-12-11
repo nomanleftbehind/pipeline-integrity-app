@@ -91,6 +91,16 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
       }
       return n;
     }
+    return 0;
+  }
+
+  const flow = {
+    upstreamPipelinesOil: sumFlow(dataPipelineFlow?.pipelineFlow, 'oil'),
+    upstreamPipelinesWater: sumFlow(dataPipelineFlow?.pipelineFlow, 'water'),
+    upstreamPipelinesGas: sumFlow(dataPipelineFlow?.pipelineFlow, 'gas'),
+    sourcesOil: sumFlow(sources, 'oil'),
+    sourcesWater: sumFlow(sources, 'water'),
+    sourcesGas: sumFlow(sources, 'gas'),
   }
 
   function handleSubmit(injectionPointType: string, newInjectionPointId: string, oldInjectionPointId?: string) {
@@ -123,14 +133,28 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
           <Table size="small" aria-label="purchases">
             <TableHead>
               <TableRow>
+                <TableCell />
+                <TableCell align="right">Oil (m³/d)</TableCell>
+                <TableCell align="right">Water (m³/d)</TableCell>
+                <TableCell align="right">Gas (E3m³/d)</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Total</TableCell>
+                <TableCell align="right">{Math.round((flow.upstreamPipelinesOil + flow.sourcesOil) * 100) / 100}</TableCell>
+                <TableCell align="right">{Math.round((flow.upstreamPipelinesWater + flow.sourcesWater) * 100) / 100}</TableCell>
+                <TableCell align="right">{Math.round((flow.upstreamPipelinesGas + flow.sourcesGas) * 100) / 100}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableHead>
+              <TableRow>
                 <TableCell>Upstream Pipelines
                   <IconButton aria-label="expand row" size="small" onClick={toggleShowUpstreamPipelinesForm}>
                     {showUpstreamPipelinesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
                   </IconButton>
                 </TableCell>
-                <TableCell align="right">{sumFlow(dataPipelineFlow?.pipelineFlow, 'oil')}</TableCell>
-                <TableCell align="right">{sumFlow(dataPipelineFlow?.pipelineFlow, 'water')}</TableCell>
-                <TableCell align="right">{sumFlow(dataPipelineFlow?.pipelineFlow, 'gas')}</TableCell>
+                <TableCell align="right">{flow.upstreamPipelinesOil}</TableCell>
+                <TableCell align="right">{flow.upstreamPipelinesWater}</TableCell>
+                <TableCell align="right">{flow.upstreamPipelinesGas}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -167,9 +191,9 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                     {showSourcesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
                   </IconButton>
                 </TableCell>
-                <TableCell align="right">{sumFlow(sources, 'oil')}</TableCell>
-                <TableCell align="right">{sumFlow(sources, 'water')}</TableCell>
-                <TableCell align="right">{sumFlow(sources, 'gas')}</TableCell>
+                <TableCell align="right">{flow.sourcesOil}</TableCell>
+                <TableCell align="right">{flow.sourcesWater}</TableCell>
+                <TableCell align="right">{flow.sourcesGas}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
