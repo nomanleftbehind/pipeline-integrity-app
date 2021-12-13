@@ -46,8 +46,12 @@ query pipelinesByIdQuery($satelliteId: String, $facilityId: String) {
       id
       source
       oil
-      gas
       water
+      gas
+      firstProduction
+      lastProduction
+      firstInjection
+      lastInjection
     }
     upstream {
       id

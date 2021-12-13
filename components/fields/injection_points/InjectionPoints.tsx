@@ -89,18 +89,86 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
           n += item[prop];
         }
       }
-      return n;
+      return n === 0 ? undefined : n;
     }
-    return 0;
+  }
+
+  function calculateLastFirstFlow<T extends IUpstreamPipelineFlow | ISourceFlow>(arr: T[] | null | undefined, prop: keyof Pick<NonNullable<T>, 'lastProduction' | 'lastInjection' | 'firstProduction' | 'firstInjection'>) {
+    if (arr) {
+      let date: Date | undefined;
+      for (let i = 0; i < arr.length; i++) {
+        const item = arr[i];
+        if (item) {
+          const dateString = item[prop];
+          if (dateString) {
+            const newDate = new Date(dateString.slice(0, 10));
+            if (prop === 'lastProduction' || prop === 'lastInjection') {
+              // calculate max date
+              if (typeof date === 'undefined' || newDate > date) {
+                date = newDate;
+              }
+            } else {
+              // calculate min date
+              if (typeof date === 'undefined' || newDate < date) {
+                date = newDate;
+              }
+            }
+          }
+        }
+      }
+      return date;
+    }
+  }
+
+  function sumHorizontal(num1?: number, num2?: number) {
+    if (num1 || num2) {
+      return Math.round(((num1 || 0) + (num2 || 0)) * 100) / 100;
+    }
+  }
+
+  function maxHorizontal(date1: Date | undefined, date2: Date | undefined) {
+    if (date1 && date2) {
+      if (date1 >= date2) {
+        return date1;
+      } else {
+        return date2;
+      }
+    } else if (date1) {
+      return date1;
+    } else if (date2) {
+      return date2;
+    }
+  }
+
+  function minHorizontal(date1: Date | undefined, date2: Date | undefined) {
+    if (date1 && date2) {
+      if (date1 <= date2) {
+        return date1;
+      } else {
+        return date2;
+      }
+    } else if (date1) {
+      return date1;
+    } else if (date2) {
+      return date2;
+    }
   }
 
   const flow = {
     upstreamPipelinesOil: sumFlow(dataPipelineFlow?.pipelineFlow, 'oil'),
     upstreamPipelinesWater: sumFlow(dataPipelineFlow?.pipelineFlow, 'water'),
     upstreamPipelinesGas: sumFlow(dataPipelineFlow?.pipelineFlow, 'gas'),
+    upstreamPipelinesLastProduction: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'lastProduction'),
+    upstreamPipelinesLastInjection: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'lastInjection'),
+    upstreamPipelinesFirstProduction: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'firstProduction'),
+    upstreamPipelinesFirstInjection: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'firstInjection'),
     sourcesOil: sumFlow(sources, 'oil'),
     sourcesWater: sumFlow(sources, 'water'),
     sourcesGas: sumFlow(sources, 'gas'),
+    sourcesLastProduction: calculateLastFirstFlow(sources, 'lastProduction'),
+    sourcesLastInjection: calculateLastFirstFlow(sources, 'lastInjection'),
+    sourcesFirstProduction: calculateLastFirstFlow(sources, 'firstProduction'),
+    sourcesFirstInjection: calculateLastFirstFlow(sources, 'firstInjection'),
   }
 
   function handleSubmit(injectionPointType: string, newInjectionPointId: string, oldInjectionPointId?: string) {
@@ -137,12 +205,20 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                 <TableCell align="right">Oil (m³/d)</TableCell>
                 <TableCell align="right">Water (m³/d)</TableCell>
                 <TableCell align="right">Gas (E3m³/d)</TableCell>
+                <TableCell align="right">Last Production</TableCell>
+                <TableCell align="right">Last Injection</TableCell>
+                <TableCell align="right">First Production</TableCell>
+                <TableCell align="right">First Injection</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Total</TableCell>
-                <TableCell align="right">{Math.round((flow.upstreamPipelinesOil + flow.sourcesOil) * 100) / 100}</TableCell>
-                <TableCell align="right">{Math.round((flow.upstreamPipelinesWater + flow.sourcesWater) * 100) / 100}</TableCell>
-                <TableCell align="right">{Math.round((flow.upstreamPipelinesGas + flow.sourcesGas) * 100) / 100}</TableCell>
+                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesOil, flow.sourcesOil)}</TableCell>
+                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesWater, flow.sourcesWater)}</TableCell>
+                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesGas, flow.sourcesGas)}</TableCell>
+                <TableCell align="right">{maxHorizontal(flow.upstreamPipelinesLastProduction, flow.sourcesLastProduction)?.toISOString().slice(0, 10)}</TableCell>
+                <TableCell align="right">{maxHorizontal(flow.upstreamPipelinesLastInjection, flow.sourcesLastInjection)?.toISOString().slice(0, 10)}</TableCell>
+                <TableCell align="right">{minHorizontal(flow.upstreamPipelinesFirstProduction, flow.sourcesFirstProduction)?.toISOString().slice(0, 10)}</TableCell>
+                <TableCell align="right">{minHorizontal(flow.upstreamPipelinesFirstInjection, flow.sourcesFirstInjection)?.toISOString().slice(0, 10)}</TableCell>
               </TableRow>
             </TableHead>
             <TableHead>
@@ -152,9 +228,15 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                     {showUpstreamPipelinesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
                   </IconButton>
                 </TableCell>
-                <TableCell align="right">{flow.upstreamPipelinesOil}</TableCell>
-                <TableCell align="right">{flow.upstreamPipelinesWater}</TableCell>
-                <TableCell align="right">{flow.upstreamPipelinesGas}</TableCell>
+                {/* Even though we don't need to sum only one value, we are passing here to sumHorizontal function because that function rounds to two decimals.
+                    If we don't pass it to the function, we might get numbers like 1.2300000000001 */}
+                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesOil)}</TableCell>
+                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesWater)}</TableCell>
+                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesGas)}</TableCell>
+                <TableCell align="right">{flow.upstreamPipelinesLastProduction?.toISOString().slice(0, 10)}</TableCell>
+                <TableCell align="right">{flow.upstreamPipelinesLastInjection?.toISOString().slice(0, 10)}</TableCell>
+                <TableCell align="right">{flow.upstreamPipelinesFirstProduction?.toISOString().slice(0, 10)}</TableCell>
+                <TableCell align="right">{flow.upstreamPipelinesFirstInjection?.toISOString().slice(0, 10)}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -177,7 +259,15 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                     source={`${upstreamPipeline.license}-${upstreamPipeline.segment}`}
                     handleSubmit={handleSubmit}
                     disconnectInjectionPoint={() => disconnectUpstreamPipeline({ variables: { id: id, upstreamId: upstreamPipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
-                    injectionPointFlow={{ injectionPointOil: upstreamPipeline.oil, injectionPointWater: upstreamPipeline.water, injectionPointGas: upstreamPipeline.gas }}
+                    injectionPointFlow={{
+                      injectionPointOil: upstreamPipeline.oil,
+                      injectionPointWater: upstreamPipeline.water,
+                      injectionPointGas: upstreamPipeline.gas,
+                      injectionPointLastProduction: upstreamPipeline.lastProduction,
+                      injectionPointFirstProduction: upstreamPipeline.firstProduction,
+                      injectionPointLastInjection: upstreamPipeline.lastInjection,
+                      injectionPointFirstInjection: upstreamPipeline.firstInjection,
+                    }}
                   />
                 ) :
                   null;
@@ -191,9 +281,13 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                     {showSourcesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
                   </IconButton>
                 </TableCell>
-                <TableCell align="right">{flow.sourcesOil}</TableCell>
-                <TableCell align="right">{flow.sourcesWater}</TableCell>
-                <TableCell align="right">{flow.sourcesGas}</TableCell>
+                <TableCell align="right">{sumHorizontal(flow.sourcesOil)}</TableCell>
+                <TableCell align="right">{sumHorizontal(flow.sourcesWater)}</TableCell>
+                <TableCell align="right">{sumHorizontal(flow.sourcesGas)}</TableCell>
+                <TableCell align="right">{flow.sourcesLastProduction?.toISOString().slice(0, 10)}</TableCell>
+                <TableCell align="right">{flow.sourcesLastInjection?.toISOString().slice(0, 10)}</TableCell>
+                <TableCell align="right">{flow.sourcesFirstProduction?.toISOString().slice(0, 10)}</TableCell>
+                <TableCell align="right">{flow.sourcesFirstInjection?.toISOString().slice(0, 10)}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -216,7 +310,15 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                     source={source.source}
                     handleSubmit={handleSubmit}
                     disconnectInjectionPoint={() => disconnectSource({ variables: { id: id, sourceId: source.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
-                    injectionPointFlow={{ injectionPointOil: source.oil, injectionPointWater: source.water, injectionPointGas: source.gas }}
+                    injectionPointFlow={{
+                      injectionPointOil: source.oil,
+                      injectionPointWater: source.water,
+                      injectionPointGas: source.gas,
+                      injectionPointLastProduction: source.lastProduction,
+                      injectionPointFirstProduction: source.firstProduction,
+                      injectionPointLastInjection: source.lastInjection,
+                      injectionPointFirstInjection: source.firstInjection,
+                    }}
                   />
                 ) :
                   null;

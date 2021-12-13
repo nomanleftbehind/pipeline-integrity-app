@@ -14,7 +14,15 @@ interface IInjectionPointEnrtyProps {
   source: string;
   handleSubmit: (injectionPointType: string, newInjectionPointId: string, oldInjectionPointId: string) => void;
   disconnectInjectionPoint: () => void;
-  injectionPointFlow: { injectionPointOil?: number; injectionPointWater?: number; injectionPointGas?: number };
+  injectionPointFlow: {
+    injectionPointOil?: number;
+    injectionPointWater?: number;
+    injectionPointGas?: number;
+    injectionPointLastProduction?: string | null;
+    injectionPointFirstProduction?: string | null;
+    injectionPointLastInjection?: string | null;
+    injectionPointFirstInjection?: string | null;
+  };
 }
 
 export default function InjectionPointEntry({ injectionPointType, injectionPointId, source, handleSubmit, disconnectInjectionPoint, injectionPointFlow }: IInjectionPointEnrtyProps) {
@@ -29,7 +37,7 @@ export default function InjectionPointEntry({ injectionPointType, injectionPoint
     setShowForm(false);
   }
 
-  const { injectionPointOil, injectionPointWater, injectionPointGas } = injectionPointFlow || {};
+  const { injectionPointOil, injectionPointWater, injectionPointGas, injectionPointLastProduction, injectionPointFirstProduction, injectionPointLastInjection, injectionPointFirstInjection } = injectionPointFlow || {};
 
   return (
     <TableRow>
@@ -56,9 +64,13 @@ export default function InjectionPointEntry({ injectionPointType, injectionPoint
       </TableCell>
       {/* Rounding to two decimal places because Prisma raw query sometimes returns what should be a two decimal places number,
           showing gazillion trailing zeros and 1 after a decimal point */}
-      <TableCell align="right">{injectionPointOil ? Math.round((injectionPointOil) * 100) / 100 : injectionPointOil}</TableCell>
-      <TableCell align="right">{injectionPointWater ? Math.round((injectionPointWater) * 100) / 100 : injectionPointWater}</TableCell>
-      <TableCell align="right">{injectionPointGas ? Math.round((injectionPointGas) * 100) / 100 : injectionPointGas}</TableCell>
+      <TableCell align="right">{injectionPointOil ? Math.round((injectionPointOil) * 100) / 100 : null}</TableCell>
+      <TableCell align="right">{injectionPointWater ? Math.round((injectionPointWater) * 100) / 100 : null}</TableCell>
+      <TableCell align="right">{injectionPointGas ? Math.round((injectionPointGas) * 100) / 100 : null}</TableCell>
+      <TableCell align="right">{injectionPointLastProduction ? injectionPointLastProduction.slice(0, 10) : null}</TableCell>
+      <TableCell align="right">{injectionPointLastInjection ? injectionPointLastInjection.slice(0, 10) : null}</TableCell>
+      <TableCell align="right">{injectionPointFirstProduction ? injectionPointFirstProduction.slice(0, 10) : null}</TableCell>
+      <TableCell align="right">{injectionPointFirstInjection ? injectionPointFirstInjection.slice(0, 10) : null}</TableCell>
     </TableRow>
   );
 }
