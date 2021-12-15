@@ -210,7 +210,7 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                 <TableCell align="right">First Production</TableCell>
                 <TableCell align="right">First Injection</TableCell>
               </TableRow>
-              <TableRow>
+              <TableRow sx={{ '& > th': { whiteSpace: 'nowrap' } }}>
                 <TableCell>Total</TableCell>
                 <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesOil, flow.sourcesOil)}</TableCell>
                 <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesWater, flow.sourcesWater)}</TableCell>
@@ -222,7 +222,7 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
               </TableRow>
             </TableHead>
             <TableHead>
-              <TableRow>
+              <TableRow sx={{ '& > th': { paddingTop: '30px', fontStyle: 'italic', whiteSpace: 'nowrap' } }}>
                 <TableCell>Upstream Pipelines
                   <IconButton aria-label="expand row" size="small" onClick={toggleShowUpstreamPipelinesForm}>
                     {showUpstreamPipelinesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
@@ -275,7 +275,7 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                 null}
             </TableBody>
             <TableHead>
-              <TableRow>
+              <TableRow sx={{ '& > th': { paddingTop: '30px', fontStyle: 'italic', whiteSpace: 'nowrap' } }}>
                 <TableCell>Sources
                   <IconButton aria-label="expand row" size="small" onClick={toggleShowSourcesForm}>
                     {showSourcesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}

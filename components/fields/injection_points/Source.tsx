@@ -40,7 +40,7 @@ export default function InjectionPointEntry({ injectionPointType, injectionPoint
   const { injectionPointOil, injectionPointWater, injectionPointGas, injectionPointLastProduction, injectionPointFirstProduction, injectionPointLastInjection, injectionPointFirstInjection } = injectionPointFlow || {};
 
   return (
-    <TableRow>
+    <TableRow sx={{ '& > td, th': { whiteSpace: 'nowrap' } }}>
       <TableCell component="th" scope="row">
         <div className="cell-wrapper">
           <div className="cell-r">
