@@ -34,7 +34,8 @@ pub extern "C" fn add_one(x: i32, y: i32) -> i32 {
     x + y
 }
 
-#[wasm_bindgen]
+// #[wasm_bindgen]
+#[wasm_bindgen(catch)]
 pub fn sum_flow(obj: &JsValue, key: &str) -> Result<f64, JsValue> {
     utils::set_panic_hook();
 
@@ -64,8 +65,8 @@ pub fn sum_flow(obj: &JsValue, key: &str) -> Result<f64, JsValue> {
             sum += value;
             // ...
         } else {
-            log!("object passed {:?}", obj);
-            // return Err(JsValue::NULL);
+            log!("object {:?} doesn't have key {:?}", &value_as_js_value, &key_as_js_value);
+            //return Err(/*js_sys::Error::new("Object has no specified key").into()*/JsValue::from_str("Fucking message"));
         }
     }
     Ok(sum)

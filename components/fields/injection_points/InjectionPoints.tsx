@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo } from 'react';
-import dynamic from 'next/dynamic';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
@@ -15,7 +14,7 @@ import Source from './Source';
 import InjectionPointForm from './InjectionPointForm';
 import { IPipeline } from '../../rows/RenderPipeline';
 
-// import { sum_flow } from '../../../wasm/pkg/pipeline_database_wasm_bg';
+import { sum_flow } from '../../../wasm/pkg/pipeline_database_wasm_bg';
 
 import { usePipelineFlowQuery, PipelineFlowQuery, useConnectUpstreamPipelineMutation, useDisconnectUpstreamPipelineMutation, useConnectSourceMutation, useDisconnectSourceMutation, PipelinesByIdQueryDocument } from '../../../graphql/generated/graphql';
 
@@ -45,24 +44,6 @@ export interface ICollectFlowDataProps {
   firstInjection?: string | null;
   lastInjection?: string | null;
 }
-
-const RustComponent = dynamic(
-  async function loader() {
-    // Import the wasm module
-    const rustModule = await import('../../../wasm/pkg/pipeline_database_wasm_bg');
-    // Return a React component that calls the add_one method on the wasm module
-    function addOne<T extends IUpstreamPipelineFlow | ISourceFlow>({ obj, property_key }: { obj: T[] | null | undefined, property_key: keyof Pick<NonNullable<T>, 'oil' | 'water' | 'gas'> }) {
-      console.log('object:', obj, 'key:', property_key);
-
-      return (
-        <div>
-          {rustModule.sum_flow(obj, property_key)}
-        </div>
-      )
-    }
-    return addOne;
-  },
-)
 
 
 export default function InjectionPoints({ open, id, injectionPoints }: IInjectionPointsProps) {
@@ -96,19 +77,20 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
     setShowSourcesForm(!showSourcesForm);
   }
 
-
-  function sumFlow<T extends IUpstreamPipelineFlow | ISourceFlow>(arr: T[] | null | undefined, prop: keyof Pick<NonNullable<T>, 'oil' | 'water' | 'gas'>) {
-    if (arr) {
-      let n = 0;
-      for (let i = 0; i < arr.length; i++) {
-        const item = arr[i];
-        if (item) {
-          n += item[prop];
-        }
-      }
-      return n === 0 ? undefined : n;
-    }
-  }
+  // This function was replaced with WebAssembly function sum_flow.
+  // Keeping here for potential future use.
+  // function sumFlow<T extends IUpstreamPipelineFlow | ISourceFlow>(arr: T[] | null | undefined, prop: keyof Pick<NonNullable<T>, 'oil' | 'water' | 'gas'>) {
+  //   if (arr) {
+  //     let n = 0;
+  //     for (let i = 0; i < arr.length; i++) {
+  //       const item = arr[i];
+  //       if (item) {
+  //         n += item[prop];
+  //       }
+  //     }
+  //     return n === 0 ? undefined : n;
+  //   }
+  // }
 
   function calculateLastFirstFlow<T extends IUpstreamPipelineFlow | ISourceFlow>(arr: T[] | null | undefined, prop: keyof Pick<NonNullable<T>, 'lastProduction' | 'lastInjection' | 'firstProduction' | 'firstInjection'>) {
     if (arr) {
@@ -171,17 +153,18 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
     }
   }
 
+  // Functions with snake_case naming convention are WebAssembly functions written in Rust.
   const flow = {
-    upstreamPipelinesOil: sumFlow(dataPipelineFlow?.pipelineFlow, 'oil'),
-    upstreamPipelinesWater: sumFlow(dataPipelineFlow?.pipelineFlow, 'water'),
-    upstreamPipelinesGas: sumFlow(dataPipelineFlow?.pipelineFlow, 'gas'),
+    upstreamPipelinesOil: sum_flow(dataPipelineFlow?.pipelineFlow || [], 'oil'),
+    upstreamPipelinesWater: sum_flow(dataPipelineFlow?.pipelineFlow || [], 'water'),
+    upstreamPipelinesGas: sum_flow(dataPipelineFlow?.pipelineFlow || [], 'gas'),
     upstreamPipelinesLastProduction: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'lastProduction'),
     upstreamPipelinesLastInjection: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'lastInjection'),
     upstreamPipelinesFirstProduction: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'firstProduction'),
     upstreamPipelinesFirstInjection: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'firstInjection'),
-    sourcesOil: sumFlow(sources, 'oil'),
-    sourcesWater: sumFlow(sources, 'water'),
-    sourcesGas: sumFlow(sources, 'gas'),
+    sourcesOil: sum_flow(sources || [], 'oil'),
+    sourcesWater: sum_flow(sources || [], 'water'),
+    sourcesGas: sum_flow(sources || [], 'gas'),
     sourcesLastProduction: calculateLastFirstFlow(sources, 'lastProduction'),
     sourcesLastInjection: calculateLastFirstFlow(sources, 'lastInjection'),
     sourcesFirstProduction: calculateLastFirstFlow(sources, 'firstProduction'),
@@ -247,10 +230,7 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                 </TableCell>
                 {/* Even though we don't need to sum only one value, we are passing here to sumHorizontal function because that function rounds to two decimals.
                     If we don't pass it to the function, we might get numbers like 1.2300000000001 */}
-                <TableCell align="right">
-                  {/*sumHorizontal(flow.upstreamPipelinesOil)*/}
-                  <RustComponent obj={dataPipelineFlow?.pipelineFlow || []} property_key='oil' />
-                </TableCell>
+                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesOil)}</TableCell>
                 <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesWater)}</TableCell>
                 <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesGas)}</TableCell>
                 <TableCell align="right">{flow.upstreamPipelinesLastProduction?.toISOString().slice(0, 10)}</TableCell>

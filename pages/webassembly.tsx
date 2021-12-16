@@ -28,7 +28,7 @@ const RustComponent = dynamic(
 
 export default function WebAssembly() {
 
-  const obj1 = sum_flow([{ key1: 3, key2: 4 }, { key1: 5, key2: 6 }, { key1: 7, key2: 8 },], 'key1');
+  const obj1 = sum_flow([{ key1: 3, key2: 4 }, { key1: 5, key2: 6 }, { key1: 7, key2: 8 },], 'key3');
 
   console.log('JS return:', obj1);
 
