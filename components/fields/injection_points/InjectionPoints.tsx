@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
@@ -13,6 +14,8 @@ import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import Source from './Source';
 import InjectionPointForm from './InjectionPointForm';
 import { IPipeline } from '../../rows/RenderPipeline';
+
+// import { sum_flow } from '../../../wasm/pkg/pipeline_database_wasm_bg';
 
 import { usePipelineFlowQuery, PipelineFlowQuery, useConnectUpstreamPipelineMutation, useDisconnectUpstreamPipelineMutation, useConnectSourceMutation, useDisconnectSourceMutation, PipelinesByIdQueryDocument } from '../../../graphql/generated/graphql';
 
@@ -43,6 +46,24 @@ export interface ICollectFlowDataProps {
   lastInjection?: string | null;
 }
 
+const RustComponent = dynamic(
+  async function loader() {
+    // Import the wasm module
+    const rustModule = await import('../../../wasm/pkg/pipeline_database_wasm_bg');
+    // Return a React component that calls the add_one method on the wasm module
+    function addOne<T extends IUpstreamPipelineFlow | ISourceFlow>({ obj, property_key }: { obj: T[] | null | undefined, property_key: keyof Pick<NonNullable<T>, 'oil' | 'water' | 'gas'> }) {
+      console.log('object:', obj, 'key:', property_key);
+
+      return (
+        <div>
+          {rustModule.sum_flow(obj, property_key)}
+        </div>
+      )
+    }
+    return addOne;
+  },
+)
+
 
 export default function InjectionPoints({ open, id, injectionPoints }: IInjectionPointsProps) {
   const [showUpstreamPipelinesForm, setShowUpstreamPipelinesForm] = React.useState<boolean>(false);
@@ -60,11 +81,6 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
   // We are now merging those two objects on their common key, which is id.
   const mergedUpstreamPipelines = upstreamPipelines ? upstreamPipelines.map(us => (us ? { ...us, ...dataPipelineFlow?.pipelineFlow?.find(pf => (pf ? pf.id === us.id : null)) } : null)) : null;
 
-  useEffect(() => {
-    console.log('dataPipelineFlow', dataPipelineFlow?.pipelineFlow, upstreamPipelines, mergedUpstreamPipelines);
-
-  }, [dataPipelineFlow])
-
   const [connectUpstreamPipeline, { data: dataConnectUpstreamPipeline }] = useConnectUpstreamPipelineMutation();
   const [disconnectUpstreamPipeline, { data: dataDisconnectUpstreamPipeline }] = useDisconnectUpstreamPipelineMutation();
 
@@ -79,6 +95,7 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
   function toggleShowSourcesForm() {
     setShowSourcesForm(!showSourcesForm);
   }
+
 
   function sumFlow<T extends IUpstreamPipelineFlow | ISourceFlow>(arr: T[] | null | undefined, prop: keyof Pick<NonNullable<T>, 'oil' | 'water' | 'gas'>) {
     if (arr) {
@@ -230,7 +247,10 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
                 </TableCell>
                 {/* Even though we don't need to sum only one value, we are passing here to sumHorizontal function because that function rounds to two decimals.
                     If we don't pass it to the function, we might get numbers like 1.2300000000001 */}
-                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesOil)}</TableCell>
+                <TableCell align="right">
+                  {/*sumHorizontal(flow.upstreamPipelinesOil)*/}
+                  <RustComponent obj={dataPipelineFlow?.pipelineFlow || []} property_key='oil' />
+                </TableCell>
                 <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesWater)}</TableCell>
                 <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesGas)}</TableCell>
                 <TableCell align="right">{flow.upstreamPipelinesLastProduction?.toISOString().slice(0, 10)}</TableCell>
