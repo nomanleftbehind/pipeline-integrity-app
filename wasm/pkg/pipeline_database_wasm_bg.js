@@ -188,15 +188,6 @@ function passStringToWasm0(arg, malloc, realloc) {
     WASM_VECTOR_LEN = offset;
     return ptr;
 }
-/**
-* @param {number} x
-* @param {number} y
-* @returns {number}
-*/
-export function add_one(x, y) {
-    var ret = wasm.add_one(x, y);
-    return ret;
-}
 
 let stack_pointer = 32;
 
@@ -208,15 +199,19 @@ function addBorrowedObject(obj) {
 /**
 * @param {any} obj
 * @param {string} key
-* @returns {number}
+* @returns {number | undefined}
 */
 export function sum_flow(obj, key) {
     try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         var ptr0 = passStringToWasm0(key, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
-        var ret = wasm.sum_flow(addBorrowedObject(obj), ptr0, len0);
-        return ret;
+        wasm.sum_flow(retptr, addBorrowedObject(obj), ptr0, len0);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getFloat64Memory0()[retptr / 8 + 1];
+        return r0 === 0 ? undefined : r1;
     } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
         heap[stack_pointer++] = undefined;
     }
 }
@@ -331,9 +326,5 @@ export function __wbindgen_debug_string(arg0, arg1) {
 
 export function __wbindgen_throw(arg0, arg1) {
     throw new Error(getStringFromWasm0(arg0, arg1));
-};
-
-export function __wbindgen_rethrow(arg0) {
-    throw takeObject(arg0);
 };
 

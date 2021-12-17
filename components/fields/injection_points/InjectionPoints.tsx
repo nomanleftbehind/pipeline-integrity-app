@@ -155,16 +155,16 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
 
   // Functions with snake_case naming convention are WebAssembly functions written in Rust.
   const flow = {
-    upstreamPipelinesOil: sum_flow(dataPipelineFlow?.pipelineFlow || [], 'oil'),
-    upstreamPipelinesWater: sum_flow(dataPipelineFlow?.pipelineFlow || [], 'water'),
-    upstreamPipelinesGas: sum_flow(dataPipelineFlow?.pipelineFlow || [], 'gas'),
+    upstreamPipelinesOil: sum_flow(dataPipelineFlow?.pipelineFlow, 'oil'),
+    upstreamPipelinesWater: sum_flow(dataPipelineFlow?.pipelineFlow, 'water'),
+    upstreamPipelinesGas: sum_flow(dataPipelineFlow?.pipelineFlow, 'gas'),
     upstreamPipelinesLastProduction: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'lastProduction'),
     upstreamPipelinesLastInjection: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'lastInjection'),
     upstreamPipelinesFirstProduction: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'firstProduction'),
     upstreamPipelinesFirstInjection: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'firstInjection'),
-    sourcesOil: sum_flow(sources || [], 'oil'),
-    sourcesWater: sum_flow(sources || [], 'water'),
-    sourcesGas: sum_flow(sources || [], 'gas'),
+    sourcesOil: sum_flow(sources, 'oil'),
+    sourcesWater: sum_flow(sources, 'water'),
+    sourcesGas: sum_flow(sources, 'gas'),
     sourcesLastProduction: calculateLastFirstFlow(sources, 'lastProduction'),
     sourcesLastInjection: calculateLastFirstFlow(sources, 'lastInjection'),
     sourcesFirstProduction: calculateLastFirstFlow(sources, 'firstProduction'),
