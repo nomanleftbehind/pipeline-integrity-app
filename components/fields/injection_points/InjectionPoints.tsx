@@ -192,7 +192,7 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
   }
 
   return (
-    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
+    // <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <Box sx={{ margin: 1 }}>
           <Typography variant="h6" gutterBottom component="div">
@@ -328,6 +328,6 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
           </Table>
         </Box>
       </Collapse>
-    </TableCell>
+    // </TableCell>
   );
 }

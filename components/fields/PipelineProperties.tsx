@@ -31,7 +31,7 @@ interface IPipelinePropertiesProps {
 export default function PipelineProperties({ open, id, properties_name, pipeline_properties }: IPipelinePropertiesProps): JSX.Element {
 
   return (
-    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={2}>
+    // <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={2}>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <Box sx={{ margin: 1 }}>
           <Typography variant="h6" gutterBottom component="div">
@@ -63,6 +63,6 @@ export default function PipelineProperties({ open, id, properties_name, pipeline
           </Table>
         </Box>
       </Collapse>
-    </TableCell>
+    // </TableCell>
   );
 }
