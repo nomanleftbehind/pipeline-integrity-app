@@ -25,16 +25,16 @@ pub fn sum_flow(obj: &JsValue, key: &str) -> Option<f64> {
     let iterator = match js_sys::try_iter(obj) {
         Ok(i) => match i.ok_or_else(|| "need to pass iterable JS values!") {
             Ok(i) => {
-                log!("Passing through js_sys::IntoIter");
+                // log!("Passing through js_sys::IntoIter");
                 i
             }
             Err(e) => {
-                log!("ok_or_else error: {}", &e);
+                // log!("ok_or_else error: {}", &e);
                 return None;
             }
         },
         Err(e) => {
-            log!("Object is not iterable {:?}", &e);
+            // log!("Object is not iterable {:?}", &e);
             return None;
         }
     };
@@ -69,7 +69,7 @@ pub fn sum_flow(obj: &JsValue, key: &str) -> Option<f64> {
                 Some(x) => x,
                 None => 0.0,
             };
-            log!("obj: {:?}, key: {:?}, key_as_js_value: {:?}, value_as_result: {:?}, value_as_js_value: {:?}, value: {:?}", obj, key, key_as_js_value, value_as_result, value_as_js_value, value);
+            // log!("obj: {:?}, key: {:?}, key_as_js_value: {:?}, value_as_result: {:?}, value_as_js_value: {:?}, value: {:?}", obj, key, key_as_js_value, value_as_result, value_as_js_value, value);
             sum += value;
             // ...
         } else {

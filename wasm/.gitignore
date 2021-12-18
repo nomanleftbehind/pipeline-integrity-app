@@ -3,4 +3,3 @@
 Cargo.lock
 bin/
 wasm-pack.log
-README.md
