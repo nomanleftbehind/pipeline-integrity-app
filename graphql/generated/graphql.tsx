@@ -36,6 +36,13 @@ export type FacilityCreateInput = {
   satellites?: Maybe<Array<Maybe<SatelliteCreateInput>>>;
 };
 
+export type FacilitySatelliteSideBar = {
+  facilityId: Scalars['String'];
+  facilityName: Scalars['String'];
+  satelliteId: Scalars['String'];
+  satelliteName: Scalars['String'];
+};
+
 export type FacilityUniqueInput = {
   id?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
@@ -548,6 +555,7 @@ export type Query = {
   pipelinesById?: Maybe<Array<Maybe<Pipeline>>>;
   pipelinesByUser?: Maybe<Array<Maybe<Pipeline>>>;
   pressureTestsById?: Maybe<Array<Maybe<PressureTest>>>;
+  sideBar?: Maybe<Array<Maybe<SideBar>>>;
   sourceOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   validators?: Maybe<Validator>;
 };
@@ -570,6 +578,7 @@ export type QueryPipelineFlowArgs = {
 
 export type QueryPipelinesByIdArgs = {
   facilityId?: Maybe<Scalars['String']>;
+  noSatellite?: Maybe<Scalars['String']>;
   satelliteId?: Maybe<Scalars['String']>;
 };
 
@@ -604,9 +613,20 @@ export type SatelliteCreateInput = {
   pipelines?: Maybe<Array<Maybe<PipelineCreateInput>>>;
 };
 
+export type SatelliteSideBar = {
+  satelliteId: Scalars['String'];
+  satelliteName: Scalars['String'];
+};
+
 export type SatelliteUniqueInput = {
   id?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
+};
+
+export type SideBar = {
+  facilityId: Scalars['String'];
+  facilityName: Scalars['String'];
+  satellites: Array<SatelliteSideBar>;
 };
 
 export type SourceOptions = {
@@ -885,6 +905,7 @@ export type MeQuery = { me?: { id: string, email: string, firstName: string, las
 export type PipelinesByIdQueryQueryVariables = Exact<{
   satelliteId?: Maybe<Scalars['String']>;
   facilityId?: Maybe<Scalars['String']>;
+  noSatellite?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -929,11 +950,6 @@ export type ValidatorsPressureTestQueryVariables = Exact<{ [key: string]: never;
 
 export type ValidatorsPressureTestQuery = { validators?: { anyTextMatchPattern: string, limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string } } | null | undefined };
 
-export type FacilitiesSideBarQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FacilitiesSideBarQuery = { allFacilities?: Array<{ id: string, name: string, satellites?: Array<{ id: string, name: string } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
-
 export type PressureTestsByIdQueryVariables = Exact<{
   pipelineId?: Maybe<Scalars['String']>;
 }>;
@@ -947,6 +963,11 @@ export type PipelineFlowQueryVariables = Exact<{
 
 
 export type PipelineFlowQuery = { pipelineFlow?: Array<{ id: string, oil: number, water: number, gas: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined };
+
+export type SideBarQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SideBarQuery = { sideBar?: Array<{ facilityId: string, facilityName: string, satellites: Array<{ satelliteId: string, satelliteName: string }> } | null | undefined> | null | undefined };
 
 
 export const LoginDocument = gql`
@@ -1426,8 +1447,12 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const PipelinesByIdQueryDocument = gql`
-    query pipelinesByIdQuery($satelliteId: String, $facilityId: String) {
-  pipelinesById(satelliteId: $satelliteId, facilityId: $facilityId) {
+    query pipelinesByIdQuery($satelliteId: String, $facilityId: String, $noSatellite: String) {
+  pipelinesById(
+    satelliteId: $satelliteId
+    facilityId: $facilityId
+    noSatellite: $noSatellite
+  ) {
     id
     createdAt
     updatedAt
@@ -1494,6 +1519,7 @@ export const PipelinesByIdQueryDocument = gql`
  *   variables: {
  *      satelliteId: // value for 'satelliteId'
  *      facilityId: // value for 'facilityId'
+ *      noSatellite: // value for 'noSatellite'
  *   },
  * });
  */
@@ -1962,45 +1988,6 @@ export function useValidatorsPressureTestLazyQuery(baseOptions?: Apollo.LazyQuer
 export type ValidatorsPressureTestQueryHookResult = ReturnType<typeof useValidatorsPressureTestQuery>;
 export type ValidatorsPressureTestLazyQueryHookResult = ReturnType<typeof useValidatorsPressureTestLazyQuery>;
 export type ValidatorsPressureTestQueryResult = Apollo.QueryResult<ValidatorsPressureTestQuery, ValidatorsPressureTestQueryVariables>;
-export const FacilitiesSideBarDocument = gql`
-    query FacilitiesSideBar {
-  allFacilities {
-    id
-    name
-    satellites {
-      id
-      name
-    }
-  }
-}
-    `;
-
-/**
- * __useFacilitiesSideBarQuery__
- *
- * To run a query within a React component, call `useFacilitiesSideBarQuery` and pass it any options that fit your needs.
- * When your component renders, `useFacilitiesSideBarQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFacilitiesSideBarQuery({
- *   variables: {
- *   },
- * });
- */
-export function useFacilitiesSideBarQuery(baseOptions?: Apollo.QueryHookOptions<FacilitiesSideBarQuery, FacilitiesSideBarQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FacilitiesSideBarQuery, FacilitiesSideBarQueryVariables>(FacilitiesSideBarDocument, options);
-      }
-export function useFacilitiesSideBarLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FacilitiesSideBarQuery, FacilitiesSideBarQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FacilitiesSideBarQuery, FacilitiesSideBarQueryVariables>(FacilitiesSideBarDocument, options);
-        }
-export type FacilitiesSideBarQueryHookResult = ReturnType<typeof useFacilitiesSideBarQuery>;
-export type FacilitiesSideBarLazyQueryHookResult = ReturnType<typeof useFacilitiesSideBarLazyQuery>;
-export type FacilitiesSideBarQueryResult = Apollo.QueryResult<FacilitiesSideBarQuery, FacilitiesSideBarQueryVariables>;
 export const PressureTestsByIdDocument = gql`
     query pressureTestsById($pipelineId: String) {
   pressureTestsById(pipelineId: $pipelineId) {
@@ -2094,3 +2081,42 @@ export function usePipelineFlowLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type PipelineFlowQueryHookResult = ReturnType<typeof usePipelineFlowQuery>;
 export type PipelineFlowLazyQueryHookResult = ReturnType<typeof usePipelineFlowLazyQuery>;
 export type PipelineFlowQueryResult = Apollo.QueryResult<PipelineFlowQuery, PipelineFlowQueryVariables>;
+export const SideBarDocument = gql`
+    query SideBar {
+  sideBar {
+    facilityId
+    facilityName
+    satellites {
+      satelliteId
+      satelliteName
+    }
+  }
+}
+    `;
+
+/**
+ * __useSideBarQuery__
+ *
+ * To run a query within a React component, call `useSideBarQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSideBarQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSideBarQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSideBarQuery(baseOptions?: Apollo.QueryHookOptions<SideBarQuery, SideBarQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SideBarQuery, SideBarQueryVariables>(SideBarDocument, options);
+      }
+export function useSideBarLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SideBarQuery, SideBarQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SideBarQuery, SideBarQueryVariables>(SideBarDocument, options);
+        }
+export type SideBarQueryHookResult = ReturnType<typeof useSideBarQuery>;
+export type SideBarLazyQueryHookResult = ReturnType<typeof useSideBarLazyQuery>;
+export type SideBarQueryResult = Apollo.QueryResult<SideBarQuery, SideBarQueryVariables>;

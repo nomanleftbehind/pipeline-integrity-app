@@ -27,6 +27,13 @@ input FacilityCreateInput {
   satellites: [SatelliteCreateInput]
 }
 
+type FacilitySatelliteSideBar {
+  facilityId: String!
+  facilityName: String!
+  satelliteId: String!
+  satelliteName: String!
+}
+
 input FacilityUniqueInput {
   id: String
   name: String
@@ -390,9 +397,10 @@ type Query {
   pipelineById(id: String!): Pipeline
   pipelineFlow(id: [String]!): [PipelineFlow]
   pipelineOptions: [PipelineOptions]
-  pipelinesById(facilityId: String, satelliteId: String): [Pipeline]
+  pipelinesById(facilityId: String, noSatellite: String, satelliteId: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
   pressureTestsById(pipelineId: String): [PressureTest]
+  sideBar: [SideBar]
   sourceOptions: [SourceOptions]
   validators: Validator
 }
@@ -418,9 +426,20 @@ input SatelliteCreateInput {
   pipelines: [PipelineCreateInput]
 }
 
+type SatelliteSideBar {
+  satelliteId: String!
+  satelliteName: String!
+}
+
 input SatelliteUniqueInput {
   id: String
   name: String
+}
+
+type SideBar {
+  facilityId: String!
+  facilityName: String!
+  satellites: [SatelliteSideBar!]!
 }
 
 type SourceOptions {

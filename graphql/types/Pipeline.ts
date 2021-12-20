@@ -362,6 +362,7 @@ export const PipelineQuery = extendType({
       args: {
         satelliteId: stringArg(),
         facilityId: stringArg(),
+        noSatellite: stringArg(),
       },
       resolve: async (_parent, args, ctx: Context) => {
         if (args.satelliteId) {
@@ -378,6 +379,16 @@ export const PipelineQuery = extendType({
               satellite: {
                 facilityId: args.facilityId
               }
+            },
+            orderBy: [
+              { license: 'asc' },
+              { segment: 'asc' }
+            ]
+          })
+        } else if (args.noSatellite === 'no satellite') {
+          return ctx.prisma.pipeline.findMany({
+            where: {
+              satellite: null
             },
             orderBy: [
               { license: 'asc' },

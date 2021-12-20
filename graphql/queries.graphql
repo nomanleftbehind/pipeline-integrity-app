@@ -8,8 +8,8 @@ query Me {
   }
 }
 
-query pipelinesByIdQuery($satelliteId: String, $facilityId: String) {
-  pipelinesById(satelliteId: $satelliteId, facilityId: $facilityId) {
+query pipelinesByIdQuery($satelliteId: String, $facilityId: String, $noSatellite: String) {
+  pipelinesById(satelliteId: $satelliteId, facilityId: $facilityId, noSatellite: $noSatellite) {
     id
     createdAt
     updatedAt
@@ -317,17 +317,6 @@ query validatorsPressureTest {
   }
 }
 
-query FacilitiesSideBar {
-  allFacilities {
-    id
-    name
-    satellites {
-      id
-      name
-    }
-  }
-}
-
 query pressureTestsById($pipelineId: String) {
   pressureTestsById(pipelineId: $pipelineId) {
     id
@@ -360,5 +349,16 @@ query PipelineFlow($pipelineFlowId: [String]!) {
     lastProduction
     firstInjection
     lastInjection
+  }
+}
+
+query SideBar {
+  sideBar {
+    facilityId
+    facilityName
+    satellites {
+      satelliteId
+      satelliteName
+    }
   }
 }

@@ -10,7 +10,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { usePipelinesByIdQueryLazyQuery, useGetValidatorsQuery, PipelinesByIdQueryQuery, GetValidatorsQuery } from '../graphql/generated/graphql';
+import { usePipelinesByIdQueryLazyQuery, useGetValidatorsQuery } from '../graphql/generated/graphql';
 
 
 export interface IHeader {
@@ -42,6 +42,10 @@ export default function PipelineDatabase() {
     pipelinesById({ variables: { facilityId: e.currentTarget.value } })
   }
 
+  function handleUnconnectedPipelinesClick(e: React.MouseEvent<HTMLButtonElement>): void {
+    pipelinesById({ variables: { noSatellite: e.currentTarget.value } })
+  }
+
   const handleFilterTextChange = (e: React.FormEvent<HTMLInputElement>): void => {
     const { name, value }: { name: string; value: string } = e.currentTarget;
     const myHeader = name as keyof IHeader;
@@ -67,6 +71,7 @@ export default function PipelineDatabase() {
             onAllPipelinesClick={pipelinesById}
             onSatelliteClick={handleSatelliteClick}
             onFacilityClick={handleFacilityClick}
+            onUnconnectedPipelinesClick={handleUnconnectedPipelinesClick}
           />
         </div>
       </div>
