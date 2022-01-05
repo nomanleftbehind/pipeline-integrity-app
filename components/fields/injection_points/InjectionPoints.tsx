@@ -21,7 +21,7 @@ import { usePipelineFlowQuery, PipelineFlowQuery, useConnectUpstreamPipelineMuta
 type IInjectionPoints = Pick<IPipeline, 'injectionPoints' | 'upstream'>;
 type IUpstream = IPipeline['upstream'];
 
-type IInferFromArray<T> = T extends (infer U)[] ? U : never;
+export type IInferFromArray<T> = T extends (infer U)[] ? U : never;
 
 type IUpstreamPipelineFlow = IInferFromArray<PipelineFlowQuery['pipelineFlow']>;
 type ISourceFlow = IInferFromArray<IInjectionPoints['injectionPoints']>;
@@ -47,8 +47,8 @@ export interface ICollectFlowDataProps {
 
 
 export default function InjectionPoints({ open, id, injectionPoints }: IInjectionPointsProps) {
-  const [showUpstreamPipelinesForm, setShowUpstreamPipelinesForm] = React.useState<boolean>(false);
-  const [showSourcesForm, setShowSourcesForm] = React.useState<boolean>(false);
+  const [showUpstreamPipelinesForm, setShowUpstreamPipelinesForm] = React.useState(false);
+  const [showSourcesForm, setShowSourcesForm] = React.useState(false);
 
   const { injectionPoints: sources, upstream: upstreamPipelines } = injectionPoints;
 

@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import InjectionPoints from '../fields/injection_points/InjectionPoints';
 import PipelineProperties from '../fields/PipelineProperties';
+import PressureTests from '../../pages/pressuretests';
 import { IPipeline, IValidators } from './RenderPipeline';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
+import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
@@ -64,7 +66,8 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
             >
               <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Injection Points" {...a11yProps(0)} />
               <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Mechanical Properties" {...a11yProps(1)} />
-              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="System Fields" {...a11yProps(2)} />
+              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Pressure Tests" {...a11yProps(2)} />
+              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="System Fields" {...a11yProps(3)} />
             </Tabs>
             <TabPanel value={value} index={0}>
               <InjectionPoints
@@ -84,6 +87,19 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
             </TabPanel>
             {/* <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={2} /> */}
             <TabPanel value={value} index={2}>
+              <Collapse in={open} timeout="auto" unmountOnExit>
+                <Box sx={{ margin: 1 }}>
+                  <Typography variant="h6" gutterBottom component="div">
+                    Pressure Tests
+                  </Typography>
+                  <PressureTests
+                    id={id}
+                    in_tab_panel={true}
+                  />
+                </Box>
+              </Collapse>
+            </TabPanel>
+            <TabPanel value={value} index={3}>
               <PipelineProperties
                 open={open}
                 id={id}
