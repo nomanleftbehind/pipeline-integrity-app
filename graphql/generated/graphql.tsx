@@ -255,6 +255,7 @@ export type MaterialEnumObject = {
 };
 
 export type Mutation = {
+  addPressureTest?: Maybe<PressureTest>;
   connectSource?: Maybe<Pipeline>;
   connectUpstreamPipeline?: Maybe<Pipeline>;
   createFacility?: Maybe<Facility>;
@@ -273,6 +274,11 @@ export type Mutation = {
   editSatellite?: Maybe<Satellite>;
   login?: Maybe<AuthPayload>;
   signup?: Maybe<AuthPayload>;
+};
+
+
+export type MutationAddPressureTestArgs = {
+  pipelineId: Scalars['String'];
 };
 
 
@@ -897,6 +903,13 @@ export type EditPressureTestMutationVariables = Exact<{
 
 export type EditPressureTestMutation = { editPressureTest?: { id: string } | null | undefined };
 
+export type AddPressureTestMutationVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type AddPressureTestMutation = { addPressureTest?: { id: string } | null | undefined };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1408,6 +1421,39 @@ export function useEditPressureTestMutation(baseOptions?: Apollo.MutationHookOpt
 export type EditPressureTestMutationHookResult = ReturnType<typeof useEditPressureTestMutation>;
 export type EditPressureTestMutationResult = Apollo.MutationResult<EditPressureTestMutation>;
 export type EditPressureTestMutationOptions = Apollo.BaseMutationOptions<EditPressureTestMutation, EditPressureTestMutationVariables>;
+export const AddPressureTestDocument = gql`
+    mutation AddPressureTest($pipelineId: String!) {
+  addPressureTest(pipelineId: $pipelineId) {
+    id
+  }
+}
+    `;
+export type AddPressureTestMutationFn = Apollo.MutationFunction<AddPressureTestMutation, AddPressureTestMutationVariables>;
+
+/**
+ * __useAddPressureTestMutation__
+ *
+ * To run a mutation, you first call `useAddPressureTestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddPressureTestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addPressureTestMutation, { data, loading, error }] = useAddPressureTestMutation({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useAddPressureTestMutation(baseOptions?: Apollo.MutationHookOptions<AddPressureTestMutation, AddPressureTestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddPressureTestMutation, AddPressureTestMutationVariables>(AddPressureTestDocument, options);
+      }
+export type AddPressureTestMutationHookResult = ReturnType<typeof useAddPressureTestMutation>;
+export type AddPressureTestMutationResult = Apollo.MutationResult<AddPressureTestMutation>;
+export type AddPressureTestMutationOptions = Apollo.BaseMutationOptions<AddPressureTestMutation, AddPressureTestMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {

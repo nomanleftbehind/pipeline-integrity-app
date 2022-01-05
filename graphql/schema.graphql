@@ -246,6 +246,7 @@ type MaterialEnumObject {
 }
 
 type Mutation {
+  addPressureTest(pipelineId: String!): PressureTest
   connectSource(id: String!, sourceId: String!): Pipeline
   connectUpstreamPipeline(id: String!, upstreamId: String!): Pipeline
   createFacility(data: FacilityCreateInput!): Facility

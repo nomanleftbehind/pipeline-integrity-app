@@ -86,3 +86,9 @@ mutation EditPressureTest($id: String!, $pipelineId: String, $limitingSpec: Limi
     id
   }
 }
+
+mutation AddPressureTest($pipelineId: String!) {
+  addPressureTest(pipelineId: $pipelineId) {
+    id
+  }
+}

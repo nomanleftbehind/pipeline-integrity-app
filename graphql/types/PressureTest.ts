@@ -1,5 +1,6 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
 import { databaseEnumToServerEnum } from './Pipeline';
+import { getUserId } from '../utils';
 import { Context } from '../context';
 
 
@@ -110,6 +111,21 @@ export const PressureTestMutation = extendType({
         })
 
       },
+    })
+    t.field('addPressureTest', {
+      type: 'PressureTest',
+      args: {
+        pipelineId: nonNull(stringArg())
+      },
+      resolve: (_parent, { pipelineId }, ctx: Context) => {
+        const userId = getUserId(ctx);
+        return ctx.prisma.pressureTest.create({
+          data: {
+            pipelineId: pipelineId,
+            createdById: String(userId),
+          }
+        })
+      }
     })
     t.field('deletePressureTest', {
       type: 'PressureTest',
