@@ -102,7 +102,8 @@ export default function InjectionPointForm({ injectionPointId, injectionPointTyp
         blurOnSelect
         autoComplete
         onChange={(_, value) => {
-          if (value) { setState(value.id) };
+          // When we click `Clear` button, value is set to null, and in that case we want state to be set back to default value of empty string.
+          setState(value ? value.id : '');
         }}
         isOptionEqualToValue={(option, value) => option !== value}
         onInputChange={(_, keyboardInput, reason) => {
@@ -117,7 +118,7 @@ export default function InjectionPointForm({ injectionPointId, injectionPointTyp
           for (let i = 0; i < optionsArray.length; i++) {
             const option = optionsArray[i];
             if (option.value.toUpperCase() === keyboardInput.toUpperCase()) {
-              // If we match the actual injection point string value with manual keyboard input, set state to that injection point's id.
+              // In case we are manually typing with keyboard, set state to that injection point's id only if we match the actual injection point string value with keyboard input.
               setState(option.id);
             }
           }
@@ -126,7 +127,8 @@ export default function InjectionPointForm({ injectionPointId, injectionPointTyp
         options={optionsArray}
         getOptionLabel={(option) => option.value}
         groupBy={(option) => option.groupBy}
-        sx={{ width: 400 }}
+        size="small"
+        sx={{ width: 400, /* Default button padding is 12px and makes button fall awkwardly half way outside of input element, so we are setting it to 0 */ '& button': { padding: 0 } }}
         renderInput={(params) => <TextField {...params} label={injectionPointType} />}
       />
       <div className="form-r">

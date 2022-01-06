@@ -46,8 +46,6 @@ export default function EntryField({ table, id, columnName, record, validator }:
 
   const toggleEdit = (): void => {
     setEdit(!edit);
-    console.log('record:', record);
-    
     setState(record ? record.toString() : (!validatorIsString && validator) ? Object.keys(validator)[0] : "");
   }
 
