@@ -910,6 +910,13 @@ export type AddPressureTestMutationVariables = Exact<{
 
 export type AddPressureTestMutation = { addPressureTest?: { id: string } | null | undefined };
 
+export type DeletePressureTestMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeletePressureTestMutation = { deletePressureTest?: { id: string } | null | undefined };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1454,6 +1461,39 @@ export function useAddPressureTestMutation(baseOptions?: Apollo.MutationHookOpti
 export type AddPressureTestMutationHookResult = ReturnType<typeof useAddPressureTestMutation>;
 export type AddPressureTestMutationResult = Apollo.MutationResult<AddPressureTestMutation>;
 export type AddPressureTestMutationOptions = Apollo.BaseMutationOptions<AddPressureTestMutation, AddPressureTestMutationVariables>;
+export const DeletePressureTestDocument = gql`
+    mutation DeletePressureTest($id: String!) {
+  deletePressureTest(id: $id) {
+    id
+  }
+}
+    `;
+export type DeletePressureTestMutationFn = Apollo.MutationFunction<DeletePressureTestMutation, DeletePressureTestMutationVariables>;
+
+/**
+ * __useDeletePressureTestMutation__
+ *
+ * To run a mutation, you first call `useDeletePressureTestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePressureTestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePressureTestMutation, { data, loading, error }] = useDeletePressureTestMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeletePressureTestMutation(baseOptions?: Apollo.MutationHookOptions<DeletePressureTestMutation, DeletePressureTestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeletePressureTestMutation, DeletePressureTestMutationVariables>(DeletePressureTestDocument, options);
+      }
+export type DeletePressureTestMutationHookResult = ReturnType<typeof useDeletePressureTestMutation>;
+export type DeletePressureTestMutationResult = Apollo.MutationResult<DeletePressureTestMutation>;
+export type DeletePressureTestMutationOptions = Apollo.BaseMutationOptions<DeletePressureTestMutation, DeletePressureTestMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {

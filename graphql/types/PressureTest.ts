@@ -65,12 +65,12 @@ export const PressureTestQuery = extendType({
         if (pipelineId) {
           return ctx.prisma.pressureTest.findMany({
             where: { pipelineId },
-            orderBy: { pressureTestDate: 'asc' },
+            orderBy: { createdAt: 'desc' },
           })
         } else {
           return ctx.prisma.pressureTest.findMany({
             orderBy:
-              { pressureTestDate: 'asc' },
+              { createdAt: 'desc' },
           })
         }
       }
@@ -132,9 +132,9 @@ export const PressureTestMutation = extendType({
       args: {
         id: nonNull(stringArg())
       },
-      resolve: (_parent, args, ctx: Context) => {
+      resolve: (_parent, { id }, ctx: Context) => {
         return ctx.prisma.pressureTest.delete({
-          where: { id: args.id }
+          where: { id }
         })
       }
     })

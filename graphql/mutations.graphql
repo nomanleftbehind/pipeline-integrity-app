@@ -92,3 +92,9 @@ mutation AddPressureTest($pipelineId: String!) {
     id
   }
 }
+
+mutation DeletePressureTest($id: String!) {
+  deletePressureTest(id: $id) {
+    id
+  }
+}
