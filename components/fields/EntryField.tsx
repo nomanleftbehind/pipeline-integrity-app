@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { useEditPipelineMutation, PipelinesByIdQueryDocument, useEditPigRunMutation, PigRunByPipelineIdDocument, useEditPressureTestMutation, PressureTestsByIdDocument } from '../../graphql/generated/graphql';
+import { useEditPipelineMutation, PipelinesByIdQueryDocument, useEditPigRunMutation, PigRunsByPipelineIdDocument, useEditPressureTestMutation, PressureTestsByPipelineIdDocument } from '../../graphql/generated/graphql';
 import { IValidator, IRecord } from '../fields/PipelineProperties';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DateAdapter from '@mui/lab/AdapterDateFns';
@@ -15,7 +15,7 @@ import TextField from '@mui/material/TextField';
 
 
 interface ITextFieldProps {
-  table?: string;
+  table?: 'pressure tests' | 'pig runs';
   id: string;
   columnName: string;
   record: IRecord;
@@ -30,8 +30,8 @@ export default function EntryField({ table, id, columnName, record, validator }:
   const recordAsKey = record as keyof typeof validator;
 
   const [editPipeline, { data: dataPipeline }] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
-  const [editPigRun, { data: dataPigRun }] = useEditPigRunMutation({ refetchQueries: [PigRunByPipelineIdDocument, 'PigRunByPipelineId'] });
-  const [editPressureTest, { data: dataPressureTest }] = useEditPressureTestMutation({ refetchQueries: [PressureTestsByIdDocument, 'pressureTestsById'] });
+  const [editPigRun, { data: dataPigRun }] = useEditPigRunMutation({ refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
+  const [editPressureTest, { data: dataPressureTest }] = useEditPressureTestMutation({ refetchQueries: [PressureTestsByPipelineIdDocument, 'PressureTestsByPipelineId'] });
 
   const recordIfDateDisplay = typeof record === "string" && record.length === 24 && record.slice(-1) === 'Z' ? record.slice(0, 10) : record;
 
@@ -81,11 +81,11 @@ export default function EntryField({ table, id, columnName, record, validator }:
     e.preventDefault();
     const mutationOptions = { variables: { id: id, [columnName]: validatorIsString && typeof record === "number" ? Number(e.currentTarget.name) : e.currentTarget.name } }
     switch (table) {
-      case 'pigRun':
+      case 'pig runs':
         console.log(table)
         editPigRun(mutationOptions);
         break;
-      case 'pressureTest':
+      case 'pressure tests':
         console.log(table)
         editPressureTest(mutationOptions);
         break;

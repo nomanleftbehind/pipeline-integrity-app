@@ -1,15 +1,14 @@
+import { ReactNode } from 'react';
 import Layout from '../components/layout';
 import MenuBar from '../components/menubar';
-import { ReactNode } from 'react';
 import GenericTable from '../components/rows/GenericTable';
 
 
-export default function PressureTests() {
-  return <GenericTable table='pressure tests' />
+export default function PigRuns() {
+  return <GenericTable table='pig runs' />
 }
 
-PressureTests.getLayout = function getLayout(page: ReactNode) {
-
+PigRuns.getLayout = function getLayout(page: ReactNode) {
   return (
     <Layout>
       <MenuBar />

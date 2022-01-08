@@ -34,6 +34,11 @@ export default function ManuBar() {
               </Link>
             </li>
             <li>
+              <Link href="/pigruns">
+                <a>Pig Runs</a>
+              </Link>
+            </li>
+            <li>
               <Link href="/webassembly">
                 <a>Webassembly</a>
               </Link>

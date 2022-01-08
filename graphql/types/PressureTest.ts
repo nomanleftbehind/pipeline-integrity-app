@@ -56,7 +56,7 @@ export const PressureTest = objectType({
 export const PressureTestQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.list.field('pressureTestsById', {
+    t.list.field('pressureTestsByPipelineId', {
       type: 'PressureTest',
       args: {
         pipelineId: stringArg(),
@@ -115,7 +115,7 @@ export const PressureTestMutation = extendType({
     t.field('addPressureTest', {
       type: 'PressureTest',
       args: {
-        pipelineId: nonNull(stringArg())
+        pipelineId: nonNull(stringArg()),
       },
       resolve: (_parent, { pipelineId }, ctx: Context) => {
         const userId = getUserId(ctx);
@@ -130,7 +130,7 @@ export const PressureTestMutation = extendType({
     t.field('deletePressureTest', {
       type: 'PressureTest',
       args: {
-        id: nonNull(stringArg())
+        id: nonNull(stringArg()),
       },
       resolve: (_parent, { id }, ctx: Context) => {
         return ctx.prisma.pressureTest.delete({

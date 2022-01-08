@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import InjectionPoints from '../fields/injection_points/InjectionPoints';
 import PipelineProperties from '../fields/PipelineProperties';
-import PressureTests from '../../pages/pressuretests';
+import GenericTable from './GenericTable';
 import { IPipeline, IValidators } from './RenderPipeline';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
@@ -67,7 +67,8 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Injection Points" {...a11yProps(0)} />
               <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Mechanical Properties" {...a11yProps(1)} />
               <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Pressure Tests" {...a11yProps(2)} />
-              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="System Fields" {...a11yProps(3)} />
+              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Pig Runs" {...a11yProps(3)} />
+              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="System Fields" {...a11yProps(4)} />
             </Tabs>
             <TabPanel value={value} index={0}>
               <InjectionPoints
@@ -92,14 +93,29 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
                   <Typography variant="h6" gutterBottom component="div">
                     Pressure Tests
                   </Typography>
-                  <PressureTests
-                    id={id}
+                  <GenericTable
+                    pipelineId={id}
                     in_tab_panel={true}
+                    table='pressure tests'
                   />
                 </Box>
               </Collapse>
             </TabPanel>
             <TabPanel value={value} index={3}>
+              <Collapse in={open} timeout="auto" unmountOnExit>
+                <Box sx={{ margin: 1 }}>
+                  <Typography variant="h6" gutterBottom component="div">
+                    Pig Runs
+                  </Typography>
+                  <GenericTable
+                    pipelineId={id}
+                    in_tab_panel={true}
+                    table='pig runs'
+                  />
+                </Box>
+              </Collapse>
+            </TabPanel>
+            <TabPanel value={value} index={4}>
               <PipelineProperties
                 open={open}
                 id={id}

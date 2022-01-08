@@ -75,12 +75,6 @@ mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $seg
   }
 }
 
-mutation EditPigRun($id: String!, $pipelineId: String, $pigType: PigTypeEnum, $date: DateTime, $comment: String, $operatorId: String) {
-  editPigRun(id: $id, pipelineId: $pipelineId, pigType: $pigType, date: $date, comment: $comment, operatorId: $operatorId) {
-    id
-  }
-}
-
 mutation EditPressureTest($id: String!, $pipelineId: String, $limitingSpec: LimitingSpecEnum, $infoSentOutDate: DateTime, $ddsDate: DateTime, $pressureTestDate: DateTime, $pressureTestReceivedDate: DateTime, $integritySheetUpdated: DateTime, $comment: String) {
   editPressureTest(id: $id, pipelineId: $pipelineId, limitingSpec: $limitingSpec, infoSentOutDate: $infoSentOutDate, ddsDate: $ddsDate, pressureTestDate: $pressureTestDate, pressureTestReceivedDate: $pressureTestReceivedDate, integritySheetUpdated: $integritySheetUpdated, comment: $comment) {
     id
@@ -95,6 +89,24 @@ mutation AddPressureTest($pipelineId: String!) {
 
 mutation DeletePressureTest($id: String!) {
   deletePressureTest(id: $id) {
+    id
+  }
+}
+
+mutation EditPigRun($id: String!, $pipelineId: String, $pigType: PigTypeEnum, $date: DateTime, $comment: String, $operatorId: String) {
+  editPigRun(id: $id, pipelineId: $pipelineId, pigType: $pigType, date: $date, comment: $comment, operatorId: $operatorId) {
+    id
+  }
+}
+
+mutation AddPigRun($pipelineId: String!) {
+  addPigRun(pipelineId: $pipelineId) {
+    id
+  }
+}
+
+mutation DeletePigRun($id: String!) {
+  deletePigRun(id: $id) {
     id
   }
 }

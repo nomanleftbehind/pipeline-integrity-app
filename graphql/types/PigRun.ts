@@ -1,5 +1,5 @@
-import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
-import { User } from './User';
+import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
+import { getUserId } from '../utils';
 import { Pipeline } from './Pipeline';
 import { Context } from '../context';
 
@@ -57,16 +57,23 @@ export const PigRun = objectType({
 export const PigRunQuery = extendType({
 	type: 'Query',
 	definition(t) {
-		t.list.field('pigRunByPipelineId', {
+		t.list.field('pigRunsByPipelineId', {
 			type: 'PigRun',
 			args: {
-				pipelineId: nonNull(stringArg())
+				pipelineId: stringArg(),
 			},
-			resolve: async (_parent, args, ctx: Context) => {
-				const result = await ctx.prisma.pigRun.findMany({
-					where: { pipelineId: args.pipelineId }
-				})
-				return result;
+			resolve: async (_parent, { pipelineId }, ctx: Context) => {
+				if (pipelineId) {
+					const result = await ctx.prisma.pigRun.findMany({
+						where: { pipelineId }
+					})
+					return result;
+				} else {
+					const result = await ctx.prisma.pigRun.findMany({
+						orderBy: { createdAt: 'desc' }
+					})
+					return result;
+				}
 			},
 		})
 	}
@@ -86,8 +93,8 @@ export const PigRunMutation = extendType({
 				comment: stringArg(),
 				operatorId: stringArg(),
 			},
-			resolve: async (_, args, context: Context) => {
-				return context.prisma.pigRun.update({
+			resolve: async (_parent, args, ctx: Context) => {
+				return ctx.prisma.pigRun.update({
 					where: { id: args.id },
 					data: {
 						pipelineId: args.pipelineId || undefined,
@@ -100,14 +107,33 @@ export const PigRunMutation = extendType({
 
 			},
 		})
+		t.field('addPigRun', {
+			type: 'PigRun',
+			args: {
+				pipelineId: nonNull(stringArg()),
+			},
+			resolve: (_parent, { pipelineId }, ctx: Context) => {
+				const userId = getUserId(ctx);
+				// When adding new pig run entry, date when pig was run is mandatory, so we set it to today as default.
+				const date = new Date();
+				date.setHours(0, 0, 0, 0);
+				return ctx.prisma.pigRun.create({
+					data: {
+						pipelineId: pipelineId,
+						date,
+						createdById: String(userId),
+					}
+				})
+			}
+		})
 		t.field('deletePigRun', {
 			type: 'PigRun',
 			args: {
-				id: nonNull(stringArg())
+				id: nonNull(stringArg()),
 			},
-			resolve: (_parent, args, ctx: Context) => {
+			resolve: (_parent, { id }, ctx: Context) => {
 				return ctx.prisma.pigRun.delete({
-					where: { id: args.id }
+					where: { id }
 				})
 			}
 		})

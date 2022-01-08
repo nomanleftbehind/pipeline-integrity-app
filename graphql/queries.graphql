@@ -126,12 +126,16 @@ query sourceOptions {
   }
 }
 
-query PigRunByPipelineId($pipelineId: String!) {
-  pigRunByPipelineId(pipelineId: $pipelineId) {
+query PigRunsByPipelineId($pipelineId: String) {
+  pigRunsByPipelineId(pipelineId: $pipelineId) {
     id
     pigType
     date
     comment
+    pipeline {
+      license
+      segment
+    }
     operator {
       email
     }
@@ -140,6 +144,18 @@ query PigRunByPipelineId($pipelineId: String!) {
     }
     createdAt
     updatedAt
+  }
+}
+
+query ValidatorsPigRun {
+  validators {
+    pigTypeEnum {
+      GSCR
+      PSCR
+      Foam
+      Scrapper
+    }
+    anyTextMatchPattern
   }
 }
 
@@ -317,8 +333,8 @@ query validatorsPressureTest {
   }
 }
 
-query pressureTestsById($pipelineId: String) {
-  pressureTestsById(pipelineId: $pipelineId) {
+query PressureTestsByPipelineId($pipelineId: String) {
+  pressureTestsByPipelineId(pipelineId: $pipelineId) {
     id
     pipeline {
       license
