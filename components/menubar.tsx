@@ -1,8 +1,18 @@
-import Link from 'next/link';
-import { useContext } from 'react';
-import { UserContext } from '../pages/_app';
-import DropDown from './Dropdown';
-import styles from './sidebar.module.css';
+import Link from "next/link";
+import { useContext } from "react";
+import { UserContext } from "../pages/_app";
+import DropDown from "./Dropdown";
+import styles from "./sidebar.module.css";
+
+type LinkProp = {
+  href: string;
+  name: string;
+};
+
+const links: LinkProp[] = [
+  { href: "/pipelines", name: "Pipelines" },
+  { href: "/pressuretests", name: "Pressure Tests" },
+];
 
 export default function ManuBar() {
   const { user } = useContext(UserContext);
@@ -10,9 +20,10 @@ export default function ManuBar() {
   return (
     <nav className={styles.nav}>
       <ul>
-        <li><Link href="/">
-          <a>Home</a>
-        </Link>
+        <li>
+          <Link href="/">
+            <a>Home</a>
+          </Link>
         </li>
         {!user && (
           <li>
@@ -21,40 +32,22 @@ export default function ManuBar() {
             </Link>
           </li>
         )}
+        {links.map(({ href, name }) => (
+          <li>
+            <Link href={href}>
+              <a>{name}</a>
+            </Link>
+          </li>
+        ))}
+
         {user && (
           <>
-            <li>
-              <Link href="/pipelines">
-                <a>Pipelines</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/pressuretests">
-                <a>Pressure Tests</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/webassembly">
-                <a>Webassembly</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/satellites">
-                <a>Satellites</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/facilities">
-                <a>Facilities</a>
-              </Link>
-            </li>
             <li>
               <DropDown />
             </li>
           </>
-        )
-        }
+        )}
       </ul>
     </nav>
-  )
+  );
 }

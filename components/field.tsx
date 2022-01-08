@@ -1,27 +1,34 @@
-import { HTMLInputTypeAttribute } from 'react'
+import { HTMLInputTypeAttribute } from "react";
 
 interface IFieldProps {
-  name: string | undefined;
+  name?: string;
   label: string;
-  type: HTMLInputTypeAttribute | undefined;
-  autoComplete: string | undefined;
-  required: boolean | undefined;
+  type?: HTMLInputTypeAttribute;
+  autoComplete?: string;
+  required?: boolean;
 }
 
-export default function Field({ name, label, type, autoComplete, required }: IFieldProps) {
+export default function Field({
+  name,
+  label,
+  type,
+  autoComplete,
+  required,
+}: IFieldProps) {
+  const formattedId = [name, "label"].join("-");
   return (
     <div>
-      <label id={[name, 'label'].join('-')} htmlFor={[name, 'input'].join('-')}>
-        {label} {required ? <span title="Required">*</span> : undefined}
+      <label id={formattedId} htmlFor={formattedId}>
+        {label} {required ? <span title="Required">*</span> : null}
       </label>
       <br />
       <input
         autoComplete={autoComplete}
-        id={[name, 'input'].join('-')}
+        id={formattedId}
         name={name}
         required={required}
         type={type}
       />
     </div>
-  )
+  );
 }

@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { useContext } from 'react';
-import { UserContext } from '../pages/_app';
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import { useState } from "react";
+import { useContext } from "react";
+import { UserContext } from "../pages/_app";
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 
 export default function DropdownMenu() {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const { user } = useContext(UserContext);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -22,8 +22,8 @@ export default function DropdownMenu() {
         id="basic-button"
         aria-controls="basic-menu"
         aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        style={{textTransform: 'none', padding: 0}}
+        aria-expanded={open ? "true" : undefined}
+        style={{ textTransform: "none", padding: 0 }}
         color="inherit"
         onClick={handleClick}
       >
@@ -35,7 +35,7 @@ export default function DropdownMenu() {
         open={open}
         onClose={handleClose}
         MenuListProps={{
-          'aria-labelledby': 'basic-button',
+          "aria-labelledby": "basic-button",
         }}
       >
         <MenuItem onClick={handleClose}>Profile</MenuItem>
