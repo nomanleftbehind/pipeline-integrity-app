@@ -364,28 +364,26 @@ export const PipelineQuery = extendType({
         facilityId: stringArg(),
         noSatellite: stringArg(),
       },
-      resolve: async (_parent, args, ctx: Context) => {
-        if (args.satelliteId) {
+      resolve: async (_parent, { facilityId, satelliteId, noSatellite }, ctx: Context) => {
+        if (satelliteId) {
           return ctx.prisma.pipeline.findMany({
-            where: { satelliteId: args.satelliteId },
+            where: { satelliteId },
             orderBy: [
               { license: 'asc' },
               { segment: 'asc' }
             ]
           })
-        } else if (args.facilityId) {
+        } else if (facilityId) {
           return ctx.prisma.pipeline.findMany({
             where: {
-              satellite: {
-                facilityId: args.facilityId
-              }
+              satellite: { facilityId }
             },
             orderBy: [
               { license: 'asc' },
               { segment: 'asc' }
             ]
           })
-        } else if (args.noSatellite === 'no satellite') {
+        } else if (noSatellite === 'no satellite') {
           return ctx.prisma.pipeline.findMany({
             where: {
               satellite: null
