@@ -7,6 +7,15 @@ import styles from './sidebar.module.css';
 export default function ManuBar() {
   const { user } = useContext(UserContext);
 
+  const links = [
+    { href: 'pipelines', a: 'Pipelines' },
+    { href: 'pressuretests', a: 'Pressure Tests' },
+    { href: 'pigruns', a: 'Pig Runs' },
+    { href: 'webassembly', a: 'WebAssembly' },
+    { href: 'satellites', a: 'Satellites' },
+    { href: 'facilities', a: 'Facilities' },
+  ]
+
   return (
     <nav className={styles.nav}>
       <ul>
@@ -23,36 +32,15 @@ export default function ManuBar() {
         )}
         {user && (
           <>
-            <li>
-              <Link href="/pipelines">
-                <a>Pipelines</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/pressuretests">
-                <a>Pressure Tests</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/pigruns">
-                <a>Pig Runs</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/webassembly">
-                <a>Webassembly</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/satellites">
-                <a>Satellites</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/facilities">
-                <a>Facilities</a>
-              </Link>
-            </li>
+            {links.map(({ href, a }) => {
+              return (
+                <li key={href}>
+                  <Link href={href}>
+                    <a>{a}</a>
+                  </Link>
+                </li>
+              )
+            })}
             <li>
               <DropDown />
             </li>
