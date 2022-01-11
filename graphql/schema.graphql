@@ -399,7 +399,7 @@ type Query {
   pipelineById(id: String!): Pipeline
   pipelineFlow(id: [String]!): [PipelineFlow]
   pipelineOptions: [PipelineOptions]
-  pipelinesById(facilityId: String, noSatellite: String, satelliteId: String): [Pipeline]
+  pipelinesById(id: String, table: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
   pressureTestsByPipelineId(pipelineId: String): [PressureTest]
   sideBar: [SideBar]
@@ -429,8 +429,8 @@ input SatelliteCreateInput {
 }
 
 type SatelliteSideBar {
-  satelliteId: String!
-  satelliteName: String!
+  id: String!
+  name: String!
 }
 
 input SatelliteUniqueInput {
@@ -439,8 +439,8 @@ input SatelliteUniqueInput {
 }
 
 type SideBar {
-  facilityId: String!
-  facilityName: String!
+  id: String!
+  name: String!
   satellites: [SatelliteSideBar!]!
 }
 

@@ -8,8 +8,8 @@ query Me {
   }
 }
 
-query pipelinesByIdQuery($satelliteId: String, $facilityId: String, $noSatellite: String) {
-  pipelinesById(satelliteId: $satelliteId, facilityId: $facilityId, noSatellite: $noSatellite) {
+query pipelinesByIdQuery($table: String, $id: String) {
+  pipelinesById(table: $table, id: $id) {
     id
     createdAt
     updatedAt
@@ -370,11 +370,11 @@ query PipelineFlow($pipelineFlowId: [String]!) {
 
 query SideBar {
   sideBar {
-    facilityId
-    facilityName
+    id
+    name
     satellites {
-      satelliteId
-      satelliteName
+      id
+      name
     }
   }
 }

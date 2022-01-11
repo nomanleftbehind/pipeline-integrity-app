@@ -589,9 +589,8 @@ export type QueryPipelineFlowArgs = {
 
 
 export type QueryPipelinesByIdArgs = {
-  facilityId?: Maybe<Scalars['String']>;
-  noSatellite?: Maybe<Scalars['String']>;
-  satelliteId?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  table?: Maybe<Scalars['String']>;
 };
 
 
@@ -626,8 +625,8 @@ export type SatelliteCreateInput = {
 };
 
 export type SatelliteSideBar = {
-  satelliteId: Scalars['String'];
-  satelliteName: Scalars['String'];
+  id: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type SatelliteUniqueInput = {
@@ -636,8 +635,8 @@ export type SatelliteUniqueInput = {
 };
 
 export type SideBar = {
-  facilityId: Scalars['String'];
-  facilityName: Scalars['String'];
+  id: Scalars['String'];
+  name: Scalars['String'];
   satellites: Array<SatelliteSideBar>;
 };
 
@@ -943,9 +942,8 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 export type MeQuery = { me?: { id: string, email: string, firstName: string, lastName: string, role: Role } | null | undefined };
 
 export type PipelinesByIdQueryQueryVariables = Exact<{
-  satelliteId?: Maybe<Scalars['String']>;
-  facilityId?: Maybe<Scalars['String']>;
-  noSatellite?: Maybe<Scalars['String']>;
+  table?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -1012,7 +1010,7 @@ export type PipelineFlowQuery = { pipelineFlow?: Array<{ id: string, oil: number
 export type SideBarQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SideBarQuery = { sideBar?: Array<{ facilityId: string, facilityName: string, satellites: Array<{ satelliteId: string, satelliteName: string }> } | null | undefined> | null | undefined };
+export type SideBarQuery = { sideBar?: Array<{ id: string, name: string, satellites: Array<{ id: string, name: string }> } | null | undefined> | null | undefined };
 
 
 export const LoginDocument = gql`
@@ -1624,12 +1622,8 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const PipelinesByIdQueryDocument = gql`
-    query pipelinesByIdQuery($satelliteId: String, $facilityId: String, $noSatellite: String) {
-  pipelinesById(
-    satelliteId: $satelliteId
-    facilityId: $facilityId
-    noSatellite: $noSatellite
-  ) {
+    query pipelinesByIdQuery($table: String, $id: String) {
+  pipelinesById(table: $table, id: $id) {
     id
     createdAt
     updatedAt
@@ -1694,9 +1688,8 @@ export const PipelinesByIdQueryDocument = gql`
  * @example
  * const { data, loading, error } = usePipelinesByIdQueryQuery({
  *   variables: {
- *      satelliteId: // value for 'satelliteId'
- *      facilityId: // value for 'facilityId'
- *      noSatellite: // value for 'noSatellite'
+ *      table: // value for 'table'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -2305,11 +2298,11 @@ export type PipelineFlowQueryResult = Apollo.QueryResult<PipelineFlowQuery, Pipe
 export const SideBarDocument = gql`
     query SideBar {
   sideBar {
-    facilityId
-    facilityName
+    id
+    name
     satellites {
-      satelliteId
-      satelliteName
+      id
+      name
     }
   }
 }

@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client'
 import { Context } from '../context';
 import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
 
+
 export const PipelineOptions = objectType({
   name: 'PipelineOptions',
   definition(t) {
@@ -52,16 +53,16 @@ export const FacilitySatelliteSideBar = objectType({
 export const SatelliteSideBar = objectType({
   name: 'SatelliteSideBar',
   definition(t) {
-    t.nonNull.string('satelliteId')
-    t.nonNull.string('satelliteName')
+    t.nonNull.string('id')
+    t.nonNull.string('name')
   }
 })
 
 export const SideBar = objectType({
   name: 'SideBar',
   definition(t) {
-    t.nonNull.string('facilityId')
-    t.nonNull.string('facilityName')
+    t.nonNull.string('id')
+    t.nonNull.string('name')
     t.nonNull.list.nonNull.field('satellites', { type: 'SatelliteSideBar' })
   }
 })
@@ -118,51 +119,37 @@ export const InjectionPointOptionsQuery = extendType({
     t.list.field('sideBar', {
       type: 'SideBar',
       resolve: async (_parent, args, ctx: Context) => {
-
-        // We need to run this custom query with full outer join between Facility and Satellite tables
-        // because it is possible that facility field in Satellite table is null.
-        // If we wrote normal Prisma resolver, we wouldn't get any satallites that are not connected to a facility.
-        const sqlReturn = await ctx.prisma.$queryRaw<NexusGenObjects['FacilitySatelliteSideBar'][]>`
-        SELECT
-
-        COALESCE(f.id, 'no facility id') as "facilityId",
-        COALESCE(f.name, 'no facility') as "facilityName",
-        COALESCE(s.id, 'no satellite id') as "satelliteId",
-        COALESCE(s.name, 'no satellite') as "satelliteName"
-        
-        FROM "ppl_db"."Facility" f
-        FULL JOIN "ppl_db"."Satellite" s ON s."facilityId" = f.id
-        
-        ORDER BY f.name, s.name
-        `
-
-        // This is the resolver return value. It is an empty array at the moment, but we will reorganize data in the object returned by raw sql query and push it inside this array.
-        const result = [];
-        let satellites = [];
-        let obj = {} as { facilityId: string; facilityName: string; satellites: { satelliteId: string; satelliteName: string; }[] };
-
-        for (let i = 0; i < sqlReturn.length; i++) {
-          const row = sqlReturn[i];
-          const previousRow = sqlReturn[i - 1] as typeof row | undefined; // TypeScript doesn't realize that previous row might be undefined.
-          const nextRow = sqlReturn[i + 1] as typeof row | undefined; // TypeScript doesn't realize that next row might be undefined.
-          satellites.push({ satelliteId: row.satelliteId, satelliteName: row.satelliteName });
-
-          if (previousRow?.facilityId !== row.facilityId) {
-            // First row of the new facility
-            obj.facilityId = row.facilityId;
-            obj.facilityName = row.facilityName;
+        const facility = await ctx.prisma.facility.findMany({
+          select: {
+            id: true,
+            name: true,
+            satellites: {
+              select: {
+                id: true,
+                name: true,
+              },
+              orderBy: {
+                name: 'asc'
+              }
+            }
+          },
+          orderBy: {
+            name: 'asc'
           }
+        });
 
-          if (nextRow?.facilityId !== row.facilityId) {
-            // Last row of new facility
-            obj.satellites = satellites;
-            result.push(obj);
-            // After pushing satellites and obj to result array, clear all data for new data to be populated from new facility 
-            satellites = [];
-            obj = {} as { facilityId: string; facilityName: string; satellites: { satelliteId: string; satelliteName: string; }[] };
+        const satellites = await ctx.prisma.satellite.findMany({
+          where: {
+            facilityId: null,
+          },
+          select: {
+            id: true,
+            name: true,
           }
-        }
-        return result;
+        });
+
+        facility.push({ id: 'no-facility', name: 'No Facility', satellites });
+        return facility;
       }
     })
     t.list.field('pipelineFlow', {

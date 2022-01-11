@@ -360,44 +360,45 @@ export const PipelineQuery = extendType({
     t.list.field('pipelinesById', {
       type: 'Pipeline',
       args: {
-        satelliteId: stringArg(),
-        facilityId: stringArg(),
-        noSatellite: stringArg(),
+        table: stringArg(),
+        id: stringArg(),
       },
-      resolve: async (_parent, { facilityId, satelliteId, noSatellite }, ctx: Context) => {
-        if (satelliteId) {
+      resolve: async (_parent, { id, table }, ctx: Context) => {
+        console.log('id: ', id, table);
+
+        if (table === 'satellite') {
           return ctx.prisma.pipeline.findMany({
-            where: { satelliteId },
+            where: { satelliteId: id },
             orderBy: [
               { license: 'asc' },
-              { segment: 'asc' }
+              { segment: 'asc' },
             ]
           })
-        } else if (facilityId) {
+        } else if (table === 'facility' && id === 'no-facility') {
           return ctx.prisma.pipeline.findMany({
             where: {
-              satellite: { facilityId }
+              satellite: { facilityId: null }
             },
             orderBy: [
               { license: 'asc' },
-              { segment: 'asc' }
+              { segment: 'asc' },
             ]
           })
-        } else if (noSatellite === 'no satellite') {
+        } else if (table === 'facility' && id) {
           return ctx.prisma.pipeline.findMany({
             where: {
-              satellite: null
+              satellite: { facilityId: id }
             },
             orderBy: [
               { license: 'asc' },
-              { segment: 'asc' }
+              { segment: 'asc' },
             ]
           })
         } else {
           return ctx.prisma.pipeline.findMany({
             orderBy: [
               { license: 'asc' },
-              { segment: 'asc' }
+              { segment: 'asc' },
             ]
           })
         }

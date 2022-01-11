@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import Layout from '../components/layout';
 import MenuBar from '../components/menubar';
 import RenderPipeline from '../components/rows/RenderPipeline';
@@ -28,22 +28,14 @@ export interface IHeader {
 export default function PipelineDatabase() {
 
   const header: IHeader = { license: "", segment: "", substance: "", from: "", fromFeature: "", to: "", toFeature: "", injectionPoints: "", status: "" };
-  const [filterText, setFilterText] = React.useState<IHeader>(header);
-  const [filterTextCaseInsensitive, setFilterTextCaseInsensitive] = React.useState<IHeader>(header);
+  const [filterText, setFilterText] = useState<IHeader>(header);
+  const [filterTextCaseInsensitive, setFilterTextCaseInsensitive] = useState<IHeader>(header);
 
   const [pipelinesById, { data, loading, error }] = usePipelinesByIdQueryLazyQuery();
   const { data: validatorsData } = useGetValidatorsQuery();
 
-  function handleSatelliteClick(e: React.MouseEvent<HTMLButtonElement>): void {
-    pipelinesById({ variables: { satelliteId: e.currentTarget.value } })
-  }
-
-  function handleFacilityClick(e: React.MouseEvent<HTMLButtonElement>): void {
-    pipelinesById({ variables: { facilityId: e.currentTarget.value } })
-  }
-
-  function handleUnconnectedPipelinesClick(e: React.MouseEvent<HTMLButtonElement>): void {
-    pipelinesById({ variables: { noSatellite: e.currentTarget.value } })
+  function handleSidebarClick(id: string, table: string): void {
+    pipelinesById({ variables: { id, table } })
   }
 
   const handleFilterTextChange = (e: React.FormEvent<HTMLInputElement>): void => {
@@ -68,10 +60,7 @@ export default function PipelineDatabase() {
       <div className="pipeline-database-side-bar">
         <div className="pipeline-database-side-bar-fixed">
           <SideNavBar
-            onAllPipelinesClick={pipelinesById}
-            onSatelliteClick={handleSatelliteClick}
-            onFacilityClick={handleFacilityClick}
-            onUnconnectedPipelinesClick={handleUnconnectedPipelinesClick}
+            onSidebarClick={handleSidebarClick}
           />
         </div>
       </div>

@@ -21,22 +21,8 @@ a {
 
 .pipeline-database-side-bar {
   flex: 0 0 300px;
-  background-color: darkcyan;
 }
 
-.pipeline-database-side-bar button {
-  background: none!important;
-  border: none;
-  padding: 0!important;
-  /* font-family: arial, sans-serif; */
-  color: #069;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.pipeline-database-side-bar button:focus {
-  color: red;
-}
 
 .app {
   padding-top: 55px;
@@ -330,7 +316,6 @@ nav ul li div {
   left: 0px;
   /* max-height: 100vh; */
   max-height: calc(100vh - 55px);
-  background-color: goldenrod;
   overflow-y: auto;
 }
 
