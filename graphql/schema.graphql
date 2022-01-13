@@ -13,6 +13,28 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
+enum EnvironmentProximityToEnum {
+  WB1
+  WB3
+  WB4
+  WB5
+  WC1
+  WC2
+  WC3
+  WC4
+}
+
+type EnvironmentProximityToEnumObject {
+  WB1: String!
+  WB3: String!
+  WB4: String!
+  WB5: String!
+  WC1: String!
+  WC2: String!
+  WC3: String!
+  WC4: String!
+}
+
 type Facility {
   createdAt: DateTime!
   createdBy: User!
@@ -74,6 +96,28 @@ type FromToFeatureEnumObject {
   StorageTank: String!
   UndergroundCapOrTieIn: String!
   Well: String!
+}
+
+enum GeotechnicalFacingEnum {
+  E
+  N
+  NE
+  NW
+  S
+  SE
+  SW
+  W
+}
+
+type GeotechnicalFacingEnumObject {
+  E: String!
+  N: String!
+  NE: String!
+  NW: String!
+  S: String!
+  SE: String!
+  SW: String!
+  W: String!
 }
 
 enum GradeEnum {
@@ -248,12 +292,14 @@ type MaterialEnumObject {
 type Mutation {
   addPigRun(pipelineId: String!): PigRun
   addPressureTest(pipelineId: String!): PressureTest
+  addRisk(pipelineId: String!): Risk
   connectSource(id: String!, sourceId: String!): Pipeline
   connectUpstreamPipeline(id: String!, upstreamId: String!): Pipeline
   createFacility(data: FacilityCreateInput!): Facility
   deletePigRun(id: String!): PigRun
   deletePipeline(id: String!): Pipeline
   deletePressureTest(id: String!): PressureTest
+  deleteRisk(id: String!): Risk
   deleteSatellite(id: String!): Satellite
   disconnectSource(id: String!, sourceId: String!): Pipeline
   disconnectUpstreamPipeline(id: String!, upstreamId: String!): Pipeline
@@ -263,6 +309,7 @@ type Mutation {
   editPigRun(comment: String, date: DateTime, id: String!, operatorId: String, pigType: PigTypeEnum, pipelineId: String): PigRun
   editPipeline(from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String, status: StatusEnum, substance: SubstanceEnum, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float, yieldStrength: Int): Pipeline
   editPressureTest(comment: String, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pipelineId: String, pressureTestDate: DateTime, pressureTestReceivedDate: DateTime): PressureTest
+  editRisk(arielReview: Boolean, dateSlopeChecked: DateTime, environmentProximityTo: EnvironmentProximityToEnum, gasReleaseCost: Float, geotechnicalFacingS1: GeotechnicalFacingEnum, geotechnicalFacingS2: GeotechnicalFacingEnum, geotechnicalHeightS1: Int, geotechnicalHeightS2: Int, geotechnicalSlopeAngleS1: Int, geotechnicalSlopeAngleS2: Int, oilReleaseCost: Float, pipelineId: String!, probabilityGeo: Float, releaseTimeDays: Int, repairTimeDays: Int, riskPeople: Int, safeguardExternalCoating: Boolean, safeguardInternalProtection: Boolean): Risk
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
   login(email: String!, password: String!): AuthPayload
   signup(email: String!, firstName: String!, lastName: String!, password: String!): AuthPayload
@@ -311,8 +358,11 @@ type Pipeline {
   material: MaterialEnum
   mop: Int
   outsideDiameter: Float
+  pigRuns: [PigRun]
   piggable: Boolean
   piggingFrequency: Int
+  pressureTests: [PressureTest]
+  risk: Risk
   satellite: Satellite
   segment: String!
   status: StatusEnum!
@@ -402,9 +452,35 @@ type Query {
   pipelinesById(id: String, table: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
   pressureTestsByPipelineId(pipelineId: String): [PressureTest]
+  riskByPipelineId(pipelineId: String): [Risk]
   sideBar: [SideBar]
   sourceOptions: [SourceOptions]
   validators: Validator
+}
+
+type Risk {
+  arielReview: Boolean
+  createdAt: DateTime!
+  createdBy: User!
+  dateSlopeChecked: DateTime
+  environmentProximityTo: EnvironmentProximityToEnum
+  gasReleaseCost: Float
+  geotechnicalFacingS1: GeotechnicalFacingEnum
+  geotechnicalFacingS2: GeotechnicalFacingEnum
+  geotechnicalHeightS1: Int
+  geotechnicalHeightS2: Int
+  geotechnicalSlopeAngleS1: Int
+  geotechnicalSlopeAngleS2: Int
+  id: String!
+  oilReleaseCost: Float
+  pipeline: Pipeline!
+  probabilityGeo: Float
+  releaseTimeDays: Int
+  repairTimeDays: Int
+  riskPeople: Int
+  safeguardExternalCoating: Boolean
+  safeguardInternalProtection: Boolean
+  updatedAt: DateTime!
 }
 
 enum Role {
@@ -584,8 +660,10 @@ input UserUniqueInput {
 
 type Validator {
   anyTextMatchPattern: String!
+  environmentProximityToEnum: EnvironmentProximityToEnumObject!
   fromToFeatureEnum: FromToFeatureEnumObject!
   fromToMatchPattern: String!
+  geotechnicalFacingEnum: GeotechnicalFacingEnumObject!
   gradeEnum: GradeEnumObject!
   internalProtectionEnum: InternalProtectionEnumObject!
   lengthMatchPattern: String!

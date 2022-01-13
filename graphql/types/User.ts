@@ -209,7 +209,7 @@ export const AuthMutation = extendType({
           },
         })
         return {
-          token: sign({ userId: user.id }, APP_SECRET),
+          token: sign({ userId: user.id }, APP_SECRET!),
           user,
         }
       },
@@ -251,7 +251,7 @@ export const AuthMutation = extendType({
           }
         }
         return {
-          token: sign({ userId: user.id }, APP_SECRET),
+          token: sign({ userId: user.id }, APP_SECRET!),
           user,
         }
       },

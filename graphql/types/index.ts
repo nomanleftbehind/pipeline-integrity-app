@@ -6,4 +6,5 @@ export * from './InjectionPointOptions';
 export * from './Validator';
 export * from './PigRun';
 export * from './PressureTest';
+export * from './Risk';
 export * from './InjectionPoint';

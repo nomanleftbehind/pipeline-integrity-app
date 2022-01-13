@@ -1,8 +1,16 @@
 import { objectType, extendType } from 'nexus';
-import { SubstanceEnumMembers, FromToFeatureEnumMembers, StatusEnumMembers, TypeEnumMembers, GradeEnumMembers, MaterialEnumMembers, InternalProtectionEnumMembers } from './Pipeline';
+import {
+	SubstanceEnumMembers,
+	FromToFeatureEnumMembers,
+	StatusEnumMembers,
+	TypeEnumMembers,
+	GradeEnumMembers,
+	MaterialEnumMembers,
+	InternalProtectionEnumMembers
+} from './Pipeline';
 import { PigTypeEnumMembers } from './PigRun';
 import { LimitingSpecEnumMembers } from './PressureTest';
-import { Context } from '../context';
+import { EnvironmentProximityToEnumMembers, GeotechnicalFacingEnumMembers } from './Risk';
 
 export const anyTextMatchPattern = "^[\\s\\S]*$";
 export const licenseMatchPattern = "^(AB|SK|BC)(\\d{5}|\\d{6})$";
@@ -96,6 +104,24 @@ export const LimitingSpecEnumObject = objectType({
 	}
 })
 
+export const EnvironmentProximityToEnumObject = objectType({
+	name: 'EnvironmentProximityToEnumObject',
+	definition(t) {
+		for (const iterator of Object.keys(EnvironmentProximityToEnumMembers)) {
+			t.nonNull.string(iterator)
+		}
+	}
+})
+
+export const GeotechnicalFacingEnumObject = objectType({
+	name: 'GeotechnicalFacingEnumObject',
+	definition(t) {
+		for (const iterator of Object.keys(GeotechnicalFacingEnumMembers)) {
+			t.nonNull.string(iterator)
+		}
+	}
+})
+
 export const Validator = objectType({
 	name: 'Validator',
 	definition(t) {
@@ -117,6 +143,8 @@ export const Validator = objectType({
 		t.nonNull.field('internalProtectionEnum', { type: 'InternalProtectionEnumObject' })
 		t.nonNull.field('pigTypeEnum', { type: 'PigTypeEnumObject' })
 		t.nonNull.field('limitingSpecEnum', { type: 'LimitingSpecEnumObject' })
+		t.nonNull.field('environmentProximityToEnum', { type: 'EnvironmentProximityToEnumObject' })
+		t.nonNull.field('geotechnicalFacingEnum', { type: 'GeotechnicalFacingEnumObject' })
 	}
 })
 
@@ -125,7 +153,7 @@ export const ValidatorQuery = extendType({
 	definition(t) {
 		t.field('validators', {
 			type: Validator,
-			resolve: (_parent, args, ctx: Context) => {
+			resolve: () => {
 				return {
 					anyTextMatchPattern,
 					licenseMatchPattern,
@@ -144,7 +172,9 @@ export const ValidatorQuery = extendType({
 					mopMatchPattern,
 					internalProtectionEnum: InternalProtectionEnumMembers,
 					pigTypeEnum: PigTypeEnumMembers,
-					limitingSpecEnum: LimitingSpecEnumMembers
+					limitingSpecEnum: LimitingSpecEnumMembers,
+					environmentProximityToEnum: EnvironmentProximityToEnumMembers,
+					geotechnicalFacingEnum: GeotechnicalFacingEnumMembers,
 				};
 			}
 		})

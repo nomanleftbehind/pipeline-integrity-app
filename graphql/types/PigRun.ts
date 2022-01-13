@@ -1,6 +1,5 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
 import { getUserId } from '../utils';
-import { Pipeline } from './Pipeline';
 import { Context } from '../context';
 
 
@@ -13,38 +12,32 @@ export const PigRun = objectType({
 	definition(t) {
 		t.nonNull.string('id')
 		t.nonNull.field('pipeline', {
-			type: Pipeline,
-			resolve: async (parent, _args, ctx: Context) => {
-				const result = await ctx.prisma.pigRun
-					.findUnique({
-						where: { id: parent.id },
-					})
-					.pipeline()
+			type: 'Pipeline',
+			resolve: async ({ id }, _args, ctx: Context) => {
+				const result = await ctx.prisma.pigRun.findUnique({
+					where: { id },
+				}).pipeline()
 				return result!
 			},
 		})
-		t.field('pigType', { type: PigTypeEnum })
+		t.field('pigType', { type: 'PigTypeEnum' })
 		t.field('date', { type: 'DateTime' })
 		t.string('comment')
 		t.field('operator', {
 			type: 'User',
-			resolve: async (parent, _args, ctx: Context) => {
-				const result = await ctx.prisma.pigRun
-					.findUnique({
-						where: { id: parent.id },
-					})
-					.operator()
+			resolve: async ({ id }, _args, ctx: Context) => {
+				const result = await ctx.prisma.pigRun.findUnique({
+					where: { id },
+				}).operator()
 				return result
 			},
 		})
 		t.nonNull.field('createdBy', {
 			type: 'User',
-			resolve: async (parent, _args, ctx: Context) => {
-				const result = await ctx.prisma.pigRun
-					.findUnique({
-						where: { id: parent.id },
-					})
-					.createdBy()
+			resolve: async ({ id }, _args, ctx: Context) => {
+				const result = await ctx.prisma.pigRun.findUnique({
+					where: { id },
+				}).createdBy()
 				return result!
 			},
 		})

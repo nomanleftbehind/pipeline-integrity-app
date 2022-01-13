@@ -1,7 +1,5 @@
 import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg, booleanArg } from 'nexus';
-import { User } from './User';
-import { Satellite } from './Satellite';
-import { InjectionPoint, InjectionPointCreateInput } from './InjectionPoint';
+import { InjectionPointCreateInput } from './InjectionPoint';
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
 
@@ -17,77 +15,67 @@ export const Pipeline = objectType({
     t.nonNull.string('id')
     t.int('index')
     t.field('satellite', {
-      type: Satellite,
-      resolve: async (parent, _args, ctx: Context) => {
-        const result = await ctx.prisma.pipeline
-          .findUnique({
-            where: { id: parent.id },
-          })
-          .satellite()
+      type: 'Satellite',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+        }).satellite()
         return result!
       },
     })
     t.list.field('injectionPoints', {
-      type: InjectionPoint,
-      resolve: (parent, _args, ctx: Context) => {
-        return ctx.prisma.pipeline
-          .findUnique({
-            where: { id: parent.id || undefined },
-          })
-          .injectionPoints()
+      type: 'InjectionPoint',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.pipeline.findUnique({
+          where: { id: id || undefined },
+        }).injectionPoints()
       },
     })
     t.nonNull.string('license')
     t.nonNull.string('segment')
     t.nonNull.field('substance', {
-      type: SubstanceEnum,
-      resolve: (parent, _args, ctx: Context) => {
-        // const parentKey = parent.substance as keyof typeof SubstanceEnumMembers;
-        const result = SubstanceEnumMembers[parent.substance] as keyof typeof SubstanceEnumMembers;
+      type: 'SubstanceEnum',
+      resolve: ({ substance }) => {
+        const result = SubstanceEnumMembers[substance] as keyof typeof SubstanceEnumMembers;
         return result;
       }
     })
     t.nonNull.string('from')
     t.field('fromFeature', {
       type: FromToFeatureEnum,
-      resolve: (parent, _args, ctx: Context) => {
-        // const parentKey = parent.fromFeature as keyof typeof FromToFeatureEnumMembers;
-        const result = parent.fromFeature !== null ? FromToFeatureEnumMembers[parent.fromFeature] as keyof typeof FromToFeatureEnumMembers : null;
+      resolve: ({ fromFeature }) => {
+        const result = fromFeature !== null ? FromToFeatureEnumMembers[fromFeature] as keyof typeof FromToFeatureEnumMembers : null;
         return result;
       }
     })
     t.nonNull.string('to')
     t.field('toFeature', {
-      type: FromToFeatureEnum,
-      resolve: (parent, _args, ctx: Context) => {
-        // const parentKey = parent.toFeature as keyof typeof FromToFeatureEnumMembers;
-        const result = parent.toFeature !== null ? FromToFeatureEnumMembers[parent.toFeature] as keyof typeof FromToFeatureEnumMembers : null;
+      type: 'FromToFeatureEnum',
+      resolve: ({ toFeature }) => {
+        const result = toFeature !== null ? FromToFeatureEnumMembers[toFeature] as keyof typeof FromToFeatureEnumMembers : null;
         return result;
       }
     })
     t.nonNull.field('status', {
-      type: StatusEnum,
-      resolve: (parent, _args, ctx: Context) => {
-        // const parentKey = parent.status as keyof typeof StatusEnumMembers;
-        const result = StatusEnumMembers[parent.status] as keyof typeof StatusEnumMembers;
+      type: 'StatusEnum',
+      resolve: ({ status }) => {
+        const result = StatusEnumMembers[status] as keyof typeof StatusEnumMembers;
         return result;
       }
     })
     t.field('licenseDate', { type: 'DateTime' })
     t.nonNull.float('length')
     t.field('type', {
-      type: TypeEnum,
-      resolve: (parent, _args, ctx: Context) => {
-        // const parentKey = parent.type as keyof typeof TypeEnumMembers;
-        const result = parent.type !== null ? TypeEnumMembers[parent.type] as keyof typeof TypeEnumMembers : null;
+      type: 'TypeEnum',
+      resolve: ({ type }) => {
+        const result = type !== null ? TypeEnumMembers[type] as keyof typeof TypeEnumMembers : null;
         return result;
       }
     })
     t.field('grade', {
-      type: GradeEnum,
-      resolve: (parent, _args, ctx: Context) => {
-        // const parentKey = parent.grade as keyof typeof GradeEnumMembers;
-        const result = parent.grade !== null ? GradeEnumMembers[parent.grade] as keyof typeof GradeEnumMembers : null;
+      type: 'GradeEnum',
+      resolve: ({ grade }) => {
+        const result = grade !== null ? GradeEnumMembers[grade] as keyof typeof GradeEnumMembers : null;
         return result;
       }
     })
@@ -95,53 +83,74 @@ export const Pipeline = objectType({
     t.float('outsideDiameter')
     t.float('wallThickness')
     t.field('material', {
-      type: MaterialEnum,
-      resolve: (parent, _args, ctx: Context) => {
-        // const parentKey = parent.material as keyof typeof MaterialEnumMembers;
-        const result = parent.material !== null ? MaterialEnumMembers[parent.material] as keyof typeof MaterialEnumMembers : null;
+      type: 'MaterialEnum',
+      resolve: ({ material }) => {
+        const result = material !== null ? MaterialEnumMembers[material] as keyof typeof MaterialEnumMembers : null;
         return result;
       }
     })
     t.int('mop')
     t.field('internalProtection', {
-      type: InternalProtectionEnum,
-      resolve: (parent, _args, ctx: Context) => {
-        // const parentKey = parent.internalProtection as keyof typeof InternalProtectionEnumMembers;
-        const result = parent.internalProtection !== null ? InternalProtectionEnumMembers[parent.internalProtection] as keyof typeof InternalProtectionEnumMembers : null;
+      type: 'InternalProtectionEnum',
+      resolve: ({ internalProtection }) => {
+        const result = internalProtection !== null ? InternalProtectionEnumMembers[internalProtection] as keyof typeof InternalProtectionEnumMembers : null;
         return result;
       }
     })
     t.boolean('piggable')
     t.int('piggingFrequency')
     t.nonNull.field('createdBy', {
-      type: User,
-      resolve: async (parent, _args, ctx: Context) => {
-        const result = await ctx.prisma.pipeline
-          .findUnique({
-            where: { id: parent.id },
-          })
-          .createdBy()
+      type: 'User',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+        }).createdBy()
         return result!;
       },
     })
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
+    t.list.field('pressureTests', {
+      type: 'PressureTest',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+        }).pressureTests()
+        return result
+      },
+    })
+    t.list.field('pigRuns', {
+      type: 'PigRun',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+        }).pigRuns()
+        return result
+      },
+    })
+    t.field('risk', {
+      type: 'Risk',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+        }).risk()
+        return result
+      }
+    })
     t.list.field('upstream', {
-      type: Pipeline,
-      resolve: (parent, _args, ctx: Context) => {
-        return ctx.prisma.pipeline
-          .findMany({
-            where: { downstream: { some: { id: parent.id || undefined } } },
-          })
+      type: 'Pipeline',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.pipeline.findMany({
+          where: { downstream: { some: { id: id || undefined } } },
+        })
       },
     })
     t.list.field('downstream', {
-      type: Pipeline,
-      resolve: (parent, _args, ctx: Context) => {
-        return ctx.prisma.pipeline
-          .findMany({
-            where: { upstream: { some: { id: parent.id || undefined } } },
-          })
+      type: 'Pipeline',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.pipeline.findMany({
+          where: { upstream: { some: { id: id || undefined } } },
+        })
       },
     })
   },

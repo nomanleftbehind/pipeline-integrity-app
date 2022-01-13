@@ -1,4 +1,4 @@
-import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
+import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
 import { databaseEnumToServerEnum } from './Pipeline';
 import { getUserId } from '../utils';
 import { Context } from '../context';
@@ -14,18 +14,16 @@ export const PressureTest = objectType({
     t.nonNull.string('id')
     t.nonNull.field('pipeline', {
       type: 'Pipeline',
-      resolve: async (parent, _args, ctx: Context) => {
-        const result = await ctx.prisma.pressureTest
-          .findUnique({
-            where: { id: parent.id },
-          })
-          .pipeline()
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pressureTest.findUnique({
+          where: { id },
+        }).pipeline()
         return result!
       },
     })
     t.field('limitingSpec', {
       type: 'LimitingSpecEnum',
-      resolve: ({ limitingSpec }, _args, ctx: Context) => {
+      resolve: ({ limitingSpec }) => {
         const result = limitingSpec !== null ? LimitingSpecEnumMembers[limitingSpec] as keyof typeof LimitingSpecEnumMembers : null;
         return result;
       }
@@ -38,12 +36,10 @@ export const PressureTest = objectType({
     t.string('comment')
     t.nonNull.field('createdBy', {
       type: 'User',
-      resolve: async (parent, _args, ctx: Context) => {
-        const result = await ctx.prisma.pressureTest
-          .findUnique({
-            where: { id: parent.id },
-          })
-          .createdBy()
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pressureTest.findUnique({
+          where: { id },
+        }).createdBy()
         return result!
       },
     })
@@ -121,7 +117,7 @@ export const PressureTestMutation = extendType({
         const userId = getUserId(ctx);
         return ctx.prisma.pressureTest.create({
           data: {
-            pipelineId: pipelineId,
+            pipelineId,
             createdById: String(userId),
           }
         })

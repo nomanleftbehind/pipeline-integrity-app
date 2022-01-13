@@ -21,6 +21,7 @@ model User {
   pigRunsOperated PigRun[]         @relation("operator")
   pigRunsCreated  PigRun[]         @relation("createdBy")
   pressureTests   PressureTest[]
+  risks           Risk[]
 }
 
 enum Role {
@@ -59,6 +60,7 @@ model Pipeline {
   satelliteId        String?
   pigRuns            PigRun[]
   injectionPoints    InjectionPoint[]
+  risk               Risk?
   license            String
   segment            String
   substance          SubstanceEnum
@@ -120,6 +122,33 @@ model PressureTest {
   createdById              String
   createdAt                DateTime          @default(now())
   updatedAt                DateTime          @updatedAt
+}
+
+model Risk {
+  id                          String                      @id @default(uuid())
+  pipeline                    Pipeline                    @relation(fields: [pipelineId], references: [id])
+  pipelineId                  String                      @unique
+  arielReview                 Boolean?
+  environmentProximityTo      EnvironmentProximityToEnum?
+  geotechnicalSlopeAngleS1    Int?
+  geotechnicalFacingS1        GeotechnicalFacingEnum?
+  geotechnicalHeightS1        Int?
+  geotechnicalSlopeAngleS2    Int?
+  geotechnicalFacingS2        GeotechnicalFacingEnum?
+  geotechnicalHeightS2        Int?
+  dateSlopeChecked            DateTime?
+  repairTimeDays              Int?
+  releaseTimeDays             Int?
+  oilReleaseCost              Decimal?                    @db.Decimal(6, 2)
+  gasReleaseCost              Decimal?                    @db.Decimal(6, 2)
+  riskPeople                  Int?
+  probabilityGeo              Decimal?                    @db.Decimal(6, 2)
+  safeguardInternalProtection Boolean?
+  safeguardExternalCoating    Boolean?
+  createdBy                   User                        @relation(fields: [createdById], references: [id])
+  createdById                 String
+  createdAt                   DateTime                    @default(now())
+  updatedAt                   DateTime                    @updatedAt
 }
 
 model InjectionPoint {
@@ -304,4 +333,30 @@ enum LimitingSpecEnum {
   ANSI600  @map("ANSI 600")
 
   @@map("limitingSpec")
+}
+
+enum EnvironmentProximityToEnum {
+  WB1
+  WB3
+  WB4
+  WB5
+  WC1
+  WC2
+  WC3
+  WC4
+
+  @@map("environmentProximityTo")
+}
+
+enum GeotechnicalFacingEnum {
+  N
+  NE
+  E
+  SE
+  S
+  SW
+  W
+  NW
+
+  @@map("geotechnicalFacingS1")
 }
