@@ -308,7 +308,7 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
           <TableHead>
             <TableRow>
               <TableCell>
-                <IconButton aria-label="add row" size="small" onClick={handleAddEntry}>
+                <IconButton aria-label="add row" size="small" onClick={handleAddEntry} disabled={dataRiskById?.riskById && dataRiskById.riskById[0] ? true : false}>
                   {showAddForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
                 </IconButton>
               </TableCell>

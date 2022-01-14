@@ -47,7 +47,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
     { columnName: 'id', record: id, validator: undefined },
   ];
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_e: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
