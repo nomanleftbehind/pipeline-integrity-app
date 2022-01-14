@@ -22,6 +22,28 @@ export type AuthPayload = {
   user?: Maybe<User>;
 };
 
+export enum EnvironmentProximityToEnum {
+  Wb1 = 'WB1',
+  Wb3 = 'WB3',
+  Wb4 = 'WB4',
+  Wb5 = 'WB5',
+  Wc1 = 'WC1',
+  Wc2 = 'WC2',
+  Wc3 = 'WC3',
+  Wc4 = 'WC4'
+}
+
+export type EnvironmentProximityToEnumObject = {
+  WB1: Scalars['String'];
+  WB3: Scalars['String'];
+  WB4: Scalars['String'];
+  WB5: Scalars['String'];
+  WC1: Scalars['String'];
+  WC2: Scalars['String'];
+  WC3: Scalars['String'];
+  WC4: Scalars['String'];
+};
+
 export type Facility = {
   createdAt: Scalars['DateTime'];
   createdBy: User;
@@ -34,13 +56,6 @@ export type Facility = {
 export type FacilityCreateInput = {
   name: Scalars['String'];
   satellites?: Maybe<Array<Maybe<SatelliteCreateInput>>>;
-};
-
-export type FacilitySatelliteSideBar = {
-  facilityId: Scalars['String'];
-  facilityName: Scalars['String'];
-  satelliteId: Scalars['String'];
-  satelliteName: Scalars['String'];
 };
 
 export type FacilityUniqueInput = {
@@ -83,6 +98,28 @@ export type FromToFeatureEnumObject = {
   StorageTank: Scalars['String'];
   UndergroundCapOrTieIn: Scalars['String'];
   Well: Scalars['String'];
+};
+
+export enum GeotechnicalFacingEnum {
+  E = 'E',
+  N = 'N',
+  Ne = 'NE',
+  Nw = 'NW',
+  S = 'S',
+  Se = 'SE',
+  Sw = 'SW',
+  W = 'W'
+}
+
+export type GeotechnicalFacingEnumObject = {
+  E: Scalars['String'];
+  N: Scalars['String'];
+  NE: Scalars['String'];
+  NW: Scalars['String'];
+  S: Scalars['String'];
+  SE: Scalars['String'];
+  SW: Scalars['String'];
+  W: Scalars['String'];
 };
 
 export enum GradeEnum {
@@ -257,12 +294,14 @@ export type MaterialEnumObject = {
 export type Mutation = {
   addPigRun?: Maybe<PigRun>;
   addPressureTest?: Maybe<PressureTest>;
+  addRisk?: Maybe<Risk>;
   connectSource?: Maybe<Pipeline>;
   connectUpstreamPipeline?: Maybe<Pipeline>;
   createFacility?: Maybe<Facility>;
   deletePigRun?: Maybe<PigRun>;
   deletePipeline?: Maybe<Pipeline>;
   deletePressureTest?: Maybe<PressureTest>;
+  deleteRisk?: Maybe<Risk>;
   deleteSatellite?: Maybe<Satellite>;
   disconnectSource?: Maybe<Pipeline>;
   disconnectUpstreamPipeline?: Maybe<Pipeline>;
@@ -272,6 +311,7 @@ export type Mutation = {
   editPigRun?: Maybe<PigRun>;
   editPipeline?: Maybe<Pipeline>;
   editPressureTest?: Maybe<PressureTest>;
+  editRisk?: Maybe<Risk>;
   editSatellite?: Maybe<Satellite>;
   login?: Maybe<AuthPayload>;
   signup?: Maybe<AuthPayload>;
@@ -285,6 +325,11 @@ export type MutationAddPigRunArgs = {
 
 export type MutationAddPressureTestArgs = {
   pipelineId: Scalars['String'];
+};
+
+
+export type MutationAddRiskArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -316,6 +361,11 @@ export type MutationDeletePipelineArgs = {
 
 
 export type MutationDeletePressureTestArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteRiskArgs = {
   id: Scalars['String'];
 };
 
@@ -413,6 +463,28 @@ export type MutationEditPressureTestArgs = {
 };
 
 
+export type MutationEditRiskArgs = {
+  arielReview?: Maybe<Scalars['Boolean']>;
+  dateSlopeChecked?: Maybe<Scalars['DateTime']>;
+  environmentProximityTo?: Maybe<EnvironmentProximityToEnum>;
+  gasReleaseCost?: Maybe<Scalars['Float']>;
+  geotechnicalFacingS1?: Maybe<GeotechnicalFacingEnum>;
+  geotechnicalFacingS2?: Maybe<GeotechnicalFacingEnum>;
+  geotechnicalHeightS1?: Maybe<Scalars['Int']>;
+  geotechnicalHeightS2?: Maybe<Scalars['Int']>;
+  geotechnicalSlopeAngleS1?: Maybe<Scalars['Int']>;
+  geotechnicalSlopeAngleS2?: Maybe<Scalars['Int']>;
+  id: Scalars['String'];
+  oilReleaseCost?: Maybe<Scalars['Float']>;
+  probabilityGeo?: Maybe<Scalars['Float']>;
+  releaseTimeDays?: Maybe<Scalars['Int']>;
+  repairTimeDays?: Maybe<Scalars['Int']>;
+  riskPeople?: Maybe<Scalars['Int']>;
+  safeguardExternalCoating?: Maybe<Scalars['Boolean']>;
+  safeguardInternalProtection?: Maybe<Scalars['Boolean']>;
+};
+
+
 export type MutationEditSatelliteArgs = {
   facilityUniqueInput?: Maybe<FacilityUniqueInput>;
   id: Scalars['String'];
@@ -476,8 +548,11 @@ export type Pipeline = {
   material?: Maybe<MaterialEnum>;
   mop?: Maybe<Scalars['Int']>;
   outsideDiameter?: Maybe<Scalars['Float']>;
+  pigRuns?: Maybe<Array<Maybe<PigRun>>>;
   piggable?: Maybe<Scalars['Boolean']>;
   piggingFrequency?: Maybe<Scalars['Int']>;
+  pressureTests?: Maybe<Array<Maybe<PressureTest>>>;
+  risk?: Maybe<Risk>;
   satellite?: Maybe<Satellite>;
   segment: Scalars['String'];
   status: StatusEnum;
@@ -567,6 +642,7 @@ export type Query = {
   pipelinesById?: Maybe<Array<Maybe<Pipeline>>>;
   pipelinesByUser?: Maybe<Array<Maybe<Pipeline>>>;
   pressureTestsByPipelineId?: Maybe<Array<Maybe<PressureTest>>>;
+  riskById?: Maybe<Array<Maybe<Risk>>>;
   sideBar?: Maybe<Array<Maybe<SideBar>>>;
   sourceOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   validators?: Maybe<Validator>;
@@ -601,6 +677,36 @@ export type QueryPipelinesByUserArgs = {
 
 export type QueryPressureTestsByPipelineIdArgs = {
   pipelineId?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryRiskByIdArgs = {
+  id?: Maybe<Scalars['String']>;
+};
+
+export type Risk = {
+  arielReview?: Maybe<Scalars['Boolean']>;
+  createdAt: Scalars['DateTime'];
+  createdBy: User;
+  dateSlopeChecked?: Maybe<Scalars['DateTime']>;
+  environmentProximityTo?: Maybe<EnvironmentProximityToEnum>;
+  gasReleaseCost?: Maybe<Scalars['Float']>;
+  geotechnicalFacingS1?: Maybe<GeotechnicalFacingEnum>;
+  geotechnicalFacingS2?: Maybe<GeotechnicalFacingEnum>;
+  geotechnicalHeightS1?: Maybe<Scalars['Int']>;
+  geotechnicalHeightS2?: Maybe<Scalars['Int']>;
+  geotechnicalSlopeAngleS1?: Maybe<Scalars['Int']>;
+  geotechnicalSlopeAngleS2?: Maybe<Scalars['Int']>;
+  id: Scalars['String'];
+  oilReleaseCost?: Maybe<Scalars['Float']>;
+  pipeline: Pipeline;
+  probabilityGeo?: Maybe<Scalars['Float']>;
+  releaseTimeDays?: Maybe<Scalars['Int']>;
+  repairTimeDays?: Maybe<Scalars['Int']>;
+  riskPeople?: Maybe<Scalars['Int']>;
+  safeguardExternalCoating?: Maybe<Scalars['Boolean']>;
+  safeguardInternalProtection?: Maybe<Scalars['Boolean']>;
+  updatedAt: Scalars['DateTime'];
 };
 
 export enum Role {
@@ -780,8 +886,10 @@ export type UserUniqueInput = {
 
 export type Validator = {
   anyTextMatchPattern: Scalars['String'];
+  environmentProximityToEnum: EnvironmentProximityToEnumObject;
   fromToFeatureEnum: FromToFeatureEnumObject;
   fromToMatchPattern: Scalars['String'];
+  geotechnicalFacingEnum: GeotechnicalFacingEnumObject;
   gradeEnum: GradeEnumObject;
   internalProtectionEnum: InternalProtectionEnumObject;
   lengthMatchPattern: Scalars['String'];
@@ -936,6 +1044,44 @@ export type DeletePigRunMutationVariables = Exact<{
 
 export type DeletePigRunMutation = { deletePigRun?: { id: string } | null | undefined };
 
+export type EditRiskMutationVariables = Exact<{
+  id: Scalars['String'];
+  arielReview?: Maybe<Scalars['Boolean']>;
+  environmentProximityTo?: Maybe<EnvironmentProximityToEnum>;
+  geotechnicalSlopeAngleS1?: Maybe<Scalars['Int']>;
+  geotechnicalFacingS1?: Maybe<GeotechnicalFacingEnum>;
+  geotechnicalHeightS1?: Maybe<Scalars['Int']>;
+  geotechnicalSlopeAngleS2?: Maybe<Scalars['Int']>;
+  geotechnicalFacingS2?: Maybe<GeotechnicalFacingEnum>;
+  geotechnicalHeightS2?: Maybe<Scalars['Int']>;
+  dateSlopeChecked?: Maybe<Scalars['DateTime']>;
+  repairTimeDays?: Maybe<Scalars['Int']>;
+  releaseTimeDays?: Maybe<Scalars['Int']>;
+  oilReleaseCost?: Maybe<Scalars['Float']>;
+  gasReleaseCost?: Maybe<Scalars['Float']>;
+  riskPeople?: Maybe<Scalars['Int']>;
+  probabilityGeo?: Maybe<Scalars['Float']>;
+  safeguardInternalProtection?: Maybe<Scalars['Boolean']>;
+  safeguardExternalCoating?: Maybe<Scalars['Boolean']>;
+}>;
+
+
+export type EditRiskMutation = { editRisk?: { id: string } | null | undefined };
+
+export type AddRiskMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type AddRiskMutation = { addRisk?: { id: string } | null | undefined };
+
+export type DeleteRiskMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteRiskMutation = { deleteRisk?: { id: string } | null | undefined };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -981,7 +1127,7 @@ export type ValidatorsPigRunQuery = { validators?: { anyTextMatchPattern: string
 export type GetValidatorsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string }, pigTypeEnum: { GSCR: string, PSCR: string, Foam: string, Scrapper: string }, limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string } } | null | undefined };
+export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string }, pigTypeEnum: { GSCR: string, PSCR: string, Foam: string, Scrapper: string }, limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string }, environmentProximityToEnum: { WB1: string, WB3: string, WB4: string, WB5: string, WC1: string, WC2: string, WC3: string, WC4: string }, geotechnicalFacingEnum: { N: string, NE: string, E: string, SE: string, S: string, SW: string, W: string, NW: string } } | null | undefined };
 
 export type ValidatorSubstanceQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -993,12 +1139,24 @@ export type ValidatorsPressureTestQueryVariables = Exact<{ [key: string]: never;
 
 export type ValidatorsPressureTestQuery = { validators?: { anyTextMatchPattern: string, limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string } } | null | undefined };
 
+export type ValidatorsRiskQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ValidatorsRiskQuery = { validators?: { environmentProximityToEnum: { WB1: string, WB3: string, WB4: string, WB5: string, WC1: string, WC2: string, WC3: string, WC4: string }, geotechnicalFacingEnum: { N: string, NE: string, E: string, SE: string, S: string, SW: string, W: string, NW: string } } | null | undefined };
+
 export type PressureTestsByPipelineIdQueryVariables = Exact<{
   pipelineId?: Maybe<Scalars['String']>;
 }>;
 
 
 export type PressureTestsByPipelineIdQuery = { pressureTestsByPipelineId?: Array<{ id: string, limitingSpec?: LimitingSpecEnum | null | undefined, infoSentOutDate?: string | null | undefined, ddsDate?: string | null | undefined, pressureTestDate?: string | null | undefined, pressureTestReceivedDate?: string | null | undefined, integritySheetUpdated?: string | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, pipeline: { license: string, segment: string }, createdBy: { email: string } } | null | undefined> | null | undefined };
+
+export type RiskByIdQueryVariables = Exact<{
+  id?: Maybe<Scalars['String']>;
+}>;
+
+
+export type RiskByIdQuery = { riskById?: Array<{ id: string, arielReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, pipeline: { license: string, segment: string }, createdBy: { email: string } } | null | undefined> | null | undefined };
 
 export type PipelineFlowQueryVariables = Exact<{
   pipelineFlowId: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
@@ -1583,6 +1741,141 @@ export function useDeletePigRunMutation(baseOptions?: Apollo.MutationHookOptions
 export type DeletePigRunMutationHookResult = ReturnType<typeof useDeletePigRunMutation>;
 export type DeletePigRunMutationResult = Apollo.MutationResult<DeletePigRunMutation>;
 export type DeletePigRunMutationOptions = Apollo.BaseMutationOptions<DeletePigRunMutation, DeletePigRunMutationVariables>;
+export const EditRiskDocument = gql`
+    mutation EditRisk($id: String!, $arielReview: Boolean, $environmentProximityTo: EnvironmentProximityToEnum, $geotechnicalSlopeAngleS1: Int, $geotechnicalFacingS1: GeotechnicalFacingEnum, $geotechnicalHeightS1: Int, $geotechnicalSlopeAngleS2: Int, $geotechnicalFacingS2: GeotechnicalFacingEnum, $geotechnicalHeightS2: Int, $dateSlopeChecked: DateTime, $repairTimeDays: Int, $releaseTimeDays: Int, $oilReleaseCost: Float, $gasReleaseCost: Float, $riskPeople: Int, $probabilityGeo: Float, $safeguardInternalProtection: Boolean, $safeguardExternalCoating: Boolean) {
+  editRisk(
+    id: $id
+    arielReview: $arielReview
+    environmentProximityTo: $environmentProximityTo
+    geotechnicalSlopeAngleS1: $geotechnicalSlopeAngleS1
+    geotechnicalFacingS1: $geotechnicalFacingS1
+    geotechnicalHeightS1: $geotechnicalHeightS1
+    geotechnicalSlopeAngleS2: $geotechnicalSlopeAngleS2
+    geotechnicalFacingS2: $geotechnicalFacingS2
+    geotechnicalHeightS2: $geotechnicalHeightS2
+    dateSlopeChecked: $dateSlopeChecked
+    repairTimeDays: $repairTimeDays
+    releaseTimeDays: $releaseTimeDays
+    oilReleaseCost: $oilReleaseCost
+    gasReleaseCost: $gasReleaseCost
+    riskPeople: $riskPeople
+    probabilityGeo: $probabilityGeo
+    safeguardInternalProtection: $safeguardInternalProtection
+    safeguardExternalCoating: $safeguardExternalCoating
+  ) {
+    id
+  }
+}
+    `;
+export type EditRiskMutationFn = Apollo.MutationFunction<EditRiskMutation, EditRiskMutationVariables>;
+
+/**
+ * __useEditRiskMutation__
+ *
+ * To run a mutation, you first call `useEditRiskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditRiskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editRiskMutation, { data, loading, error }] = useEditRiskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      arielReview: // value for 'arielReview'
+ *      environmentProximityTo: // value for 'environmentProximityTo'
+ *      geotechnicalSlopeAngleS1: // value for 'geotechnicalSlopeAngleS1'
+ *      geotechnicalFacingS1: // value for 'geotechnicalFacingS1'
+ *      geotechnicalHeightS1: // value for 'geotechnicalHeightS1'
+ *      geotechnicalSlopeAngleS2: // value for 'geotechnicalSlopeAngleS2'
+ *      geotechnicalFacingS2: // value for 'geotechnicalFacingS2'
+ *      geotechnicalHeightS2: // value for 'geotechnicalHeightS2'
+ *      dateSlopeChecked: // value for 'dateSlopeChecked'
+ *      repairTimeDays: // value for 'repairTimeDays'
+ *      releaseTimeDays: // value for 'releaseTimeDays'
+ *      oilReleaseCost: // value for 'oilReleaseCost'
+ *      gasReleaseCost: // value for 'gasReleaseCost'
+ *      riskPeople: // value for 'riskPeople'
+ *      probabilityGeo: // value for 'probabilityGeo'
+ *      safeguardInternalProtection: // value for 'safeguardInternalProtection'
+ *      safeguardExternalCoating: // value for 'safeguardExternalCoating'
+ *   },
+ * });
+ */
+export function useEditRiskMutation(baseOptions?: Apollo.MutationHookOptions<EditRiskMutation, EditRiskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditRiskMutation, EditRiskMutationVariables>(EditRiskDocument, options);
+      }
+export type EditRiskMutationHookResult = ReturnType<typeof useEditRiskMutation>;
+export type EditRiskMutationResult = Apollo.MutationResult<EditRiskMutation>;
+export type EditRiskMutationOptions = Apollo.BaseMutationOptions<EditRiskMutation, EditRiskMutationVariables>;
+export const AddRiskDocument = gql`
+    mutation AddRisk($id: String!) {
+  addRisk(id: $id) {
+    id
+  }
+}
+    `;
+export type AddRiskMutationFn = Apollo.MutationFunction<AddRiskMutation, AddRiskMutationVariables>;
+
+/**
+ * __useAddRiskMutation__
+ *
+ * To run a mutation, you first call `useAddRiskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddRiskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addRiskMutation, { data, loading, error }] = useAddRiskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAddRiskMutation(baseOptions?: Apollo.MutationHookOptions<AddRiskMutation, AddRiskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddRiskMutation, AddRiskMutationVariables>(AddRiskDocument, options);
+      }
+export type AddRiskMutationHookResult = ReturnType<typeof useAddRiskMutation>;
+export type AddRiskMutationResult = Apollo.MutationResult<AddRiskMutation>;
+export type AddRiskMutationOptions = Apollo.BaseMutationOptions<AddRiskMutation, AddRiskMutationVariables>;
+export const DeleteRiskDocument = gql`
+    mutation DeleteRisk($id: String!) {
+  deleteRisk(id: $id) {
+    id
+  }
+}
+    `;
+export type DeleteRiskMutationFn = Apollo.MutationFunction<DeleteRiskMutation, DeleteRiskMutationVariables>;
+
+/**
+ * __useDeleteRiskMutation__
+ *
+ * To run a mutation, you first call `useDeleteRiskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteRiskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteRiskMutation, { data, loading, error }] = useDeleteRiskMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteRiskMutation(baseOptions?: Apollo.MutationHookOptions<DeleteRiskMutation, DeleteRiskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteRiskMutation, DeleteRiskMutationVariables>(DeleteRiskDocument, options);
+      }
+export type DeleteRiskMutationHookResult = ReturnType<typeof useDeleteRiskMutation>;
+export type DeleteRiskMutationResult = Apollo.MutationResult<DeleteRiskMutation>;
+export type DeleteRiskMutationOptions = Apollo.BaseMutationOptions<DeleteRiskMutation, DeleteRiskMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -2090,6 +2383,26 @@ export const GetValidatorsDocument = gql`
       ANSI300
       ANSI600
     }
+    environmentProximityToEnum {
+      WB1
+      WB3
+      WB4
+      WB5
+      WC1
+      WC2
+      WC3
+      WC4
+    }
+    geotechnicalFacingEnum {
+      N
+      NE
+      E
+      SE
+      S
+      SW
+      W
+      NW
+    }
   }
 }
     `;
@@ -2202,6 +2515,59 @@ export function useValidatorsPressureTestLazyQuery(baseOptions?: Apollo.LazyQuer
 export type ValidatorsPressureTestQueryHookResult = ReturnType<typeof useValidatorsPressureTestQuery>;
 export type ValidatorsPressureTestLazyQueryHookResult = ReturnType<typeof useValidatorsPressureTestLazyQuery>;
 export type ValidatorsPressureTestQueryResult = Apollo.QueryResult<ValidatorsPressureTestQuery, ValidatorsPressureTestQueryVariables>;
+export const ValidatorsRiskDocument = gql`
+    query ValidatorsRisk {
+  validators {
+    environmentProximityToEnum {
+      WB1
+      WB3
+      WB4
+      WB5
+      WC1
+      WC2
+      WC3
+      WC4
+    }
+    geotechnicalFacingEnum {
+      N
+      NE
+      E
+      SE
+      S
+      SW
+      W
+      NW
+    }
+  }
+}
+    `;
+
+/**
+ * __useValidatorsRiskQuery__
+ *
+ * To run a query within a React component, call `useValidatorsRiskQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorsRiskQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatorsRiskQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useValidatorsRiskQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorsRiskQuery, ValidatorsRiskQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorsRiskQuery, ValidatorsRiskQueryVariables>(ValidatorsRiskDocument, options);
+      }
+export function useValidatorsRiskLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorsRiskQuery, ValidatorsRiskQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorsRiskQuery, ValidatorsRiskQueryVariables>(ValidatorsRiskDocument, options);
+        }
+export type ValidatorsRiskQueryHookResult = ReturnType<typeof useValidatorsRiskQuery>;
+export type ValidatorsRiskLazyQueryHookResult = ReturnType<typeof useValidatorsRiskLazyQuery>;
+export type ValidatorsRiskQueryResult = Apollo.QueryResult<ValidatorsRiskQuery, ValidatorsRiskQueryVariables>;
 export const PressureTestsByPipelineIdDocument = gql`
     query PressureTestsByPipelineId($pipelineId: String) {
   pressureTestsByPipelineId(pipelineId: $pipelineId) {
@@ -2253,6 +2619,67 @@ export function usePressureTestsByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQ
 export type PressureTestsByPipelineIdQueryHookResult = ReturnType<typeof usePressureTestsByPipelineIdQuery>;
 export type PressureTestsByPipelineIdLazyQueryHookResult = ReturnType<typeof usePressureTestsByPipelineIdLazyQuery>;
 export type PressureTestsByPipelineIdQueryResult = Apollo.QueryResult<PressureTestsByPipelineIdQuery, PressureTestsByPipelineIdQueryVariables>;
+export const RiskByIdDocument = gql`
+    query RiskById($id: String) {
+  riskById(id: $id) {
+    id
+    pipeline {
+      license
+      segment
+    }
+    arielReview
+    environmentProximityTo
+    geotechnicalSlopeAngleS1
+    geotechnicalFacingS1
+    geotechnicalHeightS1
+    geotechnicalSlopeAngleS2
+    geotechnicalFacingS2
+    geotechnicalHeightS2
+    dateSlopeChecked
+    repairTimeDays
+    releaseTimeDays
+    oilReleaseCost
+    gasReleaseCost
+    riskPeople
+    probabilityGeo
+    safeguardInternalProtection
+    safeguardExternalCoating
+    createdBy {
+      email
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useRiskByIdQuery__
+ *
+ * To run a query within a React component, call `useRiskByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRiskByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRiskByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRiskByIdQuery(baseOptions?: Apollo.QueryHookOptions<RiskByIdQuery, RiskByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RiskByIdQuery, RiskByIdQueryVariables>(RiskByIdDocument, options);
+      }
+export function useRiskByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RiskByIdQuery, RiskByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RiskByIdQuery, RiskByIdQueryVariables>(RiskByIdDocument, options);
+        }
+export type RiskByIdQueryHookResult = ReturnType<typeof useRiskByIdQuery>;
+export type RiskByIdLazyQueryHookResult = ReturnType<typeof useRiskByIdLazyQuery>;
+export type RiskByIdQueryResult = Apollo.QueryResult<RiskByIdQuery, RiskByIdQueryVariables>;
 export const PipelineFlowDocument = gql`
     query PipelineFlow($pipelineFlowId: [String]!) {
   pipelineFlow(id: $pipelineFlowId) {

@@ -106,9 +106,9 @@ export const InjectionPointMutation = extendType({
         pvUnitId: stringArg(),
         pvNodeId: stringArg()
       },
-      resolve: async (_, args, context: Context) => {
+      resolve: async (_, args, ctx: Context) => {
         try {
-          return context.prisma.injectionPoint.update({
+          return ctx.prisma.injectionPoint.update({
             where: { id: args.id },
             data: {
               pipelineId: args.pipelineId || undefined,

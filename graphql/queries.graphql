@@ -304,6 +304,26 @@ query getValidators {
       ANSI300
       ANSI600
     }
+    environmentProximityToEnum {
+      WB1
+      WB3
+      WB4
+      WB5
+      WC1
+      WC2
+      WC3
+      WC4
+    }
+    geotechnicalFacingEnum {
+      N
+      NE
+      E
+      SE
+      S
+      SW
+      W
+      NW
+    }
   }
 }
 
@@ -333,6 +353,31 @@ query validatorsPressureTest {
   }
 }
 
+query ValidatorsRisk {
+  validators {
+    environmentProximityToEnum {
+      WB1
+      WB3
+      WB4
+      WB5
+      WC1
+      WC2
+      WC3
+      WC4
+    }
+    geotechnicalFacingEnum {
+      N
+      NE
+      E
+      SE
+      S
+      SW
+      W
+      NW
+    }
+  }
+}
+
 query PressureTestsByPipelineId($pipelineId: String) {
   pressureTestsByPipelineId(pipelineId: $pipelineId) {
     id
@@ -347,6 +392,38 @@ query PressureTestsByPipelineId($pipelineId: String) {
     pressureTestReceivedDate
     integritySheetUpdated
     comment
+    createdBy {
+      email
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+query RiskById($id: String) {
+  riskById(id: $id) {
+    id
+    pipeline {
+      license
+      segment
+    }
+    arielReview
+    environmentProximityTo
+    geotechnicalSlopeAngleS1
+    geotechnicalFacingS1
+    geotechnicalHeightS1
+    geotechnicalSlopeAngleS2
+    geotechnicalFacingS2
+    geotechnicalHeightS2
+    dateSlopeChecked
+    repairTimeDays
+    releaseTimeDays
+    oilReleaseCost
+    gasReleaseCost
+    riskPeople
+    probabilityGeo
+    safeguardInternalProtection
+    safeguardExternalCoating
     createdBy {
       email
     }

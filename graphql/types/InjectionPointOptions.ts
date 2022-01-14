@@ -40,16 +40,6 @@ export const PipelineFlow = objectType({
   }
 })
 
-export const FacilitySatelliteSideBar = objectType({
-  name: 'FacilitySatelliteSideBar',
-  definition(t) {
-    t.nonNull.string('facilityId')
-    t.nonNull.string('facilityName')
-    t.nonNull.string('satelliteId')
-    t.nonNull.string('satelliteName')
-  }
-})
-
 export const SatelliteSideBar = objectType({
   name: 'SatelliteSideBar',
   definition(t) {

@@ -55,7 +55,6 @@ model Satellite {
 
 model Pipeline {
   id                 String                  @id @default(uuid())
-  index              Int                     @default(autoincrement())
   satellite          Satellite?              @relation(fields: [satelliteId], references: [id])
   satelliteId        String?
   pigRuns            PigRun[]
@@ -125,9 +124,8 @@ model PressureTest {
 }
 
 model Risk {
-  id                          String                      @id @default(uuid())
-  pipeline                    Pipeline                    @relation(fields: [pipelineId], references: [id])
-  pipelineId                  String                      @unique
+  pipeline                    Pipeline                    @relation(fields: [id], references: [id])
+  id                          String                      @id
   arielReview                 Boolean?
   environmentProximityTo      EnvironmentProximityToEnum?
   geotechnicalSlopeAngleS1    Int?

@@ -94,15 +94,15 @@ export const GeotechnicalFacingEnum = enumType({
 export const RiskQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.list.field('riskByPipelineId', {
+    t.list.field('riskById', {
       type: 'Risk',
       args: {
-        pipelineId: stringArg(),
+        id: stringArg(),
       },
-      resolve: async (_parent, { pipelineId }, ctx: Context) => {
-        if (pipelineId) {
+      resolve: async (_parent, { id }, ctx: Context) => {
+        if (id) {
           const result = await ctx.prisma.risk.findMany({
-            where: { pipelineId },
+            where: { id },
             orderBy: { createdAt: 'desc' },
           });
           return result;
@@ -124,7 +124,7 @@ export const RiskMutation = extendType({
     t.field('editRisk', {
       type: 'Risk',
       args: {
-        pipelineId: nonNull(stringArg()),
+        id: nonNull(stringArg()),
         arielReview: booleanArg(),
         environmentProximityTo: arg({ type: 'EnvironmentProximityToEnum' }),
         geotechnicalSlopeAngleS1: intArg(),
@@ -144,10 +144,10 @@ export const RiskMutation = extendType({
         safeguardExternalCoating: booleanArg(),
       },
       resolve: async (_, args, ctx: Context) => {
-        console.log(args.arielReview);
+        console.log(args.geotechnicalFacingS1);
 
         return ctx.prisma.risk.update({
-          where: { pipelineId: args.pipelineId },
+          where: { id: args.id },
           data: {
             arielReview: args.arielReview,
             environmentProximityTo: databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, args.environmentProximityTo),
@@ -174,13 +174,13 @@ export const RiskMutation = extendType({
     t.field('addRisk', {
       type: 'Risk',
       args: {
-        pipelineId: nonNull(stringArg()),
+        id: nonNull(stringArg()),
       },
-      resolve: (_parent, { pipelineId }, ctx: Context) => {
+      resolve: (_parent, { id }, ctx: Context) => {
         const userId = getUserId(ctx);
         return ctx.prisma.risk.create({
           data: {
-            pipelineId,
+            id,
             createdById: String(userId),
           }
         })

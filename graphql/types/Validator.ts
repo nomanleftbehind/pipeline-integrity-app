@@ -152,7 +152,7 @@ export const ValidatorQuery = extendType({
 	type: 'Query',
 	definition(t) {
 		t.field('validators', {
-			type: Validator,
+			type: 'Validator',
 			resolve: () => {
 				return {
 					anyTextMatchPattern,

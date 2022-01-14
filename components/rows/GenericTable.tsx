@@ -28,19 +28,28 @@ import {
   useDeletePigRunMutation,
   PigRunsByPipelineIdQuery,
   PigRunsByPipelineIdDocument,
+
+  useRiskByIdLazyQuery,
+  useValidatorsRiskLazyQuery,
+  useAddRiskMutation,
+  useDeleteRiskMutation,
+  RiskByIdQuery,
+  RiskByIdDocument,
+
 } from '../../graphql/generated/graphql';
 
 import { IInferFromArray } from '../fields/injection_points/InjectionPoints';
 
 type IPressureTest = NonNullable<IInferFromArray<PressureTestsByPipelineIdQuery['pressureTestsByPipelineId']>>;
 type IPigRun = NonNullable<IInferFromArray<PigRunsByPipelineIdQuery['pigRunsByPipelineId']>>;
+type IRisk = NonNullable<IInferFromArray<RiskByIdQuery['riskById']>>;
 
-interface IGenericTableData extends IPressureTest, IPigRun { };
+interface IGenericTableData extends IPressureTest, IPigRun, IRisk { };
 
 export interface IGenericTableProps {
   pipelineId?: string;
   in_tab_panel?: boolean;
-  table: 'pressure tests' | 'pig runs';
+  table: 'pressure tests' | 'pig runs' | 'risk';
 }
 
 export default function GenericTable({ pipelineId, in_tab_panel, table }: IGenericTableProps) {
@@ -55,6 +64,11 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
   const [addPigRun, { data: dataAddPigRun }] = useAddPigRunMutation({ refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
   const [deletePigRun, { data: dataDeletePigRun }] = useDeletePigRunMutation({ refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
 
+  const [riskById, { data: dataRiskById, loading: loadingRiskById, error: errorRiskById }] = useRiskByIdLazyQuery({ variables: { id: pipelineId } });
+  const [validatorsRisk, { data: dataValidatorsRisk }] = useValidatorsRiskLazyQuery();
+  const [addRisk, { data: dataAddRisk }] = useAddRiskMutation({ refetchQueries: [RiskByIdDocument, 'RiskById'] });
+  const [deleteRisk, { data: dataDeleteRisk }] = useDeleteRiskMutation({ refetchQueries: [RiskByIdDocument, 'RiskById'] });
+
   const [showAddForm, setShowAddForm] = useState(false);
 
   function loadingSwitch() {
@@ -63,6 +77,8 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
         return loadingPressureTestsByPipelineId;
       case 'pig runs':
         return loadingPigRunsByPipelineId;
+      case 'risk':
+        return loadingRiskById;
       default:
         break;
     }
@@ -74,6 +90,8 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
         return errorPressureTestsByPipelineId;
       case 'pig runs':
         return errorPigRunsByPipelineId;
+      case 'risk':
+        return errorRiskById;
       default:
         break;
     }
@@ -85,6 +103,8 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
         return dataPressureTestsByPipelineId?.pressureTestsByPipelineId;
       case 'pig runs':
         return dataPigRunsByPipelineId?.pigRunsByPipelineId;
+      case 'risk':
+        return dataRiskById?.riskById;
       default:
         break;
     }
@@ -101,6 +121,10 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
         break;
       case 'pig runs':
         deletePigRun({ variables: { id } });
+        break;
+      case 'risk':
+        deleteRisk({ variables: { id } });
+        break;
       default:
         break;
     }
@@ -115,6 +139,11 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
       case 'pig runs':
         pigRunsByPipelineId();
         validatorsPigType();
+        break;
+      case 'risk':
+        riskById();
+        validatorsRisk();
+        break;
       default:
         break;
     }
@@ -125,22 +154,36 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
   // This function needs to match handleSubmit function signature from InjectionPointForm component because we are using
   // `upstream pipeline form` to return all pipelines in autocomplete dropdown.
   function handleAddEntryFromPage(_injectionPointType: string, pipelineId: string) {
-    if (table === 'pressure tests') {
-      addPressureTest({ variables: { pipelineId } });
-    }
-    if (table === 'pig runs') {
-      addPigRun({ variables: { pipelineId } });
+    switch (table) {
+      case 'pressure tests':
+        addPressureTest({ variables: { pipelineId } });
+        break;
+      case 'pig runs':
+        addPigRun({ variables: { pipelineId } });
+        break;
+      case 'risk':
+        addRisk({ variables: { id: pipelineId } });
+        break;
+      default:
+        break;
     }
     setShowAddForm(false);
   }
 
   function handleAddEntry() {
     if (in_tab_panel === true && pipelineId) {
-      if (table === 'pressure tests') {
-        addPressureTest({ variables: { pipelineId } });
-      }
-      if (table === 'pig runs') {
-        addPigRun({ variables: { pipelineId } });
+      switch (table) {
+        case 'pressure tests':
+          addPressureTest({ variables: { pipelineId } });
+          break;
+        case 'pig runs':
+          addPigRun({ variables: { pipelineId } });
+          break;
+        case 'risk':
+          addRisk({ variables: { id: pipelineId } });
+          break;
+        default:
+          break;
       }
     } else {
       setShowAddForm(!showAddForm);
@@ -178,6 +221,24 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
             <TableCell align="right">ID</TableCell>
           </>
         );
+      case 'risk':
+        return (
+          <>
+            <TableCell align="right">Aerial Review</TableCell>
+            <TableCell align="right">Environment (proximity to)</TableCell>
+            <TableCell align="right">Geotechnical Slope Angle S1</TableCell>
+            <TableCell align="right">Geotechnical Facing S1</TableCell>
+            <TableCell align="right">Geotechnical Height S1</TableCell>
+            <TableCell align="right">Geotechnical Slope Angle S2</TableCell>
+            <TableCell align="right">Geotechnical Facing S2</TableCell>
+            <TableCell align="right">Geotechnical Height S2</TableCell>
+            <TableCell align="right">Date Slope Checked</TableCell>
+            <TableCell align="right">Created By</TableCell>
+            <TableCell align="right">Created At</TableCell>
+            <TableCell align="right">Updated At</TableCell>
+            <TableCell align="right">ID</TableCell>
+          </>
+        );
       default:
         break;
     }
@@ -185,7 +246,8 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
 
   function renderBody(data: IGenericTableData) {
     const { id, limitingSpec, infoSentOutDate, ddsDate, pressureTestDate, pressureTestReceivedDate, integritySheetUpdated, comment, createdBy,
-      pigType, date, operator, createdAt, updatedAt } = data;
+      pigType, date, operator, createdAt, updatedAt,
+      arielReview, environmentProximityTo, geotechnicalSlopeAngleS1, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS2, geotechnicalFacingS2, geotechnicalHeightS2, dateSlopeChecked } = data;
     switch (table) {
       case 'pressure tests':
         return (
@@ -215,7 +277,25 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
             <EntryField table={table} id={id} record={updatedAt} columnName="updatedAt" />
             <TableCell align="right">{id}</TableCell>
           </>
-        )
+        );
+      case 'risk':
+        return (
+          <>
+            <EntryField table={table} id={id} record={arielReview} columnName="arielReview" />
+            <EntryField table={table} id={id} record={environmentProximityTo} columnName="environmentProximityTo" validator={dataValidatorsRisk?.validators?.environmentProximityToEnum} />
+            <EntryField table={table} id={id} record={geotechnicalSlopeAngleS1} columnName="geotechnicalSlopeAngleS1" />
+            <EntryField table={table} id={id} record={geotechnicalFacingS1} columnName="geotechnicalFacingS1" validator={dataValidatorsRisk?.validators?.geotechnicalFacingEnum} />
+            <EntryField table={table} id={id} record={geotechnicalHeightS1} columnName="geotechnicalHeightS1" />
+            <EntryField table={table} id={id} record={geotechnicalSlopeAngleS2} columnName="geotechnicalSlopeAngleS2" />
+            <EntryField table={table} id={id} record={geotechnicalFacingS2} columnName="geotechnicalFacingS2" validator={dataValidatorsRisk?.validators?.geotechnicalFacingEnum} />
+            <EntryField table={table} id={id} record={geotechnicalHeightS2} columnName="geotechnicalHeightS2" />
+            <EntryField table={table} id={id} record={dateSlopeChecked} columnName="dateSlopeChecked" validator='date' />
+            <TableCell align="right">{createdBy.email}</TableCell>
+            <EntryField table={table} id={id} record={createdAt} columnName="createdAt" />
+            <EntryField table={table} id={id} record={updatedAt} columnName="updatedAt" />
+            <TableCell align="right">{id}</TableCell>
+          </>
+        );
       default:
         break;
     }

@@ -453,6 +453,11 @@ export const PipelineCreateInput = inputObjectType({
 
 
 export function databaseEnumToServerEnum<T>(object: T, value: T[keyof T] | null | undefined) {
+  // This step is necessary because otherwise, function would return undefined if null was passed for value.
+  // In GraphQL and context of this function, undefined means `do nothing`, null means set field to null.
+  if (value === null) {
+    return null;
+  }
   const keys = Object.keys(object) as (keyof T)[];
   const result = keys.find(key => object[key] === value);
   return result;
@@ -462,7 +467,7 @@ export function databaseEnumToServerEnum<T>(object: T, value: T[keyof T] | null 
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
-type IPipelinePartialBy = PartialBy<IPipeline, 'id' | 'index' | 'createdAt' | 'updatedAt'>
+type IPipelinePartialBy = PartialBy<IPipeline, 'id' | 'createdAt' | 'updatedAt'>
 
 export const PipelineMutation = extendType({
   type: 'Mutation',
@@ -501,12 +506,12 @@ export const PipelineMutation = extendType({
               satelliteId: args.satelliteId || undefined,
               license: args.license || undefined,
               segment: args.segment || undefined,
-              substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance),
+              substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
               from: args.from || undefined,
               fromFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.fromFeature),
               to: args.to || undefined,
               toFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.toFeature),
-              status: databaseEnumToServerEnum(StatusEnumMembers, args.status),
+              status: databaseEnumToServerEnum(StatusEnumMembers, args.status) || undefined,
               length: args.length || undefined,
               type: databaseEnumToServerEnum(TypeEnumMembers, args.type),
               grade: databaseEnumToServerEnum(GradeEnumMembers, args.grade),
@@ -551,7 +556,6 @@ export const PipelineMutation = extendType({
           p.license += '_copy';
           p.segment += '_copy';
           delete p.id;
-          delete p.index;
           delete p.createdAt;
           delete p.updatedAt;
           return ctx.prisma.pipeline.create({

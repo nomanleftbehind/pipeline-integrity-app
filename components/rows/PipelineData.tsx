@@ -68,7 +68,8 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Mechanical Properties" {...a11yProps(1)} />
               <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Pressure Tests" {...a11yProps(2)} />
               <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Pig Runs" {...a11yProps(3)} />
-              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="System Fields" {...a11yProps(4)} />
+              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Risk" {...a11yProps(4)} />
+              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="System Fields" {...a11yProps(5)} />
             </Tabs>
             <TabPanel value={value} index={0}>
               <InjectionPoints
@@ -116,6 +117,20 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               </Collapse>
             </TabPanel>
             <TabPanel value={value} index={4}>
+              <Collapse in={open} timeout="auto" unmountOnExit>
+                <Box sx={{ margin: 1 }}>
+                  <Typography variant="h6" gutterBottom component="div">
+                    Risk
+                  </Typography>
+                  <GenericTable
+                    pipelineId={id}
+                    in_tab_panel={true}
+                    table='risk'
+                  />
+                </Box>
+              </Collapse>
+            </TabPanel>
+            <TabPanel value={value} index={5}>
               <PipelineProperties
                 open={open}
                 id={id}
