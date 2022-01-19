@@ -15,6 +15,7 @@ import {
   RiskByIdDocument,
 } from '../../graphql/generated/graphql';
 import { IValidator, IRecord } from '../fields/PipelineProperties';
+import { ITable } from '../rows/PipelineData';
 
 
 // We are taking `validators` type which is a union of many objects, a string and undefined.
@@ -27,14 +28,14 @@ type IntersectionToObject<I> = UnionToIntersection<I> extends infer O ? { [K in 
 type IValidatorEnumsToOneObject = IntersectionToObject<UnionToIntersection<RemoveStringFromUnion<NonNullable<IValidator>>>>;
 
 interface ITextFieldProps {
-  table?: 'pressure tests' | 'pig runs' | 'risk';
   id: string;
+  table?: ITable;
   columnName: string;
   record: IRecord;
   validator?: IValidator;
 }
 
-export default function EntryField({ table, id, columnName, record, validator }: ITextFieldProps): JSX.Element {
+export default function EntryField({ id, table, columnName, record, validator }: ITextFieldProps): JSX.Element {
   const [edit, setEdit] = useState(false);
   const [valid, setValid] = useState(true);
   const [state, setState] = useState(record ? record.toString() : "");

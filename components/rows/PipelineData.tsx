@@ -2,6 +2,7 @@ import { useState } from 'react';
 import InjectionPoints from '../fields/injection_points/InjectionPoints';
 import PipelineProperties from '../fields/PipelineProperties';
 import GenericTable from './GenericTable';
+import Risk from './Risk';
 import { IPipeline, IValidators } from './RenderPipeline';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
@@ -13,6 +14,7 @@ import Tab from '@mui/material/Tab';
 
 import { TabPanel, a11yProps } from '../../pages/pipeline/[id]/index';
 
+export type ITable = 'pressure tests' | 'pig runs' | 'risk';
 
 export interface IPipelineDataProps {
   open: boolean;
@@ -83,8 +85,8 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               <PipelineProperties
                 open={open}
                 id={id}
-                properties_name="Mechanical Properties"
-                pipeline_properties={mechanical_properties}
+                propertiesName="Mechanical Properties"
+                pipelineProperties={mechanical_properties}
               />
             </TabPanel>
             {/* <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={2} /> */}
@@ -117,25 +119,14 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               </Collapse>
             </TabPanel>
             <TabPanel value={value} index={4}>
-              <Collapse in={open} timeout="auto" unmountOnExit>
-                <Box sx={{ margin: 1 }}>
-                  <Typography variant="h6" gutterBottom component="div">
-                    Risk
-                  </Typography>
-                  <GenericTable
-                    pipelineId={id}
-                    in_tab_panel={true}
-                    table='risk'
-                  />
-                </Box>
-              </Collapse>
+              <Risk id={id} open={open} />
             </TabPanel>
             <TabPanel value={value} index={5}>
               <PipelineProperties
                 open={open}
                 id={id}
-                properties_name="System Fields"
-                pipeline_properties={systemFields}
+                propertiesName="System Fields"
+                pipelineProperties={systemFields}
               />
             </TabPanel>
           </Box>
