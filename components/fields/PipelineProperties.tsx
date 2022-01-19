@@ -35,6 +35,11 @@ interface IPipelinePropertiesProps {
 
 export default function PipelineProperties({ id, open, propertiesName, pipelineProperties, addProperties, deleteProperties }: IPipelinePropertiesProps): JSX.Element {
 
+  const prettifyColumnName = (columnName: string) => columnName
+    .split(/(?=[A-Z])/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+
   return (
     <Collapse in={open} timeout="auto" unmountOnExit>
       <Box sx={{ margin: 1 }}>
@@ -50,32 +55,25 @@ export default function PipelineProperties({ id, open, propertiesName, pipelineP
               </IconButton> :
               null}
         </Typography>
-        {id ?
-          <Table size="small" aria-label="purchases">
-            <TableHead>
-              <TableRow>
-                <TableCell>Property</TableCell>
-                <TableCell align="right">Value</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {pipelineProperties.map(({ columnName, record, validator, table }) => {
-                const columnNameArray = columnName.split(/(?=[A-Z])/);
-                for (let i = 0; i < columnNameArray.length; i++) {
-                  columnNameArray[i] = columnNameArray[i].charAt(0).toUpperCase() + columnNameArray[i].slice(1);
-                }
-                const columnNamePretty = columnNameArray.join(' ')
-
-                return (
-                  <TableRow key={columnName}>
-                    <TableCell>{columnNamePretty}</TableCell>
-                    <EntryField id={id} table={table} record={record} columnName={columnName} validator={validator} />
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table> :
-          null}
+        {id && <Table size="small" aria-label="purchases">
+          <TableHead>
+            <TableRow>
+              <TableCell>Property</TableCell>
+              <TableCell align="right">Value</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {pipelineProperties.map(({ columnName, record, validator, table }) => {
+              const columnNamePretty = prettifyColumnName(columnName);
+              return (
+                <TableRow key={columnName}>
+                  <TableCell>{columnNamePretty}</TableCell>
+                  <EntryField id={id} table={table} record={record} columnName={columnName} validator={validator} />
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>}
       </Box>
     </Collapse>
   );

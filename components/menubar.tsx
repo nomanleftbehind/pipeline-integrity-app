@@ -32,15 +32,13 @@ export default function ManuBar() {
         )}
         {user && (
           <>
-            {links.map(({ href, a }) => {
-              return (
-                <li key={href}>
-                  <Link href={href}>
-                    <a>{a}</a>
-                  </Link>
-                </li>
-              )
-            })}
+            {links.map(({ href, a }) =>
+              <li key={href}>
+                <Link href={href}>
+                  <a>{a}</a>
+                </Link>
+              </li>
+            )}
             <li>
               <DropDown />
             </li>

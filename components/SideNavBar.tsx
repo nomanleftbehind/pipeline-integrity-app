@@ -15,43 +15,35 @@ export default function SideNavBar({ onSidebarClick }: SideNavBarProps) {
   const { loading, error, data } = useSideBarQuery();
 
   return (
-    <>
-      <List
-        sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-        component="nav"
-        aria-labelledby="nested-list-subheader"
-        subheader={
-          <ListSubheader component="div" id="nested-list-subheader">
-            Facilities & Satellites
-          </ListSubheader>
-        }
-      >
-        {loading ? <ListItemText primary="Loading..." /> :
-          error ? <ListItemText primary={error.message} /> :
-            data && data.sideBar ?
-              (
-                <>
-                  <SidebarItem
-                    name="All Pipelines"
-                    onSidebarClick={onSidebarClick}
-                  />
-                  {data.sideBar.map(facility => {
-                    return facility ?
-                      (
-                        <SidebarItem
-                          key={facility.id}
-                          id={facility.id}
-                          name={facility.name}
-                          onSidebarClick={onSidebarClick}
-                          satellites={facility.satellites}
-                        />
-                      ) :
-                      null
-                  })}
-                </>
-              ) :
-              null}
-      </List>
-    </>
+    <List
+      sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+      component="nav"
+      aria-labelledby="nested-list-subheader"
+      subheader={
+        <ListSubheader component="div">
+          Facilities & Satellites
+        </ListSubheader>
+      }
+    >
+      {loading && <ListItemText primary="Loading..." />}
+      {error && <ListItemText primary={error.message} />}
+      {data?.sideBar && (
+        <>
+          <SidebarItem
+            name="All Pipelines"
+            onSidebarClick={onSidebarClick}
+          />
+          {data.sideBar.map(facility => facility && (
+            <SidebarItem
+              key={facility.id}
+              id={facility.id}
+              name={facility.name}
+              onSidebarClick={onSidebarClick}
+              satellites={facility.satellites}
+            />
+          ))}
+        </>
+      )}
+    </List>
   );
 }

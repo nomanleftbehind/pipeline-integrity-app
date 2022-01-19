@@ -38,7 +38,7 @@ interface ITextFieldProps {
 export default function EntryField({ id, table, columnName, record, validator }: ITextFieldProps): JSX.Element {
   const [edit, setEdit] = useState(false);
   const [valid, setValid] = useState(true);
-  const [state, setState] = useState(record ? record.toString() : "");
+  const [state, setState] = useState(record?.toString() || "");
 
   const [editPipeline, { data: dataPipeline }] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
   const [editPigRun, { data: dataPigRun }] = useEditPigRunMutation({ refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
