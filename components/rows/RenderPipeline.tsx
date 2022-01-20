@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, Fragment } from 'react';
 import EntryField from '../fields/EntryField';
 import { useRouter } from 'next/router';
 import { ModalDeletePipeline } from '../Modal';
@@ -30,8 +30,8 @@ const isEven = (value: number): "even" | "odd" => {
 }
 
 export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRenderPipelineProps) {
-  const [open, setOpen] = React.useState(false);
-  const [showDeletePipelineModal, setShowDeletePipelineModal] = React.useState<boolean>(false);
+  const [open, setOpen] = useState(false);
+  const [showDeletePipelineModal, setShowDeletePipelineModal] = useState(false);
 
   const [deletePipeline, { data: dataDeletePipeline }] = useDeletePipelineMutation({ variables: { id: pipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
   const [duplicatePipeline, { data: dataDuplicatePipeline }] = useDuplicatePipelineMutation({ variables: { id: pipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })
@@ -61,7 +61,7 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
       hideModalDeletePipeline={hideModalDeletePipeline} /> : null;
 
   return (
-    <React.Fragment>
+    <Fragment>
       <TableRow sx={{ '& > td': { borderBottom: 'unset' } }}>
         <TableCell>
           <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
@@ -92,13 +92,13 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
         <TableCell align="right">{injectionPoints ? injectionPoints.length === 1 ? "1 well" : `${injectionPoints.length} wells` : null}</TableCell>
         <EntryField id={id} record={status} columnName="status" validator={validators?.statusEnum} />
       </TableRow>
-      < PipelineData
+      <PipelineData
         key={`${id} injection points`}
         open={open}
         pipeline={pipeline}
         validators={validators}
         isEven={isEven(ppl_idx)}
       />
-    </React.Fragment>
+    </Fragment>
   );
 }

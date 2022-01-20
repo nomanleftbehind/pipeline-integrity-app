@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
@@ -47,8 +47,8 @@ export interface ICollectFlowDataProps {
 
 
 export default function InjectionPoints({ open, id, injectionPoints }: IInjectionPointsProps) {
-  const [showUpstreamPipelinesForm, setShowUpstreamPipelinesForm] = React.useState(false);
-  const [showSourcesForm, setShowSourcesForm] = React.useState(false);
+  const [showUpstreamPipelinesForm, setShowUpstreamPipelinesForm] = useState(false);
+  const [showSourcesForm, setShowSourcesForm] = useState(false);
 
   const { injectionPoints: sources, upstream: upstreamPipelines } = injectionPoints;
 
@@ -158,6 +158,8 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
     upstreamPipelinesOil: sum_flow(dataPipelineFlow?.pipelineFlow, 'oil'),
     upstreamPipelinesWater: sum_flow(dataPipelineFlow?.pipelineFlow, 'water'),
     upstreamPipelinesGas: sum_flow(dataPipelineFlow?.pipelineFlow, 'gas'),
+    upstreamPipelinesGasAssociatedLiquids: sum_flow(dataPipelineFlow?.pipelineFlow, 'gasAssociatedLiquids'),
+    upstreamPipelinesTotalFluids: sum_flow(dataPipelineFlow?.pipelineFlow, 'totalFluids'),
     upstreamPipelinesLastProduction: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'lastProduction'),
     upstreamPipelinesLastInjection: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'lastInjection'),
     upstreamPipelinesFirstProduction: calculateLastFirstFlow(dataPipelineFlow?.pipelineFlow, 'firstProduction'),
@@ -165,6 +167,8 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
     sourcesOil: sum_flow(sources, 'oil'),
     sourcesWater: sum_flow(sources, 'water'),
     sourcesGas: sum_flow(sources, 'gas'),
+    sourcesGasAssociatedLiquids: sum_flow(sources, 'gasAssociatedLiquids'),
+    sourcesTotalFluids: sum_flow(sources, 'totalFluids'),
     sourcesLastProduction: calculateLastFirstFlow(sources, 'lastProduction'),
     sourcesLastInjection: calculateLastFirstFlow(sources, 'lastInjection'),
     sourcesFirstProduction: calculateLastFirstFlow(sources, 'firstProduction'),
@@ -193,141 +197,153 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
 
   return (
     // <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        <Box sx={{ margin: 1 }}>
-          <Typography variant="h6" gutterBottom component="div">
-            Injection Points
-          </Typography>
-          <Table size="small" aria-label="purchases">
-            <TableHead>
-              <TableRow>
-                <TableCell />
-                <TableCell align="right">Oil (m³/d)</TableCell>
-                <TableCell align="right">Water (m³/d)</TableCell>
-                <TableCell align="right">Gas (E3m³/d)</TableCell>
-                <TableCell align="right">Last Production</TableCell>
-                <TableCell align="right">Last Injection</TableCell>
-                <TableCell align="right">First Production</TableCell>
-                <TableCell align="right">First Injection</TableCell>
-              </TableRow>
-              <TableRow sx={{ '& > th': { whiteSpace: 'nowrap' } }}>
-                <TableCell>Total</TableCell>
-                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesOil, flow.sourcesOil)}</TableCell>
-                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesWater, flow.sourcesWater)}</TableCell>
-                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesGas, flow.sourcesGas)}</TableCell>
-                <TableCell align="right">{maxHorizontal(flow.upstreamPipelinesLastProduction, flow.sourcesLastProduction)?.toISOString().slice(0, 10)}</TableCell>
-                <TableCell align="right">{maxHorizontal(flow.upstreamPipelinesLastInjection, flow.sourcesLastInjection)?.toISOString().slice(0, 10)}</TableCell>
-                <TableCell align="right">{minHorizontal(flow.upstreamPipelinesFirstProduction, flow.sourcesFirstProduction)?.toISOString().slice(0, 10)}</TableCell>
-                <TableCell align="right">{minHorizontal(flow.upstreamPipelinesFirstInjection, flow.sourcesFirstInjection)?.toISOString().slice(0, 10)}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableHead>
-              <TableRow sx={{ '& > th': { paddingTop: '30px', fontStyle: 'italic', whiteSpace: 'nowrap' } }}>
-                <TableCell>Upstream Pipelines
-                  <IconButton aria-label="expand row" size="small" onClick={toggleShowUpstreamPipelinesForm}>
-                    {showUpstreamPipelinesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
-                  </IconButton>
-                </TableCell>
-                {/* Even though we don't need to sum only one value, we are passing here to sumHorizontal function because that function rounds to two decimals.
+    <Collapse in={open} timeout="auto" unmountOnExit>
+      <Box sx={{ margin: 1 }}>
+        <Typography variant="h6" gutterBottom component="div">
+          Injection Points
+        </Typography>
+        <Table size="small" aria-label="purchases">
+          <TableHead>
+            <TableRow>
+              <TableCell />
+              <TableCell align="right">Oil (m³/d)</TableCell>
+              <TableCell align="right">Water (m³/d)</TableCell>
+              <TableCell align="right">Gas (E3m³/d)</TableCell>
+              <TableCell align="right">Gas Associated Liquids (m³/d)</TableCell>
+              <TableCell align="right">Total Fluids (m³/d)</TableCell>
+              <TableCell align="right">Last Production</TableCell>
+              <TableCell align="right">Last Injection</TableCell>
+              <TableCell align="right">First Production</TableCell>
+              <TableCell align="right">First Injection</TableCell>
+            </TableRow>
+            <TableRow sx={{ '& > th': { whiteSpace: 'nowrap' } }}>
+              <TableCell>Total</TableCell>
+              <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesOil, flow.sourcesOil)}</TableCell>
+              <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesWater, flow.sourcesWater)}</TableCell>
+              <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesGas, flow.sourcesGas)}</TableCell>
+              <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesGasAssociatedLiquids, flow.sourcesGasAssociatedLiquids)}</TableCell>
+              <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesTotalFluids, flow.sourcesTotalFluids)}</TableCell>
+              <TableCell align="right">{maxHorizontal(flow.upstreamPipelinesLastProduction, flow.sourcesLastProduction)?.toISOString().slice(0, 10)}</TableCell>
+              <TableCell align="right">{maxHorizontal(flow.upstreamPipelinesLastInjection, flow.sourcesLastInjection)?.toISOString().slice(0, 10)}</TableCell>
+              <TableCell align="right">{minHorizontal(flow.upstreamPipelinesFirstProduction, flow.sourcesFirstProduction)?.toISOString().slice(0, 10)}</TableCell>
+              <TableCell align="right">{minHorizontal(flow.upstreamPipelinesFirstInjection, flow.sourcesFirstInjection)?.toISOString().slice(0, 10)}</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableHead>
+            <TableRow sx={{ '& > th': { paddingTop: '30px', fontStyle: 'italic', whiteSpace: 'nowrap' } }}>
+              <TableCell>Upstream Pipelines
+                <IconButton aria-label="expand row" size="small" onClick={toggleShowUpstreamPipelinesForm}>
+                  {showUpstreamPipelinesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
+                </IconButton>
+              </TableCell>
+              {/* Even though we don't need to sum only one value, we are passing here to sumHorizontal function because that function rounds to two decimals.
                     If we don't pass it to the function, we might get numbers like 1.2300000000001 */}
-                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesOil)}</TableCell>
-                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesWater)}</TableCell>
-                <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesGas)}</TableCell>
-                <TableCell align="right">{flow.upstreamPipelinesLastProduction?.toISOString().slice(0, 10)}</TableCell>
-                <TableCell align="right">{flow.upstreamPipelinesLastInjection?.toISOString().slice(0, 10)}</TableCell>
-                <TableCell align="right">{flow.upstreamPipelinesFirstProduction?.toISOString().slice(0, 10)}</TableCell>
-                <TableCell align="right">{flow.upstreamPipelinesFirstInjection?.toISOString().slice(0, 10)}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {showUpstreamPipelinesForm ?
-                <TableRow>
-                  <TableCell>
-                    <InjectionPointForm
-                      injectionPointType="upstream pipeline"
-                      handleSubmit={handleSubmit}
-                    />
-                  </TableCell>
-                </TableRow> :
-                null}
-              {mergedUpstreamPipelines ? mergedUpstreamPipelines.map(upstreamPipeline => {
-                return upstreamPipeline ? (
-                  <Source
-                    key={upstreamPipeline.id}
+              <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesOil)}</TableCell>
+              <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesWater)}</TableCell>
+              <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesGas)}</TableCell>
+              <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesGasAssociatedLiquids)}</TableCell>
+              <TableCell align="right">{sumHorizontal(flow.upstreamPipelinesTotalFluids)}</TableCell>
+              <TableCell align="right">{flow.upstreamPipelinesLastProduction?.toISOString().slice(0, 10)}</TableCell>
+              <TableCell align="right">{flow.upstreamPipelinesLastInjection?.toISOString().slice(0, 10)}</TableCell>
+              <TableCell align="right">{flow.upstreamPipelinesFirstProduction?.toISOString().slice(0, 10)}</TableCell>
+              <TableCell align="right">{flow.upstreamPipelinesFirstInjection?.toISOString().slice(0, 10)}</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {showUpstreamPipelinesForm ?
+              <TableRow>
+                <TableCell>
+                  <InjectionPointForm
                     injectionPointType="upstream pipeline"
-                    injectionPointId={upstreamPipeline.id}
-                    source={`${upstreamPipeline.license}-${upstreamPipeline.segment}`}
                     handleSubmit={handleSubmit}
-                    disconnectInjectionPoint={() => disconnectUpstreamPipeline({ variables: { id: id, upstreamId: upstreamPipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
-                    injectionPointFlow={{
-                      injectionPointOil: upstreamPipeline.oil,
-                      injectionPointWater: upstreamPipeline.water,
-                      injectionPointGas: upstreamPipeline.gas,
-                      injectionPointLastProduction: upstreamPipeline.lastProduction,
-                      injectionPointFirstProduction: upstreamPipeline.firstProduction,
-                      injectionPointLastInjection: upstreamPipeline.lastInjection,
-                      injectionPointFirstInjection: upstreamPipeline.firstInjection,
-                    }}
                   />
-                ) :
-                  null;
-              }) :
-                null}
-            </TableBody>
-            <TableHead>
-              <TableRow sx={{ '& > th': { paddingTop: '30px', fontStyle: 'italic', whiteSpace: 'nowrap' } }}>
-                <TableCell>Sources
-                  <IconButton aria-label="expand row" size="small" onClick={toggleShowSourcesForm}>
-                    {showSourcesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
-                  </IconButton>
                 </TableCell>
-                <TableCell align="right">{sumHorizontal(flow.sourcesOil)}</TableCell>
-                <TableCell align="right">{sumHorizontal(flow.sourcesWater)}</TableCell>
-                <TableCell align="right">{sumHorizontal(flow.sourcesGas)}</TableCell>
-                <TableCell align="right">{flow.sourcesLastProduction?.toISOString().slice(0, 10)}</TableCell>
-                <TableCell align="right">{flow.sourcesLastInjection?.toISOString().slice(0, 10)}</TableCell>
-                <TableCell align="right">{flow.sourcesFirstProduction?.toISOString().slice(0, 10)}</TableCell>
-                <TableCell align="right">{flow.sourcesFirstInjection?.toISOString().slice(0, 10)}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {showSourcesForm ?
-                <TableRow>
-                  <TableCell>
-                    <InjectionPointForm
-                      injectionPointType="source"
-                      handleSubmit={handleSubmit}
-                    />
-                  </TableCell>
-                </TableRow> :
-                null}
-              {sources ? sources.map(source => {
-                return source ? (
-                  <Source
-                    key={source.id}
+              </TableRow> :
+              null}
+            {mergedUpstreamPipelines ? mergedUpstreamPipelines.map(upstreamPipeline => {
+              return upstreamPipeline ? (
+                <Source
+                  key={upstreamPipeline.id}
+                  injectionPointType="upstream pipeline"
+                  injectionPointId={upstreamPipeline.id}
+                  source={`${upstreamPipeline.license}-${upstreamPipeline.segment}`}
+                  handleSubmit={handleSubmit}
+                  disconnectInjectionPoint={() => disconnectUpstreamPipeline({ variables: { id: id, upstreamId: upstreamPipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
+                  injectionPointFlow={{
+                    injectionPointOil: upstreamPipeline.oil,
+                    injectionPointWater: upstreamPipeline.water,
+                    injectionPointGas: upstreamPipeline.gas,
+                    injectionPointGasAssociatedLiquids: upstreamPipeline.gasAssociatedLiquids,
+                    injectionPointTotalFluids: upstreamPipeline.totalFluids,
+                    injectionPointLastProduction: upstreamPipeline.lastProduction,
+                    injectionPointFirstProduction: upstreamPipeline.firstProduction,
+                    injectionPointLastInjection: upstreamPipeline.lastInjection,
+                    injectionPointFirstInjection: upstreamPipeline.firstInjection,
+                  }}
+                />
+              ) :
+                null;
+            }) :
+              null}
+          </TableBody>
+          <TableHead>
+            <TableRow sx={{ '& > th': { paddingTop: '30px', fontStyle: 'italic', whiteSpace: 'nowrap' } }}>
+              <TableCell>Sources
+                <IconButton aria-label="expand row" size="small" onClick={toggleShowSourcesForm}>
+                  {showSourcesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
+                </IconButton>
+              </TableCell>
+              <TableCell align="right">{sumHorizontal(flow.sourcesOil)}</TableCell>
+              <TableCell align="right">{sumHorizontal(flow.sourcesWater)}</TableCell>
+              <TableCell align="right">{sumHorizontal(flow.sourcesGas)}</TableCell>
+              <TableCell align="right">{sumHorizontal(flow.sourcesGasAssociatedLiquids)}</TableCell>
+              <TableCell align="right">{sumHorizontal(flow.sourcesTotalFluids)}</TableCell>
+              <TableCell align="right">{flow.sourcesLastProduction?.toISOString().slice(0, 10)}</TableCell>
+              <TableCell align="right">{flow.sourcesLastInjection?.toISOString().slice(0, 10)}</TableCell>
+              <TableCell align="right">{flow.sourcesFirstProduction?.toISOString().slice(0, 10)}</TableCell>
+              <TableCell align="right">{flow.sourcesFirstInjection?.toISOString().slice(0, 10)}</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {showSourcesForm ?
+              <TableRow>
+                <TableCell>
+                  <InjectionPointForm
                     injectionPointType="source"
-                    injectionPointId={source.id}
-                    source={source.source}
                     handleSubmit={handleSubmit}
-                    disconnectInjectionPoint={() => disconnectSource({ variables: { id: id, sourceId: source.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
-                    injectionPointFlow={{
-                      injectionPointOil: source.oil,
-                      injectionPointWater: source.water,
-                      injectionPointGas: source.gas,
-                      injectionPointLastProduction: source.lastProduction,
-                      injectionPointFirstProduction: source.firstProduction,
-                      injectionPointLastInjection: source.lastInjection,
-                      injectionPointFirstInjection: source.firstInjection,
-                    }}
                   />
-                ) :
-                  null;
-              }) :
-                null}
-            </TableBody>
-          </Table>
-        </Box>
-      </Collapse>
+                </TableCell>
+              </TableRow> :
+              null}
+            {sources ? sources.map(source => {
+              return source ? (
+                <Source
+                  key={source.id}
+                  injectionPointType="source"
+                  injectionPointId={source.id}
+                  source={source.source}
+                  handleSubmit={handleSubmit}
+                  disconnectInjectionPoint={() => disconnectSource({ variables: { id: id, sourceId: source.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
+                  injectionPointFlow={{
+                    injectionPointOil: source.oil,
+                    injectionPointWater: source.water,
+                    injectionPointGas: source.gas,
+                    injectionPointGasAssociatedLiquids: source.gasAssociatedLiquids,
+                    injectionPointTotalFluids: source.totalFluids,
+                    injectionPointLastProduction: source.lastProduction,
+                    injectionPointFirstProduction: source.firstProduction,
+                    injectionPointLastInjection: source.lastInjection,
+                    injectionPointFirstInjection: source.firstInjection,
+                  }}
+                />
+              ) :
+                null;
+            }) :
+              null}
+          </TableBody>
+        </Table>
+      </Box>
+    </Collapse>
     // </TableCell>
   );
 }

@@ -30,7 +30,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
 
   const { licenseMatchPattern, segmentMatchPattern, substanceEnum, fromToMatchPattern, fromToFeatureEnum, statusEnum, lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
 
-  const mechanical_properties = [
+  const mechanicalProperties = [
     { columnName: 'length', record: length, validator: lengthMatchPattern },
     { columnName: 'type', record: type, validator: typeEnum },
     { columnName: 'grade', record: grade, validator: gradeEnum },
@@ -86,7 +86,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
                 open={open}
                 id={id}
                 propertiesName="Mechanical Properties"
-                pipelineProperties={mechanical_properties}
+                pipelineProperties={mechanicalProperties}
               />
             </TabPanel>
             {/* <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={2} /> */}

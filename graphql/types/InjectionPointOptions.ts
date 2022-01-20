@@ -1,5 +1,5 @@
 import { objectType, extendType, nonNull, stringArg, list } from 'nexus';
-import { gasAssociatedLiquids, totalFluids } from './InjectionPoint';
+import { gasAssociatedLiquidsCalc, totalFluidsCalc } from './InjectionPoint';
 import { Prisma } from '@prisma/client'
 import { Context } from '../context';
 import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
@@ -35,10 +35,10 @@ export const PipelineFlow = objectType({
     t.nonNull.float('water')
     t.nonNull.float('gas')
     t.nonNull.float('gasAssociatedLiquids', {
-      resolve: async ({ gas }) => gasAssociatedLiquids(gas)
+      resolve: async ({ gas }) => gasAssociatedLiquidsCalc(gas)
     })
     t.nonNull.float('totalFluids', {
-      resolve: async ({ oil, water, gas }) => totalFluids(oil, water, gas)
+      resolve: async ({ oil, water, gas }) => totalFluidsCalc(oil, water, gas)
     })
     t.field('firstProduction', { type: 'DateTime' })
     t.field('lastProduction', { type: 'DateTime' })
@@ -64,7 +64,7 @@ export const SideBar = objectType({
   }
 })
 
-export const TotalPipelineFlowRawQuery = async (id: (string | null)[], ctx: Context) => {
+export const totalPipelineFlowRawQuery = async (id: (string | null)[], ctx: Context) => {
   const result = await ctx.prisma.$queryRaw<NexusGenObjects['PipelineFlow'][]>`
         WITH pipeline_volume as (
           SELECT
@@ -430,7 +430,7 @@ export const InjectionPointOptionsQuery = extendType({
       },
       resolve: async (_parent, { id }, ctx: Context) => {
 
-        const result = await TotalPipelineFlowRawQuery(id, ctx);
+        const result = await totalPipelineFlowRawQuery(id, ctx);
 
         return result;
       }

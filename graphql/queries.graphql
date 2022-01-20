@@ -48,6 +48,8 @@ query pipelinesByIdQuery($table: String, $id: String) {
       oil
       water
       gas
+      gasAssociatedLiquids
+      totalFluids
       firstProduction
       lastProduction
       firstInjection
@@ -440,6 +442,8 @@ query PipelineFlow($pipelineFlowId: [String]!) {
     oil
     water
     gas
+    gasAssociatedLiquids
+    totalFluids
     firstProduction
     lastProduction
     firstInjection

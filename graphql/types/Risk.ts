@@ -2,10 +2,64 @@ import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, bo
 'node_modules\.prisma\client\index.d.ts'
 import { Risk as IRisk } from '@prisma/client';
 import { databaseEnumToServerEnum } from './Pipeline';
-import { totalFluids } from './InjectionPoint';
-import { TotalPipelineFlowRawQuery } from './InjectionPointOptions';
+import { totalFluidsCalc } from './InjectionPoint';
+import { totalPipelineFlowRawQuery } from './InjectionPointOptions';
 import { getUserId } from '../utils';
 import { Context } from '../context';
+
+
+const riskResolvers = async (parent: IRisk, ctx: Context) => {
+  const { id, environmentProximityTo } = parent;
+  const { substance, status } = await ctx.prisma.pipeline.findUnique({ where: { id } }) || {};
+  // This function takes an array of pipeline ids as the first argument and returns an array of `pipeline flow` objects.
+  // In this case since first argument array contains only one pipeline id, return value will be an array with only one `pipeline flow` object.
+  const { water, oil, gas, } = (await totalPipelineFlowRawQuery([id], ctx))[0];
+  const totalFluids = totalFluidsCalc(oil, water, gas);
+
+
+  const enviroRisk = () => {
+    if (status === 'Discontinued' || status === 'Abandoned' || substance === 'FreshWater') {
+      return 1;
+    } else {
+      if (substance === 'NaturalGas' || substance === 'FuelGas' || substance === 'SourNaturalGas') {
+        if (environmentProximityTo === null) {
+          // no water body and no crossing.  (eg. middle of field)
+          return totalFluids >= 1 ? 2 : 1;
+        }
+        else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WB3') {
+          // WC1 = Ephemeral, WB3 = non-permanent seasonal/temporary wetlands; Fens; Bogs;
+          return totalFluids >= 1 ? 3 : 2;
+        } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WC3' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB5' || environmentProximityTo === 'WB4') {
+          return totalFluids >= 1 ? 4 : 3;
+        } else {
+          return null;
+        }
+      } else if (substance === 'OilWellEffluent' || substance === 'CrudeOil' || substance === 'SaltWater' /*|| substance === 'Sour Crude'*/) {
+        if (environmentProximityTo === null || environmentProximityTo === 'WB1') {
+          return 2;
+        } else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB3') {
+          return 3;
+        } else if (environmentProximityTo === 'WC3' || environmentProximityTo === 'WB4') {
+          return 4;
+        } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WB5') {
+          return 5;
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    }
+  }
+  const er = enviroRisk();
+
+  const result = {
+    costPerM3Released: substance === 'FreshWater' ? 0 : 25000 * water + 1000 * gas + 15000 * oil,
+    enviroRisk: er,
+  }
+  return result;
+}
+
 
 export const Risk = objectType({
   name: 'Risk',
@@ -36,21 +90,14 @@ export const Risk = objectType({
     t.int('repairTimeDays')
     t.int('releaseTimeDays')
     t.float('costPerM3Released', {
-      resolve: async ({ id }, _args, ctx: Context) => {
-        const { substance } = await ctx.prisma.pipeline.findUnique({ where: { id } }) || {};
-        // This function takes an array of pipeline ids as the first argument and returns an array of `pipeline flow` objects.
-        // In this case since first argument array contains only one pipeline id, return value will be an array with only one `pipeline flow` object.
-        const { water, oil, gas } = (await TotalPipelineFlowRawQuery([id], ctx))[0];
-        if (substance === 'FreshWater') {
-          return 0;
-        } else {
-          return 25000 * water + 1000 * gas + 15000 * oil;
-        }
+      resolve: async (parent, _args, ctx: Context) => {
+        const { costPerM3Released } = await riskResolvers(parent, ctx);
+        return costPerM3Released;
       }
     })
     t.int('enviroRisk', {
       resolve: async (parent, _args, ctx: Context) => {
-        const { enviroRisk } = await RiskResolvers(parent, ctx);
+        const { enviroRisk } = await riskResolvers(parent, ctx);
         return enviroRisk;
       }
     })
@@ -141,56 +188,6 @@ export const RiskQuery = extendType({
   }
 })
 
-
-const RiskResolvers = async (parent: IRisk, ctx: Context) => {
-  const { id, environmentProximityTo } = parent;
-  const { substance, status } = await ctx.prisma.pipeline.findUnique({ where: { id } }) || {};
-  // This function takes an array of pipeline ids as the first argument and returns an array of `pipeline flow` objects.
-  // In this case since first argument array contains only one pipeline id, return value will be an array with only one `pipeline flow` object.
-  const { water, oil, gas, } = (await TotalPipelineFlowRawQuery([id], ctx))[0];
-  const tf = totalFluids(oil, water, gas);
-
-  const enviroRisk = () => {
-    if (status === 'Discontinued' || status === 'Abandoned' || substance === 'FreshWater') {
-      return 1;
-    } else {
-      if (substance === 'NaturalGas' || substance === 'FuelGas' || substance === 'SourNaturalGas') {
-        if (environmentProximityTo === null) {
-          // no water body and no crossing.  (eg. middle of field)
-          return tf >= 1 ? 2 : 1;
-        }
-        else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WB3') {
-          // WC1 = Ephemeral, WB3 = non-permanent seasonal/temporary wetlands; Fens; Bogs;
-          return tf >= 1 ? 3 : 2;
-        } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WC3' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB5' || environmentProximityTo === 'WB4') {
-          return tf >= 1 ? 4 : 3;
-        } else {
-          return null;
-        }
-      } else if (substance === 'OilWellEffluent' || substance === 'CrudeOil' || substance === 'SaltWater' /*|| substance === 'Sour Crude'*/) {
-        if (environmentProximityTo === null || environmentProximityTo === 'WB1') {
-          return 2;
-        } else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB3') {
-          return 3;
-        } else if (environmentProximityTo === 'WC3' || environmentProximityTo === 'WB4') {
-          return 4;
-        } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WB5') {
-          return 5;
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
-    }
-  }
-
-  const result = {
-    costPerM3Released: substance === 'FreshWater' ? 0 : 25000 * water + 1000 * gas + 15000 * oil,
-    enviroRisk: enviroRisk(),
-  }
-  return result;
-}
 
 
 export const RiskMutation = extendType({

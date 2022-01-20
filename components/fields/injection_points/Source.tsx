@@ -17,7 +17,9 @@ interface IInjectionPointEnrtyProps {
   injectionPointFlow: {
     injectionPointOil?: number;
     injectionPointWater?: number;
+    injectionPointGasAssociatedLiquids?: number;
     injectionPointGas?: number;
+    injectionPointTotalFluids?: number;
     injectionPointLastProduction?: string | null;
     injectionPointFirstProduction?: string | null;
     injectionPointLastInjection?: string | null;
@@ -37,7 +39,7 @@ export default function InjectionPointEntry({ injectionPointType, injectionPoint
     setShowForm(false);
   }
 
-  const { injectionPointOil, injectionPointWater, injectionPointGas, injectionPointLastProduction, injectionPointFirstProduction, injectionPointLastInjection, injectionPointFirstInjection } = injectionPointFlow || {};
+  const { injectionPointOil, injectionPointWater, injectionPointGas, injectionPointGasAssociatedLiquids, injectionPointTotalFluids, injectionPointLastProduction, injectionPointFirstProduction, injectionPointLastInjection, injectionPointFirstInjection } = injectionPointFlow || {};
 
   return (
     <TableRow sx={{ '& > td, th': { whiteSpace: 'nowrap' } }}>
@@ -67,6 +69,8 @@ export default function InjectionPointEntry({ injectionPointType, injectionPoint
       <TableCell align="right">{injectionPointOil ? Math.round((injectionPointOil) * 100) / 100 : null}</TableCell>
       <TableCell align="right">{injectionPointWater ? Math.round((injectionPointWater) * 100) / 100 : null}</TableCell>
       <TableCell align="right">{injectionPointGas ? Math.round((injectionPointGas) * 100) / 100 : null}</TableCell>
+      <TableCell align="right">{injectionPointGasAssociatedLiquids ? Math.round((injectionPointGasAssociatedLiquids) * 100) / 100 : null}</TableCell>
+      <TableCell align="right">{injectionPointTotalFluids ? Math.round((injectionPointTotalFluids) * 100) / 100 : null}</TableCell>
       <TableCell align="right">{injectionPointLastProduction ? injectionPointLastProduction.slice(0, 10) : null}</TableCell>
       <TableCell align="right">{injectionPointLastInjection ? injectionPointLastInjection.slice(0, 10) : null}</TableCell>
       <TableCell align="right">{injectionPointFirstProduction ? injectionPointFirstProduction.slice(0, 10) : null}</TableCell>

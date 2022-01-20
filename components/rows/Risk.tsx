@@ -49,7 +49,7 @@ export default function Risk({ id, open }: IRiskProps) {
     { columnName: 'releaseTimeDays', record: releaseTimeDays, table },
     { columnName: 'costPerM3Released', record: costPerM3Released },
     { columnName: 'riskPeople', record: riskPeople, table },
-    { columnName: 'enviroRisk', record: riskPeople },
+    { columnName: 'enviroRisk', record: enviroRisk },
     { columnName: 'safeguardExternalCoating', record: safeguardExternalCoating, table },
     { columnName: 'safeguardInternalProtection', record: safeguardInternalProtection, table },
     { columnName: 'createdBy', record: createdBy?.email, table },
