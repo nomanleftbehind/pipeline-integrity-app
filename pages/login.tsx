@@ -32,11 +32,6 @@ export default function Login() {
 
   // // const me = data?.me;
 
-  useEffect(() => {
-    console.log('loginUser: ', user);
-
-  }, [user])
-
 
 
   async function handleSubmit(e: any) {

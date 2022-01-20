@@ -690,6 +690,7 @@ export type QueryRiskByIdArgs = {
 
 export type Risk = {
   arielReview?: Maybe<Scalars['Boolean']>;
+  assetRisk?: Maybe<Scalars['Int']>;
   costPerM3Released?: Maybe<Scalars['Float']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
@@ -707,6 +708,7 @@ export type Risk = {
   oilReleaseCost?: Maybe<Scalars['Float']>;
   pipeline: Pipeline;
   probabilityGeo?: Maybe<Scalars['Float']>;
+  probabilityInterior?: Maybe<Scalars['Int']>;
   releaseTimeDays?: Maybe<Scalars['Int']>;
   repairTimeDays?: Maybe<Scalars['Int']>;
   riskPeople?: Maybe<Scalars['Int']>;
@@ -1162,7 +1164,7 @@ export type RiskByIdQueryVariables = Exact<{
 }>;
 
 
-export type RiskByIdQuery = { riskById?: Array<{ id: string, arielReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, enviroRisk?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, pipeline: { license: string, segment: string }, createdBy: { email: string } } | null | undefined> | null | undefined };
+export type RiskByIdQuery = { riskById?: Array<{ id: string, arielReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, enviroRisk?: number | null | undefined, assetRisk?: number | null | undefined, probabilityGeo?: number | null | undefined, probabilityInterior?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, pipeline: { license: string, segment: string }, createdBy: { email: string } } | null | undefined> | null | undefined };
 
 export type PipelineFlowQueryVariables = Exact<{
   pipelineFlowId: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
@@ -2651,7 +2653,9 @@ export const RiskByIdDocument = gql`
     gasReleaseCost
     riskPeople
     enviroRisk
+    assetRisk
     probabilityGeo
+    probabilityInterior
     safeguardInternalProtection
     safeguardExternalCoating
     createdBy {

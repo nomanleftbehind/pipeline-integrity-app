@@ -29,7 +29,7 @@ export default function Risk({ id, open }: IRiskProps) {
   const table: ITable = 'risk';
 
   const { id: riskId, arielReview, environmentProximityTo, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS1, geotechnicalFacingS2, geotechnicalHeightS2, geotechnicalSlopeAngleS2,
-    dateSlopeChecked, oilReleaseCost, gasReleaseCost, probabilityGeo, repairTimeDays, releaseTimeDays, costPerM3Released, riskPeople, enviroRisk, safeguardExternalCoating, safeguardInternalProtection, createdBy, createdAt, updatedAt } = data?.riskById?.[0] || {};
+    dateSlopeChecked, oilReleaseCost, gasReleaseCost, probabilityGeo, probabilityInterior, repairTimeDays, releaseTimeDays, costPerM3Released, riskPeople, enviroRisk, assetRisk, safeguardExternalCoating, safeguardInternalProtection, createdBy, createdAt, updatedAt } = data?.riskById?.[0] || {};
   const { environmentProximityToEnum, geotechnicalFacingEnum } = dataValidatorsRisk?.validators || {};
 
   const riskProperties = [
@@ -45,11 +45,13 @@ export default function Risk({ id, open }: IRiskProps) {
     { columnName: 'oilReleaseCost', record: oilReleaseCost, table },
     { columnName: 'gasReleaseCost', record: gasReleaseCost, table },
     { columnName: 'probabilityGeo', record: probabilityGeo, table },
+    { columnName: 'probabilityInterior', record: probabilityInterior },
     { columnName: 'repairTimeDays', record: repairTimeDays, table },
     { columnName: 'releaseTimeDays', record: releaseTimeDays, table },
     { columnName: 'costPerM3Released', record: costPerM3Released },
     { columnName: 'riskPeople', record: riskPeople, table },
     { columnName: 'enviroRisk', record: enviroRisk },
+    { columnName: 'assetRisk', record: assetRisk },
     { columnName: 'safeguardExternalCoating', record: safeguardExternalCoating, table },
     { columnName: 'safeguardInternalProtection', record: safeguardInternalProtection, table },
     { columnName: 'createdBy', record: createdBy?.email, table },

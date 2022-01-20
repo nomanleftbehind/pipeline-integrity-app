@@ -28,7 +28,6 @@ export default function SatelliteFacilityList() {
 
   const { loading, data } = useQuery<SatelliteData>(SATELLITES_QUERY);
   if (data) {
-    console.log(data.allSatellites);
     return (
       <div className="app">
         <h3>Facilities</h3>

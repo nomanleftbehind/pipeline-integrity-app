@@ -457,6 +457,7 @@ type Query {
 
 type Risk {
   arielReview: Boolean
+  assetRisk: Int
   costPerM3Released: Float
   createdAt: DateTime!
   createdBy: User!
@@ -474,6 +475,7 @@ type Risk {
   oilReleaseCost: Float
   pipeline: Pipeline!
   probabilityGeo: Float
+  probabilityInterior: Int
   releaseTimeDays: Int
   repairTimeDays: Int
   riskPeople: Int

@@ -47,7 +47,6 @@ export default function PipelineDatabase() {
     newFilterTextCaseInsensitive[myHeader] = value.toUpperCase();
     setFilterText(newFilterText);
     setFilterTextCaseInsensitive(newFilterTextCaseInsensitive);
-    console.log(filterTextCaseInsensitive[myHeader]);
   }
 
   const validators = validatorsData?.validators;

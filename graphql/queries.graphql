@@ -425,7 +425,9 @@ query RiskById($id: String) {
     gasReleaseCost
     riskPeople
     enviroRisk
+    assetRisk
     probabilityGeo
+    probabilityInterior
     safeguardInternalProtection
     safeguardExternalCoating
     createdBy {

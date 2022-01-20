@@ -373,8 +373,6 @@ export const PipelineQuery = extendType({
         id: stringArg(),
       },
       resolve: async (_parent, { id, table }, ctx: Context) => {
-        console.log('id: ', id, table);
-
         if (table === 'satellite') {
           return ctx.prisma.pipeline.findMany({
             where: { satelliteId: id },

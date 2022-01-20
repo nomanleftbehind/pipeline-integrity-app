@@ -35,7 +35,6 @@ export const FromToFeatureEnumObject = objectType({
 	name: 'FromToFeatureEnumObject',
 	definition(t) {
 		for (const iterator of Object.keys(FromToFeatureEnumMembers)) {
-			console.log(iterator);
 			t.nonNull.string(iterator)
 		}
 	}
