@@ -212,6 +212,7 @@ export type InjectionPoint = {
   firstInjection?: Maybe<Scalars['DateTime']>;
   firstProduction?: Maybe<Scalars['DateTime']>;
   gas: Scalars['Float'];
+  gasAssociatedLiquids: Scalars['Float'];
   id: Scalars['String'];
   lastInjection?: Maybe<Scalars['DateTime']>;
   lastProduction?: Maybe<Scalars['DateTime']>;
@@ -220,6 +221,7 @@ export type InjectionPoint = {
   pvNodeId?: Maybe<Scalars['String']>;
   pvUnitId?: Maybe<Scalars['String']>;
   source: Scalars['String'];
+  totalFluids: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
   water: Scalars['Float'];
 };
@@ -592,10 +594,12 @@ export type PipelineFlow = {
   firstInjection?: Maybe<Scalars['DateTime']>;
   firstProduction?: Maybe<Scalars['DateTime']>;
   gas: Scalars['Float'];
+  gasAssociatedLiquids: Scalars['Float'];
   id: Scalars['String'];
   lastInjection?: Maybe<Scalars['DateTime']>;
   lastProduction?: Maybe<Scalars['DateTime']>;
   oil: Scalars['Float'];
+  totalFluids: Scalars['Float'];
   water: Scalars['Float'];
 };
 
@@ -686,9 +690,11 @@ export type QueryRiskByIdArgs = {
 
 export type Risk = {
   arielReview?: Maybe<Scalars['Boolean']>;
+  costPerM3Released?: Maybe<Scalars['Float']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
   dateSlopeChecked?: Maybe<Scalars['DateTime']>;
+  enviroRisk?: Maybe<Scalars['Int']>;
   environmentProximityTo?: Maybe<EnvironmentProximityToEnum>;
   gasReleaseCost?: Maybe<Scalars['Float']>;
   geotechnicalFacingS1?: Maybe<GeotechnicalFacingEnum>;
@@ -1156,7 +1162,7 @@ export type RiskByIdQueryVariables = Exact<{
 }>;
 
 
-export type RiskByIdQuery = { riskById?: Array<{ id: string, arielReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, pipeline: { license: string, segment: string }, createdBy: { email: string } } | null | undefined> | null | undefined };
+export type RiskByIdQuery = { riskById?: Array<{ id: string, arielReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, enviroRisk?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, pipeline: { license: string, segment: string }, createdBy: { email: string } } | null | undefined> | null | undefined };
 
 export type PipelineFlowQueryVariables = Exact<{
   pipelineFlowId: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
@@ -2638,9 +2644,11 @@ export const RiskByIdDocument = gql`
     dateSlopeChecked
     repairTimeDays
     releaseTimeDays
+    costPerM3Released
     oilReleaseCost
     gasReleaseCost
     riskPeople
+    enviroRisk
     probabilityGeo
     safeguardInternalProtection
     safeguardExternalCoating

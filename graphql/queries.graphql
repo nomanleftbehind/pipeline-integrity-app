@@ -418,9 +418,11 @@ query RiskById($id: String) {
     dateSlopeChecked
     repairTimeDays
     releaseTimeDays
+    costPerM3Released
     oilReleaseCost
     gasReleaseCost
     riskPeople
+    enviroRisk
     probabilityGeo
     safeguardInternalProtection
     safeguardExternalCoating

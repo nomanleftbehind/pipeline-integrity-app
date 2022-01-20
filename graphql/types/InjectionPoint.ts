@@ -1,9 +1,20 @@
 import { enumType, intArg, objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
+import { InjectionPoint as IInjectionPoint } from '@prisma/client';
 import { User } from './User';
 import { Satellite, SatelliteUniqueInput } from './Satellite';
-import { Pipeline, PipelineUniqueInput } from './Pipeline';
+import { Pipeline } from './Pipeline';
 import { Context } from '../context';
 
+
+export const gasAssociatedLiquids = (gas: IInjectionPoint['gas'] | number) => {
+  return (typeof gas === 'number' ? gas : gas.toNumber()) * 35.49 * 0.00355238191999475 / 6.3;
+}
+
+export const totalFluids = (oil: IInjectionPoint['oil'] | number, water: IInjectionPoint['water'] | number, gas: IInjectionPoint['gas'] | number) => {
+  oil = typeof oil === 'number' ? oil : oil.toNumber();
+  water = typeof water === 'number' ? water : water.toNumber();
+  return oil + water + gasAssociatedLiquids(gas);
+}
 
 export const InjectionPoint = objectType({
   name: 'InjectionPoint',
@@ -17,6 +28,12 @@ export const InjectionPoint = objectType({
     t.nonNull.float('oil')
     t.nonNull.float('water')
     t.nonNull.float('gas')
+    t.nonNull.float('gasAssociatedLiquids', {
+      resolve: async ({ gas }) => gasAssociatedLiquids(gas)
+    })
+    t.nonNull.float('totalFluids', {
+      resolve: async ({ oil, water, gas }) => totalFluids(oil, water, gas)
+    })
     t.field('firstProduction', { type: 'DateTime' })
     t.field('lastProduction', { type: 'DateTime' })
     t.field('firstInjection', { type: 'DateTime' })

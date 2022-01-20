@@ -203,6 +203,7 @@ type InjectionPoint {
   firstInjection: DateTime
   firstProduction: DateTime
   gas: Float!
+  gasAssociatedLiquids: Float!
   id: String!
   lastInjection: DateTime
   lastProduction: DateTime
@@ -211,6 +212,7 @@ type InjectionPoint {
   pvNodeId: String
   pvUnitId: String
   source: String!
+  totalFluids: Float!
   updatedAt: DateTime!
   water: Float!
 }
@@ -395,10 +397,12 @@ type PipelineFlow {
   firstInjection: DateTime
   firstProduction: DateTime
   gas: Float!
+  gasAssociatedLiquids: Float!
   id: String!
   lastInjection: DateTime
   lastProduction: DateTime
   oil: Float!
+  totalFluids: Float!
   water: Float!
 }
 
@@ -453,9 +457,11 @@ type Query {
 
 type Risk {
   arielReview: Boolean
+  costPerM3Released: Float
   createdAt: DateTime!
   createdBy: User!
   dateSlopeChecked: DateTime
+  enviroRisk: Int
   environmentProximityTo: EnvironmentProximityToEnum
   gasReleaseCost: Float
   geotechnicalFacingS1: GeotechnicalFacingEnum
