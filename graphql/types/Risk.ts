@@ -24,7 +24,7 @@ const riskResolvers = async (parent: IRisk, ctx: Context) => {
       if (environmentProximityTo === null) {
         // no water body and no crossing.  (eg. middle of field)
         return totalFluids >= 1 ? 2 : 1;
-      } else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WB3') {
+      } else if (['WC1', 'WB3'].includes(environmentProximityTo)) {
         // WC1 = Ephemeral, WB3 = non-permanent seasonal/temporary wetlands; Fens; Bogs;
         return totalFluids >= 1 ? 3 : 2;
       } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WC3' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB5' || environmentProximityTo === 'WB4') {
