@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION get_last_join(
+CREATE OR REPLACE FUNCTION "ppl_db".pipeline_flow(
 	pipeline_id text
 )
 RETURNS TABLE (
@@ -73,8 +73,8 @@ pv.id,
 
 	query_join text := '
 FROM pipeline_volume pv1';
-	query_where text := '
-WHERE pv1.id = ' || pipeline_id;
+	query_where text := CONCAT('
+WHERE pv1.id IN (''', pipeline_id, ''')');
 
 	query_not_in_beggin text;
 	plus text;
@@ -97,7 +97,7 @@ BEGIN
 			plus := '';
 		END IF;
 
-		query_select := CONCAT(query_select, /*query_not_in_beggin,*/ ',
+		query_select := CONCAT(query_select, ',
 ROW_NUMBER () OVER (PARTITION BY pv', counter, '.id ORDER BY pv', counter, '.id) as sum_if_', counter, ',
 pv', counter, '.oil as "oil', counter, '"', ',
 pv', counter, '.water as "water', counter, '"', ',
@@ -156,7 +156,7 @@ pv.id
 
 ORDER BY
 pv.id');
-		raise notice '%', query_final_text;
+ 		raise notice '%', query_final_text;
 		EXECUTE query_pipeline_volume || query_max || query_join || query_where
 		INTO res;
 		
@@ -169,5 +169,3 @@ pv.id');
 END;
 
 $$;
-
-SELECT * FROM get_last_join('''06c1210d-b560-423e-9c05-fd0e5e1273a7''');
