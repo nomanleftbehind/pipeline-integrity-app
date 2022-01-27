@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "codegen": "graphql-codegen --config codegen.yml",
-    "generate": "graphql-codegen"
+    "generate": "graphql-codegen",
+    "updateflow": "ts-node prisma/update_flow.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.4.16",
@@ -28,6 +29,7 @@
     "@types/micro": "^7.3.6",
     "@types/micro-cors": "^0.1.2",
     "@types/react-dom": "^17.0.10",
+    "@types/tedious": "^4.0.6",
     "apollo-server-cache-redis": "^3.2.0",
     "apollo-server-micro": "^3.4.0",
     "bcryptjs": "^2.4.3",
@@ -49,7 +51,8 @@
     "react": "17.0.2",
     "react-dom": "^17.0.2",
     "redis": "^3.1.2",
-    "swr": "^1.0.1"
+    "swr": "^1.0.1",
+    "tedious": "^14.1.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "2.2.2",

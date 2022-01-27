@@ -68,6 +68,8 @@ export const SideBar = objectType({
 export const totalPipelineFlowRawQuery = async (id: (string | null)[], ctx: Context) => {
   const ids = id.join("', '");
 
+  // This raw query calls user defined custom function on PostgreSQL database.
+  // For it to work, sql function must first be created by executing file `/prisma/pipeline_flow_dynamic.sql` on database as the Administrator.
   const result = await ctx.prisma.$queryRaw<NexusGenObjects['PipelineFlow'][]>`
   SELECT * FROM "ppl_db".pipeline_flow(${ids});
   `
