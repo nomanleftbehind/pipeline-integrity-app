@@ -6,7 +6,8 @@ import {
 	TypeEnumMembers,
 	GradeEnumMembers,
 	MaterialEnumMembers,
-	InternalProtectionEnumMembers
+	InternalProtectionEnumMembers,
+	FlowDirectionEnumMembers
 } from './Pipeline';
 import { PigTypeEnumMembers } from './PigRun';
 import { LimitingSpecEnumMembers } from './PressureTest';
@@ -22,6 +23,7 @@ export const wallThicknessMatchPattern = "^(\\d|1\\d|2[0-5])(\\.\\d{1,2})?$";
 export const mopMatchPattern = "^\\d{1,5}$"; // number between 0 and 99999
 export const outsideDiameterMatchPattern = "^4[3-9]$|^4[2-9]\\.[2-9]\\d?$|^([5-9]\\d)(\\.\\d\\d?)?$|^([1-2]\\d{2})(\\.\\d\\d?)?$|^(3[0-2][0-3])(\\.[0-8]\\d?)?$"; // number between 42.2 and 323.89
 
+
 export const SubstanceEnumObject = objectType({
 	name: 'SubstanceEnumObject',
 	definition(t) {
@@ -29,7 +31,7 @@ export const SubstanceEnumObject = objectType({
 			t.nonNull.string(iterator)
 		}
 	}
-})
+});
 
 export const FromToFeatureEnumObject = objectType({
 	name: 'FromToFeatureEnumObject',
@@ -38,7 +40,7 @@ export const FromToFeatureEnumObject = objectType({
 			t.nonNull.string(iterator)
 		}
 	}
-})
+});
 
 export const StatusEnumObject = objectType({
 	name: 'StatusEnumObject',
@@ -47,7 +49,7 @@ export const StatusEnumObject = objectType({
 			t.nonNull.string(iterator)
 		}
 	}
-})
+});
 
 export const TypeEnumObject = objectType({
 	name: 'TypeEnumObject',
@@ -56,7 +58,7 @@ export const TypeEnumObject = objectType({
 			t.nonNull.string(iterator)
 		}
 	}
-})
+});
 
 export const GradeEnumObject = objectType({
 	name: 'GradeEnumObject',
@@ -65,7 +67,7 @@ export const GradeEnumObject = objectType({
 			t.nonNull.string(iterator)
 		}
 	}
-})
+});
 
 export const MaterialEnumObject = objectType({
 	name: 'MaterialEnumObject',
@@ -74,7 +76,7 @@ export const MaterialEnumObject = objectType({
 			t.nonNull.string(iterator)
 		}
 	}
-})
+});
 
 export const InternalProtectionEnumObject = objectType({
 	name: 'InternalProtectionEnumObject',
@@ -83,7 +85,16 @@ export const InternalProtectionEnumObject = objectType({
 			t.nonNull.string(iterator)
 		}
 	}
-})
+});
+
+export const FlowDirectionEnumObject = objectType({
+	name: 'FlowDirectionEnumObject',
+	definition(t) {
+		for (const iterator of Object.keys(FlowDirectionEnumMembers)) {
+			t.nonNull.string(iterator)
+		}
+	}
+});
 
 export const PigTypeEnumObject = objectType({
 	name: 'PigTypeEnumObject',
@@ -92,7 +103,7 @@ export const PigTypeEnumObject = objectType({
 			t.nonNull.string(iterator)
 		}
 	}
-})
+});
 
 export const LimitingSpecEnumObject = objectType({
 	name: 'LimitingSpecEnumObject',
@@ -101,7 +112,7 @@ export const LimitingSpecEnumObject = objectType({
 			t.nonNull.string(iterator)
 		}
 	}
-})
+});
 
 export const EnvironmentProximityToEnumObject = objectType({
 	name: 'EnvironmentProximityToEnumObject',
@@ -110,7 +121,7 @@ export const EnvironmentProximityToEnumObject = objectType({
 			t.nonNull.string(iterator)
 		}
 	}
-})
+});
 
 export const GeotechnicalFacingEnumObject = objectType({
 	name: 'GeotechnicalFacingEnumObject',
@@ -119,7 +130,7 @@ export const GeotechnicalFacingEnumObject = objectType({
 			t.nonNull.string(iterator)
 		}
 	}
-})
+});
 
 export const Validator = objectType({
 	name: 'Validator',
@@ -140,6 +151,7 @@ export const Validator = objectType({
 		t.nonNull.field('materialEnum', { type: 'MaterialEnumObject' })
 		t.nonNull.string('mopMatchPattern')
 		t.nonNull.field('internalProtectionEnum', { type: 'InternalProtectionEnumObject' })
+		t.nonNull.field('flowDirectionEnum', { type: 'FlowDirectionEnumObject' })
 		t.nonNull.field('pigTypeEnum', { type: 'PigTypeEnumObject' })
 		t.nonNull.field('limitingSpecEnum', { type: 'LimitingSpecEnumObject' })
 		t.nonNull.field('environmentProximityToEnum', { type: 'EnvironmentProximityToEnumObject' })
@@ -170,6 +182,7 @@ export const ValidatorQuery = extendType({
 					materialEnum: MaterialEnumMembers,
 					mopMatchPattern,
 					internalProtectionEnum: InternalProtectionEnumMembers,
+					flowDirectionEnum: FlowDirectionEnumMembers,
 					pigTypeEnum: PigTypeEnumMembers,
 					limitingSpecEnum: LimitingSpecEnumMembers,
 					environmentProximityToEnum: EnvironmentProximityToEnumMembers,

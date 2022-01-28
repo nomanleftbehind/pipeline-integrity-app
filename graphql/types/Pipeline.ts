@@ -2,6 +2,7 @@ import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, n
 import { InjectionPointCreateInput } from './InjectionPoint';
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
+import { getUserId } from '../utils';
 
 
 
@@ -40,6 +41,7 @@ export const Pipeline = objectType({
         return result;
       }
     })
+    t.nonNull.field('flowDirection', { type: 'FlowDirectionEnum' })
     t.nonNull.string('from')
     t.field('fromFeature', {
       type: FromToFeatureEnum,
@@ -109,6 +111,15 @@ export const Pipeline = objectType({
       },
     })
     t.nonNull.field('createdAt', { type: 'DateTime' })
+    t.nonNull.field('updatedBy', {
+      type: 'User',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+        }).updatedBy()
+        return result!;
+      },
+    })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
     t.list.field('pressureTests', {
       type: 'PressureTest',
@@ -352,6 +363,20 @@ export const InternalProtectionEnum = enumType({
   members: InternalProtectionEnumMembers
 });
 
+export const FlowDirectionEnumMembers = {
+  Production: 'Production',
+  Injection: 'Injection',
+}
+
+export const FlowDirectionEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'FlowDirectionEnum',
+  },
+  name: 'FlowDirectionEnum',
+  members: FlowDirectionEnumMembers
+});
+
 export const PipelineQuery = extendType({
   type: 'Query',
   definition(t) {
@@ -478,6 +503,7 @@ export const PipelineMutation = extendType({
         license: stringArg(),
         segment: stringArg(),
         substance: arg({ type: 'SubstanceEnum' }),
+        flowDirection: arg({ type: 'FlowDirectionEnum' }),
         from: stringArg(),
         fromFeature: arg({ type: 'FromToFeatureEnum' }),
         to: stringArg(),
@@ -497,6 +523,7 @@ export const PipelineMutation = extendType({
         piggingFrequency: intArg(),
       },
       resolve: async (_, args, ctx: Context) => {
+        const userId = getUserId(ctx);
         try {
           return ctx.prisma.pipeline.update({
             where: { id: args.id },
@@ -505,6 +532,7 @@ export const PipelineMutation = extendType({
               license: args.license || undefined,
               segment: args.segment || undefined,
               substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
+              flowDirection: args.flowDirection || undefined,
               from: args.from || undefined,
               fromFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.fromFeature),
               to: args.to || undefined,
@@ -521,6 +549,7 @@ export const PipelineMutation = extendType({
               internalProtection: databaseEnumToServerEnum(InternalProtectionEnumMembers, args.internalProtection),
               piggable: args.piggable || undefined,
               piggingFrequency: args.piggingFrequency || undefined,
+              updatedById: String(userId),
             },
           })
         } catch (e) {
@@ -546,9 +575,10 @@ export const PipelineMutation = extendType({
       args: {
         id: nonNull(stringArg()),
       },
-      resolve: async (_parent, args, ctx: Context) => {
+      resolve: async (_parent, { id }, ctx: Context) => {
+        const userId = getUserId(ctx);
         const p = await ctx.prisma.pipeline.findUnique({
-          where: { id: args.id }
+          where: { id }
         }) as IPipelinePartialBy
         if (p) {
           p.license += '_copy';
@@ -556,6 +586,8 @@ export const PipelineMutation = extendType({
           delete p.id;
           delete p.createdAt;
           delete p.updatedAt;
+          p.createdById = String(userId);
+          p.updatedById = String(userId);
           return ctx.prisma.pipeline.create({
             data: p
           })
@@ -569,12 +601,18 @@ export const PipelineMutation = extendType({
         upstreamId: nonNull(stringArg()),
       },
       resolve: async (_parent, { id, upstreamId }, ctx: Context) => {
+        const userId = getUserId(ctx);
         return ctx.prisma.pipeline.update({
           where: { id },
           data: {
             upstream: {
               connect: {
                 id: upstreamId
+              }
+            },
+            updatedBy: {
+              update: {
+                id: String(userId),
               }
             }
           }
@@ -588,11 +626,17 @@ export const PipelineMutation = extendType({
         upstreamId: nonNull(stringArg()),
       },
       resolve: async (_parent, { id, upstreamId }, ctx: Context) => {
+        const userId = getUserId(ctx);
         return ctx.prisma.pipeline.update({
           where: { id },
           data: {
             upstream: {
               disconnect: { id: upstreamId }
+            },
+            updatedBy: {
+              update: {
+                id: String(userId),
+              }
             }
           }
         })
@@ -605,12 +649,18 @@ export const PipelineMutation = extendType({
         sourceId: nonNull(stringArg()),
       },
       resolve: async (_parent, { id, sourceId }, ctx: Context) => {
+        const userId = getUserId(ctx);
         return ctx.prisma.pipeline.update({
           where: { id },
           data: {
             injectionPoints: {
               connect: {
                 id: sourceId
+              }
+            },
+            updatedBy: {
+              update: {
+                id: String(userId),
               }
             }
           }
@@ -624,11 +674,17 @@ export const PipelineMutation = extendType({
         sourceId: nonNull(stringArg()),
       },
       resolve: async (_parent, { id, sourceId }, ctx: Context) => {
+        const userId = getUserId(ctx);
         return ctx.prisma.pipeline.update({
           where: { id },
           data: {
             injectionPoints: {
               disconnect: { id: sourceId }
+            },
+            updatedBy: {
+              update: {
+                id: String(userId),
+              }
             }
           }
         })

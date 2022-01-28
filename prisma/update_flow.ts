@@ -54,7 +54,6 @@ async function main() {
     const request = new Request(
       `SELECT
   
-      un.IDRECPARENT "pvUnitId",
       un.IDREC "pvNodeId",
       ISNULL(unmd.VOLHCLIQ,0) "oil",
       ISNULL(unmd.VOLWATER,0) "water",
@@ -78,14 +77,11 @@ async function main() {
     );
 
     request.on('row', async columns => {
-      const [unitId, nodeId, oil, water, gas, lastProduction, lastInjection] = columns;
+      const [nodeId, oil, water, gas, lastProduction, lastInjection] = columns;
 
       const data: Prisma.InjectionPointUpdateArgs = {
         where: {
-          pvUnitId_pvNodeId: {
-            pvUnitId: unitId.value,
-            pvNodeId: nodeId.value,
-          }
+          pvNodeId: nodeId.value,
         },
         data: {
           oil: oil.value,

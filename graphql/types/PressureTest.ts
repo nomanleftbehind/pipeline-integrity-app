@@ -44,6 +44,15 @@ export const PressureTest = objectType({
       },
     })
     t.nonNull.field('createdAt', { type: 'DateTime' })
+    t.nonNull.field('updatedBy', {
+      type: 'User',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pressureTest.findUnique({
+          where: { id },
+        }).updatedBy()
+        return result!
+      },
+    })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
   },
 })
@@ -91,8 +100,9 @@ export const PressureTestMutation = extendType({
         integritySheetUpdated: arg({ type: 'DateTime' }),
         comment: stringArg(),
       },
-      resolve: async (_, args, context: Context) => {
-        return context.prisma.pressureTest.update({
+      resolve: async (_, args, ctx: Context) => {
+        const userId = getUserId(ctx);
+        return ctx.prisma.pressureTest.update({
           where: { id: args.id },
           data: {
             pipelineId: args.pipelineId || undefined,
@@ -103,6 +113,7 @@ export const PressureTestMutation = extendType({
             pressureTestReceivedDate: args.pressureTestReceivedDate || undefined,
             integritySheetUpdated: args.integritySheetUpdated || undefined,
             comment: args.comment || undefined,
+            updatedById: String(userId),
           },
         })
 
@@ -119,6 +130,7 @@ export const PressureTestMutation = extendType({
           data: {
             pipelineId,
             createdById: String(userId),
+            updatedById: String(userId),
           }
         })
       }

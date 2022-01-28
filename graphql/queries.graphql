@@ -11,14 +11,10 @@ query Me {
 query pipelinesByIdQuery($table: String, $id: String) {
   pipelinesById(table: $table, id: $id) {
     id
-    createdAt
-    updatedAt
-    createdBy {
-      email
-    }
     license
     segment
     substance
+    flowDirection
     from
     fromFeature
     to
@@ -60,6 +56,14 @@ query pipelinesByIdQuery($table: String, $id: String) {
       license
       segment
     }
+    createdBy {
+      email
+    }
+    createdAt
+    updatedBy {
+      email
+    }
+    updatedAt
   }
 }
 
@@ -69,6 +73,7 @@ query PipelineById($id: String!) {
     license
     segment
     substance
+    flowDirection
     from
     fromFeature
     to
@@ -90,6 +95,9 @@ query PipelineById($id: String!) {
       email
     }
     createdAt
+    updatedBy {
+      email
+    }
     updatedAt
     upstream {
       license
@@ -145,6 +153,9 @@ query PigRunsByPipelineId($pipelineId: String) {
       email
     }
     createdAt
+    updatedBy {
+      email
+    }
     updatedAt
   }
 }
@@ -398,6 +409,9 @@ query PressureTestsByPipelineId($pipelineId: String) {
       email
     }
     createdAt
+    updatedBy {
+      email
+    }
     updatedAt
   }
 }
@@ -434,6 +448,9 @@ query RiskById($id: String) {
       email
     }
     createdAt
+    updatedBy {
+      email
+    }
     updatedAt
   }
 }

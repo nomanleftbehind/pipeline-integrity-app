@@ -42,6 +42,15 @@ export const PigRun = objectType({
 			},
 		})
 		t.nonNull.field('createdAt', { type: 'DateTime' })
+		t.nonNull.field('updatedBy', {
+			type: 'User',
+			resolve: async ({ id }, _args, ctx: Context) => {
+				const result = await ctx.prisma.pigRun.findUnique({
+					where: { id },
+				}).updatedBy()
+				return result!
+			},
+		})
 		t.nonNull.field('updatedAt', { type: 'DateTime' })
 	},
 })
@@ -87,6 +96,7 @@ export const PigRunMutation = extendType({
 				operatorId: stringArg(),
 			},
 			resolve: async (_parent, args, ctx: Context) => {
+				const userId = getUserId(ctx);
 				return ctx.prisma.pigRun.update({
 					where: { id: args.id },
 					data: {
@@ -95,6 +105,7 @@ export const PigRunMutation = extendType({
 						date: args.date || undefined,
 						comment: args.comment || undefined,
 						operatorId: args.operatorId || undefined,
+						updatedById: String(userId),
 					},
 				})
 
@@ -115,6 +126,7 @@ export const PigRunMutation = extendType({
 						pipelineId: pipelineId,
 						date,
 						createdById: String(userId),
+						updatedById: String(userId),
 					}
 				})
 			}
