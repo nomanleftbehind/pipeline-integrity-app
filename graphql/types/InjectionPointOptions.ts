@@ -1,6 +1,5 @@
 import { objectType, extendType, nonNull, stringArg, list } from 'nexus';
 import { gasAssociatedLiquidsCalc, totalFluidsCalc } from './InjectionPoint';
-import { Prisma } from '@prisma/client'
 import { Context } from '../context';
 import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
 

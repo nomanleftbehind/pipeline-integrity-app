@@ -178,11 +178,20 @@ export const Risk = objectType({
       resolve: async ({ id }, _args, ctx: Context) => {
         const result = await ctx.prisma.risk.findUnique({
           where: { id },
-        }).createdBy()
+        }).createdBy();
         return result!;
       },
     })
     t.nonNull.field('createdAt', { type: 'DateTime' })
+    t.nonNull.field('updatedBy', {
+      type: 'User',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.risk.findUnique({
+          where: { id },
+        }).updatedBy();
+        return result!;
+      },
+    })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
   }
 })
@@ -282,6 +291,7 @@ export const RiskMutation = extendType({
         safeguardExternalCoating: booleanArg(),
       },
       resolve: async (_, args, ctx: Context) => {
+        const userId = getUserId(ctx);
 
         return ctx.prisma.risk.update({
           where: { id: args.id },
@@ -303,6 +313,7 @@ export const RiskMutation = extendType({
             probabilityGeo: args.probabilityGeo,
             safeguardInternalProtection: args.safeguardInternalProtection,
             safeguardExternalCoating: args.safeguardExternalCoating,
+            updatedById: String(userId),
           },
         })
 
@@ -319,6 +330,7 @@ export const RiskMutation = extendType({
           data: {
             id,
             createdById: String(userId),
+            updatedById: String(userId),
           }
         })
       }

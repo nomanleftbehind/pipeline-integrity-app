@@ -1,9 +1,7 @@
-import { enumType, intArg, objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
+import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
 import { InjectionPoint as IInjectionPoint } from '@prisma/client';
-import { User } from './User';
-import { Satellite, SatelliteUniqueInput } from './Satellite';
-import { Pipeline } from './Pipeline';
 import { Context } from '../context';
+import { getUserId } from '../utils';
 
 
 export const gasAssociatedLiquidsCalc = (gas: IInjectionPoint['gas'] | number) => {
@@ -38,29 +36,33 @@ export const InjectionPoint = objectType({
     t.field('lastProduction', { type: 'DateTime' })
     t.field('firstInjection', { type: 'DateTime' })
     t.field('lastInjection', { type: 'DateTime' })
-    t.string('pvUnitId')
     t.string('pvNodeId')
     t.nonNull.field('createdBy', {
-      type: User,
-      resolve: async (parent, _args, ctx: Context) => {
-        const result = await ctx.prisma.injectionPoint
-          .findUnique({
-            where: { id: parent.id },
-          })
-          .createdBy()
+      type: 'User',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.injectionPoint.findUnique({
+          where: { id },
+        }).createdBy();
         return result!
       },
     })
     t.nonNull.field('createdAt', { type: 'DateTime' })
+    t.nonNull.field('updatedBy', {
+      type: 'User',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.injectionPoint.findUnique({
+          where: { id },
+        }).updatedBy();
+        return result!
+      },
+    })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
     t.field('pipeline', {
-      type: Pipeline,
-      resolve: (parent, _args, ctx: Context) => {
-        return ctx.prisma.injectionPoint
-          .findUnique({
-            where: { id: parent.id },
-          })
-          .pipeline()
+      type: 'Pipeline',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.injectionPoint.findUnique({
+          where: { id },
+        }).pipeline();
       },
     })
   },
@@ -98,7 +100,6 @@ export const InjectionPointCreateInput = inputObjectType({
     t.field('lastProduction', { type: 'DateTime' })
     t.field('firstInjection', { type: 'DateTime' })
     t.field('lastInjection', { type: 'DateTime' })
-    t.string('pvUnitId')
     t.string('pvNodeId')
   },
 })
@@ -108,7 +109,7 @@ export const InjectionPointMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editInjectionPoint', {
-      type: InjectionPoint,
+      type: 'InjectionPoint',
       args: {
         id: nonNull(stringArg()),
         pipelineId: stringArg(),
@@ -120,10 +121,10 @@ export const InjectionPointMutation = extendType({
         lastProduction: arg({ type: 'DateTime' }),
         firstInjection: arg({ type: 'DateTime' }),
         lastInjection: arg({ type: 'DateTime' }),
-        pvUnitId: stringArg(),
         pvNodeId: stringArg()
       },
       resolve: async (_, args, ctx: Context) => {
+        const userId = getUserId(ctx);
         try {
           return ctx.prisma.injectionPoint.update({
             where: { id: args.id },
@@ -137,8 +138,8 @@ export const InjectionPointMutation = extendType({
               lastProduction: args.lastProduction || undefined,
               firstInjection: args.firstInjection || undefined,
               lastInjection: args.lastInjection || undefined,
-              pvUnitId: args.pvUnitId || undefined,
               pvNodeId: args.pvNodeId || undefined,
+              updatedById: String(userId),
             },
           })
         } catch (e) {
@@ -148,40 +149,5 @@ export const InjectionPointMutation = extendType({
         }
       },
     })
-    // t.field('connectSource', {
-    //   type: 'InjectionPoint',
-    //   args: {
-    //     id: nonNull(stringArg()),
-    //     pipelineId: nonNull(stringArg()),
-    //   },
-    //   resolve: (_parent, { id, pipelineId }, ctx: Context) => {
-    //     return ctx.prisma.injectionPoint.update({
-    //       where: { id },
-    //       data: {
-    //         pipeline: {
-    //           connect: {
-    //             id: pipelineId
-    //           }
-    //         }
-    //       }
-    //     })
-    //   }
-    // })
-    // t.field('disconnectSource', {
-    //   type: 'InjectionPoint',
-    //   args: {
-    //     id: nonNull(stringArg())
-    //   },
-    //   resolve: (_parent, { id }, ctx: Context) => {
-    //     return ctx.prisma.injectionPoint.update({
-    //       where: { id },
-    //       data: {
-    //         pipeline: {
-    //           disconnect: true
-    //         }
-    //       }
-    //     })
-    //   }
-    // })
   }
 })

@@ -28,7 +28,7 @@ export const PigRun = objectType({
 			resolve: async ({ id }, _args, ctx: Context) => {
 				const result = await ctx.prisma.pigRun.findUnique({
 					where: { id },
-				}).operator()
+				}).operator();
 				return result
 			},
 		})
@@ -37,7 +37,7 @@ export const PigRun = objectType({
 			resolve: async ({ id }, _args, ctx: Context) => {
 				const result = await ctx.prisma.pigRun.findUnique({
 					where: { id },
-				}).createdBy()
+				}).createdBy();
 				return result!
 			},
 		})
@@ -47,7 +47,7 @@ export const PigRun = objectType({
 			resolve: async ({ id }, _args, ctx: Context) => {
 				const result = await ctx.prisma.pigRun.findUnique({
 					where: { id },
-				}).updatedBy()
+				}).updatedBy();
 				return result!
 			},
 		})

@@ -42,6 +42,7 @@ type Facility {
   name: String!
   satellites: [Satellite]
   updatedAt: DateTime!
+  updatedBy: User!
 }
 
 input FacilityCreateInput {
@@ -220,7 +221,6 @@ type InjectionPoint {
   oil: Float!
   pipeline: Pipeline
   pvNodeId: String
-  pvUnitId: String
   source: String!
   totalFluids: Float!
   updatedAt: DateTime!
@@ -235,7 +235,6 @@ input InjectionPointCreateInput {
   lastProduction: DateTime
   oil: Float!
   pvNodeId: String
-  pvUnitId: String
   source: String!
   water: Float!
 }
@@ -310,7 +309,7 @@ type Mutation {
   disconnectUpstreamPipeline(id: String!, upstreamId: String!): Pipeline
   duplicatePipeline(id: String!): Pipeline
   editFacility(id: String!, name: String): Facility
-  editInjectionPoint(firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineId: String, pvNodeId: String, pvUnitId: String, source: String, water: Float): InjectionPoint
+  editInjectionPoint(firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineId: String, pvNodeId: String, source: String, water: Float): InjectionPoint
   editPigRun(comment: String, date: DateTime, id: String!, operatorId: String, pigType: PigTypeEnum, pipelineId: String): PigRun
   editPipeline(flowDirection: FlowDirectionEnum, from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String, status: StatusEnum, substance: SubstanceEnum, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float, yieldStrength: Int): Pipeline
   editPressureTest(comment: String, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pipelineId: String, pressureTestDate: DateTime, pressureTestReceivedDate: DateTime): PressureTest
@@ -330,6 +329,7 @@ type PigRun {
   pigType: PigTypeEnum
   pipeline: Pipeline!
   updatedAt: DateTime!
+  updatedBy: User!
 }
 
 enum PigTypeEnum {
@@ -446,6 +446,7 @@ type PressureTest {
   pressureTestDate: DateTime
   pressureTestReceivedDate: DateTime
   updatedAt: DateTime!
+  updatedBy: User!
 }
 
 type Query {
@@ -509,6 +510,7 @@ type Satellite {
   name: String!
   pipelines: [Pipeline]
   updatedAt: DateTime!
+  updatedBy: User!
 }
 
 input SatelliteCreateInput {

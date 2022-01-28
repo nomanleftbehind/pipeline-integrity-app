@@ -1,10 +1,7 @@
 import { enumType, objectType, inputObjectType, stringArg, nonNull, arg, asNexusMethod } from 'nexus';
 import { extendType } from 'nexus';
 import { DateTimeResolver } from 'graphql-scalars';
-import { Facility, FacilityCreateInput } from './Facility';
-import { Satellite, SatelliteCreateInput } from './Satellite';
-import { Pipeline, PipelineCreateInput } from './Pipeline';
-import { InjectionPoint, InjectionPointCreateInput } from './InjectionPoint';
+import { InjectionPoint } from './InjectionPoint';
 import { Context } from '../context';
 import { APP_SECRET, getUserId } from '../utils';
 import { compare, hash } from 'bcryptjs';
@@ -25,44 +22,68 @@ export const User = objectType({
     t.nonNull.string('firstName')
     t.nonNull.string('lastName')
     t.nonNull.field('role', { type: Role })
-    t.list.field('pipelines', {
-      type: Pipeline,
-      resolve: (parent, _args, ctx: Context) => {
-        return ctx.prisma.user
-          .findUnique({
-            where: { id: parent.id },
-          })
-          .pipelines()
+    t.list.field('pipelinesCreated', {
+      type: 'Pipeline',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.user.findUnique({
+          where: { id },
+        }).pipelinesCreatedBy();
       },
     })
-    t.list.field('facilities', {
-      type: Facility,
-      resolve: (parent, _args, context: Context) => {
-        return context.prisma.user
-          .findUnique({
-            where: { id: parent.id },
-          })
-          .facilities()
+    t.list.field('pipelinesUpdated', {
+      type: 'Pipeline',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.user.findUnique({
+          where: { id },
+        }).pipelinesUpdatedBy();
       },
     })
-    t.list.field('satellites', {
-      type: Satellite,
-      resolve: (parent, _args, context: Context) => {
-        return context.prisma.user
-          .findUnique({
-            where: { id: parent.id },
-          })
-          .satellites()
+    t.list.field('facilitiesCreated', {
+      type: 'Facility',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.user.findUnique({
+          where: { id },
+        }).facilitiesCreatedBy();
       },
     })
-    t.list.field('injectionPoints', {
+    t.list.field('facilitiesUpdated', {
+      type: 'Facility',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.user.findUnique({
+          where: { id },
+        }).facilitiesUpdatedBy();
+      },
+    })
+    t.list.field('satellitesCreated', {
+      type: 'Satellite',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.user.findUnique({
+          where: { id },
+        }).satellitesCreatedBy();
+      },
+    })
+    t.list.field('satellitesUpdated', {
+      type: 'Satellite',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.user.findUnique({
+          where: { id },
+        }).satellitesUpdatedBy();
+      },
+    })
+    t.list.field('injectionPointsCreated', {
       type: InjectionPoint,
-      resolve: (parent, _args, context: Context) => {
-        return context.prisma.user
-          .findUnique({
-            where: { id: parent.id },
-          })
-          .injectionPoints()
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.user.findUnique({
+          where: { id },
+        }).injectionPointsCreatedBy();
+      },
+    })
+    t.list.field('injectionPointsUpdated', {
+      type: InjectionPoint,
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.user.findUnique({
+          where: { id },
+        }).injectionPointsUpdatedBy();
       },
     })
   },
@@ -77,16 +98,16 @@ export const UserQuery = extendType({
   type: 'Query',
   definition(t) {
     t.list.field('allUsers', {
-      type: User,
+      type: 'User',
       resolve: (_parent, _args, context: Context) => {
         return context.prisma.user.findMany()
       },
     })
     t.field('me', {
-      type: User,
+      type: 'User',
       resolve: (_parent, _args, ctx: Context) => {
         const userId = getUserId(ctx)
-        
+
         return ctx.prisma.user.findUnique({
           where: {
             id: String(userId),
@@ -101,23 +122,22 @@ export const UserPipelines = extendType({
   type: 'Query',
   definition(t) {
     t.list.field('pipelinesByUser', {
-      type: Pipeline,
+      type: 'Pipeline',
       args: {
         userUniqueInput: nonNull(
           arg({
-            type: UserUniqueInput,
+            type: 'UserUniqueInput',
           }),
         ),
       },
-      async resolve(_parent, args, ctx: Context) {
-        const user = ctx.prisma.user
-          .findUnique({
-            where: {
-              id: args.userUniqueInput.id || undefined,
-              email: args.userUniqueInput.email || undefined,
-            },
-          })
-        return user.pipelines();
+      async resolve(_parent, { userUniqueInput }, ctx: Context) {
+        const user = ctx.prisma.user.findUnique({
+          where: {
+            id: userUniqueInput.id || undefined,
+            email: userUniqueInput.email || undefined,
+          },
+        })
+        return user.pipelinesCreatedBy();
       },
     })
   },
@@ -130,10 +150,10 @@ export const UserCreateInput = inputObjectType({
     t.nonNull.string('email')
     t.nonNull.string('firstName')
     t.nonNull.string('lastName')
-    t.list.field('facilities', { type: FacilityCreateInput })
-    t.list.field('satellites', { type: SatelliteCreateInput })
-    t.list.field('pipelines', { type: PipelineCreateInput })
-    t.list.field('injectionPoints', { type: InjectionPointCreateInput })
+    t.list.field('facilities', { type: 'FacilityCreateInput' })
+    t.list.field('satellites', { type: 'SatelliteCreateInput' })
+    t.list.field('pipelines', { type: 'PipelineCreateInput' })
+    t.list.field('injectionPoints', { type: 'InjectionPointCreateInput' })
   },
 })
 
@@ -157,8 +177,8 @@ export const AuthPayload = objectType({
   name: 'AuthPayload',
   definition(t) {
     t.string('token')
-    t.field('user', { type: User })
-    t.list.field('errors', { type: FieldError })
+    t.field('user', { type: 'User' })
+    t.list.field('errors', { type: 'FieldError' })
   },
 })
 
@@ -166,19 +186,19 @@ export const AuthMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('signup', {
-      type: AuthPayload,
+      type: 'AuthPayload',
       args: {
         firstName: nonNull(stringArg()),
         lastName: nonNull(stringArg()),
         email: nonNull(stringArg()),
         password: nonNull(stringArg()),
       },
-      resolve: async (_parent, args, context: Context) => {
-        const userExists = await context.prisma.user.findUnique({
+      resolve: async (_parent, args, ctx: Context) => {
+        const userExists = await ctx.prisma.user.findUnique({
           where: {
             email: args.email
           }
-        })
+        });
         if (userExists) {
           return {
             errors: [
@@ -200,7 +220,7 @@ export const AuthMutation = extendType({
           }
         }
         const hashedPassword = await hash(args.password, 10)
-        const user = await context.prisma.user.create({
+        const user = await ctx.prisma.user.create({
           data: {
             firstName: args.firstName,
             lastName: args.lastName,
@@ -216,13 +236,13 @@ export const AuthMutation = extendType({
     })
 
     t.field('login', {
-      type: AuthPayload,
+      type: 'AuthPayload',
       args: {
         email: nonNull(stringArg()),
         password: nonNull(stringArg()),
       },
-      resolve: async (_parent, { email, password }, context: Context) => {
-        const user = await context.prisma.user.findUnique({
+      resolve: async (_parent, { email, password }, ctx: Context) => {
+        const user = await ctx.prisma.user.findUnique({
           where: {
             email,
           },
