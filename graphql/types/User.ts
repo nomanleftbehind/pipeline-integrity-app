@@ -20,7 +20,13 @@ export const User = objectType({
     t.nonNull.string('email')
     t.nonNull.string('firstName')
     t.nonNull.string('lastName')
-    t.nonNull.field('role', { type: 'UserRoleEnum' })
+    t.nonNull.field('role', {
+      type: 'UserRoleEnum',
+      resolve: ({ role }) => {
+        const result = UserRoleEnumMembers[role] as keyof typeof UserRoleEnumMembers;
+        return result;
+      }
+    })
     t.list.field('pipelinesCreated', {
       type: 'Pipeline',
       resolve: ({ id }, _args, ctx: Context) => {
