@@ -13,7 +13,7 @@ model User {
   password                 String
   firstName                String
   lastName                 String
-  role                     Role             @default(USER)
+  role                     UserRoleEnum     @default(USER)
   facilitiesCreatedBy      Facility[]       @relation("facilityCreatedBy")
   facilitiesUpdatedBy      Facility[]       @relation("facilityUpdatedBy")
   satellitesCreatedBy      Satellite[]      @relation("satelliteCreatedBy")
@@ -28,12 +28,15 @@ model User {
   pressureTestsCreatedBy   PressureTest[]   @relation("pressureTestCreatedBy")
   pressureTestsUpdatedBy   PressureTest[]   @relation("pressureTestUpdatedBy")
   risksCreatedBy           Risk[]           @relation("riskCreatedBy")
-  risksupdatedBy           Risk[]           @relation("riskUpdatedBy")
+  risksUpdatedBy           Risk[]           @relation("riskUpdatedBy")
 }
 
-enum Role {
-  USER
-  ADMIN
+enum UserRoleEnum {
+  USER        @map("User")
+  ADMIN       @map("Admin")
+  CONTRACTOR  @map("Contractor")
+
+  @@map("user_role")
 }
 
 model Facility {

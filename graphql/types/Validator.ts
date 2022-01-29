@@ -1,4 +1,5 @@
 import { objectType, extendType } from 'nexus';
+import { UserRoleEnumMembers } from './User';
 import {
 	SubstanceEnumMembers,
 	FromToFeatureEnumMembers,
@@ -23,6 +24,15 @@ export const wallThicknessMatchPattern = "^(\\d|1\\d|2[0-5])(\\.\\d{1,2})?$";
 export const mopMatchPattern = "^\\d{1,5}$"; // number between 0 and 99999
 export const outsideDiameterMatchPattern = "^4[3-9]$|^4[2-9]\\.[2-9]\\d?$|^([5-9]\\d)(\\.\\d\\d?)?$|^([1-2]\\d{2})(\\.\\d\\d?)?$|^(3[0-2][0-3])(\\.[0-8]\\d?)?$"; // number between 42.2 and 323.89
 
+
+export const UserRoleEnumObject = objectType({
+	name: 'UserRoleEnumObject',
+	definition(t) {
+		for (const iterator of Object.keys(UserRoleEnumMembers)) {
+			t.nonNull.string(iterator)
+		}
+	}
+});
 
 export const SubstanceEnumObject = objectType({
 	name: 'SubstanceEnumObject',
@@ -135,6 +145,7 @@ export const GeotechnicalFacingEnumObject = objectType({
 export const Validator = objectType({
 	name: 'Validator',
 	definition(t) {
+		t.nonNull.field('userRoleEnum', { type: 'UserRoleEnumObject' })
 		t.nonNull.string('anyTextMatchPattern')
 		t.nonNull.string('licenseMatchPattern')
 		t.nonNull.string('segmentMatchPattern')
@@ -166,6 +177,7 @@ export const ValidatorQuery = extendType({
 			type: 'Validator',
 			resolve: () => {
 				return {
+					userRoleEnum: UserRoleEnumMembers,
 					anyTextMatchPattern,
 					licenseMatchPattern,
 					segmentMatchPattern,

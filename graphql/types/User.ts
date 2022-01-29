@@ -1,7 +1,6 @@
 import { enumType, objectType, inputObjectType, stringArg, nonNull, arg, asNexusMethod } from 'nexus';
 import { extendType } from 'nexus';
 import { DateTimeResolver } from 'graphql-scalars';
-import { InjectionPoint } from './InjectionPoint';
 import { Context } from '../context';
 import { APP_SECRET, getUserId } from '../utils';
 import { compare, hash } from 'bcryptjs';
@@ -21,7 +20,7 @@ export const User = objectType({
     t.nonNull.string('email')
     t.nonNull.string('firstName')
     t.nonNull.string('lastName')
-    t.nonNull.field('role', { type: Role })
+    t.nonNull.field('role', { type: 'UserRoleEnum' })
     t.list.field('pipelinesCreated', {
       type: 'Pipeline',
       resolve: ({ id }, _args, ctx: Context) => {
@@ -71,7 +70,7 @@ export const User = objectType({
       },
     })
     t.list.field('injectionPointsCreated', {
-      type: InjectionPoint,
+      type: 'InjectionPoint',
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
@@ -79,20 +78,48 @@ export const User = objectType({
       },
     })
     t.list.field('injectionPointsUpdated', {
-      type: InjectionPoint,
+      type: 'InjectionPoint',
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
         }).injectionPointsUpdatedBy();
       },
     })
+    t.list.field('risksCreated', {
+      type: 'Risk',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.user.findUnique({
+          where: { id },
+        }).risksCreatedBy();
+      }
+    })
+    t.list.field('risksUpdated', {
+      type: 'Risk',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.user.findUnique({
+          where: { id },
+        }).risksUpdatedBy();
+      }
+    })
   },
 })
 
-export const Role = enumType({
-  name: 'Role',
-  members: ['USER', 'ADMIN'],
+
+export const UserRoleEnumMembers = {
+  USER: 'User',
+  ADMIN: 'Admin',
+  CONTRACTOR: 'Contractor',
+}
+
+export const UserRoleEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'UserRoleEnum',
+  },
+  name: 'UserRoleEnum',
+  members: UserRoleEnumMembers
 });
+
 
 export const UserQuery = extendType({
   type: 'Query',
@@ -100,7 +127,7 @@ export const UserQuery = extendType({
     t.list.field('allUsers', {
       type: 'User',
       resolve: (_parent, _args, context: Context) => {
-        return context.prisma.user.findMany()
+        return context.prisma.user.findMany();
       },
     })
     t.field('me', {

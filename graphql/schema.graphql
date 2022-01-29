@@ -224,6 +224,7 @@ type InjectionPoint {
   source: String!
   totalFluids: Float!
   updatedAt: DateTime!
+  updatedBy: User!
   water: Float!
 }
 
@@ -495,11 +496,7 @@ type Risk {
   safeguardExternalCoating: Boolean
   safeguardInternalProtection: Boolean
   updatedAt: DateTime!
-}
-
-enum Role {
-  ADMIN
-  USER
+  updatedBy: User!
 }
 
 type Satellite {
@@ -648,14 +645,20 @@ type TypeEnumObject {
 
 type User {
   email: String!
-  facilities: [Facility]
+  facilitiesCreated: [Facility]
+  facilitiesUpdated: [Facility]
   firstName: String!
   id: String!
-  injectionPoints: [InjectionPoint]
+  injectionPointsCreated: [InjectionPoint]
+  injectionPointsUpdated: [InjectionPoint]
   lastName: String!
-  pipelines: [Pipeline]
-  role: Role!
-  satellites: [Satellite]
+  pipelinesCreated: [Pipeline]
+  pipelinesUpdated: [Pipeline]
+  risksCreated: [Risk]
+  risksUpdated: [Risk]
+  role: UserRoleEnum!
+  satellitesCreated: [Satellite]
+  satellitesUpdated: [Satellite]
 }
 
 input UserCreateInput {
@@ -666,6 +669,18 @@ input UserCreateInput {
   lastName: String!
   pipelines: [PipelineCreateInput]
   satellites: [SatelliteCreateInput]
+}
+
+enum UserRoleEnum {
+  ADMIN
+  CONTRACTOR
+  USER
+}
+
+type UserRoleEnumObject {
+  ADMIN: String!
+  CONTRACTOR: String!
+  USER: String!
 }
 
 input UserUniqueInput {
@@ -693,6 +708,7 @@ type Validator {
   statusEnum: StatusEnumObject!
   substanceEnum: SubstanceEnumObject!
   typeEnum: TypeEnumObject!
+  userRoleEnum: UserRoleEnumObject!
   wallThicknessMatchPattern: String!
   yieldStrengthMatchPattern: String!
 }

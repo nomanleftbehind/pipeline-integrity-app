@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
+CREATE TYPE "user_role" AS ENUM ('User', 'Admin', 'Contractor');
 
 -- CreateEnum
 CREATE TYPE "substance" AS ENUM ('Natural Gas', 'Fresh Water', 'Salt Water', 'Crude Oil', 'Oil Well Effluent', 'LVP Products', 'Fuel Gas', 'Sour Natural Gas');
@@ -44,7 +44,7 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
-    "role" "Role" NOT NULL DEFAULT E'USER',
+    "role" "user_role" NOT NULL DEFAULT E'User',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );

@@ -16,7 +16,7 @@ export const PigRun = objectType({
 			resolve: async ({ id }, _args, ctx: Context) => {
 				const result = await ctx.prisma.pigRun.findUnique({
 					where: { id },
-				}).pipeline()
+				}).pipeline();
 				return result!
 			},
 		})
