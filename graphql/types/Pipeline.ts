@@ -1,5 +1,4 @@
 import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg, booleanArg } from 'nexus';
-import { InjectionPointCreateInput } from './InjectionPoint';
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
 import { getUserId } from '../utils';
@@ -14,7 +13,6 @@ export const Pipeline = objectType({
   },
   definition(t) {
     t.nonNull.string('id')
-    t.int('index')
     t.field('satellite', {
       type: 'Satellite',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -41,7 +39,7 @@ export const Pipeline = objectType({
         return result;
       }
     })
-    t.nonNull.field('flowDirection', { type: 'FlowDirectionEnum' })
+    t.nonNull.field('flowCalculationDirection', { type: 'FlowCalculationDirectionEnum' })
     t.nonNull.string('from')
     t.field('fromFeature', {
       type: FromToFeatureEnum,
@@ -363,18 +361,18 @@ export const InternalProtectionEnum = enumType({
   members: InternalProtectionEnumMembers
 });
 
-export const FlowDirectionEnumMembers = {
-  Production: 'Production',
-  Injection: 'Injection',
+export const FlowCalculationDirectionEnumMembers = {
+  Upstream: 'Upstream',
+  Downstream: 'Downstream',
 }
 
-export const FlowDirectionEnum = enumType({
+export const FlowCalculationDirectionEnum = enumType({
   sourceType: {
     module: '@prisma/client',
-    export: 'FlowDirectionEnum',
+    export: 'FlowCalculationDirectionEnum',
   },
-  name: 'FlowDirectionEnum',
-  members: FlowDirectionEnumMembers
+  name: 'FlowCalculationDirectionEnum',
+  members: FlowCalculationDirectionEnumMembers
 });
 
 export const PipelineQuery = extendType({
@@ -503,7 +501,7 @@ export const PipelineMutation = extendType({
         license: stringArg(),
         segment: stringArg(),
         substance: arg({ type: 'SubstanceEnum' }),
-        flowDirection: arg({ type: 'FlowDirectionEnum' }),
+        flowCalculationDirection: arg({ type: 'FlowCalculationDirectionEnum' }),
         from: stringArg(),
         fromFeature: arg({ type: 'FromToFeatureEnum' }),
         to: stringArg(),
@@ -532,7 +530,7 @@ export const PipelineMutation = extendType({
               license: args.license || undefined,
               segment: args.segment || undefined,
               substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
-              flowDirection: args.flowDirection || undefined,
+              flowCalculationDirection: args.flowCalculationDirection || undefined,
               from: args.from || undefined,
               fromFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.fromFeature),
               to: args.to || undefined,

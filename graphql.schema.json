@@ -525,20 +525,20 @@
       },
       {
         "kind": "ENUM",
-        "name": "FlowDirectionEnum",
+        "name": "FlowCalculationDirectionEnum",
         "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
           {
-            "name": "Injection",
+            "name": "Downstream",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "Production",
+            "name": "Upstream",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -548,11 +548,11 @@
       },
       {
         "kind": "OBJECT",
-        "name": "FlowDirectionEnumObject",
+        "name": "FlowCalculationDirectionEnumObject",
         "description": null,
         "fields": [
           {
-            "name": "Injection",
+            "name": "Downstream",
             "description": null,
             "args": [],
             "type": {
@@ -568,7 +568,7 @@
             "deprecationReason": null
           },
           {
-            "name": "Production",
+            "name": "Upstream",
             "description": null,
             "args": [],
             "type": {
@@ -3600,11 +3600,11 @@
             "description": null,
             "args": [
               {
-                "name": "flowDirection",
+                "name": "flowCalculationDirection",
                 "description": null,
                 "type": {
                   "kind": "ENUM",
-                  "name": "FlowDirectionEnum",
+                  "name": "FlowCalculationDirectionEnum",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -4746,7 +4746,7 @@
             "deprecationReason": null
           },
           {
-            "name": "flowDirection",
+            "name": "flowCalculationDirection",
             "description": null,
             "args": [],
             "type": {
@@ -4754,7 +4754,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "FlowDirectionEnum",
+                "name": "FlowCalculationDirectionEnum",
                 "ofType": null
               }
             },
@@ -8535,6 +8535,65 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "UserRoleEnumObject",
+        "description": null,
+        "fields": [
+          {
+            "name": "ADMIN",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CONTRACTOR",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "USER",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "INPUT_OBJECT",
         "name": "UserUniqueInput",
         "description": null,
@@ -8607,7 +8666,7 @@
             "deprecationReason": null
           },
           {
-            "name": "flowDirectionEnum",
+            "name": "flowCalculationDirectionEnum",
             "description": null,
             "args": [],
             "type": {
@@ -8615,7 +8674,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "FlowDirectionEnumObject",
+                "name": "FlowCalculationDirectionEnumObject",
                 "ofType": null
               }
             },
@@ -8872,6 +8931,22 @@
               "ofType": {
                 "kind": "OBJECT",
                 "name": "TypeEnumObject",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "userRoleEnum",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "UserRoleEnumObject",
                 "ofType": null
               }
             },

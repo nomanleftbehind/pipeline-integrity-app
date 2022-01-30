@@ -128,7 +128,7 @@ export const Risk = objectType({
       resolve: async ({ id }, _args, ctx: Context) => {
         const result = await ctx.prisma.risk.findUnique({
           where: { id },
-        }).pipeline()
+        }).pipeline();
         return result!;
       }
     })
@@ -245,6 +245,10 @@ export const RiskQuery = extendType({
         id: stringArg(),
       },
       resolve: async (_parent, { id }, ctx: Context) => {
+        const e = ctx.req.httpVersion
+
+        console.log('req,', e);
+        
         if (id) {
           const result = await ctx.prisma.risk.findMany({
             where: { id },

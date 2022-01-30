@@ -23,7 +23,7 @@ CREATE TYPE "material" AS ENUM ('Steel', 'Polyvinyl Chloride', 'Composite', 'Fib
 CREATE TYPE "internal_protection" AS ENUM ('Uncoated', 'Free Standing (Slip Lined)', 'Unknown', 'Cement', 'Expanded Polyethylene', 'Thin Film');
 
 -- CreateEnum
-CREATE TYPE "flow_direction" AS ENUM ('Production', 'Injection');
+CREATE TYPE "flow_calculation_direction" AS ENUM ('Upstream', 'Downstream');
 
 -- CreateEnum
 CREATE TYPE "pig_type" AS ENUM ('GSCR', 'PSCR', 'Foam', 'Scrapper');
@@ -98,7 +98,7 @@ CREATE TABLE "Pipeline" (
     "internalProtection" "internal_protection",
     "piggable" BOOLEAN,
     "piggingFrequency" INTEGER,
-    "flowDirection" "flow_direction" NOT NULL,
+    "flowCalculationDirection" "flow_calculation_direction" NOT NULL,
     "createdById" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedById" TEXT NOT NULL,

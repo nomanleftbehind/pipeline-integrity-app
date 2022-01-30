@@ -68,42 +68,42 @@ model Satellite {
 }
 
 model Pipeline {
-  id                 String                  @id @default(uuid())
-  satellite          Satellite?              @relation(fields: [satelliteId], references: [id])
-  satelliteId        String?
-  pigRuns            PigRun[]
-  injectionPoints    InjectionPoint[]
-  risk               Risk?
-  license            String
-  segment            String
-  substance          SubstanceEnum
-  from               String
-  fromFeature        FromToFeatureEnum?
-  to                 String
-  toFeature          FromToFeatureEnum?
-  status             StatusEnum
-  licenseDate        DateTime?
-  length             Float
-  type               TypeEnum?
-  grade              GradeEnum?
-  yieldStrength      Int?
-  outsideDiameter    Decimal?                @db.Decimal(6, 2)
-  wallThickness      Decimal?                @db.Decimal(6, 2)
-  material           MaterialEnum?
-  mop                Int?
-  internalProtection InternalProtectionEnum?
-  piggable           Boolean?
-  piggingFrequency   Int?
-  flowDirection      FlowDirectionEnum
-  upstream           Pipeline[]              @relation("PipelineFollows", references: [id])
-  downstream         Pipeline[]              @relation("PipelineFollows", references: [id])
-  pressureTests      PressureTest[]
-  createdBy          User                    @relation("pipelineCreatedBy", fields: [createdById], references: [id])
-  createdById        String
-  createdAt          DateTime                @default(now())
-  updatedBy          User                    @relation("pipelineUpdatedBy", fields: [updatedById], references: [id])
-  updatedById        String
-  updatedAt          DateTime                @updatedAt
+  id                       String                       @id @default(uuid())
+  satellite                Satellite?                   @relation(fields: [satelliteId], references: [id])
+  satelliteId              String?
+  pigRuns                  PigRun[]
+  injectionPoints          InjectionPoint[]
+  risk                     Risk?
+  license                  String
+  segment                  String
+  substance                SubstanceEnum
+  from                     String
+  fromFeature              FromToFeatureEnum?
+  to                       String
+  toFeature                FromToFeatureEnum?
+  status                   StatusEnum
+  licenseDate              DateTime?
+  length                   Float
+  type                     TypeEnum?
+  grade                    GradeEnum?
+  yieldStrength            Int?
+  outsideDiameter          Decimal?                     @db.Decimal(6, 2)
+  wallThickness            Decimal?                     @db.Decimal(6, 2)
+  material                 MaterialEnum?
+  mop                      Int?
+  internalProtection       InternalProtectionEnum?
+  piggable                 Boolean?
+  piggingFrequency         Int?
+  flowCalculationDirection FlowCalculationDirectionEnum
+  upstream                 Pipeline[]                   @relation("PipelineFollows", references: [id])
+  downstream               Pipeline[]                   @relation("PipelineFollows", references: [id])
+  pressureTests            PressureTest[]
+  createdBy                User                         @relation("pipelineCreatedBy", fields: [createdById], references: [id])
+  createdById              String
+  createdAt                DateTime                     @default(now())
+  updatedBy                User                         @relation("pipelineUpdatedBy", fields: [updatedById], references: [id])
+  updatedById              String
+  updatedAt                DateTime                     @updatedAt
 
   @@unique([license, segment])
 }
@@ -339,11 +339,11 @@ enum InternalProtectionEnum {
   @@map("internal_protection")
 }
 
-enum FlowDirectionEnum {
-  Production
-  Injection
+enum FlowCalculationDirectionEnum {
+  Upstream
+  Downstream
 
-  @@map("flow_direction")
+  @@map("flow_calculation_direction")
 }
 
 enum PigTypeEnum {

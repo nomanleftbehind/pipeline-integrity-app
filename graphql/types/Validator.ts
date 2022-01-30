@@ -8,7 +8,7 @@ import {
 	GradeEnumMembers,
 	MaterialEnumMembers,
 	InternalProtectionEnumMembers,
-	FlowDirectionEnumMembers
+	FlowCalculationDirectionEnumMembers
 } from './Pipeline';
 import { PigTypeEnumMembers } from './PigRun';
 import { LimitingSpecEnumMembers } from './PressureTest';
@@ -97,10 +97,10 @@ export const InternalProtectionEnumObject = objectType({
 	}
 });
 
-export const FlowDirectionEnumObject = objectType({
-	name: 'FlowDirectionEnumObject',
+export const FlowCalculationDirectionEnumObject = objectType({
+	name: 'FlowCalculationDirectionEnumObject',
 	definition(t) {
-		for (const iterator of Object.keys(FlowDirectionEnumMembers)) {
+		for (const iterator of Object.keys(FlowCalculationDirectionEnumMembers)) {
 			t.nonNull.string(iterator)
 		}
 	}
@@ -162,7 +162,7 @@ export const Validator = objectType({
 		t.nonNull.field('materialEnum', { type: 'MaterialEnumObject' })
 		t.nonNull.string('mopMatchPattern')
 		t.nonNull.field('internalProtectionEnum', { type: 'InternalProtectionEnumObject' })
-		t.nonNull.field('flowDirectionEnum', { type: 'FlowDirectionEnumObject' })
+		t.nonNull.field('flowCalculationDirectionEnum', { type: 'FlowCalculationDirectionEnumObject' })
 		t.nonNull.field('pigTypeEnum', { type: 'PigTypeEnumObject' })
 		t.nonNull.field('limitingSpecEnum', { type: 'LimitingSpecEnumObject' })
 		t.nonNull.field('environmentProximityToEnum', { type: 'EnvironmentProximityToEnumObject' })
@@ -194,7 +194,7 @@ export const ValidatorQuery = extendType({
 					materialEnum: MaterialEnumMembers,
 					mopMatchPattern,
 					internalProtectionEnum: InternalProtectionEnumMembers,
-					flowDirectionEnum: FlowDirectionEnumMembers,
+					flowCalculationDirectionEnum: FlowCalculationDirectionEnumMembers,
 					pigTypeEnum: PigTypeEnumMembers,
 					limitingSpecEnum: LimitingSpecEnumMembers,
 					environmentProximityToEnum: EnvironmentProximityToEnumMembers,

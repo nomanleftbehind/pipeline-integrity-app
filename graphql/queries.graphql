@@ -14,7 +14,7 @@ query pipelinesByIdQuery($table: String, $id: String) {
     license
     segment
     substance
-    flowDirection
+    flowCalculationDirection
     from
     fromFeature
     to
@@ -73,7 +73,7 @@ query PipelineById($id: String!) {
     license
     segment
     substance
-    flowDirection
+    flowCalculationDirection
     from
     fromFeature
     to

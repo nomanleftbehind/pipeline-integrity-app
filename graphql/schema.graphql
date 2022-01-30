@@ -60,14 +60,14 @@ type FieldError {
   message: String
 }
 
-enum FlowDirectionEnum {
-  Injection
-  Production
+enum FlowCalculationDirectionEnum {
+  Downstream
+  Upstream
 }
 
-type FlowDirectionEnumObject {
-  Injection: String!
-  Production: String!
+type FlowCalculationDirectionEnumObject {
+  Downstream: String!
+  Upstream: String!
 }
 
 enum FromToFeatureEnum {
@@ -312,7 +312,7 @@ type Mutation {
   editFacility(id: String!, name: String): Facility
   editInjectionPoint(firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineId: String, pvNodeId: String, source: String, water: Float): InjectionPoint
   editPigRun(comment: String, date: DateTime, id: String!, operatorId: String, pigType: PigTypeEnum, pipelineId: String): PigRun
-  editPipeline(flowDirection: FlowDirectionEnum, from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String, status: StatusEnum, substance: SubstanceEnum, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float, yieldStrength: Int): Pipeline
+  editPipeline(flowCalculationDirection: FlowCalculationDirectionEnum, from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String, status: StatusEnum, substance: SubstanceEnum, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float, yieldStrength: Int): Pipeline
   editPressureTest(comment: String, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pipelineId: String, pressureTestDate: DateTime, pressureTestReceivedDate: DateTime): PressureTest
   editRisk(arielReview: Boolean, dateSlopeChecked: DateTime, environmentProximityTo: EnvironmentProximityToEnum, gasReleaseCost: Float, geotechnicalFacingS1: GeotechnicalFacingEnum, geotechnicalFacingS2: GeotechnicalFacingEnum, geotechnicalHeightS1: Int, geotechnicalHeightS2: Int, geotechnicalSlopeAngleS1: Int, geotechnicalSlopeAngleS2: Int, id: String!, oilReleaseCost: Float, probabilityGeo: Float, releaseTimeDays: Int, repairTimeDays: Int, riskPeople: Int, safeguardExternalCoating: Boolean, safeguardInternalProtection: Boolean): Risk
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
@@ -351,12 +351,11 @@ type Pipeline {
   createdAt: DateTime!
   createdBy: User!
   downstream: [Pipeline]
-  flowDirection: FlowDirectionEnum!
+  flowCalculationDirection: FlowCalculationDirectionEnum!
   from: String!
   fromFeature: FromToFeatureEnum
   grade: GradeEnum
   id: String!
-  index: Int
   injectionPoints: [InjectionPoint]
   internalProtection: InternalProtectionEnum
   length: Float!
@@ -691,7 +690,7 @@ input UserUniqueInput {
 type Validator {
   anyTextMatchPattern: String!
   environmentProximityToEnum: EnvironmentProximityToEnumObject!
-  flowDirectionEnum: FlowDirectionEnumObject!
+  flowCalculationDirectionEnum: FlowCalculationDirectionEnumObject!
   fromToFeatureEnum: FromToFeatureEnumObject!
   fromToMatchPattern: String!
   geotechnicalFacingEnum: GeotechnicalFacingEnumObject!

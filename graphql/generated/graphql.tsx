@@ -69,14 +69,14 @@ export type FieldError = {
   message?: Maybe<Scalars['String']>;
 };
 
-export enum FlowDirectionEnum {
-  Injection = 'Injection',
-  Production = 'Production'
+export enum FlowCalculationDirectionEnum {
+  Downstream = 'Downstream',
+  Upstream = 'Upstream'
 }
 
-export type FlowDirectionEnumObject = {
-  Injection: Scalars['String'];
-  Production: Scalars['String'];
+export type FlowCalculationDirectionEnumObject = {
+  Downstream: Scalars['String'];
+  Upstream: Scalars['String'];
 };
 
 export enum FromToFeatureEnum {
@@ -436,7 +436,7 @@ export type MutationEditPigRunArgs = {
 
 
 export type MutationEditPipelineArgs = {
-  flowDirection?: Maybe<FlowDirectionEnum>;
+  flowCalculationDirection?: Maybe<FlowCalculationDirectionEnum>;
   from?: Maybe<Scalars['String']>;
   fromFeature?: Maybe<FromToFeatureEnum>;
   grade?: Maybe<GradeEnum>;
@@ -548,7 +548,7 @@ export type Pipeline = {
   createdAt: Scalars['DateTime'];
   createdBy: User;
   downstream?: Maybe<Array<Maybe<Pipeline>>>;
-  flowDirection: FlowDirectionEnum;
+  flowCalculationDirection: FlowCalculationDirectionEnum;
   from: Scalars['String'];
   fromFeature?: Maybe<FromToFeatureEnum>;
   grade?: Maybe<GradeEnum>;
@@ -910,6 +910,12 @@ export enum UserRoleEnum {
   User = 'USER'
 }
 
+export type UserRoleEnumObject = {
+  ADMIN: Scalars['String'];
+  CONTRACTOR: Scalars['String'];
+  USER: Scalars['String'];
+};
+
 export type UserUniqueInput = {
   email?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
@@ -918,7 +924,7 @@ export type UserUniqueInput = {
 export type Validator = {
   anyTextMatchPattern: Scalars['String'];
   environmentProximityToEnum: EnvironmentProximityToEnumObject;
-  flowDirectionEnum: FlowDirectionEnumObject;
+  flowCalculationDirectionEnum: FlowCalculationDirectionEnumObject;
   fromToFeatureEnum: FromToFeatureEnumObject;
   fromToMatchPattern: Scalars['String'];
   geotechnicalFacingEnum: GeotechnicalFacingEnumObject;
@@ -935,6 +941,7 @@ export type Validator = {
   statusEnum: StatusEnumObject;
   substanceEnum: SubstanceEnumObject;
   typeEnum: TypeEnumObject;
+  userRoleEnum: UserRoleEnumObject;
   wallThicknessMatchPattern: Scalars['String'];
   yieldStrengthMatchPattern: Scalars['String'];
 };
@@ -999,7 +1006,7 @@ export type EditPipelineMutationVariables = Exact<{
   license?: Maybe<Scalars['String']>;
   segment?: Maybe<Scalars['String']>;
   substance?: Maybe<SubstanceEnum>;
-  flowDirection?: Maybe<FlowDirectionEnum>;
+  flowCalculationDirection?: Maybe<FlowCalculationDirectionEnum>;
   from?: Maybe<Scalars['String']>;
   fromFeature?: Maybe<FromToFeatureEnum>;
   to?: Maybe<Scalars['String']>;
@@ -1126,14 +1133,14 @@ export type PipelinesByIdQueryQueryVariables = Exact<{
 }>;
 
 
-export type PipelinesByIdQueryQuery = { pipelinesById?: Array<{ id: string, license: string, segment: string, substance: SubstanceEnum, flowDirection: FlowDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, satellite?: { id: string, facility?: { id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ id: string, source: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined, upstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, createdBy: { email: string }, updatedBy: { email: string } } | null | undefined> | null | undefined };
+export type PipelinesByIdQueryQuery = { pipelinesById?: Array<{ id: string, license: string, segment: string, substance: SubstanceEnum, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, satellite?: { id: string, facility?: { id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ id: string, source: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined, upstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, createdBy: { email: string }, updatedBy: { email: string } } | null | undefined> | null | undefined };
 
 export type PipelineByIdQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type PipelineByIdQuery = { pipelineById?: { id: string, license: string, segment: string, substance: SubstanceEnum, flowDirection: FlowDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, createdBy: { email: string }, updatedBy: { email: string }, upstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, satellite?: { name: string } | null | undefined, injectionPoints?: Array<{ source: string } | null | undefined> | null | undefined } | null | undefined };
+export type PipelineByIdQuery = { pipelineById?: { id: string, license: string, segment: string, substance: SubstanceEnum, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status: StatusEnum, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, createdBy: { email: string }, updatedBy: { email: string }, upstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, satellite?: { name: string } | null | undefined, injectionPoints?: Array<{ source: string } | null | undefined> | null | undefined } | null | undefined };
 
 export type PipelineOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1468,14 +1475,14 @@ export type DisconnectSourceMutationHookResult = ReturnType<typeof useDisconnect
 export type DisconnectSourceMutationResult = Apollo.MutationResult<DisconnectSourceMutation>;
 export type DisconnectSourceMutationOptions = Apollo.BaseMutationOptions<DisconnectSourceMutation, DisconnectSourceMutationVariables>;
 export const EditPipelineDocument = gql`
-    mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $substance: SubstanceEnum, $flowDirection: FlowDirectionEnum, $from: String, $fromFeature: FromToFeatureEnum, $to: String, $toFeature: FromToFeatureEnum, $status: StatusEnum, $licenseDate: DateTime, $length: Float, $type: TypeEnum, $grade: GradeEnum, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
+    mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $substance: SubstanceEnum, $flowCalculationDirection: FlowCalculationDirectionEnum, $from: String, $fromFeature: FromToFeatureEnum, $to: String, $toFeature: FromToFeatureEnum, $status: StatusEnum, $licenseDate: DateTime, $length: Float, $type: TypeEnum, $grade: GradeEnum, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
   editPipeline(
     id: $id
     satelliteId: $satelliteId
     license: $license
     segment: $segment
     substance: $substance
-    flowDirection: $flowDirection
+    flowCalculationDirection: $flowCalculationDirection
     from: $from
     fromFeature: $fromFeature
     to: $to
@@ -1520,7 +1527,7 @@ export type EditPipelineMutationFn = Apollo.MutationFunction<EditPipelineMutatio
  *      license: // value for 'license'
  *      segment: // value for 'segment'
  *      substance: // value for 'substance'
- *      flowDirection: // value for 'flowDirection'
+ *      flowCalculationDirection: // value for 'flowCalculationDirection'
  *      from: // value for 'from'
  *      fromFeature: // value for 'fromFeature'
  *      to: // value for 'to'
@@ -1956,7 +1963,7 @@ export const PipelinesByIdQueryDocument = gql`
     license
     segment
     substance
-    flowDirection
+    flowCalculationDirection
     from
     fromFeature
     to
@@ -2045,7 +2052,7 @@ export const PipelineByIdDocument = gql`
     license
     segment
     substance
-    flowDirection
+    flowCalculationDirection
     from
     fromFeature
     to
