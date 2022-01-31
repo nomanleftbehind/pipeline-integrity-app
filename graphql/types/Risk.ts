@@ -10,10 +10,10 @@ import { Context } from '../context';
 
 const riskResolvers = async (parent: IRisk, ctx: Context) => {
   const { id, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost } = parent;
-  const { substance, status, material, type } = await ctx.prisma.pipeline.findUnique({ where: { id } }) || {};
+  const { substance, flowCalculationDirection, status, material, type } = await ctx.prisma.pipeline.findUnique({ where: { id } }) || {};
   // This function takes an array of pipeline ids as the first argument and returns an array of `pipeline flow` objects.
   // In this case since first argument array contains only one pipeline id, return value will be an array with only one `pipeline flow` object.
-  const { water, oil, gas, } = (await totalPipelineFlowRawQuery([id], ctx))[0];
+  const { water, oil, gas, } = (await totalPipelineFlowRawQuery([id], flowCalculationDirection || 'Upstream', ctx))[0];
   const totalFluids = totalFluidsCalc(oil, water, gas);
 
   const enviroRiskCalc = () => {
@@ -248,7 +248,7 @@ export const RiskQuery = extendType({
         const e = ctx.req.httpVersion
 
         console.log('req,', e);
-        
+
         if (id) {
           const result = await ctx.prisma.risk.findMany({
             where: { id },

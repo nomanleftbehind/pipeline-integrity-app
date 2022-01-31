@@ -1,7 +1,8 @@
-import { objectType, extendType, nonNull, stringArg, list } from 'nexus';
+import { objectType, extendType, nonNull, stringArg, list, arg } from 'nexus';
 import { gasAssociatedLiquidsCalc, totalFluidsCalc } from './InjectionPoint';
 import { Context } from '../context';
 import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
+import { FlowCalculationDirectionEnum } from '@prisma/client';
 
 
 export const PipelineOptions = objectType({
@@ -64,13 +65,16 @@ export const SideBar = objectType({
 })
 
 
-export const totalPipelineFlowRawQuery = async (id: (string | null)[], ctx: Context) => {
-  const ids = id.join("', '");
+export const totalPipelineFlowRawQuery = async (idList: (string | null)[], flowCalculationDirection: FlowCalculationDirectionEnum, ctx: Context) => {
+  const ids = idList.join("', '");
+
+  console.log(flowCalculationDirection);
+  
 
   // This raw query calls user defined custom function on PostgreSQL database.
   // For it to work, sql function must first be created by executing file `/prisma/pipeline_flow_dynamic.sql` on database as the Administrator.
   const result = await ctx.prisma.$queryRaw<NexusGenObjects['PipelineFlow'][]>`
-  SELECT * FROM "ppl_db".pipeline_flow(${ids});
+  SELECT * FROM "ppl_db".pipeline_flow(${ids}, ${flowCalculationDirection});
   `
 
   return result;
@@ -165,10 +169,11 @@ export const InjectionPointOptionsQuery = extendType({
     t.list.field('pipelineFlow', {
       type: 'PipelineFlow',
       args: {
-        id: nonNull(list(stringArg())),
+        idList: nonNull(list(stringArg())),
+        flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
       },
-      resolve: async (_parent, { id }, ctx: Context) => {
-        const result = await totalPipelineFlowRawQuery(id, ctx);
+      resolve: async (_parent, { idList, flowCalculationDirection }, ctx: Context) => {
+        const result = await totalPipelineFlowRawQuery(idList, flowCalculationDirection, ctx);
 
         return result;
       }

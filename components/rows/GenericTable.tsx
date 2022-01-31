@@ -320,7 +320,7 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
             {showAddForm ? <TableRow>
               <TableCell colSpan={4}>
                 <InjectionPointForm
-                  injectionPointType="upstream pipeline"
+                  injectionPointType='connected pipeline'
                   handleSubmit={handleAddEntryFromPage}
                 />
               </TableCell>

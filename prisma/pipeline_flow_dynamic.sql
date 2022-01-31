@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION "ppl_db".pipeline_flow(
-	pipeline_id text
+	pipeline_id text,
+	flow_calculation_direction "ppl_db"."flow_calculation_direction"
 )
 RETURNS TABLE (
 	id text,
@@ -20,12 +21,14 @@ DECLARE
 	res text;
 	keep_going boolean := true;
 	counter integer := 1;
+	connected_pipeline_column text := CASE WHEN flow_calculation_direction = 'Upstream' THEN '"A"' WHEN flow_calculation_direction = 'Downstream' THEN '"B"' END;
+	connected_pipeline_join_on_column text := CASE WHEN flow_calculation_direction = 'Upstream' THEN '"B"' WHEN flow_calculation_direction = 'Downstream' THEN '"A"' END;
 	query_pipeline_volume text := '
 WITH pipeline_volume as (
 SELECT
 
 pip.id,
-fl."A" as "upstream",
+fl.' || connected_pipeline_column || ' as "connected_pipeline_id",
 SUM(ip.oil) as "oil",
 SUM(ip.water) as "water",
 SUM(ip.gas) as "gas",
@@ -35,12 +38,12 @@ MIN(ip."firstInjection") as "firstInjection",
 MAX(ip."lastInjection") as "lastInjection"
 
 FROM "ppl_db"."Pipeline" pip
-LEFT OUTER JOIN "ppl_db"."_PipelineFollows" fl ON fl."B" = pip.id
+LEFT OUTER JOIN "ppl_db"."_PipelineFollows" fl ON fl.' || connected_pipeline_join_on_column || ' = pip.id
 LEFT OUTER JOIN "ppl_db"."InjectionPoint" ip ON ip."pipelineId" = pip.id
 
 GROUP BY
 pip.id,
-fl."A"
+fl.' || connected_pipeline_column || '
 )
 ';
 
@@ -132,7 +135,7 @@ MAX(CASE WHEN pv.sum_if_', counter, ' = 1 THEN pv."lastInjection', counter, '" E
 		query_not_in := CONCAT(query_not_in, query_not_in_beggin, 'pv', counter - 1, '.id');
 		
 		query_join := CONCAT(query_join, '
-LEFT OUTER JOIN pipeline_volume pv', counter, ' ON pv', counter, '.id = pv', counter - 1, '.upstream', ' AND pv', counter, '.id NOT IN (', query_not_in, ')');
+LEFT OUTER JOIN pipeline_volume pv', counter, ' ON pv', counter, '.id = pv', counter - 1, '.connected_pipeline_id', ' AND pv', counter, '.id NOT IN (', query_not_in, ')');
 
 		query_final_text := CONCAT(query_pipeline_volume, query_select3, coalesce_oil, ' as "oil",
 ', coalesce_water, ' as "water",

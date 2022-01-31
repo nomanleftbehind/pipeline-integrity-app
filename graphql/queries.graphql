@@ -455,8 +455,8 @@ query RiskById($id: String) {
   }
 }
 
-query PipelineFlow($pipelineFlowId: [String]!) {
-  pipelineFlow(id: $pipelineFlowId) {
+query PipelineFlow($idList: [String]!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
+  pipelineFlow(idList: $idList, flowCalculationDirection: $flowCalculationDirection) {
     id
     oil
     water

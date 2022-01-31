@@ -298,16 +298,16 @@ type Mutation {
   addPigRun(pipelineId: String!): PigRun
   addPressureTest(pipelineId: String!): PressureTest
   addRisk(id: String!): Risk
+  connectPipeline(connectPipelineId: String!, flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): Pipeline
   connectSource(id: String!, sourceId: String!): Pipeline
-  connectUpstreamPipeline(id: String!, upstreamId: String!): Pipeline
   createFacility(data: FacilityCreateInput!): Facility
   deletePigRun(id: String!): PigRun
   deletePipeline(id: String!): Pipeline
   deletePressureTest(id: String!): PressureTest
   deleteRisk(id: String!): Risk
   deleteSatellite(id: String!): Satellite
+  disconnectPipeline(disconnectPipelineId: String!, flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): Pipeline
   disconnectSource(id: String!, sourceId: String!): Pipeline
-  disconnectUpstreamPipeline(id: String!, upstreamId: String!): Pipeline
   duplicatePipeline(id: String!): Pipeline
   editFacility(id: String!, name: String): Facility
   editInjectionPoint(firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineId: String, pvNodeId: String, source: String, water: Float): InjectionPoint
@@ -457,7 +457,7 @@ type Query {
   me: User
   pigRunsByPipelineId(pipelineId: String): [PigRun]
   pipelineById(id: String!): Pipeline
-  pipelineFlow(id: [String]!): [PipelineFlow]
+  pipelineFlow(flowCalculationDirection: FlowCalculationDirectionEnum!, idList: [String]!): [PipelineFlow]
   pipelineOptions: [PipelineOptions]
   pipelinesById(id: String, table: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]

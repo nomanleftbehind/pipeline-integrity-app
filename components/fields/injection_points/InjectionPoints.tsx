@@ -16,7 +16,15 @@ import { IPipeline } from '../../rows/RenderPipeline';
 
 import { sum_flow } from '../../../wasm/pkg/pipeline_database_wasm_bg';
 
-import { usePipelineFlowQuery, PipelineFlowQuery, useConnectUpstreamPipelineMutation, useDisconnectUpstreamPipelineMutation, useConnectSourceMutation, useDisconnectSourceMutation, PipelinesByIdQueryDocument } from '../../../graphql/generated/graphql';
+import {
+  usePipelineFlowQuery,
+  PipelineFlowQuery,
+  useConnectPipelineMutation,
+  useDisconnectPipelineMutation,
+  useConnectSourceMutation,
+  useDisconnectSourceMutation,
+  PipelinesByIdQueryDocument,
+} from '../../../graphql/generated/graphql';
 
 type IInjectionPoints = Pick<IPipeline, 'injectionPoints' | 'upstream'>;
 type IUpstream = IPipeline['upstream'];
@@ -30,6 +38,7 @@ type ISourceFlow = IInferFromArray<IInjectionPoints['injectionPoints']>;
 interface IInjectionPointsProps {
   open: boolean;
   id: string;
+  flowCalculationDirection: IPipeline['flowCalculationDirection'];
   upstream: IUpstream;
   injectionPoints: IInjectionPoints;
 }
@@ -46,31 +55,31 @@ export interface ICollectFlowDataProps {
 }
 
 
-export default function InjectionPoints({ open, id, injectionPoints }: IInjectionPointsProps) {
-  const [showUpstreamPipelinesForm, setShowUpstreamPipelinesForm] = useState(false);
+export default function InjectionPoints({ open, id, flowCalculationDirection, injectionPoints }: IInjectionPointsProps) {
+  const [showConnectedPipelinesForm, setShowConnectedPipelinesForm] = useState(false);
   const [showSourcesForm, setShowSourcesForm] = useState(false);
 
   const { injectionPoints: sources, upstream: upstreamPipelines } = injectionPoints;
 
   const args = upstreamPipelines ? upstreamPipelines.map(upstreamPipeline => upstreamPipeline ? upstreamPipeline.id : null) : [];
 
-  // This function calls Prisma raw query that calculates total flow volume through each upstream pipeline.
-  const { data: dataPipelineFlow } = usePipelineFlowQuery({ variables: { pipelineFlowId: args } });
+  // This function calls Prisma raw query that calculates total flow volume through each upstream OR downstream pipeline.
+  const { data: dataPipelineFlow } = usePipelineFlowQuery({ variables: { idList: args, flowCalculationDirection } });
 
   // Upstream pipelines object was being passed as a prop all the way from pipelines page.
   // However, it didn't contain volume flow data. We had to write raw SQL query to return object with calculated total flow through each upstream pipeline.
   // We are now merging those two objects on their common key, which is id.
   const mergedUpstreamPipelines = upstreamPipelines ? upstreamPipelines.map(us => (us ? { ...us, ...dataPipelineFlow?.pipelineFlow?.find(pf => (pf ? pf.id === us.id : null)) } : null)) : null;
 
-  const [connectUpstreamPipeline, { data: dataConnectUpstreamPipeline }] = useConnectUpstreamPipelineMutation();
-  const [disconnectUpstreamPipeline, { data: dataDisconnectUpstreamPipeline }] = useDisconnectUpstreamPipelineMutation();
+  const [connectPipeline, { data: dataConnectUpstreamPipeline }] = useConnectPipelineMutation();
+  const [disconnectPipeline, { data: dataDisconnectUpstreamPipeline }] = useDisconnectPipelineMutation();
 
   const [connectSource, { data: dataConnectSource }] = useConnectSourceMutation();
   const [disconnectSource, { data: dataDisconnectSource }] = useDisconnectSourceMutation();
 
 
-  function toggleShowUpstreamPipelinesForm() {
-    setShowUpstreamPipelinesForm(!showUpstreamPipelinesForm);
+  function toggleShowConnectedPipelinesForm() {
+    setShowConnectedPipelinesForm(!showConnectedPipelinesForm);
   }
 
   function toggleShowSourcesForm() {
@@ -177,13 +186,13 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
 
   function handleSubmit(injectionPointType: string, newInjectionPointId: string, oldInjectionPointId?: string) {
     switch (injectionPointType) {
-      case 'upstream pipeline':
+      case 'connected pipeline':
         // Very important this is the first mutation called in this block,
         // as otherwise if you click OK, while not having selected a different injection point,
         // it would first override injection point with itself and then delete it.
-        if (oldInjectionPointId) disconnectUpstreamPipeline({ variables: { id, upstreamId: oldInjectionPointId } });
-        connectUpstreamPipeline({ variables: { id, upstreamId: newInjectionPointId }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
-        setShowUpstreamPipelinesForm(false);
+        if (oldInjectionPointId) disconnectPipeline({ variables: { id, disconnectPipelineId: oldInjectionPointId, flowCalculationDirection } });
+        connectPipeline({ variables: { id, connectPipelineId: newInjectionPointId, flowCalculationDirection }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
+        setShowConnectedPipelinesForm(false);
         break;
       case 'source':
         if (oldInjectionPointId) disconnectSource({ variables: { id, sourceId: oldInjectionPointId } });
@@ -230,9 +239,9 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
           </TableHead>
           <TableHead>
             <TableRow sx={{ '& > th': { paddingTop: '30px', fontStyle: 'italic', whiteSpace: 'nowrap' } }}>
-              <TableCell>Upstream Pipelines
-                <IconButton aria-label="expand row" size="small" onClick={toggleShowUpstreamPipelinesForm}>
-                  {showUpstreamPipelinesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
+              <TableCell>{`${flowCalculationDirection} Pipelines`}
+                <IconButton aria-label="expand row" size="small" onClick={toggleShowConnectedPipelinesForm}>
+                  {showConnectedPipelinesForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
                 </IconButton>
               </TableCell>
               {/* Even though we don't need to sum only one value, we are passing here to sumHorizontal function because that function rounds to two decimals.
@@ -249,11 +258,11 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
             </TableRow>
           </TableHead>
           <TableBody>
-            {showUpstreamPipelinesForm ?
+            {showConnectedPipelinesForm ?
               <TableRow>
                 <TableCell>
                   <InjectionPointForm
-                    injectionPointType="upstream pipeline"
+                    injectionPointType='connected pipeline'
                     handleSubmit={handleSubmit}
                   />
                 </TableCell>
@@ -263,11 +272,11 @@ export default function InjectionPoints({ open, id, injectionPoints }: IInjectio
               return upstreamPipeline ? (
                 <Source
                   key={upstreamPipeline.id}
-                  injectionPointType="upstream pipeline"
+                  injectionPointType='connected pipeline'
                   injectionPointId={upstreamPipeline.id}
                   source={`${upstreamPipeline.license}-${upstreamPipeline.segment}`}
                   handleSubmit={handleSubmit}
-                  disconnectInjectionPoint={() => disconnectUpstreamPipeline({ variables: { id: id, upstreamId: upstreamPipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
+                  disconnectInjectionPoint={() => disconnectPipeline({ variables: { id: id, disconnectPipelineId: upstreamPipeline.id, flowCalculationDirection }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
                   injectionPointFlow={{
                     injectionPointOil: upstreamPipeline.oil,
                     injectionPointWater: upstreamPipeline.water,

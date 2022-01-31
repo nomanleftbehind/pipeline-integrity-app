@@ -6,10 +6,12 @@ import { useSourceOptionsLazyQuery, usePipelineOptionsLazyQuery, PipelineOptions
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
+import { IInjectionPointType } from './Source';
+
 interface IInjectionPointFormProps {
   injectionPointId?: string;
-  injectionPointType: string;
-  handleSubmit: (injectionPointType: string, newInjectionPointId: string) => void;
+  injectionPointType: IInjectionPointType;
+  handleSubmit: (injectionPointType: IInjectionPointType, newInjectionPointId: string) => void;
 }
 
 type IPipelineOption = PipelineOptionsQuery['pipelineOptions'] extends (infer U | null | undefined)[] | null | undefined ? U : never;
@@ -34,7 +36,7 @@ export default function InjectionPointForm({ injectionPointId, injectionPointTyp
 
   function loadOptions() {
     switch (injectionPointType) {
-      case 'upstream pipeline':
+      case 'connected pipeline':
         upstreamPipelineOptions();
         validatorSubstance();
         break;

@@ -592,52 +592,62 @@ export const PipelineMutation = extendType({
         } else return null;
       }
     })
-    t.field('connectUpstreamPipeline', {
+    t.field('connectPipeline', {
       type: 'Pipeline',
       args: {
         id: nonNull(stringArg()),
-        upstreamId: nonNull(stringArg()),
+        connectPipelineId: nonNull(stringArg()),
+        flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
       },
-      resolve: async (_parent, { id, upstreamId }, ctx: Context) => {
+      resolve: async (_parent, { id, connectPipelineId, flowCalculationDirection }, ctx: Context) => {
         const userId = getUserId(ctx);
-        return ctx.prisma.pipeline.update({
+
+        const result = await ctx.prisma.pipeline.update({
           where: { id },
           data: {
-            upstream: {
-              connect: {
-                id: upstreamId
-              }
-            },
+            upstream: flowCalculationDirection === 'Upstream' ? {
+              connect: { id: connectPipelineId }
+            } : undefined,
+            downstream: flowCalculationDirection === 'Downstream' ? {
+              connect: { id: connectPipelineId }
+            } : undefined,
             updatedBy: {
               update: {
                 id: String(userId),
               }
             }
           }
-        })
+        });
+        return result;
       }
     })
-    t.field('disconnectUpstreamPipeline', {
+    t.field('disconnectPipeline', {
       type: 'Pipeline',
       args: {
         id: nonNull(stringArg()),
-        upstreamId: nonNull(stringArg()),
+        disconnectPipelineId: nonNull(stringArg()),
+        flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
       },
-      resolve: async (_parent, { id, upstreamId }, ctx: Context) => {
+      resolve: async (_parent, { id, disconnectPipelineId, flowCalculationDirection }, ctx: Context) => {
         const userId = getUserId(ctx);
-        return ctx.prisma.pipeline.update({
+
+        const result = await ctx.prisma.pipeline.update({
           where: { id },
           data: {
-            upstream: {
-              disconnect: { id: upstreamId }
-            },
+            upstream: flowCalculationDirection === 'Upstream' ? {
+              disconnect: { id: disconnectPipelineId }
+            } : undefined,
+            downstream: flowCalculationDirection === 'Downstream' ? {
+              disconnect: { id: disconnectPipelineId }
+            } : undefined,
             updatedBy: {
               update: {
                 id: String(userId),
               }
             }
           }
-        })
+        });
+        return result;
       }
     })
     t.field('connectSource', {

@@ -26,7 +26,7 @@ export interface IPipelineDataProps {
 export default function PipelineData({ open, pipeline, validators, isEven }: IPipelineDataProps): JSX.Element {
   const [value, setValue] = useState(0);
 
-  const { id, createdAt, updatedAt, createdBy, license, segment, substance, from, fromFeature, to, toFeature, injectionPoints, upstream, status, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
+  const { id, createdAt, updatedAt, createdBy, license, segment, substance, flowCalculationDirection, from, fromFeature, to, toFeature, injectionPoints, upstream, status, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
 
   const { licenseMatchPattern, segmentMatchPattern, substanceEnum, fromToMatchPattern, fromToFeatureEnum, statusEnum, lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
 
@@ -77,6 +77,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               <InjectionPoints
                 open={open}
                 id={id}
+                flowCalculationDirection={flowCalculationDirection}
                 upstream={upstream}
                 injectionPoints={{ injectionPoints, upstream }}
               />

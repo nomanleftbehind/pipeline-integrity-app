@@ -2934,11 +2934,11 @@
             "deprecationReason": null
           },
           {
-            "name": "connectSource",
+            "name": "connectPipeline",
             "description": null,
             "args": [
               {
-                "name": "id",
+                "name": "connectPipelineId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -2954,7 +2954,23 @@
                 "deprecationReason": null
               },
               {
-                "name": "sourceId",
+                "name": "flowCalculationDirection",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "FlowCalculationDirectionEnum",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "id",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -2979,7 +2995,7 @@
             "deprecationReason": null
           },
           {
-            "name": "connectUpstreamPipeline",
+            "name": "connectSource",
             "description": null,
             "args": [
               {
@@ -2999,7 +3015,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "upstreamId",
+                "name": "sourceId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3198,11 +3214,11 @@
             "deprecationReason": null
           },
           {
-            "name": "disconnectSource",
+            "name": "disconnectPipeline",
             "description": null,
             "args": [
               {
-                "name": "id",
+                "name": "disconnectPipelineId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3218,7 +3234,23 @@
                 "deprecationReason": null
               },
               {
-                "name": "sourceId",
+                "name": "flowCalculationDirection",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "FlowCalculationDirectionEnum",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "id",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3243,7 +3275,7 @@
             "deprecationReason": null
           },
           {
-            "name": "disconnectUpstreamPipeline",
+            "name": "disconnectSource",
             "description": null,
             "args": [
               {
@@ -3263,7 +3295,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "upstreamId",
+                "name": "sourceId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -4818,18 +4850,6 @@
             "deprecationReason": null
           },
           {
-            "name": "index",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "injectionPoints",
             "description": null,
             "args": [],
@@ -6106,7 +6126,23 @@
             "description": null,
             "args": [
               {
-                "name": "id",
+                "name": "flowCalculationDirection",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "FlowCalculationDirectionEnum",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "idList",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",

@@ -307,16 +307,16 @@ export type Mutation = {
   addPigRun?: Maybe<PigRun>;
   addPressureTest?: Maybe<PressureTest>;
   addRisk?: Maybe<Risk>;
+  connectPipeline?: Maybe<Pipeline>;
   connectSource?: Maybe<Pipeline>;
-  connectUpstreamPipeline?: Maybe<Pipeline>;
   createFacility?: Maybe<Facility>;
   deletePigRun?: Maybe<PigRun>;
   deletePipeline?: Maybe<Pipeline>;
   deletePressureTest?: Maybe<PressureTest>;
   deleteRisk?: Maybe<Risk>;
   deleteSatellite?: Maybe<Satellite>;
+  disconnectPipeline?: Maybe<Pipeline>;
   disconnectSource?: Maybe<Pipeline>;
-  disconnectUpstreamPipeline?: Maybe<Pipeline>;
   duplicatePipeline?: Maybe<Pipeline>;
   editFacility?: Maybe<Facility>;
   editInjectionPoint?: Maybe<InjectionPoint>;
@@ -345,15 +345,16 @@ export type MutationAddRiskArgs = {
 };
 
 
-export type MutationConnectSourceArgs = {
+export type MutationConnectPipelineArgs = {
+  connectPipelineId: Scalars['String'];
+  flowCalculationDirection: FlowCalculationDirectionEnum;
   id: Scalars['String'];
-  sourceId: Scalars['String'];
 };
 
 
-export type MutationConnectUpstreamPipelineArgs = {
+export type MutationConnectSourceArgs = {
   id: Scalars['String'];
-  upstreamId: Scalars['String'];
+  sourceId: Scalars['String'];
 };
 
 
@@ -387,15 +388,16 @@ export type MutationDeleteSatelliteArgs = {
 };
 
 
-export type MutationDisconnectSourceArgs = {
+export type MutationDisconnectPipelineArgs = {
+  disconnectPipelineId: Scalars['String'];
+  flowCalculationDirection: FlowCalculationDirectionEnum;
   id: Scalars['String'];
-  sourceId: Scalars['String'];
 };
 
 
-export type MutationDisconnectUpstreamPipelineArgs = {
+export type MutationDisconnectSourceArgs = {
   id: Scalars['String'];
-  upstreamId: Scalars['String'];
+  sourceId: Scalars['String'];
 };
 
 
@@ -553,7 +555,6 @@ export type Pipeline = {
   fromFeature?: Maybe<FromToFeatureEnum>;
   grade?: Maybe<GradeEnum>;
   id: Scalars['String'];
-  index?: Maybe<Scalars['Int']>;
   injectionPoints?: Maybe<Array<Maybe<InjectionPoint>>>;
   internalProtection?: Maybe<InternalProtectionEnum>;
   length: Scalars['Float'];
@@ -678,7 +679,8 @@ export type QueryPipelineByIdArgs = {
 
 
 export type QueryPipelineFlowArgs = {
-  id: Array<Maybe<Scalars['String']>>;
+  flowCalculationDirection: FlowCalculationDirectionEnum;
+  idList: Array<Maybe<Scalars['String']>>;
 };
 
 
@@ -968,21 +970,23 @@ export type DuplicatePipelineMutationVariables = Exact<{
 
 export type DuplicatePipelineMutation = { duplicatePipeline?: { id: string, license: string, segment: string } | null | undefined };
 
-export type ConnectUpstreamPipelineMutationVariables = Exact<{
+export type ConnectPipelineMutationVariables = Exact<{
   id: Scalars['String'];
-  upstreamId: Scalars['String'];
+  connectPipelineId: Scalars['String'];
+  flowCalculationDirection: FlowCalculationDirectionEnum;
 }>;
 
 
-export type ConnectUpstreamPipelineMutation = { connectUpstreamPipeline?: { id: string, upstream?: Array<{ id: string } | null | undefined> | null | undefined } | null | undefined };
+export type ConnectPipelineMutation = { connectPipeline?: { id: string } | null | undefined };
 
-export type DisconnectUpstreamPipelineMutationVariables = Exact<{
+export type DisconnectPipelineMutationVariables = Exact<{
   id: Scalars['String'];
-  upstreamId: Scalars['String'];
+  disconnectPipelineId: Scalars['String'];
+  flowCalculationDirection: FlowCalculationDirectionEnum;
 }>;
 
 
-export type DisconnectUpstreamPipelineMutation = { disconnectUpstreamPipeline?: { id: string, upstream?: Array<{ id: string } | null | undefined> | null | undefined } | null | undefined };
+export type DisconnectPipelineMutation = { disconnectPipeline?: { id: string } | null | undefined };
 
 export type ConnectSourceMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1199,7 +1203,8 @@ export type RiskByIdQueryVariables = Exact<{
 export type RiskByIdQuery = { riskById?: Array<{ id: string, arielReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, enviroRisk?: number | null | undefined, assetRisk?: number | null | undefined, probabilityGeo?: number | null | undefined, probabilityInterior?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, pipeline: { license: string, segment: string }, createdBy: { email: string }, updatedBy: { email: string } } | null | undefined> | null | undefined };
 
 export type PipelineFlowQueryVariables = Exact<{
-  pipelineFlowId: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
+  idList: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
+  flowCalculationDirection: FlowCalculationDirectionEnum;
 }>;
 
 
@@ -1326,82 +1331,86 @@ export function useDuplicatePipelineMutation(baseOptions?: Apollo.MutationHookOp
 export type DuplicatePipelineMutationHookResult = ReturnType<typeof useDuplicatePipelineMutation>;
 export type DuplicatePipelineMutationResult = Apollo.MutationResult<DuplicatePipelineMutation>;
 export type DuplicatePipelineMutationOptions = Apollo.BaseMutationOptions<DuplicatePipelineMutation, DuplicatePipelineMutationVariables>;
-export const ConnectUpstreamPipelineDocument = gql`
-    mutation connectUpstreamPipeline($id: String!, $upstreamId: String!) {
-  connectUpstreamPipeline(id: $id, upstreamId: $upstreamId) {
+export const ConnectPipelineDocument = gql`
+    mutation ConnectPipeline($id: String!, $connectPipelineId: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
+  connectPipeline(
+    id: $id
+    connectPipelineId: $connectPipelineId
+    flowCalculationDirection: $flowCalculationDirection
+  ) {
     id
-    upstream {
-      id
-    }
   }
 }
     `;
-export type ConnectUpstreamPipelineMutationFn = Apollo.MutationFunction<ConnectUpstreamPipelineMutation, ConnectUpstreamPipelineMutationVariables>;
+export type ConnectPipelineMutationFn = Apollo.MutationFunction<ConnectPipelineMutation, ConnectPipelineMutationVariables>;
 
 /**
- * __useConnectUpstreamPipelineMutation__
+ * __useConnectPipelineMutation__
  *
- * To run a mutation, you first call `useConnectUpstreamPipelineMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useConnectUpstreamPipelineMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useConnectPipelineMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConnectPipelineMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [connectUpstreamPipelineMutation, { data, loading, error }] = useConnectUpstreamPipelineMutation({
+ * const [connectPipelineMutation, { data, loading, error }] = useConnectPipelineMutation({
  *   variables: {
  *      id: // value for 'id'
- *      upstreamId: // value for 'upstreamId'
+ *      connectPipelineId: // value for 'connectPipelineId'
+ *      flowCalculationDirection: // value for 'flowCalculationDirection'
  *   },
  * });
  */
-export function useConnectUpstreamPipelineMutation(baseOptions?: Apollo.MutationHookOptions<ConnectUpstreamPipelineMutation, ConnectUpstreamPipelineMutationVariables>) {
+export function useConnectPipelineMutation(baseOptions?: Apollo.MutationHookOptions<ConnectPipelineMutation, ConnectPipelineMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ConnectUpstreamPipelineMutation, ConnectUpstreamPipelineMutationVariables>(ConnectUpstreamPipelineDocument, options);
+        return Apollo.useMutation<ConnectPipelineMutation, ConnectPipelineMutationVariables>(ConnectPipelineDocument, options);
       }
-export type ConnectUpstreamPipelineMutationHookResult = ReturnType<typeof useConnectUpstreamPipelineMutation>;
-export type ConnectUpstreamPipelineMutationResult = Apollo.MutationResult<ConnectUpstreamPipelineMutation>;
-export type ConnectUpstreamPipelineMutationOptions = Apollo.BaseMutationOptions<ConnectUpstreamPipelineMutation, ConnectUpstreamPipelineMutationVariables>;
-export const DisconnectUpstreamPipelineDocument = gql`
-    mutation disconnectUpstreamPipeline($id: String!, $upstreamId: String!) {
-  disconnectUpstreamPipeline(id: $id, upstreamId: $upstreamId) {
+export type ConnectPipelineMutationHookResult = ReturnType<typeof useConnectPipelineMutation>;
+export type ConnectPipelineMutationResult = Apollo.MutationResult<ConnectPipelineMutation>;
+export type ConnectPipelineMutationOptions = Apollo.BaseMutationOptions<ConnectPipelineMutation, ConnectPipelineMutationVariables>;
+export const DisconnectPipelineDocument = gql`
+    mutation DisconnectPipeline($id: String!, $disconnectPipelineId: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
+  disconnectPipeline(
+    id: $id
+    disconnectPipelineId: $disconnectPipelineId
+    flowCalculationDirection: $flowCalculationDirection
+  ) {
     id
-    upstream {
-      id
-    }
   }
 }
     `;
-export type DisconnectUpstreamPipelineMutationFn = Apollo.MutationFunction<DisconnectUpstreamPipelineMutation, DisconnectUpstreamPipelineMutationVariables>;
+export type DisconnectPipelineMutationFn = Apollo.MutationFunction<DisconnectPipelineMutation, DisconnectPipelineMutationVariables>;
 
 /**
- * __useDisconnectUpstreamPipelineMutation__
+ * __useDisconnectPipelineMutation__
  *
- * To run a mutation, you first call `useDisconnectUpstreamPipelineMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDisconnectUpstreamPipelineMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useDisconnectPipelineMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDisconnectPipelineMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [disconnectUpstreamPipelineMutation, { data, loading, error }] = useDisconnectUpstreamPipelineMutation({
+ * const [disconnectPipelineMutation, { data, loading, error }] = useDisconnectPipelineMutation({
  *   variables: {
  *      id: // value for 'id'
- *      upstreamId: // value for 'upstreamId'
+ *      disconnectPipelineId: // value for 'disconnectPipelineId'
+ *      flowCalculationDirection: // value for 'flowCalculationDirection'
  *   },
  * });
  */
-export function useDisconnectUpstreamPipelineMutation(baseOptions?: Apollo.MutationHookOptions<DisconnectUpstreamPipelineMutation, DisconnectUpstreamPipelineMutationVariables>) {
+export function useDisconnectPipelineMutation(baseOptions?: Apollo.MutationHookOptions<DisconnectPipelineMutation, DisconnectPipelineMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DisconnectUpstreamPipelineMutation, DisconnectUpstreamPipelineMutationVariables>(DisconnectUpstreamPipelineDocument, options);
+        return Apollo.useMutation<DisconnectPipelineMutation, DisconnectPipelineMutationVariables>(DisconnectPipelineDocument, options);
       }
-export type DisconnectUpstreamPipelineMutationHookResult = ReturnType<typeof useDisconnectUpstreamPipelineMutation>;
-export type DisconnectUpstreamPipelineMutationResult = Apollo.MutationResult<DisconnectUpstreamPipelineMutation>;
-export type DisconnectUpstreamPipelineMutationOptions = Apollo.BaseMutationOptions<DisconnectUpstreamPipelineMutation, DisconnectUpstreamPipelineMutationVariables>;
+export type DisconnectPipelineMutationHookResult = ReturnType<typeof useDisconnectPipelineMutation>;
+export type DisconnectPipelineMutationResult = Apollo.MutationResult<DisconnectPipelineMutation>;
+export type DisconnectPipelineMutationOptions = Apollo.BaseMutationOptions<DisconnectPipelineMutation, DisconnectPipelineMutationVariables>;
 export const ConnectSourceDocument = gql`
-    mutation connectSource($id: String!, $sourceId: String!) {
+    mutation ConnectSource($id: String!, $sourceId: String!) {
   connectSource(id: $id, sourceId: $sourceId) {
     id
     injectionPoints {
@@ -1438,7 +1447,7 @@ export type ConnectSourceMutationHookResult = ReturnType<typeof useConnectSource
 export type ConnectSourceMutationResult = Apollo.MutationResult<ConnectSourceMutation>;
 export type ConnectSourceMutationOptions = Apollo.BaseMutationOptions<ConnectSourceMutation, ConnectSourceMutationVariables>;
 export const DisconnectSourceDocument = gql`
-    mutation disconnectSource($id: String!, $sourceId: String!) {
+    mutation DisconnectSource($id: String!, $sourceId: String!) {
   disconnectSource(id: $id, sourceId: $sourceId) {
     id
     injectionPoints {
@@ -2746,8 +2755,11 @@ export type RiskByIdQueryHookResult = ReturnType<typeof useRiskByIdQuery>;
 export type RiskByIdLazyQueryHookResult = ReturnType<typeof useRiskByIdLazyQuery>;
 export type RiskByIdQueryResult = Apollo.QueryResult<RiskByIdQuery, RiskByIdQueryVariables>;
 export const PipelineFlowDocument = gql`
-    query PipelineFlow($pipelineFlowId: [String]!) {
-  pipelineFlow(id: $pipelineFlowId) {
+    query PipelineFlow($idList: [String]!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
+  pipelineFlow(
+    idList: $idList
+    flowCalculationDirection: $flowCalculationDirection
+  ) {
     id
     oil
     water
@@ -2774,7 +2786,8 @@ export const PipelineFlowDocument = gql`
  * @example
  * const { data, loading, error } = usePipelineFlowQuery({
  *   variables: {
- *      pipelineFlowId: // value for 'pipelineFlowId'
+ *      idList: // value for 'idList'
+ *      flowCalculationDirection: // value for 'flowCalculationDirection'
  *   },
  * });
  */

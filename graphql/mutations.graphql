@@ -24,32 +24,26 @@ mutation deletePipeline($id: String!) {
 }
 
 mutation duplicatePipeline($id: String!) {
-duplicatePipeline(id: $id) {
-  id
-  license
-  segment
-}
-}
-
-mutation connectUpstreamPipeline($id: String!, $upstreamId: String!) {
-  connectUpstreamPipeline(id: $id, upstreamId: $upstreamId) {
+  duplicatePipeline(id: $id) {
     id
-    upstream {
-      id
-    }
+    license
+    segment
   }
 }
 
-mutation disconnectUpstreamPipeline($id: String!, $upstreamId: String!) {
-  disconnectUpstreamPipeline(id: $id, upstreamId: $upstreamId) {
+mutation ConnectPipeline($id: String!, $connectPipelineId: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
+  connectPipeline(id: $id, connectPipelineId: $connectPipelineId, flowCalculationDirection: $flowCalculationDirection) {
     id
-    upstream {
-      id
-    }
   }
 }
 
-mutation connectSource($id: String!, $sourceId: String!) {
+mutation DisconnectPipeline($id: String!, $disconnectPipelineId: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
+  disconnectPipeline(id: $id, disconnectPipelineId: $disconnectPipelineId, flowCalculationDirection: $flowCalculationDirection) {
+    id
+  }
+}
+
+mutation ConnectSource($id: String!, $sourceId: String!) {
   connectSource(id: $id, sourceId: $sourceId) {
     id
     injectionPoints {
@@ -58,7 +52,7 @@ mutation connectSource($id: String!, $sourceId: String!) {
   }
 }
 
-mutation disconnectSource($id: String!, $sourceId: String!) {
+mutation DisconnectSource($id: String!, $sourceId: String!) {
   disconnectSource(id: $id, sourceId: $sourceId) {
     id
     injectionPoints {

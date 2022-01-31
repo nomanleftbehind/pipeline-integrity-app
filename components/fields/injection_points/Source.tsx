@@ -7,12 +7,13 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
+export type IInjectionPointType = 'connected pipeline' | 'source';
 
 interface IInjectionPointEnrtyProps {
-  injectionPointType: string;
+  injectionPointType: IInjectionPointType;
   injectionPointId: string;
   source: string;
-  handleSubmit: (injectionPointType: string, newInjectionPointId: string, oldInjectionPointId: string) => void;
+  handleSubmit: (injectionPointType: IInjectionPointType, newInjectionPointId: string, oldInjectionPointId: string) => void;
   disconnectInjectionPoint: () => void;
   injectionPointFlow: {
     injectionPointOil?: number;
@@ -34,7 +35,7 @@ export default function InjectionPointEntry({ injectionPointType, injectionPoint
     setShowForm(!showForm);
   }
 
-  function handleSubmitAndHideForm(injectionPointType: string, newInjectionPointId: string) {
+  function handleSubmitAndHideForm(injectionPointType: IInjectionPointType, newInjectionPointId: string) {
     handleSubmit(injectionPointType, newInjectionPointId, injectionPointId);
     setShowForm(false);
   }
