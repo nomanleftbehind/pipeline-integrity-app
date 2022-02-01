@@ -1,14 +1,13 @@
 import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
-import { InjectionPoint as IInjectionPoint } from '@prisma/client';
 import { Context } from '../context';
 import { getUserId } from '../utils';
 
 
-export const gasAssociatedLiquidsCalc = (gas: IInjectionPoint['gas']) => {
+export const gasAssociatedLiquidsCalc = (gas: number) => {
   return gas * 35.49 * 0.00355238191999475 / 6.3;
 }
 
-export const totalFluidsCalc = (oil: IInjectionPoint['oil'], water: IInjectionPoint['water'], gas: IInjectionPoint['gas']) => {
+export const totalFluidsCalc = (oil: number, water: number, gas: number) => {
   return oil + water + gasAssociatedLiquidsCalc(gas);
 }
 

@@ -83,7 +83,7 @@ export default function PipelineDatabase() {
                         (
                           pipeline.license.toUpperCase().includes(filterTextCaseInsensitive.license) &&
                           pipeline.segment.toUpperCase().includes(filterTextCaseInsensitive.segment) &&
-                          valuesFromEnum(pipeline.substance, validators?.substanceEnum).toUpperCase().includes(filterTextCaseInsensitive.substance) &&
+                          (pipeline.substance ? valuesFromEnum(pipeline.substance, validators?.substanceEnum).toUpperCase().includes(filterTextCaseInsensitive.substance) : filterTextCaseInsensitive.substance.length === 0) &&
                           pipeline.from.toUpperCase().includes(filterTextCaseInsensitive.from) &&
                           (pipeline.fromFeature ? valuesFromEnum(pipeline.fromFeature, validators?.fromToFeatureEnum).toUpperCase().includes(filterTextCaseInsensitive.fromFeature) : filterTextCaseInsensitive.fromFeature.length === 0) &&
                           pipeline.to.toUpperCase().includes(filterTextCaseInsensitive.to) &&
@@ -98,7 +98,7 @@ export default function PipelineDatabase() {
                                   return i.toUpperCase().includes(filterTextCaseInsensitive.injectionPoints)
                               }
                             })) &&
-                          valuesFromEnum(pipeline.status, validators?.statusEnum).toUpperCase().includes(filterTextCaseInsensitive.status)
+                          (pipeline.status ? valuesFromEnum(pipeline.status, validators?.statusEnum).toUpperCase().includes(filterTextCaseInsensitive.status) : filterTextCaseInsensitive.status.length === 0)
                         ) :
                         undefined
                     );

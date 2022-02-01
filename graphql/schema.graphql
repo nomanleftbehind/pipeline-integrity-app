@@ -478,7 +478,7 @@ type Query {
   pipelinesById(id: String, table: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
   pressureTestsByPipelineId(pipelineId: String): [PressureTest]
-  riskById(id: String): [Risk]
+  riskById(id: String!): Risk
   sideBar: [SideBar]
   sourceOptions: [SourceOptions]
   validators: Validator
@@ -486,12 +486,12 @@ type Query {
 
 type Risk {
   arielReview: Boolean
-  assetRisk: Int
-  costPerM3Released: Float
+  assetRisk(gas: Float, oil: Float, water: Float): Int
+  costPerM3Released(gas: Float, oil: Float, substance: SubstanceEnum, water: Float): Float
   createdAt: DateTime!
   createdBy: User!
   dateSlopeChecked: DateTime
-  enviroRisk: Int
+  enviroRisk(gas: Float, oil: Float, status: StatusEnum, substance: SubstanceEnum, water: Float): Int
   environmentProximityTo: EnvironmentProximityToEnum
   gasReleaseCost: Float
   geotechnicalFacingS1: GeotechnicalFacingEnum
@@ -504,7 +504,7 @@ type Risk {
   oilReleaseCost: Float
   pipeline: Pipeline!
   probabilityGeo: Float
-  probabilityInterior: Int
+  probabilityInterior(material: MaterialEnum, status: StatusEnum, substance: SubstanceEnum, type: TypeEnum): Int
   releaseTimeDays: Int
   repairTimeDays: Int
   riskPeople: Int

@@ -416,13 +416,9 @@ query PressureTestsByPipelineId($pipelineId: String) {
   }
 }
 
-query RiskById($id: String) {
+query RiskById($id: String!, $substance: SubstanceEnum, $oil: Float, $water: Float, $gas: Float, $status: StatusEnum, $type: TypeEnum, $material: MaterialEnum) {
   riskById(id: $id) {
     id
-    pipeline {
-      license
-      segment
-    }
     arielReview
     environmentProximityTo
     geotechnicalSlopeAngleS1
@@ -434,14 +430,14 @@ query RiskById($id: String) {
     dateSlopeChecked
     repairTimeDays
     releaseTimeDays
-    costPerM3Released
+    costPerM3Released(substance: $substance, oil: $oil, water: $water, gas: $gas)
+    enviroRisk(substance: $substance, status: $status, oil: $oil, water: $water, gas: $gas)
+    assetRisk(oil: $oil, water: $water, gas: $gas)
+    probabilityInterior(substance: $substance, status: $status, type: $type, material: $material)
     oilReleaseCost
     gasReleaseCost
     riskPeople
-    enviroRisk
-    assetRisk
     probabilityGeo
-    probabilityInterior
     safeguardInternalProtection
     safeguardExternalCoating
     createdBy {

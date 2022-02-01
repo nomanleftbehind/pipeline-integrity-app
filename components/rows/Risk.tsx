@@ -1,4 +1,5 @@
 import RiskProperties from '../fields/PipelineProperties';
+import { IPipeline } from './RenderPipeline';
 
 import {
   useRiskByIdQuery,
@@ -6,8 +7,7 @@ import {
   useAddRiskMutation,
   useDeleteRiskMutation,
   RiskByIdDocument,
-  RiskByIdQuery
-
+  usePipelineFlowQuery,
 } from '../../graphql/generated/graphql';
 
 import { ITable } from './PipelineData';
@@ -16,12 +16,21 @@ import { ITable } from './PipelineData';
 export interface IRiskProps {
   id: string;
   open: boolean;
+  flowCalculationDirection: IPipeline['flowCalculationDirection'];
+  substance: IPipeline['substance'];
+  status: IPipeline['status'];
+  type: IPipeline['type'];
+  material: IPipeline['material'];
 }
 
 
-export default function Risk({ id, open }: IRiskProps) {
+export default function Risk({ id, open, flowCalculationDirection, substance, status, type, material }: IRiskProps) {
 
-  const { data, loading, error } = useRiskByIdQuery({ variables: { id } });
+  const { data: dataPipelineFlow, loading: loadingPipelineFlow, error: errorPipelineFlow } = usePipelineFlowQuery({ variables: { idList: [id], flowCalculationDirection } });
+
+  const { oil, water, gas } = dataPipelineFlow?.pipelineFlow?.[0] || {};
+
+  const { data, loading, error } = useRiskByIdQuery({ variables: { id, substance, status, type, material, oil, water, gas } });
   const { data: dataValidatorsRisk } = useValidatorsRiskQuery();
   const [addRisk, { data: dataAddRisk }] = useAddRiskMutation({ variables: { id }, refetchQueries: [RiskByIdDocument, 'RiskById'] });
   const [deleteRisk, { data: dataDeleteRisk }] = useDeleteRiskMutation({ variables: { id }, refetchQueries: [RiskByIdDocument, 'RiskById'] });
@@ -29,7 +38,7 @@ export default function Risk({ id, open }: IRiskProps) {
   const table: ITable = 'risk';
 
   const { id: riskId, arielReview, environmentProximityTo, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS1, geotechnicalFacingS2, geotechnicalHeightS2, geotechnicalSlopeAngleS2,
-    dateSlopeChecked, oilReleaseCost, gasReleaseCost, probabilityGeo, probabilityInterior, repairTimeDays, releaseTimeDays, costPerM3Released, riskPeople, enviroRisk, assetRisk, safeguardExternalCoating, safeguardInternalProtection, createdBy, createdAt, updatedAt } = data?.riskById?.[0] || {};
+    dateSlopeChecked, oilReleaseCost, gasReleaseCost, probabilityGeo, probabilityInterior, repairTimeDays, releaseTimeDays, costPerM3Released, riskPeople, enviroRisk, assetRisk, safeguardExternalCoating, safeguardInternalProtection, createdBy, createdAt, updatedAt } = data?.riskById || {};
   const { environmentProximityToEnum, geotechnicalFacingEnum } = dataValidatorsRisk?.validators || {};
 
   const riskProperties = [
@@ -58,7 +67,6 @@ export default function Risk({ id, open }: IRiskProps) {
     { columnName: 'createdAt', record: createdAt, table },
     { columnName: 'updatedAt', record: updatedAt, table },
   ];
-
 
   return (
     <RiskProperties

@@ -120,7 +120,15 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               </Collapse>
             </TabPanel>
             <TabPanel value={value} index={4}>
-              <Risk id={id} open={open} />
+              <Risk
+                id={id}
+                open={open}
+                flowCalculationDirection={flowCalculationDirection}
+                substance={substance}
+                status={status}
+                type={type}
+                material={material}
+              />
             </TabPanel>
             <TabPanel value={value} index={5}>
               <PipelineProperties

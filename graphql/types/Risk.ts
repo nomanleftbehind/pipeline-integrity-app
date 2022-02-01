@@ -13,10 +13,13 @@ const riskResolvers = async (parent: IRisk, ctx: Context) => {
   const { flowCalculationDirection, material, type } = await ctx.prisma.pipeline.findUnique({ where: { id } }) || {};
   const status = await statusResolver(id, ctx);
   const substance = await substanceResolver(id, ctx);
+
   // This function takes an array of pipeline ids as the first argument and returns an array of `pipeline flow` objects.
   // In this case since first argument array contains only one pipeline id, return value will be an array with only one `pipeline flow` object.
   const { water, oil, gas, } = (await totalPipelineFlowRawQuery([id], flowCalculationDirection || 'Upstream', ctx))[0];
+  console.log('substance:', substance);
   const totalFluids = totalFluidsCalc(oil, water, gas);
+
 
   const enviroRiskCalc = () => {
     if (status === 'Discontinued' || status === 'Abandoned' || substance === 'FreshWater') {
@@ -51,22 +54,22 @@ const riskResolvers = async (parent: IRisk, ctx: Context) => {
     }
   }
 
-  const assetRiskCalc = () => {
-    if (totalFluids === 0) {
-      return 1;
-    } else {
-      const i = (gas * (gasReleaseCost && gasReleaseCost || 0) + oil * (oilReleaseCost && oilReleaseCost || 0)) * (repairTimeDays || 0)
-      if (i >= 1_000_000) {
-        return 4;
-      } else if (i < 1_000_000 && i >= 500_000) {
-        return 3;
-      } else if (i < 500_000 && i > 0) {
-        return 2;
-      } else {
-        return 1
-      }
-    }
-  }
+  // const assetRiskCalc = () => {
+  //   if (totalFluids === 0) {
+  //     return 1;
+  //   } else {
+  //     const i = (gas * (gasReleaseCost && gasReleaseCost || 0) + oil * (oilReleaseCost && oilReleaseCost || 0)) * (repairTimeDays || 0)
+  //     if (i >= 1_000_000) {
+  //       return 4;
+  //     } else if (i < 1_000_000 && i >= 500_000) {
+  //       return 3;
+  //     } else if (i < 500_000 && i > 0) {
+  //       return 2;
+  //     } else {
+  //       return 1
+  //     }
+  //   }
+  // }
 
   const probabilityInteriorCalc = () => {
     const isTypeZ245 = type && ['TypeZ2451', 'TypeZ2453'].includes(type);
@@ -104,14 +107,16 @@ const riskResolvers = async (parent: IRisk, ctx: Context) => {
 
 
   const enviroRisk = enviroRiskCalc();
-  const assetRisk = assetRiskCalc();
+  // const assetRisk = assetRiskCalc();
+  // console.log('assetRisk:', assetRisk);
+
   const probabilityInterior = probabilityInteriorCalc();
 
   const result = {
     costPerM3Released: substance === 'FreshWater' ? 0 : 25000 * water + 1000 * gas + 15000 * oil,
-    enviroRisk,
-    assetRisk,
-    probabilityInterior,
+    // enviroRisk,
+    // assetRisk,
+    // probabilityInterior,
   }
   return result;
 }
@@ -146,27 +151,136 @@ export const Risk = objectType({
     t.int('repairTimeDays')
     t.int('releaseTimeDays')
     t.float('costPerM3Released', {
-      resolve: async (parent, _args, ctx: Context) => {
-        const { costPerM3Released } = await riskResolvers(parent, ctx);
-        return costPerM3Released;
+      args: {
+        substance: arg({ type: 'SubstanceEnum' }),
+        oil: floatArg(),
+        water: floatArg(),
+        gas: floatArg(),
+      },
+      resolve: async (_parent, { substance, oil, water, gas }) => {
+        // Use loose unequality to capture both null and undefined
+        if (oil != null && water != null && gas != null) {
+          return substance === 'FreshWater' ? 0 : 25000 * water + 1000 * gas + 15000 * oil;
+        }
+        return null;
       }
     })
     t.int('enviroRisk', {
-      resolve: async (parent, _args, ctx: Context) => {
-        const { enviroRisk } = await riskResolvers(parent, ctx);
-        return enviroRisk;
+      args: {
+        substance: arg({ type: 'SubstanceEnum' }),
+        status: arg({ type: 'StatusEnum' }),
+        oil: floatArg(),
+        water: floatArg(),
+        gas: floatArg(),
+      },
+      resolve: async ({ environmentProximityTo }, { substance, status, oil, water, gas }) => {
+        if (oil == null || water == null || gas == null) {
+          return null;
+        } else {
+          const totalFluids = totalFluidsCalc(oil, water, gas);
+          if (status === 'Discontinued' || status === 'Abandoned' || substance === 'FreshWater') {
+            return 1;
+          } else if (substance === 'NaturalGas' || substance === 'FuelGas' || substance === 'SourNaturalGas') {
+
+            if (environmentProximityTo === null) {
+              // no water body and no crossing.  (eg. middle of field)
+              return totalFluids >= 1 ? 2 : 1;
+            } else if (['WC1', 'WB3'].includes(environmentProximityTo)) {
+              // WC1 = Ephemeral, WB3 = non-permanent seasonal/temporary wetlands; Fens; Bogs;
+              return totalFluids >= 1 ? 3 : 2;
+            } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WC3' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB5' || environmentProximityTo === 'WB4') {
+              return totalFluids >= 1 ? 4 : 3;
+            } else {
+              return null;
+            }
+          } else if (substance === 'OilWellEffluent' || substance === 'CrudeOil' || substance === 'SaltWater' /*|| substance === 'Sour Crude'*/) {
+            if (environmentProximityTo === null || environmentProximityTo === 'WB1') {
+              return 2;
+            } else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB3') {
+              return 3;
+            } else if (environmentProximityTo === 'WC3' || environmentProximityTo === 'WB4') {
+              return 4;
+            } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WB5') {
+              return 5;
+            } else {
+              return null;
+            }
+          } else {
+            return null;
+          }
+        }
       }
     })
     t.int('assetRisk', {
-      resolve: async (parent, _args, ctx: Context) => {
-        const { assetRisk } = await riskResolvers(parent, ctx);
-        return assetRisk;
+      args: {
+        oil: floatArg(),
+        water: floatArg(),
+        gas: floatArg(),
+      },
+      resolve: async ({ repairTimeDays, oilReleaseCost, gasReleaseCost }, { oil, water, gas }) => {
+        if (oil == null || water == null || gas == null) {
+          return null;
+        } else {
+          const totalFluids = totalFluidsCalc(oil, water, gas);
+          if (totalFluids === 0) {
+            return 1;
+          } else if (gasReleaseCost != null && oilReleaseCost != null && repairTimeDays != null) {
+            const i = (gas * gasReleaseCost + oil * oilReleaseCost) * repairTimeDays
+            if (i >= 1_000_000) {
+              return 4;
+            } else if (i < 1_000_000 && i >= 500_000) {
+              return 3;
+            } else if (i < 500_000 && i > 0) {
+              return 2;
+            } else {
+              return 1
+            }
+          } else {
+            return null;
+          }
+        }
       }
     })
     t.int('probabilityInterior', {
-      resolve: async (parent, _args, ctx: Context) => {
-        const { probabilityInterior } = await riskResolvers(parent, ctx);
-        return probabilityInterior;
+      args: {
+        substance: arg({ type: 'SubstanceEnum' }),
+        status: arg({ type: 'StatusEnum' }),
+        type: arg({ type: 'TypeEnum' }),
+        material: arg({ type: 'MaterialEnum' }),
+      },
+      resolve: async (_parent, { substance, status, type, material }) => {
+
+        const isTypeZ245 = type && ['TypeZ2451', 'TypeZ2453'].includes(type);
+
+        if ((status && ['Discontinued', 'Abandoned'].includes(status)) || (material && ['Fiberglass', 'Composite', 'Polyethylene', 'AsbestosCement', 'PolyvinylChloride', 'Aluminum'].includes(material))) {
+          return 1;
+        } else if (material === 'Steel') {
+          if (substance && ['OilWellEffluent', 'SaltWater', 'FreshWater'].includes(substance)) {
+            if (isTypeZ245) {
+              return 3;
+            } else {
+              return 4;
+            }
+          } else if (substance === 'CrudeOil'/* || substance === 'Sour Crude'*/) {
+            if (isTypeZ245) {
+              return 2;
+            } else {
+              return 3;
+            }
+          } else if (substance && ['NaturalGas', 'FuelGas', 'SourNaturalGas'].includes(substance)) {
+            if (isTypeZ245) {
+              return 1;
+            } else {
+              return 2;
+            }
+          } else {
+            // Create Error Message
+            // MsgBox === 'SUBSTANCE type doesn't exist in vba code.'
+            return null;
+          }
+        } else {
+          return null;
+        }
       }
     })
     t.float('oilReleaseCost')
@@ -241,25 +355,16 @@ export const GeotechnicalFacingEnum = enumType({
 export const RiskQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.list.field('riskById', {
+    t.field('riskById', {
       type: 'Risk',
       args: {
-        id: stringArg(),
+        id: nonNull(stringArg()),
       },
       resolve: async (_parent, { id }, ctx: Context) => {
-        if (id) {
-          const result = await ctx.prisma.risk.findMany({
-            where: { id },
-            orderBy: { createdAt: 'desc' },
-          });
-          return result;
-        } else {
-          const result = await ctx.prisma.risk.findMany({
-            orderBy:
-              { createdAt: 'desc' },
-          });
-          return result;
-        }
+        const result = await ctx.prisma.risk.findUnique({
+          where: { id },
+        });
+        return result;
       }
     })
   }

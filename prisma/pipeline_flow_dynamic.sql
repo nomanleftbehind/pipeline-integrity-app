@@ -4,9 +4,9 @@ CREATE OR REPLACE FUNCTION "ppl_db".pipeline_flow(
 )
 RETURNS TABLE (
 	id text,
-	oil numeric,
-	water numeric,
-	gas numeric,
+	oil double precision,
+	water double precision,
+	gas double precision,
 	"firstProduction" timestamp without time zone,
 	"lastProduction" timestamp without time zone,
 	"firstInjection" timestamp without time zone,

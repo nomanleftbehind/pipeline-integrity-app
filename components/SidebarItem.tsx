@@ -82,24 +82,20 @@ export default function SidebarDropdownItem({ id, name, onSidebarClick, satellit
         onExpand={handleExpand}
         open={open}
       />
-      {satellites ?
-        satellites.map(satellite => {
-          return satellite ?
-            (
-              <Collapse in={open} timeout="auto" unmountOnExit key={satellite.id}>
-                <List component="div" disablePadding>
-                  <SidebarItem
-                    id={satellite.id}
-                    name={satellite.name}
-                    onClick={(e) => onSidebarClick(e.currentTarget.value, 'satellite')}
-                    paddingLeft={6}
-                  />
-                </List>
-              </Collapse>
-            ) :
-            null;
-        }) :
-        null
+      {satellites && satellites.map(satellite => {
+        return satellite && (
+          <Collapse in={open} timeout="auto" unmountOnExit key={satellite.id}>
+            <List component="div" disablePadding>
+              <SidebarItem
+                id={satellite.id}
+                name={satellite.name}
+                onClick={(e) => onSidebarClick(e.currentTarget.value, 'satellite')}
+                paddingLeft={6}
+              />
+            </List>
+          </Collapse>
+        );
+      })
       }
     </>
   )
