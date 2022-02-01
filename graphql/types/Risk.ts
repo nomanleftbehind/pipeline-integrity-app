@@ -1,125 +1,9 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
-'node_modules\.prisma\client\index.d.ts'
-import { Risk as IRisk } from '@prisma/client';
-import { databaseEnumToServerEnum, statusResolver, substanceResolver } from './Pipeline';
+import { databaseEnumToServerEnum, TypeEnumMembers, MaterialEnumMembers } from './Pipeline';
+import { SubstanceEnumMembers, StatusEnumMembers } from './LicenseChange';
 import { totalFluidsCalc } from './InjectionPoint';
-import { totalPipelineFlowRawQuery } from './InjectionPointOptions';
 import { getUserId } from '../utils';
 import { Context } from '../context';
-
-
-const riskResolvers = async (parent: IRisk, ctx: Context) => {
-  const { id, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost } = parent;
-  const { flowCalculationDirection, material, type } = await ctx.prisma.pipeline.findUnique({ where: { id } }) || {};
-  const status = await statusResolver(id, ctx);
-  const substance = await substanceResolver(id, ctx);
-
-  // This function takes an array of pipeline ids as the first argument and returns an array of `pipeline flow` objects.
-  // In this case since first argument array contains only one pipeline id, return value will be an array with only one `pipeline flow` object.
-  const { water, oil, gas, } = (await totalPipelineFlowRawQuery([id], flowCalculationDirection || 'Upstream', ctx))[0];
-  console.log('substance:', substance);
-  const totalFluids = totalFluidsCalc(oil, water, gas);
-
-
-  const enviroRiskCalc = () => {
-    if (status === 'Discontinued' || status === 'Abandoned' || substance === 'FreshWater') {
-      return 1;
-    } else if (substance === 'NaturalGas' || substance === 'FuelGas' || substance === 'SourNaturalGas') {
-
-      if (environmentProximityTo === null) {
-        // no water body and no crossing.  (eg. middle of field)
-        return totalFluids >= 1 ? 2 : 1;
-      } else if (['WC1', 'WB3'].includes(environmentProximityTo)) {
-        // WC1 = Ephemeral, WB3 = non-permanent seasonal/temporary wetlands; Fens; Bogs;
-        return totalFluids >= 1 ? 3 : 2;
-      } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WC3' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB5' || environmentProximityTo === 'WB4') {
-        return totalFluids >= 1 ? 4 : 3;
-      } else {
-        return null;
-      }
-    } else if (substance === 'OilWellEffluent' || substance === 'CrudeOil' || substance === 'SaltWater' /*|| substance === 'Sour Crude'*/) {
-      if (environmentProximityTo === null || environmentProximityTo === 'WB1') {
-        return 2;
-      } else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB3') {
-        return 3;
-      } else if (environmentProximityTo === 'WC3' || environmentProximityTo === 'WB4') {
-        return 4;
-      } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WB5') {
-        return 5;
-      } else {
-        return null;
-      }
-    } else {
-      return null;
-    }
-  }
-
-  // const assetRiskCalc = () => {
-  //   if (totalFluids === 0) {
-  //     return 1;
-  //   } else {
-  //     const i = (gas * (gasReleaseCost && gasReleaseCost || 0) + oil * (oilReleaseCost && oilReleaseCost || 0)) * (repairTimeDays || 0)
-  //     if (i >= 1_000_000) {
-  //       return 4;
-  //     } else if (i < 1_000_000 && i >= 500_000) {
-  //       return 3;
-  //     } else if (i < 500_000 && i > 0) {
-  //       return 2;
-  //     } else {
-  //       return 1
-  //     }
-  //   }
-  // }
-
-  const probabilityInteriorCalc = () => {
-    const isTypeZ245 = type && ['TypeZ2451', 'TypeZ2453'].includes(type);
-
-    if ((status && ['Discontinued', 'Abandoned'].includes(status)) || (material && ['Fiberglass', 'Composite', 'Polyethylene', 'AsbestosCement', 'PolyvinylChloride', 'Aluminum'].includes(material))) {
-      return 1;
-    } else if (material === 'Steel') {
-      if (substance && ['OilWellEffluent', 'SaltWater', 'FreshWater'].includes(substance)) {
-        if (isTypeZ245) {
-          return 3;
-        } else {
-          return 4;
-        }
-      } else if (substance === 'CrudeOil'/* || substance === 'Sour Crude'*/) {
-        if (isTypeZ245) {
-          return 2;
-        } else {
-          return 3;
-        }
-      } else if (substance && ['NaturalGas', 'FuelGas', 'SourNaturalGas'].includes(substance)) {
-        if (isTypeZ245) {
-          return 1;
-        } else {
-          return 2;
-        }
-      } else {
-        // Create Error Message
-        // MsgBox === 'SUBSTANCE type doesn't exist in vba code.'
-        return null;
-      }
-    } else {
-      return null;
-    }
-  }
-
-
-  const enviroRisk = enviroRiskCalc();
-  // const assetRisk = assetRiskCalc();
-  // console.log('assetRisk:', assetRisk);
-
-  const probabilityInterior = probabilityInteriorCalc();
-
-  const result = {
-    costPerM3Released: substance === 'FreshWater' ? 0 : 25000 * water + 1000 * gas + 15000 * oil,
-    // enviroRisk,
-    // assetRisk,
-    // probabilityInterior,
-  }
-  return result;
-}
 
 
 export const Risk = objectType({
@@ -158,6 +42,8 @@ export const Risk = objectType({
         gas: floatArg(),
       },
       resolve: async (_parent, { substance, oil, water, gas }) => {
+        substance = databaseEnumToServerEnum(SubstanceEnumMembers, substance);
+
         // Use loose unequality to capture both null and undefined
         if (oil != null && water != null && gas != null) {
           return substance === 'FreshWater' ? 0 : 25000 * water + 1000 * gas + 15000 * oil;
@@ -174,6 +60,10 @@ export const Risk = objectType({
         gas: floatArg(),
       },
       resolve: async ({ environmentProximityTo }, { substance, status, oil, water, gas }) => {
+        substance = databaseEnumToServerEnum(SubstanceEnumMembers, substance);
+        status = databaseEnumToServerEnum(StatusEnumMembers, status);
+        environmentProximityTo = databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, environmentProximityTo) || null;
+
         if (oil == null || water == null || gas == null) {
           return null;
         } else {
@@ -249,6 +139,10 @@ export const Risk = objectType({
         material: arg({ type: 'MaterialEnum' }),
       },
       resolve: async (_parent, { substance, status, type, material }) => {
+        substance = databaseEnumToServerEnum(SubstanceEnumMembers, substance);
+        status = databaseEnumToServerEnum(StatusEnumMembers, status);
+        type = databaseEnumToServerEnum(TypeEnumMembers, type);
+        material = databaseEnumToServerEnum(MaterialEnumMembers, material);
 
         const isTypeZ245 = type && ['TypeZ2451', 'TypeZ2453'].includes(type);
 

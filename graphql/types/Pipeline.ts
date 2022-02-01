@@ -36,9 +36,9 @@ export const Pipeline = objectType({
     t.nonNull.field('flowCalculationDirection', { type: 'FlowCalculationDirectionEnum' })
     t.nonNull.string('from')
     t.field('fromFeature', {
-      type: FromToFeatureEnum,
+      type: 'FromToFeatureEnum',
       resolve: ({ fromFeature }) => {
-        const result = fromFeature && FromToFeatureEnumMembers[fromFeature] as keyof typeof FromToFeatureEnumMembers;
+        const result = fromFeature && serverEnumToDatabaseEnum(FromToFeatureEnumMembers, fromFeature);
         return result;
       }
     })
@@ -46,21 +46,32 @@ export const Pipeline = objectType({
     t.field('toFeature', {
       type: 'FromToFeatureEnum',
       resolve: ({ toFeature }) => {
-        const result = toFeature && FromToFeatureEnumMembers[toFeature] as keyof typeof FromToFeatureEnumMembers;
+        const result = toFeature && serverEnumToDatabaseEnum(FromToFeatureEnumMembers, toFeature);
         return result;
       }
     })
     t.field('status', {
       type: 'StatusEnum',
       resolve: async ({ id }, _args, ctx: Context) => {
-        const result = await statusResolver(id, ctx);
+        const { status } = await ctx.prisma.licenseChange.findFirst({
+          where: { pipelineId: id },
+          orderBy: { date: 'desc' },
+          select: { status: true },
+        }) || {};
+        const result = status && serverEnumToDatabaseEnum(StatusEnumMembers, status) || null;
         return result;
       }
     })
     t.field('substance', {
       type: 'SubstanceEnum',
       resolve: async ({ id }, _args, ctx: Context) => {
-        const result = await substanceResolver(id, ctx);
+        const { substance } = await ctx.prisma.licenseChange.findFirst({
+          where: { pipelineId: id },
+          orderBy: { date: 'desc' },
+          select: { substance: true },
+        }) || {};
+
+        const result = substance && serverEnumToDatabaseEnum(SubstanceEnumMembers, substance) || null;
         return result;
       }
     })
@@ -69,14 +80,14 @@ export const Pipeline = objectType({
     t.field('type', {
       type: 'TypeEnum',
       resolve: ({ type }) => {
-        const result = type && TypeEnumMembers[type] as keyof typeof TypeEnumMembers;
+        const result = type && serverEnumToDatabaseEnum(TypeEnumMembers, type);
         return result;
       }
     })
     t.field('grade', {
       type: 'GradeEnum',
       resolve: ({ grade }) => {
-        const result = grade && GradeEnumMembers[grade] as keyof typeof GradeEnumMembers;
+        const result = grade && serverEnumToDatabaseEnum(GradeEnumMembers, grade);
         return result;
       }
     })
@@ -86,7 +97,7 @@ export const Pipeline = objectType({
     t.field('material', {
       type: 'MaterialEnum',
       resolve: ({ material }) => {
-        const result = material && MaterialEnumMembers[material] as keyof typeof MaterialEnumMembers;
+        const result = material && serverEnumToDatabaseEnum(MaterialEnumMembers, material);
         return result;
       }
     })
@@ -94,7 +105,7 @@ export const Pipeline = objectType({
     t.field('internalProtection', {
       type: 'InternalProtectionEnum',
       resolve: ({ internalProtection }) => {
-        const result = internalProtection && InternalProtectionEnumMembers[internalProtection] as keyof typeof InternalProtectionEnumMembers;
+        const result = internalProtection && serverEnumToDatabaseEnum(InternalProtectionEnumMembers, internalProtection);
         return result;
       }
     })
@@ -440,6 +451,10 @@ export const PipelineCreateInput = inputObjectType({
 })
 
 
+export function serverEnumToDatabaseEnum<T>(object: T, key: keyof T) {
+  return object[key] as unknown as keyof T;
+}
+
 export function databaseEnumToServerEnum<T>(object: T, value: T[keyof T] | null | undefined) {
   // This step is necessary because otherwise, function would return undefined if null was passed for value.
   // In GraphQL and context of this function, undefined means `do nothing`, null means set field to null.
@@ -448,28 +463,6 @@ export function databaseEnumToServerEnum<T>(object: T, value: T[keyof T] | null 
   }
   const keys = Object.keys(object) as (keyof T)[];
   const result = keys.find(key => object[key] === value);
-  return result;
-}
-
-export async function statusResolver(id: string, ctx: Context) {
-  const { status } = await ctx.prisma.licenseChange.findFirst({
-    where: { pipelineId: id },
-    orderBy: { date: 'desc' },
-    select: { status: true },
-  }) || {};
-
-  const result = status && StatusEnumMembers[status] as keyof typeof StatusEnumMembers || null;
-  return result;
-}
-
-export async function substanceResolver(id: string, ctx: Context) {
-  const { substance } = await ctx.prisma.licenseChange.findFirst({
-    where: { pipelineId: id },
-    orderBy: { date: 'desc' },
-    select: { substance: true },
-  }) || {};
-
-  const result = substance && SubstanceEnumMembers[substance] as keyof typeof SubstanceEnumMembers || null;
   return result;
 }
 

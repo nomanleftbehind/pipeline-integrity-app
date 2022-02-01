@@ -1,5 +1,5 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
-import { databaseEnumToServerEnum } from './Pipeline';
+import { databaseEnumToServerEnum, serverEnumToDatabaseEnum } from './Pipeline';
 import { getUserId } from '../utils';
 import { Context } from '../context';
 
@@ -24,14 +24,14 @@ export const LicenseChange = objectType({
     t.nonNull.field('status', {
       type: 'StatusEnum',
       resolve: ({ status }) => {
-        const result = StatusEnumMembers[status] as keyof typeof StatusEnumMembers;
+        const result = serverEnumToDatabaseEnum(StatusEnumMembers, status);
         return result;
       }
     })
     t.nonNull.field('substance', {
       type: 'SubstanceEnum',
       resolve: ({ substance }) => {
-        const result = SubstanceEnumMembers[substance] as keyof typeof SubstanceEnumMembers;
+        const result = serverEnumToDatabaseEnum(SubstanceEnumMembers, substance);
         return result;
       }
     })
