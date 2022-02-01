@@ -63,9 +63,6 @@ export const FacilityQuery = extendType({
                 pipelines: {
                   orderBy: [
                     {
-                      substance: 'asc'
-                    },
-                    {
                       license: 'asc'
                     },
                     {

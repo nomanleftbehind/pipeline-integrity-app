@@ -43,6 +43,22 @@ export const User = objectType({
         }).pipelinesUpdatedBy();
       },
     })
+    t.list.field('licenseChangesCreated', {
+      type: 'LicenseChange',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.user.findUnique({
+          where: { id },
+        }).licenseChangesCreatedBy();
+      },
+    })
+    t.list.field('licenseChangesUpdated', {
+      type: 'LicenseChange',
+      resolve: ({ id }, _args, ctx: Context) => {
+        return ctx.prisma.user.findUnique({
+          where: { id },
+        }).licenseChangesUpdatedBy();
+      },
+    })
     t.list.field('facilitiesCreated', {
       type: 'Facility',
       resolve: ({ id }, _args, ctx: Context) => {

@@ -78,7 +78,6 @@ model Pipeline {
   risk                     Risk?
   license                  String
   segment                  String
-  substance                SubstanceEnum
   from                     String
   fromFeature              FromToFeatureEnum?
   to                       String
@@ -111,18 +110,19 @@ model Pipeline {
 }
 
 model LicenseChange {
-  id                  String     @id @default(uuid())
-  pipeline            Pipeline   @relation(fields: [pipelineId], references: [id])
+  id                  String        @id @default(uuid())
+  pipeline            Pipeline      @relation(fields: [pipelineId], references: [id])
   pipelineId          String
-  status              StatusEnum @default(Operating)
+  status              StatusEnum    @default(Operating)
+  substance           SubstanceEnum @default(OilWellEffluent)
   date                DateTime
   linkToDocumentation String?
-  createdBy           User       @relation("licenseChangeCreatedBy", fields: [createdById], references: [id])
+  createdBy           User          @relation("licenseChangeCreatedBy", fields: [createdById], references: [id])
   createdById         String
-  createdAt           DateTime   @default(now())
-  updatedBy           User       @relation("licenseChangeUpdatedBy", fields: [updatedById], references: [id])
+  createdAt           DateTime      @default(now())
+  updatedBy           User          @relation("licenseChangeUpdatedBy", fields: [updatedById], references: [id])
   updatedById         String
-  updatedAt           DateTime   @updatedAt
+  updatedAt           DateTime      @updatedAt
 }
 
 model PigRun {

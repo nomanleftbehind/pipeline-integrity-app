@@ -1,7 +1,6 @@
 import { objectType, extendType } from 'nexus';
 import { UserRoleEnumMembers } from './User';
 import {
-	SubstanceEnumMembers,
 	FromToFeatureEnumMembers,
 	TypeEnumMembers,
 	GradeEnumMembers,
@@ -9,7 +8,7 @@ import {
 	InternalProtectionEnumMembers,
 	FlowCalculationDirectionEnumMembers
 } from './Pipeline';
-import { StatusEnumMembers } from './LicenseChange';
+import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
 import { PigTypeEnumMembers } from './PigRun';
 import { LimitingSpecEnumMembers } from './PressureTest';
 import { EnvironmentProximityToEnumMembers, GeotechnicalFacingEnumMembers } from './Risk';

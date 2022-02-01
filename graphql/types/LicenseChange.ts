@@ -28,6 +28,13 @@ export const LicenseChange = objectType({
         return result;
       }
     })
+    t.nonNull.field('substance', {
+      type: 'SubstanceEnum',
+      resolve: ({ substance }) => {
+        const result = SubstanceEnumMembers[substance] as keyof typeof SubstanceEnumMembers;
+        return result;
+      }
+    })
     t.nonNull.field('date', { type: 'DateTime' })
     t.string('linkToDocumentation')
     t.nonNull.field('createdBy', {
@@ -76,6 +83,27 @@ export const StatusEnum = enumType({
 });
 
 
+export const SubstanceEnumMembers = {
+  NaturalGas: "Natural Gas",
+  FreshWater: "Fresh Water",
+  SaltWater: "Salt Water",
+  CrudeOil: "Crude Oil",
+  OilWellEffluent: "Oil Well Effluent",
+  LVPProducts: "LVP Products",
+  FuelGas: "Fuel Gas",
+  SourNaturalGas: "Sour Natural Gas"
+}
+
+export const SubstanceEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'SubstanceEnum',
+  },
+  name: 'SubstanceEnum',
+  members: SubstanceEnumMembers
+});
+
+
 export const LicenseChangeQuery = extendType({
   type: 'Query',
   definition(t) {
@@ -111,6 +139,7 @@ export const LicenseChangeMutation = extendType({
         id: nonNull(stringArg()),
         pipelineId: stringArg(),
         status: arg({ type: 'StatusEnum' }),
+        substance: arg({ type: 'SubstanceEnum' }),
         date: arg({ type: 'DateTime' }),
         linkToDocumentation: stringArg(),
       },
@@ -121,6 +150,7 @@ export const LicenseChangeMutation = extendType({
           data: {
             pipelineId: args.pipelineId || undefined,
             status: databaseEnumToServerEnum(StatusEnumMembers, args.status) || undefined,
+            substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
             date: args.date || undefined,
             linkToDocumentation: args.linkToDocumentation || undefined,
             updatedById: String(userId),

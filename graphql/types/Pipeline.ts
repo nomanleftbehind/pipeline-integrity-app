@@ -2,6 +2,7 @@ import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, n
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
 import { getUserId } from '../utils';
+import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
 
 
 
@@ -32,19 +33,12 @@ export const Pipeline = objectType({
     })
     t.nonNull.string('license')
     t.nonNull.string('segment')
-    t.nonNull.field('substance', {
-      type: 'SubstanceEnum',
-      resolve: ({ substance }) => {
-        const result = SubstanceEnumMembers[substance] as keyof typeof SubstanceEnumMembers;
-        return result;
-      }
-    })
     t.nonNull.field('flowCalculationDirection', { type: 'FlowCalculationDirectionEnum' })
     t.nonNull.string('from')
     t.field('fromFeature', {
       type: FromToFeatureEnum,
       resolve: ({ fromFeature }) => {
-        const result = fromFeature !== null ? FromToFeatureEnumMembers[fromFeature] as keyof typeof FromToFeatureEnumMembers : null;
+        const result = fromFeature && FromToFeatureEnumMembers[fromFeature] as keyof typeof FromToFeatureEnumMembers;
         return result;
       }
     })
@@ -52,14 +46,21 @@ export const Pipeline = objectType({
     t.field('toFeature', {
       type: 'FromToFeatureEnum',
       resolve: ({ toFeature }) => {
-        const result = toFeature !== null ? FromToFeatureEnumMembers[toFeature] as keyof typeof FromToFeatureEnumMembers : null;
+        const result = toFeature && FromToFeatureEnumMembers[toFeature] as keyof typeof FromToFeatureEnumMembers;
         return result;
       }
     })
-    t.nonNull.field('status', {
+    t.field('status', {
       type: 'StatusEnum',
       resolve: async ({ id }, _args, ctx: Context) => {
         const result = await statusResolver(id, ctx);
+        return result;
+      }
+    })
+    t.field('substance', {
+      type: 'SubstanceEnum',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await substanceResolver(id, ctx);
         return result;
       }
     })
@@ -68,14 +69,14 @@ export const Pipeline = objectType({
     t.field('type', {
       type: 'TypeEnum',
       resolve: ({ type }) => {
-        const result = type !== null ? TypeEnumMembers[type] as keyof typeof TypeEnumMembers : null;
+        const result = type && TypeEnumMembers[type] as keyof typeof TypeEnumMembers;
         return result;
       }
     })
     t.field('grade', {
       type: 'GradeEnum',
       resolve: ({ grade }) => {
-        const result = grade !== null ? GradeEnumMembers[grade] as keyof typeof GradeEnumMembers : null;
+        const result = grade && GradeEnumMembers[grade] as keyof typeof GradeEnumMembers;
         return result;
       }
     })
@@ -85,7 +86,7 @@ export const Pipeline = objectType({
     t.field('material', {
       type: 'MaterialEnum',
       resolve: ({ material }) => {
-        const result = material !== null ? MaterialEnumMembers[material] as keyof typeof MaterialEnumMembers : null;
+        const result = material && MaterialEnumMembers[material] as keyof typeof MaterialEnumMembers;
         return result;
       }
     })
@@ -93,7 +94,7 @@ export const Pipeline = objectType({
     t.field('internalProtection', {
       type: 'InternalProtectionEnum',
       resolve: ({ internalProtection }) => {
-        const result = internalProtection !== null ? InternalProtectionEnumMembers[internalProtection] as keyof typeof InternalProtectionEnumMembers : null;
+        const result = internalProtection && InternalProtectionEnumMembers[internalProtection] as keyof typeof InternalProtectionEnumMembers;
         return result;
       }
     })
@@ -124,8 +125,8 @@ export const Pipeline = objectType({
       resolve: async ({ id }, _args, ctx: Context) => {
         const result = await ctx.prisma.pipeline.findUnique({
           where: { id },
-        }).pressureTests()
-        return result
+        }).pressureTests();
+        return result;
       },
     })
     t.list.field('pigRuns', {
@@ -133,24 +134,33 @@ export const Pipeline = objectType({
       resolve: async ({ id }, _args, ctx: Context) => {
         const result = await ctx.prisma.pipeline.findUnique({
           where: { id },
-        }).pigRuns()
-        return result
+        }).pigRuns();
+        return result;
       },
+    })
+    t.list.field('licenseChanges', {
+      type: 'LicenseChange',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+        }).licenseChanges();
+        return result;
+      }
     })
     t.field('risk', {
       type: 'Risk',
       resolve: async ({ id }, _args, ctx: Context) => {
         const result = await ctx.prisma.pipeline.findUnique({
           where: { id },
-        }).risk()
-        return result
+        }).risk();
+        return result;
       }
     })
     t.list.field('upstream', {
       type: 'Pipeline',
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.pipeline.findMany({
-          where: { downstream: { some: { id: id || undefined } } },
+          where: { downstream: { some: { id } } },
         })
       },
     })
@@ -158,7 +168,7 @@ export const Pipeline = objectType({
       type: 'Pipeline',
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.pipeline.findMany({
-          where: { upstream: { some: { id: id || undefined } } },
+          where: { upstream: { some: { id } } },
         })
       },
     })
@@ -166,31 +176,12 @@ export const Pipeline = objectType({
 });
 
 
-export const SubstanceEnumMembers = {
-  NaturalGas: "Natural Gas",
-  FreshWater: "Fresh Water",
-  SaltWater: "Salt Water",
-  CrudeOil: "Crude Oil",
-  OilWellEffluent: "Oil Well Effluent",
-  LVPProducts: "LVP Products",
-  FuelGas: "Fuel Gas",
-  SourNaturalGas: "Sour Natural Gas"
-}
-
-export const SubstanceEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'SubstanceEnum',
-  },
-  name: 'SubstanceEnum',
-  members: SubstanceEnumMembers
-});
 
 export const FromToFeatureEnumMembers = {
   BlindEnd: "Blind end",
   Battery: "Battery",
-  "Pipeline": "Pipeline",
-  "Satellite": "Satellite",
+  Pipeline: "Pipeline",
+  Satellite: "Satellite",
   StorageTank: "Storage tank",
   InjectionPlant: "Injection plant",
   Well: "Well",
@@ -431,7 +422,6 @@ export const PipelineCreateInput = inputObjectType({
     t.list.field('injectionPoints', { type: 'InjectionPointCreateInput' })
     t.nonNull.string('license')
     t.nonNull.string('segment')
-    t.nonNull.field('substance', { type: 'SubstanceEnum' })
     t.nonNull.string('from')
     t.field('fromFeature', { type: 'FromToFeatureEnum' })
     t.nonNull.string('to')
@@ -462,12 +452,25 @@ export function databaseEnumToServerEnum<T>(object: T, value: T[keyof T] | null 
 }
 
 export async function statusResolver(id: string, ctx: Context) {
-  const result = await ctx.prisma.licenseChange.findFirst({
+  const { status } = await ctx.prisma.licenseChange.findFirst({
     where: { pipelineId: id },
     orderBy: { date: 'desc' },
     select: { status: true },
-  });
-  return result?.status || null;
+  }) || {};
+
+  const result = status && StatusEnumMembers[status] as keyof typeof StatusEnumMembers || null;
+  return result;
+}
+
+export async function substanceResolver(id: string, ctx: Context) {
+  const { substance } = await ctx.prisma.licenseChange.findFirst({
+    where: { pipelineId: id },
+    orderBy: { date: 'desc' },
+    select: { substance: true },
+  }) || {};
+
+  const result = substance && SubstanceEnumMembers[substance] as keyof typeof SubstanceEnumMembers || null;
+  return result;
 }
 
 
@@ -485,7 +488,6 @@ export const PipelineMutation = extendType({
         satelliteId: stringArg(),
         license: stringArg(),
         segment: stringArg(),
-        substance: arg({ type: 'SubstanceEnum' }),
         flowCalculationDirection: arg({ type: 'FlowCalculationDirectionEnum' }),
         from: stringArg(),
         fromFeature: arg({ type: 'FromToFeatureEnum' }),
@@ -513,7 +515,6 @@ export const PipelineMutation = extendType({
               satelliteId: args.satelliteId || undefined,
               license: args.license || undefined,
               segment: args.segment || undefined,
-              substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
               flowCalculationDirection: args.flowCalculationDirection || undefined,
               from: args.from || undefined,
               fromFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.fromFeature),
