@@ -3,13 +3,13 @@ import { UserRoleEnumMembers } from './User';
 import {
 	SubstanceEnumMembers,
 	FromToFeatureEnumMembers,
-	StatusEnumMembers,
 	TypeEnumMembers,
 	GradeEnumMembers,
 	MaterialEnumMembers,
 	InternalProtectionEnumMembers,
 	FlowCalculationDirectionEnumMembers
 } from './Pipeline';
+import { StatusEnumMembers } from './LicenseChange';
 import { PigTypeEnumMembers } from './PigRun';
 import { LimitingSpecEnumMembers } from './PressureTest';
 import { EnvironmentProximityToEnumMembers, GeotechnicalFacingEnumMembers } from './Risk';

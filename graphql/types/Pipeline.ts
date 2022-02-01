@@ -18,7 +18,7 @@ export const Pipeline = objectType({
       resolve: async ({ id }, _args, ctx: Context) => {
         const result = await ctx.prisma.pipeline.findUnique({
           where: { id },
-        }).satellite()
+        }).satellite();
         return result!
       },
     })
@@ -27,7 +27,7 @@ export const Pipeline = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.pipeline.findUnique({
           where: { id: id || undefined },
-        }).injectionPoints()
+        }).injectionPoints();
       },
     })
     t.nonNull.string('license')
@@ -58,8 +58,8 @@ export const Pipeline = objectType({
     })
     t.nonNull.field('status', {
       type: 'StatusEnum',
-      resolve: ({ status }) => {
-        const result = StatusEnumMembers[status] as keyof typeof StatusEnumMembers;
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await statusResolver(id, ctx);
         return result;
       }
     })
@@ -209,28 +209,6 @@ export const FromToFeatureEnum = enumType({
   },
   name: 'FromToFeatureEnum',
   members: FromToFeatureEnumMembers
-});
-
-
-export const StatusEnumMembers = {
-  Operating: "Operating",
-  Discontinued: "Discontinued",
-  Abandoned: "Abandoned",
-  Removed: "Removed",
-  ToBeConstructed: "To Be Constructed",
-  Active: "Active",
-  Cancelled: "Cancelled",
-  New: "New",
-  NotConstructed: "Not Constructed"
-}
-
-export const StatusEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'StatusEnum',
-  },
-  name: 'StatusEnum',
-  members: StatusEnumMembers
 });
 
 export const TypeEnumMembers = {
@@ -458,7 +436,6 @@ export const PipelineCreateInput = inputObjectType({
     t.field('fromFeature', { type: 'FromToFeatureEnum' })
     t.nonNull.string('to')
     t.field('toFeature', { type: 'FromToFeatureEnum' })
-    t.nonNull.field('status', { type: 'StatusEnum' })
     t.nonNull.float('length')
     t.field('type', { type: 'TypeEnum' })
     t.field('grade', { type: 'GradeEnum' })
@@ -484,6 +461,14 @@ export function databaseEnumToServerEnum<T>(object: T, value: T[keyof T] | null 
   return result;
 }
 
+export async function statusResolver(id: string, ctx: Context) {
+  const result = await ctx.prisma.licenseChange.findFirst({
+    where: { pipelineId: id },
+    orderBy: { date: 'desc' },
+    select: { status: true },
+  });
+  return result?.status || null;
+}
 
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
@@ -506,7 +491,6 @@ export const PipelineMutation = extendType({
         fromFeature: arg({ type: 'FromToFeatureEnum' }),
         to: stringArg(),
         toFeature: arg({ type: 'FromToFeatureEnum' }),
-        status: arg({ type: 'StatusEnum' }),
         licenseDate: arg({ type: 'DateTime' }),
         length: floatArg(),
         type: arg({ type: 'TypeEnum' }),
@@ -535,7 +519,6 @@ export const PipelineMutation = extendType({
               fromFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.fromFeature),
               to: args.to || undefined,
               toFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.toFeature),
-              status: databaseEnumToServerEnum(StatusEnumMembers, args.status) || undefined,
               length: args.length || undefined,
               type: databaseEnumToServerEnum(TypeEnumMembers, args.type),
               grade: databaseEnumToServerEnum(GradeEnumMembers, args.grade),

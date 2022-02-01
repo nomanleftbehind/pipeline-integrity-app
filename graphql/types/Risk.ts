@@ -1,7 +1,7 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
 'node_modules\.prisma\client\index.d.ts'
 import { Risk as IRisk } from '@prisma/client';
-import { databaseEnumToServerEnum } from './Pipeline';
+import { databaseEnumToServerEnum, statusResolver } from './Pipeline';
 import { totalFluidsCalc } from './InjectionPoint';
 import { totalPipelineFlowRawQuery } from './InjectionPointOptions';
 import { getUserId } from '../utils';
@@ -10,7 +10,8 @@ import { Context } from '../context';
 
 const riskResolvers = async (parent: IRisk, ctx: Context) => {
   const { id, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost } = parent;
-  const { substance, flowCalculationDirection, status, material, type } = await ctx.prisma.pipeline.findUnique({ where: { id } }) || {};
+  const { substance, flowCalculationDirection, material, type } = await ctx.prisma.pipeline.findUnique({ where: { id } }) || {};
+  const status = await statusResolver(id, ctx);
   // This function takes an array of pipeline ids as the first argument and returns an array of `pipeline flow` objects.
   // In this case since first argument array contains only one pipeline id, return value will be an array with only one `pipeline flow` object.
   const { water, oil, gas, } = (await totalPipelineFlowRawQuery([id], flowCalculationDirection || 'Upstream', ctx))[0];
@@ -53,7 +54,7 @@ const riskResolvers = async (parent: IRisk, ctx: Context) => {
     if (totalFluids === 0) {
       return 1;
     } else {
-      const i = (gas * (gasReleaseCost && gasReleaseCost.toNumber() || 0) + oil * (oilReleaseCost && oilReleaseCost.toNumber() || 0)) * (repairTimeDays || 0)
+      const i = (gas * (gasReleaseCost && gasReleaseCost || 0) + oil * (oilReleaseCost && oilReleaseCost || 0)) * (repairTimeDays || 0)
       if (i >= 1_000_000) {
         return 4;
       } else if (i < 1_000_000 && i >= 500_000) {

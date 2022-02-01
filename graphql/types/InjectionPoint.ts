@@ -4,13 +4,11 @@ import { Context } from '../context';
 import { getUserId } from '../utils';
 
 
-export const gasAssociatedLiquidsCalc = (gas: IInjectionPoint['gas'] | number) => {
-  return (typeof gas === 'number' ? gas : gas.toNumber()) * 35.49 * 0.00355238191999475 / 6.3;
+export const gasAssociatedLiquidsCalc = (gas: IInjectionPoint['gas']) => {
+  return gas * 35.49 * 0.00355238191999475 / 6.3;
 }
 
-export const totalFluidsCalc = (oil: IInjectionPoint['oil'] | number, water: IInjectionPoint['water'] | number, gas: IInjectionPoint['gas'] | number) => {
-  oil = typeof oil === 'number' ? oil : oil.toNumber();
-  water = typeof water === 'number' ? water : water.toNumber();
+export const totalFluidsCalc = (oil: IInjectionPoint['oil'], water: IInjectionPoint['water'], gas: IInjectionPoint['gas']) => {
   return oil + water + gasAssociatedLiquidsCalc(gas);
 }
 

@@ -20,6 +20,8 @@ model User {
   satellitesUpdatedBy      Satellite[]      @relation("satelliteUpdatedBy")
   pipelinesCreatedBy       Pipeline[]       @relation("pipelineCreatedBy")
   pipelinesUpdatedBy       Pipeline[]       @relation("pipelineUpdatedBy")
+  licenseChangesCreatedBy  LicenseChange[]  @relation("licenseChangeCreatedBy")
+  licenseChangesUpdatedBy  LicenseChange[]  @relation("licenseChangeUpdatedBy")
   injectionPointsCreatedBy InjectionPoint[] @relation("injectionPointCreatedBy")
   injectionPointsUpdatedBy InjectionPoint[] @relation("injectionPointUpdatedBy")
   pigRunsOperator          PigRun[]         @relation("pigRunOperator")
@@ -81,14 +83,14 @@ model Pipeline {
   fromFeature              FromToFeatureEnum?
   to                       String
   toFeature                FromToFeatureEnum?
-  status                   StatusEnum
+  licenseChanges           LicenseChange[]
   licenseDate              DateTime?
   length                   Float
   type                     TypeEnum?
   grade                    GradeEnum?
   yieldStrength            Int?
-  outsideDiameter          Decimal?                     @db.Decimal(6, 2)
-  wallThickness            Decimal?                     @db.Decimal(6, 2)
+  outsideDiameter          Float?
+  wallThickness            Float?
   material                 MaterialEnum?
   mop                      Int?
   internalProtection       InternalProtectionEnum?
@@ -106,6 +108,21 @@ model Pipeline {
   updatedAt                DateTime                     @updatedAt
 
   @@unique([license, segment])
+}
+
+model LicenseChange {
+  id                  String     @id @default(uuid())
+  pipeline            Pipeline   @relation(fields: [pipelineId], references: [id])
+  pipelineId          String
+  status              StatusEnum @default(Operating)
+  date                DateTime
+  linkToDocumentation String?
+  createdBy           User       @relation("licenseChangeCreatedBy", fields: [createdById], references: [id])
+  createdById         String
+  createdAt           DateTime   @default(now())
+  updatedBy           User       @relation("licenseChangeUpdatedBy", fields: [updatedById], references: [id])
+  updatedById         String
+  updatedAt           DateTime   @updatedAt
 }
 
 model PigRun {
@@ -158,10 +175,10 @@ model Risk {
   dateSlopeChecked            DateTime?
   repairTimeDays              Int?
   releaseTimeDays             Int?
-  oilReleaseCost              Decimal?                    @db.Decimal(6, 2)
-  gasReleaseCost              Decimal?                    @db.Decimal(6, 2)
+  oilReleaseCost              Float?
+  gasReleaseCost              Float?
   riskPeople                  Int?
-  probabilityGeo              Decimal?                    @db.Decimal(6, 2)
+  probabilityGeo              Float?
   safeguardInternalProtection Boolean?
   safeguardExternalCoating    Boolean?
   createdBy                   User                        @relation("riskCreatedBy", fields: [createdById], references: [id])
@@ -175,9 +192,9 @@ model Risk {
 model InjectionPoint {
   id              String    @id @default(uuid())
   source          String    @unique
-  oil             Decimal   @db.Decimal(6, 2)
-  water           Decimal   @db.Decimal(6, 2)
-  gas             Decimal   @db.Decimal(6, 2)
+  oil             Float
+  water           Float
+  gas             Float
   firstProduction DateTime?
   lastProduction  DateTime?
   firstInjection  DateTime?
