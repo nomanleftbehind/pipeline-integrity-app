@@ -465,11 +465,13 @@ export type MutationEditLicenseChangeArgs = {
 
 export type MutationEditPigRunArgs = {
   comment?: Maybe<Scalars['String']>;
-  date?: Maybe<Scalars['DateTime']>;
+  dateIn?: Maybe<Scalars['DateTime']>;
+  dateOut?: Maybe<Scalars['DateTime']>;
   id: Scalars['String'];
+  isolationValveFunctionTest?: Maybe<PigInspectionEnum>;
   operatorId?: Maybe<Scalars['String']>;
+  pigSenderReceiverInspection?: Maybe<PigInspectionEnum>;
   pigType?: Maybe<PigTypeEnum>;
-  pipelineId?: Maybe<Scalars['String']>;
 };
 
 
@@ -553,13 +555,26 @@ export type MutationSignupArgs = {
   password: Scalars['String'];
 };
 
+export enum PigInspectionEnum {
+  Failed = 'Failed',
+  Good = 'Good'
+}
+
+export type PigInspectionEnumObject = {
+  Failed: Scalars['String'];
+  Good: Scalars['String'];
+};
+
 export type PigRun = {
   comment?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
-  date?: Maybe<Scalars['DateTime']>;
+  dateIn: Scalars['DateTime'];
+  dateOut?: Maybe<Scalars['DateTime']>;
   id: Scalars['String'];
+  isolationValveFunctionTest?: Maybe<PigInspectionEnum>;
   operator?: Maybe<User>;
+  pigSenderReceiverInspection?: Maybe<PigInspectionEnum>;
   pigType?: Maybe<PigTypeEnum>;
   pipeline: Pipeline;
   updatedAt: Scalars['DateTime'];
@@ -567,17 +582,191 @@ export type PigRun = {
 };
 
 export enum PigTypeEnum {
+  Ball = 'Ball',
+  Blue3inscraper = 'Blue3inscraper',
+  BlueRibbed = 'BlueRibbed',
   Foam = 'Foam',
   Gscr = 'GSCR',
-  Pscr = 'PSCR',
-  Scrapper = 'Scrapper'
+  Highline = 'Highline',
+  MDFoamy = 'M_D_Foamy',
+  NoSender = 'NoSender',
+  PigType2green2disc = 'PigType2green2disc',
+  PigType2inGscr = 'PigType2inGSCR',
+  PigType2inGscrGfp = 'PigType2inGSCR_GFP',
+  PigType2inPscr = 'PigType2inPSCR',
+  PigType2inPscrFlm = 'PigType2inPSCR_FLM',
+  PigType2inPurpleDisc = 'PigType2inPurpleDisc',
+  PigType2ingscr = 'PigType2ingscr',
+  PigType2purple2disc = 'PigType2purple2disc',
+  PigType3 = 'PigType3',
+  PigType3BlueRibbed = 'PigType3BlueRibbed',
+  PigType3BrownRibbed = 'PigType3BrownRibbed',
+  PigType3GreenRibbed = 'PigType3GreenRibbed',
+  PigType3Scrapper = 'PigType3_scrapper',
+  PigType3inArgus = 'PigType3inARGUS',
+  PigType3inArgus = 'PigType3inArgus',
+  PigType3inBlueRibbed = 'PigType3inBlueRibbed',
+  PigType3inGscr = 'PigType3inGSCR',
+  PigType3inGreenDisc = 'PigType3inGreenDisc',
+  PigType3inGreenRibbed = 'PigType3inGreenRibbed',
+  PigType3inGscr = 'PigType3inGscr',
+  PigType3inPscr = 'PigType3inPSCR',
+  PigType3inPurpleScraper = 'PigType3inPurpleScraper',
+  PigType3inPurpleStubby = 'PigType3inPurpleStubby',
+  PigType3inRscr = 'PigType3inRscr',
+  PigType3inScraper = 'PigType3inSCRAPER',
+  PigType3inStubby = 'PigType3inStubby',
+  PigType3inbluescraper = 'PigType3inbluescraper',
+  PigType3ingreendisc = 'PigType3ingreendisc',
+  PigType3inpurple2disc = 'PigType3inpurple2disc',
+  PigType3inpurpledisc = 'PigType3inpurpledisc',
+  PigType3inredscrape = 'PigType3inredscrape',
+  PigType3inscapper = 'PigType3inscapper',
+  PigType3inscr = 'PigType3inscr',
+  PigType3inscraper = 'PigType3inscraper',
+  PigType3inscrapper = 'PigType3inscrapper',
+  PigType4GreenRibbed = 'PigType4_GreenRibbed',
+  PigType4gree2disc = 'PigType4gree2disc',
+  PigType4green2disc = 'PigType4green2disc',
+  PigType4inArgus = 'PigType4inArgus',
+  PigType4inBlueDisc = 'PigType4inBlueDisc',
+  PigType4inFoam = 'PigType4inFoam',
+  PigType4inGscr = 'PigType4inGSCR',
+  PigType4inGreenDisc = 'PigType4inGreenDisc',
+  PigType4inGreendisc = 'PigType4inGreendisc',
+  PigType4inpurplescraper = 'PigType4inpurplescraper',
+  PigType4inscrapper = 'PigType4inscrapper',
+  PigType6inArgus = 'PigType6inArgus',
+  PigType6inGreenDisc = 'PigType6inGreenDisc',
+  PigType6inGreenRibbed = 'PigType6inGreenRibbed',
+  PigType6ingreenscraper = 'PigType6ingreenscraper',
+  PigType6inscrapper = 'PigType6inscrapper',
+  PigType8inBlackDisc = 'PigType8inBlackDisc',
+  PigType8inFoam = 'PigType8inFoam',
+  Purple3inDisc = 'Purple3inDisc',
+  Reverseflowduetotaqa = 'REVERSEFLOWDUETOTAQA',
+  Red3inscraper = 'Red3inscraper',
+  Red4inscraper = 'Red4inscraper',
+  RedStubby = 'RedStubby',
+  Simay2018 = 'SIMAY2018',
+  SiGoingtotaqa = 'SI_GOINGTOTAQA',
+  ScaperP314 = 'ScaperP314',
+  ScaperPp309 = 'ScaperPP309',
+  ScraperP200 = 'ScraperP200',
+  ScraperP204 = 'ScraperP204',
+  ScraperP206 = 'ScraperP206',
+  ScraperP208 = 'ScraperP208',
+  ScraperP300 = 'ScraperP300',
+  ScraperP301 = 'ScraperP301',
+  ScraperP303 = 'ScraperP303',
+  ScraperP304 = 'ScraperP304',
+  ScraperP305 = 'ScraperP305',
+  ScraperP309 = 'ScraperP309',
+  ScraperP311 = 'ScraperP311',
+  ScraperP312 = 'ScraperP312',
+  ScraperP314 = 'ScraperP314',
+  ScraperP400 = 'ScraperP400',
+  ScraperP401 = 'ScraperP401',
+  Scrapper = 'Scrapper',
+  ScrapperP307 = 'ScrapperP307',
+  Shutin = 'Shutin',
+  Torpedo = 'Torpedo',
+  Bullet = 'bullet',
+  Disc = 'disc'
 }
 
 export type PigTypeEnumObject = {
+  Ball: Scalars['String'];
+  Blue3inscraper: Scalars['String'];
+  BlueRibbed: Scalars['String'];
   Foam: Scalars['String'];
   GSCR: Scalars['String'];
-  PSCR: Scalars['String'];
+  Highline: Scalars['String'];
+  M_D_Foamy: Scalars['String'];
+  NoSender: Scalars['String'];
+  PigType2green2disc: Scalars['String'];
+  PigType2inGSCR: Scalars['String'];
+  PigType2inGSCR_GFP: Scalars['String'];
+  PigType2inPSCR: Scalars['String'];
+  PigType2inPSCR_FLM: Scalars['String'];
+  PigType2inPurpleDisc: Scalars['String'];
+  PigType2ingscr: Scalars['String'];
+  PigType2purple2disc: Scalars['String'];
+  PigType3: Scalars['String'];
+  PigType3BlueRibbed: Scalars['String'];
+  PigType3BrownRibbed: Scalars['String'];
+  PigType3GreenRibbed: Scalars['String'];
+  PigType3_scrapper: Scalars['String'];
+  PigType3inARGUS: Scalars['String'];
+  PigType3inArgus: Scalars['String'];
+  PigType3inBlueRibbed: Scalars['String'];
+  PigType3inGSCR: Scalars['String'];
+  PigType3inGreenDisc: Scalars['String'];
+  PigType3inGreenRibbed: Scalars['String'];
+  PigType3inGscr: Scalars['String'];
+  PigType3inPSCR: Scalars['String'];
+  PigType3inPurpleScraper: Scalars['String'];
+  PigType3inPurpleStubby: Scalars['String'];
+  PigType3inRscr: Scalars['String'];
+  PigType3inSCRAPER: Scalars['String'];
+  PigType3inStubby: Scalars['String'];
+  PigType3inbluescraper: Scalars['String'];
+  PigType3ingreendisc: Scalars['String'];
+  PigType3inpurple2disc: Scalars['String'];
+  PigType3inpurpledisc: Scalars['String'];
+  PigType3inredscrape: Scalars['String'];
+  PigType3inscapper: Scalars['String'];
+  PigType3inscr: Scalars['String'];
+  PigType3inscraper: Scalars['String'];
+  PigType3inscrapper: Scalars['String'];
+  PigType4_GreenRibbed: Scalars['String'];
+  PigType4gree2disc: Scalars['String'];
+  PigType4green2disc: Scalars['String'];
+  PigType4inArgus: Scalars['String'];
+  PigType4inBlueDisc: Scalars['String'];
+  PigType4inFoam: Scalars['String'];
+  PigType4inGSCR: Scalars['String'];
+  PigType4inGreenDisc: Scalars['String'];
+  PigType4inGreendisc: Scalars['String'];
+  PigType4inpurplescraper: Scalars['String'];
+  PigType4inscrapper: Scalars['String'];
+  PigType6inArgus: Scalars['String'];
+  PigType6inGreenDisc: Scalars['String'];
+  PigType6inGreenRibbed: Scalars['String'];
+  PigType6ingreenscraper: Scalars['String'];
+  PigType6inscrapper: Scalars['String'];
+  PigType8inBlackDisc: Scalars['String'];
+  PigType8inFoam: Scalars['String'];
+  Purple3inDisc: Scalars['String'];
+  REVERSEFLOWDUETOTAQA: Scalars['String'];
+  Red3inscraper: Scalars['String'];
+  Red4inscraper: Scalars['String'];
+  RedStubby: Scalars['String'];
+  SIMAY2018: Scalars['String'];
+  SI_GOINGTOTAQA: Scalars['String'];
+  ScaperP314: Scalars['String'];
+  ScaperPP309: Scalars['String'];
+  ScraperP200: Scalars['String'];
+  ScraperP204: Scalars['String'];
+  ScraperP206: Scalars['String'];
+  ScraperP208: Scalars['String'];
+  ScraperP300: Scalars['String'];
+  ScraperP301: Scalars['String'];
+  ScraperP303: Scalars['String'];
+  ScraperP304: Scalars['String'];
+  ScraperP305: Scalars['String'];
+  ScraperP309: Scalars['String'];
+  ScraperP311: Scalars['String'];
+  ScraperP312: Scalars['String'];
+  ScraperP314: Scalars['String'];
+  ScraperP400: Scalars['String'];
+  ScraperP401: Scalars['String'];
   Scrapper: Scalars['String'];
+  ScrapperP307: Scalars['String'];
+  Shutin: Scalars['String'];
+  Torpedo: Scalars['String'];
+  bullet: Scalars['String'];
+  disc: Scalars['String'];
 };
 
 export type Pipeline = {
@@ -707,7 +896,7 @@ export type QueryLicenseChangesByPipelineIdArgs = {
 
 
 export type QueryPigRunsByPipelineIdArgs = {
-  pipelineId?: Maybe<Scalars['String']>;
+  pipelineId: Scalars['String'];
 };
 
 
@@ -1010,6 +1199,7 @@ export type Validator = {
   materialEnum: MaterialEnumObject;
   mopMatchPattern: Scalars['String'];
   outsideDiameterMatchPattern: Scalars['String'];
+  pigInspectionEnum: PigInspectionEnumObject;
   pigTypeEnum: PigTypeEnumObject;
   segmentMatchPattern: Scalars['String'];
   statusEnum: StatusEnumObject;
@@ -1134,9 +1324,11 @@ export type DeletePressureTestMutation = { deletePressureTest?: { id: string } |
 
 export type EditPigRunMutationVariables = Exact<{
   id: Scalars['String'];
-  pipelineId?: Maybe<Scalars['String']>;
   pigType?: Maybe<PigTypeEnum>;
-  date?: Maybe<Scalars['DateTime']>;
+  dateIn?: Maybe<Scalars['DateTime']>;
+  dateOut?: Maybe<Scalars['DateTime']>;
+  isolationValveFunctionTest?: Maybe<PigInspectionEnum>;
+  pigSenderReceiverInspection?: Maybe<PigInspectionEnum>;
   comment?: Maybe<Scalars['String']>;
   operatorId?: Maybe<Scalars['String']>;
 }>;
@@ -1227,21 +1419,21 @@ export type SourceOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 export type SourceOptionsQuery = { sourceOptions?: Array<{ facility: string, satellite: string, id: string, source: string } | null | undefined> | null | undefined };
 
 export type PigRunsByPipelineIdQueryVariables = Exact<{
-  pipelineId?: Maybe<Scalars['String']>;
+  pipelineId: Scalars['String'];
 }>;
 
 
-export type PigRunsByPipelineIdQuery = { pigRunsByPipelineId?: Array<{ id: string, pigType?: PigTypeEnum | null | undefined, date?: string | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, pipeline: { license: string, segment: string }, operator?: { email: string } | null | undefined, createdBy: { email: string }, updatedBy: { email: string } } | null | undefined> | null | undefined };
+export type PigRunsByPipelineIdQuery = { pigRunsByPipelineId?: Array<{ id: string, pigType?: PigTypeEnum | null | undefined, dateIn: string, dateOut?: string | null | undefined, isolationValveFunctionTest?: PigInspectionEnum | null | undefined, pigSenderReceiverInspection?: PigInspectionEnum | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, operator?: { email: string } | null | undefined, createdBy: { email: string }, updatedBy: { email: string } } | null | undefined> | null | undefined };
 
 export type ValidatorsPigRunQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorsPigRunQuery = { validators?: { anyTextMatchPattern: string, pigTypeEnum: { GSCR: string, PSCR: string, Foam: string, Scrapper: string } } | null | undefined };
+export type ValidatorsPigRunQuery = { validators?: { anyTextMatchPattern: string, pigTypeEnum: { Scrapper: string, PigType4inArgus: string, PigType6inArgus: string, ScraperP400: string, PigType3inPurpleScraper: string, ScraperP304: string, PigType3inscapper: string, PigType3inscrapper: string, PigType3inscraper: string, Foam: string, RedStubby: string, PigType3inGSCR: string, PigType2inGSCR: string, NoSender: string, PigType2ingscr: string, PigType2inGSCR_GFP: string, PigType4inGSCR: string, PigType2inPSCR_FLM: string, PigType3inPSCR: string, Highline: string, PigType2inPSCR: string, PigType3_scrapper: string, ScraperP401: string, ScraperP300: string, ScraperP301: string, ScraperP309: string, ScraperP314: string, ScaperP314: string, ScaperPP309: string, ScraperP204: string, ScraperP208: string, PigType3inArgus: string, Ball: string, REVERSEFLOWDUETOTAQA: string, PigType3: string, SIMAY2018: string, ScraperP206: string, ScraperP200: string, PigType3inRscr: string, PigType3inPurpleStubby: string, PigType3inSCRAPER: string, Red3inscraper: string, PigType3inGreenDisc: string, PigType4inGreenDisc: string, PigType4green2disc: string, PigType4gree2disc: string, PigType3ingreendisc: string, PigType3inpurpledisc: string, PigType2inPurpleDisc: string, disc: string, PigType2purple2disc: string, Shutin: string, PigType3inpurple2disc: string, PigType2green2disc: string, bullet: string, PigType8inFoam: string, PigType3inscr: string, ScraperP305: string, ScraperP312: string, ScraperP303: string, ScraperP311: string, ScrapperP307: string, PigType4inpurplescraper: string, Torpedo: string, PigType3BrownRibbed: string, PigType3GreenRibbed: string, PigType3inBlueRibbed: string, PigType3inGreenRibbed: string, PigType3BlueRibbed: string, BlueRibbed: string, M_D_Foamy: string, PigType6inGreenRibbed: string, SI_GOINGTOTAQA: string, Red4inscraper: string, Blue3inscraper: string, PigType3inARGUS: string, PigType4inBlueDisc: string, PigType8inBlackDisc: string, PigType4inGreendisc: string, PigType6inGreenDisc: string, PigType6inscrapper: string, PigType4inscrapper: string, PigType4inFoam: string, PigType3inredscrape: string, GSCR: string, PigType3inStubby: string, PigType4_GreenRibbed: string, PigType3inbluescraper: string, PigType6ingreenscraper: string, Purple3inDisc: string, PigType3inGscr: string }, pigInspectionEnum: { Failed: string, Good: string } } | null | undefined };
 
 export type GetValidatorsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string }, pigTypeEnum: { GSCR: string, PSCR: string, Foam: string, Scrapper: string }, limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string }, environmentProximityToEnum: { WB1: string, WB3: string, WB4: string, WB5: string, WC1: string, WC2: string, WC3: string, WC4: string }, geotechnicalFacingEnum: { N: string, NE: string, E: string, SE: string, S: string, SW: string, W: string, NW: string } } | null | undefined };
+export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string }, pigTypeEnum: { Scrapper: string, PigType4inArgus: string, PigType6inArgus: string, ScraperP400: string, PigType3inPurpleScraper: string, ScraperP304: string, PigType3inscapper: string, PigType3inscrapper: string, PigType3inscraper: string, Foam: string, RedStubby: string, PigType3inGSCR: string, PigType2inGSCR: string, NoSender: string, PigType2ingscr: string, PigType2inGSCR_GFP: string, PigType4inGSCR: string, PigType2inPSCR_FLM: string, PigType3inPSCR: string, Highline: string, PigType2inPSCR: string, PigType3_scrapper: string, ScraperP401: string, ScraperP300: string, ScraperP301: string, ScraperP309: string, ScraperP314: string, ScaperP314: string, ScaperPP309: string, ScraperP204: string, ScraperP208: string, PigType3inArgus: string, Ball: string, REVERSEFLOWDUETOTAQA: string, PigType3: string, SIMAY2018: string, ScraperP206: string, ScraperP200: string, PigType3inRscr: string, PigType3inPurpleStubby: string, PigType3inSCRAPER: string, Red3inscraper: string, PigType3inGreenDisc: string, PigType4inGreenDisc: string, PigType4green2disc: string, PigType4gree2disc: string, PigType3ingreendisc: string, PigType3inpurpledisc: string, PigType2inPurpleDisc: string, disc: string, PigType2purple2disc: string, Shutin: string, PigType3inpurple2disc: string, PigType2green2disc: string, bullet: string, PigType8inFoam: string, PigType3inscr: string, ScraperP305: string, ScraperP312: string, ScraperP303: string, ScraperP311: string, ScrapperP307: string, PigType4inpurplescraper: string, Torpedo: string, PigType3BrownRibbed: string, PigType3GreenRibbed: string, PigType3inBlueRibbed: string, PigType3inGreenRibbed: string, PigType3BlueRibbed: string, BlueRibbed: string, M_D_Foamy: string, PigType6inGreenRibbed: string, SI_GOINGTOTAQA: string, Red4inscraper: string, Blue3inscraper: string, PigType3inARGUS: string, PigType4inBlueDisc: string, PigType8inBlackDisc: string, PigType4inGreendisc: string, PigType6inGreenDisc: string, PigType6inscrapper: string, PigType4inscrapper: string, PigType4inFoam: string, PigType3inredscrape: string, GSCR: string, PigType3inStubby: string, PigType4_GreenRibbed: string, PigType3inbluescraper: string, PigType6ingreenscraper: string, Purple3inDisc: string, PigType3inGscr: string }, pigInspectionEnum: { Failed: string, Good: string }, limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string }, environmentProximityToEnum: { WB1: string, WB3: string, WB4: string, WB5: string, WC1: string, WC2: string, WC3: string, WC4: string }, geotechnicalFacingEnum: { N: string, NE: string, E: string, SE: string, S: string, SW: string, W: string, NW: string } } | null | undefined };
 
 export type ValidatorSubstanceQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1755,12 +1947,14 @@ export type DeletePressureTestMutationHookResult = ReturnType<typeof useDeletePr
 export type DeletePressureTestMutationResult = Apollo.MutationResult<DeletePressureTestMutation>;
 export type DeletePressureTestMutationOptions = Apollo.BaseMutationOptions<DeletePressureTestMutation, DeletePressureTestMutationVariables>;
 export const EditPigRunDocument = gql`
-    mutation EditPigRun($id: String!, $pipelineId: String, $pigType: PigTypeEnum, $date: DateTime, $comment: String, $operatorId: String) {
+    mutation EditPigRun($id: String!, $pigType: PigTypeEnum, $dateIn: DateTime, $dateOut: DateTime, $isolationValveFunctionTest: PigInspectionEnum, $pigSenderReceiverInspection: PigInspectionEnum, $comment: String, $operatorId: String) {
   editPigRun(
     id: $id
-    pipelineId: $pipelineId
     pigType: $pigType
-    date: $date
+    dateIn: $dateIn
+    dateOut: $dateOut
+    isolationValveFunctionTest: $isolationValveFunctionTest
+    pigSenderReceiverInspection: $pigSenderReceiverInspection
     comment: $comment
     operatorId: $operatorId
   ) {
@@ -1784,9 +1978,11 @@ export type EditPigRunMutationFn = Apollo.MutationFunction<EditPigRunMutation, E
  * const [editPigRunMutation, { data, loading, error }] = useEditPigRunMutation({
  *   variables: {
  *      id: // value for 'id'
- *      pipelineId: // value for 'pipelineId'
  *      pigType: // value for 'pigType'
- *      date: // value for 'date'
+ *      dateIn: // value for 'dateIn'
+ *      dateOut: // value for 'dateOut'
+ *      isolationValveFunctionTest: // value for 'isolationValveFunctionTest'
+ *      pigSenderReceiverInspection: // value for 'pigSenderReceiverInspection'
  *      comment: // value for 'comment'
  *      operatorId: // value for 'operatorId'
  *   },
@@ -2281,16 +2477,15 @@ export type SourceOptionsQueryHookResult = ReturnType<typeof useSourceOptionsQue
 export type SourceOptionsLazyQueryHookResult = ReturnType<typeof useSourceOptionsLazyQuery>;
 export type SourceOptionsQueryResult = Apollo.QueryResult<SourceOptionsQuery, SourceOptionsQueryVariables>;
 export const PigRunsByPipelineIdDocument = gql`
-    query PigRunsByPipelineId($pipelineId: String) {
+    query PigRunsByPipelineId($pipelineId: String!) {
   pigRunsByPipelineId(pipelineId: $pipelineId) {
     id
     pigType
-    date
+    dateIn
+    dateOut
+    isolationValveFunctionTest
+    pigSenderReceiverInspection
     comment
-    pipeline {
-      license
-      segment
-    }
     operator {
       email
     }
@@ -2322,7 +2517,7 @@ export const PigRunsByPipelineIdDocument = gql`
  *   },
  * });
  */
-export function usePigRunsByPipelineIdQuery(baseOptions?: Apollo.QueryHookOptions<PigRunsByPipelineIdQuery, PigRunsByPipelineIdQueryVariables>) {
+export function usePigRunsByPipelineIdQuery(baseOptions: Apollo.QueryHookOptions<PigRunsByPipelineIdQuery, PigRunsByPipelineIdQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<PigRunsByPipelineIdQuery, PigRunsByPipelineIdQueryVariables>(PigRunsByPipelineIdDocument, options);
       }
@@ -2337,10 +2532,101 @@ export const ValidatorsPigRunDocument = gql`
     query ValidatorsPigRun {
   validators {
     pigTypeEnum {
-      GSCR
-      PSCR
-      Foam
       Scrapper
+      PigType4inArgus
+      PigType6inArgus
+      ScraperP400
+      PigType3inPurpleScraper
+      ScraperP304
+      PigType3inscapper
+      PigType3inscrapper
+      PigType3inscraper
+      Foam
+      RedStubby
+      PigType3inGSCR
+      PigType2inGSCR
+      NoSender
+      PigType2ingscr
+      PigType2inGSCR_GFP
+      PigType4inGSCR
+      PigType2inPSCR_FLM
+      PigType3inPSCR
+      Highline
+      PigType2inPSCR
+      PigType3_scrapper
+      ScraperP401
+      ScraperP300
+      ScraperP301
+      ScraperP309
+      ScraperP314
+      ScaperP314
+      ScaperPP309
+      ScraperP204
+      ScraperP208
+      PigType3inArgus
+      Ball
+      REVERSEFLOWDUETOTAQA
+      PigType3
+      SIMAY2018
+      ScraperP206
+      ScraperP200
+      PigType3inRscr
+      PigType3inPurpleStubby
+      PigType3inSCRAPER
+      Red3inscraper
+      PigType3inGreenDisc
+      PigType4inGreenDisc
+      PigType4green2disc
+      PigType4gree2disc
+      PigType3ingreendisc
+      PigType3inpurpledisc
+      PigType2inPurpleDisc
+      disc
+      PigType2purple2disc
+      Shutin
+      PigType3inpurple2disc
+      PigType2green2disc
+      bullet
+      PigType8inFoam
+      PigType3inscr
+      ScraperP305
+      ScraperP312
+      ScraperP303
+      ScraperP311
+      ScrapperP307
+      PigType4inpurplescraper
+      Torpedo
+      PigType3BrownRibbed
+      PigType3GreenRibbed
+      PigType3inBlueRibbed
+      PigType3inGreenRibbed
+      PigType3BlueRibbed
+      BlueRibbed
+      M_D_Foamy
+      PigType6inGreenRibbed
+      SI_GOINGTOTAQA
+      Red4inscraper
+      Blue3inscraper
+      PigType3inARGUS
+      PigType4inBlueDisc
+      PigType8inBlackDisc
+      PigType4inGreendisc
+      PigType6inGreenDisc
+      PigType6inscrapper
+      PigType4inscrapper
+      PigType4inFoam
+      PigType3inredscrape
+      GSCR
+      PigType3inStubby
+      PigType4_GreenRibbed
+      PigType3inbluescraper
+      PigType6ingreenscraper
+      Purple3inDisc
+      PigType3inGscr
+    }
+    pigInspectionEnum {
+      Failed
+      Good
     }
     anyTextMatchPattern
   }
@@ -2509,10 +2795,101 @@ export const GetValidatorsDocument = gql`
       ThinFilm
     }
     pigTypeEnum {
-      GSCR
-      PSCR
-      Foam
       Scrapper
+      PigType4inArgus
+      PigType6inArgus
+      ScraperP400
+      PigType3inPurpleScraper
+      ScraperP304
+      PigType3inscapper
+      PigType3inscrapper
+      PigType3inscraper
+      Foam
+      RedStubby
+      PigType3inGSCR
+      PigType2inGSCR
+      NoSender
+      PigType2ingscr
+      PigType2inGSCR_GFP
+      PigType4inGSCR
+      PigType2inPSCR_FLM
+      PigType3inPSCR
+      Highline
+      PigType2inPSCR
+      PigType3_scrapper
+      ScraperP401
+      ScraperP300
+      ScraperP301
+      ScraperP309
+      ScraperP314
+      ScaperP314
+      ScaperPP309
+      ScraperP204
+      ScraperP208
+      PigType3inArgus
+      Ball
+      REVERSEFLOWDUETOTAQA
+      PigType3
+      SIMAY2018
+      ScraperP206
+      ScraperP200
+      PigType3inRscr
+      PigType3inPurpleStubby
+      PigType3inSCRAPER
+      Red3inscraper
+      PigType3inGreenDisc
+      PigType4inGreenDisc
+      PigType4green2disc
+      PigType4gree2disc
+      PigType3ingreendisc
+      PigType3inpurpledisc
+      PigType2inPurpleDisc
+      disc
+      PigType2purple2disc
+      Shutin
+      PigType3inpurple2disc
+      PigType2green2disc
+      bullet
+      PigType8inFoam
+      PigType3inscr
+      ScraperP305
+      ScraperP312
+      ScraperP303
+      ScraperP311
+      ScrapperP307
+      PigType4inpurplescraper
+      Torpedo
+      PigType3BrownRibbed
+      PigType3GreenRibbed
+      PigType3inBlueRibbed
+      PigType3inGreenRibbed
+      PigType3BlueRibbed
+      BlueRibbed
+      M_D_Foamy
+      PigType6inGreenRibbed
+      SI_GOINGTOTAQA
+      Red4inscraper
+      Blue3inscraper
+      PigType3inARGUS
+      PigType4inBlueDisc
+      PigType8inBlackDisc
+      PigType4inGreendisc
+      PigType6inGreenDisc
+      PigType6inscrapper
+      PigType4inscrapper
+      PigType4inFoam
+      PigType3inredscrape
+      GSCR
+      PigType3inStubby
+      PigType4_GreenRibbed
+      PigType3inbluescraper
+      PigType6ingreenscraper
+      Purple3inDisc
+      PigType3inGscr
+    }
+    pigInspectionEnum {
+      Failed
+      Good
     }
     limitingSpecEnum {
       ANSI150

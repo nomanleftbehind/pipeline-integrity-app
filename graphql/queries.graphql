@@ -135,16 +135,15 @@ query sourceOptions {
   }
 }
 
-query PigRunsByPipelineId($pipelineId: String) {
+query PigRunsByPipelineId($pipelineId: String!) {
   pigRunsByPipelineId(pipelineId: $pipelineId) {
     id
     pigType
-    date
+    dateIn
+    dateOut
+    isolationValveFunctionTest
+    pigSenderReceiverInspection
     comment
-    pipeline {
-      license
-      segment
-    }
     operator {
       email
     }
@@ -162,10 +161,101 @@ query PigRunsByPipelineId($pipelineId: String) {
 query ValidatorsPigRun {
   validators {
     pigTypeEnum {
-      GSCR
-      PSCR
-      Foam
       Scrapper
+      PigType4inArgus
+      PigType6inArgus
+      ScraperP400
+      PigType3inPurpleScraper
+      ScraperP304
+      PigType3inscapper
+      PigType3inscrapper
+      PigType3inscraper
+      Foam
+      RedStubby
+      PigType3inGSCR
+      PigType2inGSCR
+      NoSender
+      PigType2ingscr
+      PigType2inGSCR_GFP
+      PigType4inGSCR
+      PigType2inPSCR_FLM
+      PigType3inPSCR
+      Highline
+      PigType2inPSCR
+      PigType3_scrapper
+      ScraperP401
+      ScraperP300
+      ScraperP301
+      ScraperP309
+      ScraperP314
+      ScaperP314
+      ScaperPP309
+      ScraperP204
+      ScraperP208
+      PigType3inArgus
+      Ball
+      REVERSEFLOWDUETOTAQA
+      PigType3
+      SIMAY2018
+      ScraperP206
+      ScraperP200
+      PigType3inRscr
+      PigType3inPurpleStubby
+      PigType3inSCRAPER
+      Red3inscraper
+      PigType3inGreenDisc
+      PigType4inGreenDisc
+      PigType4green2disc
+      PigType4gree2disc
+      PigType3ingreendisc
+      PigType3inpurpledisc
+      PigType2inPurpleDisc
+      disc
+      PigType2purple2disc
+      Shutin
+      PigType3inpurple2disc
+      PigType2green2disc
+      bullet
+      PigType8inFoam
+      PigType3inscr
+      ScraperP305
+      ScraperP312
+      ScraperP303
+      ScraperP311
+      ScrapperP307
+      PigType4inpurplescraper
+      Torpedo
+      PigType3BrownRibbed
+      PigType3GreenRibbed
+      PigType3inBlueRibbed
+      PigType3inGreenRibbed
+      PigType3BlueRibbed
+      BlueRibbed
+      M_D_Foamy
+      PigType6inGreenRibbed
+      SI_GOINGTOTAQA
+      Red4inscraper
+      Blue3inscraper
+      PigType3inARGUS
+      PigType4inBlueDisc
+      PigType8inBlackDisc
+      PigType4inGreendisc
+      PigType6inGreenDisc
+      PigType6inscrapper
+      PigType4inscrapper
+      PigType4inFoam
+      PigType3inredscrape
+      GSCR
+      PigType3inStubby
+      PigType4_GreenRibbed
+      PigType3inbluescraper
+      PigType6ingreenscraper
+      Purple3inDisc
+      PigType3inGscr
+    }
+    pigInspectionEnum {
+      Failed
+      Good
     }
     anyTextMatchPattern
   }
@@ -306,10 +396,101 @@ query getValidators {
       ThinFilm
     }
     pigTypeEnum {
-      GSCR
-      PSCR
-      Foam
       Scrapper
+      PigType4inArgus
+      PigType6inArgus
+      ScraperP400
+      PigType3inPurpleScraper
+      ScraperP304
+      PigType3inscapper
+      PigType3inscrapper
+      PigType3inscraper
+      Foam
+      RedStubby
+      PigType3inGSCR
+      PigType2inGSCR
+      NoSender
+      PigType2ingscr
+      PigType2inGSCR_GFP
+      PigType4inGSCR
+      PigType2inPSCR_FLM
+      PigType3inPSCR
+      Highline
+      PigType2inPSCR
+      PigType3_scrapper
+      ScraperP401
+      ScraperP300
+      ScraperP301
+      ScraperP309
+      ScraperP314
+      ScaperP314
+      ScaperPP309
+      ScraperP204
+      ScraperP208
+      PigType3inArgus
+      Ball
+      REVERSEFLOWDUETOTAQA
+      PigType3
+      SIMAY2018
+      ScraperP206
+      ScraperP200
+      PigType3inRscr
+      PigType3inPurpleStubby
+      PigType3inSCRAPER
+      Red3inscraper
+      PigType3inGreenDisc
+      PigType4inGreenDisc
+      PigType4green2disc
+      PigType4gree2disc
+      PigType3ingreendisc
+      PigType3inpurpledisc
+      PigType2inPurpleDisc
+      disc
+      PigType2purple2disc
+      Shutin
+      PigType3inpurple2disc
+      PigType2green2disc
+      bullet
+      PigType8inFoam
+      PigType3inscr
+      ScraperP305
+      ScraperP312
+      ScraperP303
+      ScraperP311
+      ScrapperP307
+      PigType4inpurplescraper
+      Torpedo
+      PigType3BrownRibbed
+      PigType3GreenRibbed
+      PigType3inBlueRibbed
+      PigType3inGreenRibbed
+      PigType3BlueRibbed
+      BlueRibbed
+      M_D_Foamy
+      PigType6inGreenRibbed
+      SI_GOINGTOTAQA
+      Red4inscraper
+      Blue3inscraper
+      PigType3inARGUS
+      PigType4inBlueDisc
+      PigType8inBlackDisc
+      PigType4inGreendisc
+      PigType6inGreenDisc
+      PigType6inscrapper
+      PigType4inscrapper
+      PigType4inFoam
+      PigType3inredscrape
+      GSCR
+      PigType3inStubby
+      PigType4_GreenRibbed
+      PigType3inbluescraper
+      PigType6ingreenscraper
+      Purple3inDisc
+      PigType3inGscr
+    }
+    pigInspectionEnum {
+      Failed
+      Good
     }
     limitingSpecEnum {
       ANSI150

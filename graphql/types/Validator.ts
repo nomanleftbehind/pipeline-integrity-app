@@ -9,7 +9,7 @@ import {
 	FlowCalculationDirectionEnumMembers
 } from './Pipeline';
 import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
-import { PigTypeEnumMembers } from './PigRun';
+import { PigTypeEnumMembers, PigInspectionEnumMembers } from './PigRun';
 import { LimitingSpecEnumMembers } from './PressureTest';
 import { EnvironmentProximityToEnumMembers, GeotechnicalFacingEnumMembers } from './Risk';
 
@@ -114,6 +114,15 @@ export const PigTypeEnumObject = objectType({
 	}
 });
 
+export const PigInspectionEnumObject = objectType({
+	name: 'PigInspectionEnumObject',
+	definition(t) {
+		for (const iterator of Object.keys(PigInspectionEnumMembers)) {
+			t.nonNull.string(iterator)
+		}
+	}
+});
+
 export const LimitingSpecEnumObject = objectType({
 	name: 'LimitingSpecEnumObject',
 	definition(t) {
@@ -163,6 +172,7 @@ export const Validator = objectType({
 		t.nonNull.field('internalProtectionEnum', { type: 'InternalProtectionEnumObject' })
 		t.nonNull.field('flowCalculationDirectionEnum', { type: 'FlowCalculationDirectionEnumObject' })
 		t.nonNull.field('pigTypeEnum', { type: 'PigTypeEnumObject' })
+		t.nonNull.field('pigInspectionEnum', { type: 'PigInspectionEnumObject' })
 		t.nonNull.field('limitingSpecEnum', { type: 'LimitingSpecEnumObject' })
 		t.nonNull.field('environmentProximityToEnum', { type: 'EnvironmentProximityToEnumObject' })
 		t.nonNull.field('geotechnicalFacingEnum', { type: 'GeotechnicalFacingEnumObject' })
@@ -195,6 +205,7 @@ export const ValidatorQuery = extendType({
 					internalProtectionEnum: InternalProtectionEnumMembers,
 					flowCalculationDirectionEnum: FlowCalculationDirectionEnumMembers,
 					pigTypeEnum: PigTypeEnumMembers,
+					pigInspectionEnum: PigInspectionEnumMembers,
 					limitingSpecEnum: LimitingSpecEnumMembers,
 					environmentProximityToEnum: EnvironmentProximityToEnumMembers,
 					geotechnicalFacingEnum: GeotechnicalFacingEnumMembers,
