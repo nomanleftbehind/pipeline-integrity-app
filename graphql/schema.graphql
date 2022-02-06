@@ -439,7 +439,6 @@ type PipelineOptions {
   license: String!
   satellite: String!
   segment: String!
-  substance: SubstanceEnum!
 }
 
 input PipelineUniqueInput {

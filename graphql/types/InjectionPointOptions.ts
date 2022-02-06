@@ -10,7 +10,6 @@ export const PipelineOptions = objectType({
   definition(t) {
     t.nonNull.string('facility')
     t.nonNull.string('satellite')
-    t.nonNull.field('substance', { type: 'SubstanceEnum' })
     t.nonNull.string('id')
     t.nonNull.string('license')
     t.nonNull.string('segment')
@@ -73,7 +72,6 @@ export const totalPipelineFlowRawQuery = async (idList: (string | null)[], flowC
   const result = await ctx.prisma.$queryRaw<NexusGenObjects['PipelineFlow'][]>`
   SELECT * FROM "ppl_db".pipeline_flow(${ids}, ${flowCalculationDirection});
   `
-  console.log(result);
   return result;
 }
 
@@ -90,7 +88,6 @@ export const InjectionPointOptionsQuery = extendType({
 
         COALESCE(f.name, 'no facility') "facility",
         COALESCE(s.name, 'no satellite') "satellite",
-		    pip.substance,
         pip.id,
         pip.license,
         pip.segment
@@ -100,7 +97,7 @@ export const InjectionPointOptionsQuery = extendType({
         LEFT OUTER JOIN "ppl_db"."Satellite" s ON s."id" = pip."satelliteId"
         LEFT OUTER JOIN "ppl_db"."Facility" f ON f."id" = s."facilityId"
 		
-		    ORDER BY f.name, s.name, pip.substance, pip.license, pip.segment
+		    ORDER BY f.name, s.name, pip.license, pip.segment
         `
         return result;
       }

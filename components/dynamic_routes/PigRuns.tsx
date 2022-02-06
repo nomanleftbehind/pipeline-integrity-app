@@ -48,7 +48,7 @@ export default function PigRuns() {
 														<EntryField table="pig runs" id={pigRun.id} record={pigRun.id} columnName="id" />
 														<EntryField table="pig runs" id={pigRun.id} record={pigRun.pigType} columnName="pigType" validator={pigTypeEnum} />
 														<EntryField table="pig runs" id={pigRun.id} record={pigRun.date} columnName="date" />
-														<EntryField table="pig runs" id={pigRun.id} record={pigRun.comment} columnName="comment" validator={"^.*$"} />
+														<EntryField table="pig runs" id={pigRun.id} record={pigRun.comment} columnName="comment" columnType='string' validator={"^.*$"} />
 														<EntryField table="pig runs" id={pigRun.id} record={pigRun.operator?.email} columnName="operator" />
 														<EntryField table="pig runs" id={pigRun.id} record={pigRun.createdBy?.email} columnName="createdBy" />
 														<EntryField table="pig runs" id={pigRun.id} record={pigRun.createdAt} columnName="createdAt" />

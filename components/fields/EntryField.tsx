@@ -32,6 +32,7 @@ interface ITextFieldProps {
   table?: ITable;
   columnName: string;
   record: IRecord;
+  columnType?: 'string' | 'number';
   validator?: IValidator;
 }
 
@@ -66,6 +67,11 @@ export default function EntryField({ id, table, columnName, record, validator }:
     }
   }
 
+  useEffect(() => {
+    console.log('columnName:', columnName, 'record:', record);
+
+  }, [record])
+
   const recordDisplay = switchRecordDisplay();
 
   const toggleEdit = (): void => {
@@ -86,6 +92,8 @@ export default function EntryField({ id, table, columnName, record, validator }:
   useEffect(() => { validateForm() }, [state]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    console.log(e.currentTarget.value);
+
     if (e.currentTarget.type === 'date') {
       const date = new Date(e.currentTarget.value);
       try {
@@ -103,7 +111,14 @@ export default function EntryField({ id, table, columnName, record, validator }:
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const mutationOptions = { variables: { id: id, [columnName]: validatorIsString && typeof record === "number" ? Number(e.currentTarget.name) : e.currentTarget.name } }
+    const mutationOptions = {
+      variables: {
+        id,
+        [columnName]: Number(e.currentTarget.name)//validatorIsString && typeof record === "number" ? Number(e.currentTarget.name) : e.currentTarget.name
+      }
+    }
+    console.log('submitted:', Number(e.currentTarget.name));
+
     switch (table) {
       case 'pig runs':
         editPigRun(mutationOptions);

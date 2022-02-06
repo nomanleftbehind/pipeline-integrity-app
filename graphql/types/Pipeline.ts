@@ -515,7 +515,7 @@ export const PipelineMutation = extendType({
               toFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.toFeature),
               length: args.length || undefined,
               type: databaseEnumToServerEnum(TypeEnumMembers, args.type),
-              grade: databaseEnumToServerEnum(GradeEnumMembers, args.grade),
+              grade: databaseEnumToServerEnum(GradeEnumMembers, args.grade) || undefined,
               yieldStrength: args.yieldStrength || undefined,
               outsideDiameter: args.outsideDiameter || undefined,
               wallThickness: args.wallThickness || undefined,

@@ -656,7 +656,6 @@ export type PipelineOptions = {
   license: Scalars['String'];
   satellite: Scalars['String'];
   segment: Scalars['String'];
-  substance: SubstanceEnum;
 };
 
 export type PipelineUniqueInput = {
@@ -1220,7 +1219,7 @@ export type PipelineByIdQuery = { pipelineById?: { id: string, license: string, 
 export type PipelineOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type PipelineOptionsQuery = { pipelineOptions?: Array<{ facility: string, satellite: string, substance: SubstanceEnum, id: string, license: string, segment: string } | null | undefined> | null | undefined };
+export type PipelineOptionsQuery = { pipelineOptions?: Array<{ facility: string, satellite: string, id: string, license: string, segment: string } | null | undefined> | null | undefined };
 
 export type SourceOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2211,7 +2210,6 @@ export const PipelineOptionsDocument = gql`
   pipelineOptions {
     facility
     satellite
-    substance
     id
     license
     segment

@@ -42,7 +42,7 @@ import { IInferFromArray } from '../fields/injection_points/InjectionPoints';
 
 type IPressureTest = NonNullable<IInferFromArray<PressureTestsByPipelineIdQuery['pressureTestsByPipelineId']>>;
 type IPigRun = NonNullable<IInferFromArray<PigRunsByPipelineIdQuery['pigRunsByPipelineId']>>;
-type IRisk = NonNullable<IInferFromArray<RiskByIdQuery['riskById']>>;
+type IRisk = NonNullable<RiskByIdQuery['riskById']>;
 
 interface IGenericTableData extends IPressureTest, IPigRun, IRisk { };
 
@@ -258,7 +258,7 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
             <EntryField table={table} id={id} record={pressureTestDate} columnName="pressureTestDate" validator="date" />
             <EntryField table={table} id={id} record={pressureTestReceivedDate} columnName="pressureTestReceivedDate" validator="date" />
             <EntryField table={table} id={id} record={integritySheetUpdated} columnName="integritySheetUpdated" validator="date" />
-            <EntryField table={table} id={id} record={comment} columnName="comment" validator={dataValidatorsPressureTest?.validators?.anyTextMatchPattern} />
+            <EntryField table={table} id={id} record={comment} columnName="comment" columnType='string' validator={dataValidatorsPressureTest?.validators?.anyTextMatchPattern} />
             <TableCell align="right">{createdBy.email}</TableCell>
             <EntryField table={table} id={id} record={createdAt} columnName="createdAt" />
             <EntryField table={table} id={id} record={updatedAt} columnName="updatedAt" />
@@ -308,7 +308,7 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
           <TableHead>
             <TableRow>
               <TableCell>
-                <IconButton aria-label="add row" size="small" onClick={handleAddEntry} disabled={Boolean(dataRiskById?.riskById?.[0])}>
+                <IconButton aria-label="add row" size="small" onClick={handleAddEntry} disabled={Boolean(dataRiskById?.riskById)}>
                   {showAddForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
                 </IconButton>
               </TableCell>

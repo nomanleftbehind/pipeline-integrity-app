@@ -123,23 +123,28 @@ model LicenseChange {
   updatedBy           User          @relation("licenseChangeUpdatedBy", fields: [updatedById], references: [id])
   updatedById         String
   updatedAt           DateTime      @updatedAt
+
+  @@unique([pipelineId, date])
 }
 
 model PigRun {
-  id          String       @id @default(uuid())
-  pipeline    Pipeline     @relation(fields: [pipelineId], references: [id])
-  pipelineId  String
-  pigType     PigTypeEnum?
-  date        DateTime
-  comment     String?
-  operator    User?        @relation("pigRunOperator", fields: [operatorId], references: [id])
-  operatorId  String?
-  createdBy   User         @relation("pigRunCreatedBy", fields: [createdById], references: [id])
-  createdById String
-  createdAt   DateTime     @default(now())
-  updatedBy   User         @relation("pigRunUpdatedBy", fields: [updatedById], references: [id])
-  updatedById String
-  updatedAt   DateTime     @updatedAt
+  id                          String             @id @default(uuid())
+  pipeline                    Pipeline           @relation(fields: [pipelineId], references: [id])
+  pipelineId                  String
+  pigType                     PigTypeEnum?
+  dateIn                      DateTime
+  dateOut                     DateTime?
+  isolationValveFunctionTest  PigInspectionEnum?
+  pigSenderReceiverInspection PigInspectionEnum?
+  comment                     String?
+  operator                    User?              @relation("pigRunOperator", fields: [operatorId], references: [id])
+  operatorId                  String?
+  createdBy                   User               @relation("pigRunCreatedBy", fields: [createdById], references: [id])
+  createdById                 String
+  createdAt                   DateTime           @default(now())
+  updatedBy                   User               @relation("pigRunUpdatedBy", fields: [updatedById], references: [id])
+  updatedById                 String
+  updatedAt                   DateTime           @updatedAt
 }
 
 model PressureTest {
@@ -364,12 +369,106 @@ enum FlowCalculationDirectionEnum {
 }
 
 enum PigTypeEnum {
-  GSCR
-  PSCR
-  Foam
-  Scrapper
+  Scrapper                 @map("Scrapper")
+  PigType4inArgus          @map("4in Argus")
+  PigType6inArgus          @map("6in Argus")
+  ScraperP400              @map("Scraper P400")
+  PigType3inPurpleScraper  @map("3in Purple Scraper")
+  ScraperP304              @map("Scraper P304")
+  PigType3inscapper        @map("3inscapper")
+  PigType3inscrapper       @map("3inscrapper")
+  PigType3inscraper        @map("3in scraper")
+  Foam                     @map("Foam")
+  RedStubby                @map("Red Stubby")
+  PigType3inGSCR           @map("3in GSCR")
+  PigType2inGSCR           @map("2in GSCR")
+  NoSender                 @map("No Sender")
+  PigType2ingscr           @map("2ing scr")
+  PigType2inGSCR_GFP       @map("2in GSCR/GFP")
+  PigType4inGSCR           @map("4in GSCR")
+  PigType2inPSCR_FLM       @map("2in PSCR/FLM")
+  PigType3inPSCR           @map("3in PSCR")
+  Highline                 @map("High line")
+  PigType2inPSCR           @map("2in PSCR")
+  PigType3_scrapper        @map("3:scrapper")
+  ScraperP401              @map("Scraper P401")
+  ScraperP300              @map("Scraper P300")
+  ScraperP301              @map("Scraper P301")
+  ScraperP309              @map("Scraper P309")
+  ScraperP314              @map("Scraper P314")
+  ScaperP314               @map("Scaper P314")
+  ScaperPP309              @map("Scaper PP309")
+  ScraperP204              @map("Scraper P204")
+  ScraperP208              @map("Scraper P208")
+  PigType3inArgus          @map("3in Argus")
+  Ball                     @map("Ball")
+  REVERSEFLOWDUETOTAQA     @map("REVERSE FLOW DUE TO TAQA")
+  PigType3                 @map("3")
+  SIMAY2018                @map("SI MAY 2018")
+  ScraperP206              @map("Scraper P206")
+  ScraperP200              @map("Scraper P200")
+  PigType3inRscr           @map("3in R scr")
+  PigType3inPurpleStubby   @map("3in Purple Stubby")
+  PigType3inSCRAPER        @map("3in SCRAPER")
+  Red3inscraper            @map("Red 3in scraper")
+  PigType3inGreenDisc      @map("3in Green Disc")
+  PigType4inGreenDisc      @map("4in Green Disc")
+  PigType4green2disc       @map("4green 2 disc")
+  PigType4gree2disc        @map("4 gree 2 disc")
+  PigType3ingreendisc      @map("3in green disc")
+  PigType3inpurpledisc     @map("3in purple disc")
+  PigType2inPurpleDisc     @map("2in Purple Disc")
+  disc                     @map("disc")
+  PigType2purple2disc      @map("2 purple 2 disc")
+  Shutin                   @map("Shut in")
+  PigType3inpurple2disc    @map("3in purple 2 disc")
+  PigType2green2disc       @map("2 green 2 disc")
+  bullet                   @map("bullet")
+  PigType8inFoam           @map("8in Foam")
+  PigType3inscr            @map("3in scr")
+  ScraperP305              @map("Scraper P305")
+  ScraperP312              @map("Scraper P312")
+  ScraperP303              @map("Scraper P303")
+  ScraperP311              @map("Scraper P311")
+  ScrapperP307             @map("Scrapper P307")
+  PigType4inpurplescraper  @map("4in  purple scraper")
+  Torpedo                  @map("Torpedo")
+  PigType3BrownRibbed      @map("#3 Brown Ribbed")
+  PigType3GreenRibbed      @map("#3 Green Ribbed")
+  PigType3inBlueRibbed     @map("3in Blue Ribbed")
+  PigType3inGreenRibbed    @map("3in Green Ribbed")
+  PigType3BlueRibbed       @map("#3 Blue Ribbed")
+  BlueRibbed               @map("Blue Ribbed")
+  M_D_Foamy                @map("M.D. Foamy")
+  PigType6inGreenRibbed    @map("6in Green Ribbed")
+  SI_GOINGTOTAQA           @map("SI - GOING TO TAQA")
+  Red4inscraper            @map("Red 4in scraper")
+  Blue3inscraper           @map("Blue 3in scraper")
+  PigType3inARGUS          @map("3inARGUS")
+  PigType4inBlueDisc       @map("4inBlue Disc")
+  PigType8inBlackDisc      @map("8in Black Disc")
+  PigType4inGreendisc      @map("4in Green disc")
+  PigType6inGreenDisc      @map("6in Green Disc")
+  PigType6inscrapper       @map("6in scrapper")
+  PigType4inscrapper       @map("4inscrapper")
+  PigType4inFoam           @map("4in Foam")
+  PigType3inredscrape      @map("3in red scrape")
+  GSCR                     @map("GSCR")
+  PigType3inStubby         @map("3in Stubby")
+  PigType4_GreenRibbed     @map("4: Green Ribbed")
+  PigType3inbluescraper    @map("3in blue scraper")
+  PigType6ingreenscraper   @map("6in green scraper")
+  Purple3inDisc            @map("Purple 3in Disc")
+  PigType3inGscr           @map("3in G scr")
 
   @@map("pig_type")
+}
+
+enum PigInspectionEnum {
+  Good
+  Failed
+
+  @@map("pig_inspection")
 }
 
 enum LimitingSpecEnum {

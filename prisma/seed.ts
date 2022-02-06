@@ -8,10 +8,22 @@ import {
   pipelineUpstreamData,
   licenseChangeData,
   injectionPointData,
-  pigRunData,
   pressureTestData,
   riskData,
 } from './SeedData';
+
+import {
+  pigRunData1,
+  pigRunData2,
+  pigRunData3,
+  pigRunData4,
+  pigRunData5,
+  pigRunData6,
+  pigRunData7,
+  pigRunData8,
+  pigRunData9,
+  pigRunData10,
+} from './SeedPigRunData';
 
 const prisma = new PrismaClient(/*{
   log: [
@@ -98,7 +110,70 @@ async function main() {
     console.log(`Created injection point with id: ${injectionPoint.id}`)
   }
 
-  for (const u of pigRunData) {
+  for (const u of pigRunData1) {
+    const pigRun = await prisma.pigRun.create({
+      data: u,
+    })
+    console.log(`Created pig run with id: ${pigRun.id}`)
+  }
+
+  for (const u of pigRunData2) {
+    const pigRun = await prisma.pigRun.create({
+      data: u,
+    })
+    console.log(`Created pig run with id: ${pigRun.id}`)
+  }
+
+  for (const u of pigRunData3) {
+    const pigRun = await prisma.pigRun.create({
+      data: u,
+    })
+    console.log(`Created pig run with id: ${pigRun.id}`)
+  }
+
+  for (const u of pigRunData4) {
+    const pigRun = await prisma.pigRun.create({
+      data: u,
+    })
+    console.log(`Created pig run with id: ${pigRun.id}`)
+  }
+
+  for (const u of pigRunData5) {
+    const pigRun = await prisma.pigRun.create({
+      data: u,
+    })
+    console.log(`Created pig run with id: ${pigRun.id}`)
+  }
+
+  for (const u of pigRunData6) {
+    const pigRun = await prisma.pigRun.create({
+      data: u,
+    })
+    console.log(`Created pig run with id: ${pigRun.id}`)
+  }
+
+  for (const u of pigRunData7) {
+    const pigRun = await prisma.pigRun.create({
+      data: u,
+    })
+    console.log(`Created pig run with id: ${pigRun.id}`)
+  }
+
+  for (const u of pigRunData8) {
+    const pigRun = await prisma.pigRun.create({
+      data: u,
+    })
+    console.log(`Created pig run with id: ${pigRun.id}`)
+  }
+
+  for (const u of pigRunData9) {
+    const pigRun = await prisma.pigRun.create({
+      data: u,
+    })
+    console.log(`Created pig run with id: ${pigRun.id}`)
+  }
+
+  for (const u of pigRunData10) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })

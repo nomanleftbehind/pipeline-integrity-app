@@ -120,7 +120,6 @@ query pipelineOptions {
   pipelineOptions {
     facility
     satellite
-    substance
     id
     license
     segment
