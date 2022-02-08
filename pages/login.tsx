@@ -40,6 +40,9 @@ export default function Login() {
     const emailElement = e.currentTarget.elements.email
     const passwordElement = e.currentTarget.elements.password
 
+    console.log(emailElement.value, passwordElement.value);
+    
+
     await client.resetStore()
     // const { data, errors } = 
     const { data } = await login({

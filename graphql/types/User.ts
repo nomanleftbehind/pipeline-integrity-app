@@ -5,6 +5,9 @@ import { Context } from '../context';
 import { APP_SECRET, getUserId } from '../utils';
 import { compare, hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
+import { setLoginSession } from '../../lib/auth';
+import { removeTokenCookie } from '../../lib/auth-cookies';
+import { serverEnumToDatabaseEnum } from './Pipeline';
 
 
 export const DateTime = asNexusMethod(DateTimeResolver, 'date');
@@ -23,7 +26,7 @@ export const User = objectType({
     t.nonNull.field('role', {
       type: 'UserRoleEnum',
       resolve: ({ role }) => {
-        const result = UserRoleEnumMembers[role] as keyof typeof UserRoleEnumMembers;
+        const result = serverEnumToDatabaseEnum(UserRoleEnumMembers, role);
         return result;
       }
     })
@@ -225,7 +228,7 @@ export const FieldError = objectType({
 export const AuthPayload = objectType({
   name: 'AuthPayload',
   definition(t) {
-    t.string('token')
+    // t.string('token')
     t.field('user', { type: 'User' })
     t.list.field('errors', { type: 'FieldError' })
   },
@@ -278,7 +281,7 @@ export const AuthMutation = extendType({
           },
         })
         return {
-          token: sign({ userId: user.id }, APP_SECRET!),
+          // token: sign({ userId: user.id }, APP_SECRET!),
           user,
         }
       },
@@ -291,11 +294,13 @@ export const AuthMutation = extendType({
         password: nonNull(stringArg()),
       },
       resolve: async (_parent, { email, password }, ctx: Context) => {
+        console.log('email password', email, password);
         const user = await ctx.prisma.user.findUnique({
           where: {
             email,
           },
         })
+        console.log('user:', user);
         if (!user) {
           return {
             errors: [
@@ -307,6 +312,7 @@ export const AuthMutation = extendType({
           }
           // throw new Error(`No user found for email: ${email}`)
         }
+
         const passwordValid = await compare(password, user.password)
         if (!passwordValid) {
           return {
@@ -319,11 +325,29 @@ export const AuthMutation = extendType({
             // throw new Error('Invalid password')
           }
         }
+
+
+        await setLoginSession(ctx.res, user);
+
+        ctx.req.cookies = user;
+
+
+        console.log('ctx.req.cookies:', ctx.req.cookies);
+
+        // return payload;
+
         return {
-          token: sign({ userId: user.id }, APP_SECRET!),
+          // token: sign({ userId: user.id }, APP_SECRET!),
           user,
         }
       },
+    })
+
+    t.string('logout', {
+      resolve: async (_parent, _args, ctx: Context) => {
+        removeTokenCookie(ctx.res);
+        return "Logged out";
+      }
     })
   }
 })

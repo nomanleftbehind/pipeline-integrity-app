@@ -4,6 +4,7 @@ import { setContext } from '@apollo/client/link/context';
 
 const httpLink = createHttpLink({
   uri: '/api',
+  credentials: 'same-origin',
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -46,7 +47,7 @@ const apolloClient = new ApolloClient({
       }
     }
   }),
-  link: authLink.concat(httpLink),
+  link: httpLink,//authLink.concat(httpLink),
 })
 
 export default apolloClient

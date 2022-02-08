@@ -6,7 +6,7 @@ import { schema } from '../../graphql/schema';
 import { createContext } from '../../graphql/context';
 import Cors from 'micro-cors';
 
-const cors = Cors();
+const cors = Cors(/*{ allowCredentials: true, origin: 'https://studio.apollographql.com'}*/);
 
 const apolloServer = new ApolloServer({
   schema,

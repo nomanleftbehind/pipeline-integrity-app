@@ -63,7 +63,7 @@ export const PigRun = objectType({
 		})
 		t.nonNull.field('updatedAt', { type: 'DateTime' })
 	},
-})
+});
 
 
 export const PigRunQuery = extendType({
@@ -76,13 +76,14 @@ export const PigRunQuery = extendType({
 			},
 			resolve: async (_parent, { pipelineId }, ctx: Context) => {
 				const result = await ctx.prisma.pigRun.findMany({
-					where: { pipelineId }
+					where: { pipelineId },
+					orderBy: { dateIn: 'desc' },
 				})
 				return result;
 			},
 		})
 	}
-})
+});
 
 
 export const PigRunMutation = extendType({
@@ -105,17 +106,16 @@ export const PigRunMutation = extendType({
 				return ctx.prisma.pigRun.update({
 					where: { id: args.id },
 					data: {
-						pigType: databaseEnumToServerEnum(PigTypeEnumMembers, args.pigType) || undefined,
-						dateIn: args.dateIn || undefined,
-						dateOut: args.dateOut || undefined,
-						isolationValveFunctionTest: args.isolationValveFunctionTest || undefined,
-						pigSenderReceiverInspection: args.pigSenderReceiverInspection || undefined,
-						comment: args.comment || undefined,
-						operatorId: args.operatorId || undefined,
+						pigType: databaseEnumToServerEnum(PigTypeEnumMembers, args.pigType),
+						dateIn: args.dateIn,
+						dateOut: args.dateOut,
+						isolationValveFunctionTest: args.isolationValveFunctionTest,
+						pigSenderReceiverInspection: args.pigSenderReceiverInspection,
+						comment: args.comment,
+						operatorId: args.operatorId,
 						updatedById: String(userId),
 					},
 				})
-
 			},
 		})
 		t.field('addPigRun', {
@@ -155,7 +155,7 @@ export const PigRunMutation = extendType({
 			}
 		})
 	}
-})
+});
 
 
 export const PigTypeEnumMembers = {

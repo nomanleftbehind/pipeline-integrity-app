@@ -4,7 +4,6 @@
 
 type AuthPayload {
   errors: [FieldError]
-  token: String
   user: User
 }
 
@@ -333,6 +332,7 @@ type Mutation {
   editRisk(arielReview: Boolean, dateSlopeChecked: DateTime, environmentProximityTo: EnvironmentProximityToEnum, gasReleaseCost: Float, geotechnicalFacingS1: GeotechnicalFacingEnum, geotechnicalFacingS2: GeotechnicalFacingEnum, geotechnicalHeightS1: Int, geotechnicalHeightS2: Int, geotechnicalSlopeAngleS1: Int, geotechnicalSlopeAngleS2: Int, id: String!, oilReleaseCost: Float, probabilityGeo: Float, releaseTimeDays: Int, repairTimeDays: Int, riskPeople: Int, safeguardExternalCoating: Boolean, safeguardInternalProtection: Boolean): Risk
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
   login(email: String!, password: String!): AuthPayload
+  logout: String
   signup(email: String!, firstName: String!, lastName: String!, password: String!): AuthPayload
 }
 

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import InjectionPoints from '../fields/injection_points/InjectionPoints';
 import PipelineProperties from '../fields/PipelineProperties';
 import GenericTable from './GenericTable';
+import PigRuns from './PigRuns';
 import Risk from './Risk';
 import { IPipeline, IValidators } from './RenderPipeline';
 import TableCell from '@mui/material/TableCell';
@@ -112,11 +113,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
                   <Typography variant="h6" gutterBottom component="div">
                     Pig Runs
                   </Typography>
-                  <GenericTable
-                    pipelineId={id}
-                    in_tab_panel={true}
-                    table='pig runs'
-                  />
+                  <PigRuns pipelineId={id} />
                 </Box>
               </Collapse>
             </TabPanel>

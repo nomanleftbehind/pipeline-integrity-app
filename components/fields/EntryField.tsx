@@ -4,6 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import {
   useEditPipelineMutation,
   PipelinesByIdQueryDocument,
@@ -33,10 +34,11 @@ interface ITextFieldProps {
   columnName: string;
   record: IRecord;
   columnType?: 'string' | 'number';
+  deleteField?: () => void;
   validator?: IValidator;
 }
 
-export default function EntryField({ id, table, columnName, record, validator }: ITextFieldProps): JSX.Element {
+export default function EntryField({ id, table, columnName, record, validator, deleteField }: ITextFieldProps): JSX.Element {
   const [edit, setEdit] = useState(false);
   const [valid, setValid] = useState(true);
   const [state, setState] = useState(record?.toString() || "");
@@ -114,10 +116,10 @@ export default function EntryField({ id, table, columnName, record, validator }:
     const mutationOptions = {
       variables: {
         id,
-        [columnName]: Number(e.currentTarget.name)//validatorIsString && typeof record === "number" ? Number(e.currentTarget.name) : e.currentTarget.name
+        [columnName]: validatorIsString && typeof record === "number" ? Number(e.currentTarget.name) : e.currentTarget.name
       }
     }
-    console.log('submitted:', Number(e.currentTarget.name));
+    console.log('submitted:', e.currentTarget.name);
 
     switch (table) {
       case 'pig runs':
@@ -175,6 +177,10 @@ export default function EntryField({ id, table, columnName, record, validator }:
             <IconButton aria-label="edit cell" size="small" onClick={toggleEdit}>
               {edit ? <BlockOutlinedIcon /> : <EditOutlinedIcon />}
             </IconButton>
+            {deleteField && <IconButton aria-label="delete field" size="small" onClick={deleteField}>
+              <RemoveCircleOutlineOutlinedIcon />
+            </IconButton>}
+
           </div>
           {edit ?
             <form className="cell-l" name={state} onSubmit={handleSubmit}>

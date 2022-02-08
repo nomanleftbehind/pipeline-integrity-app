@@ -1,16 +1,29 @@
 import { PrismaClient } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '../lib/prisma';
+import { prisma } from '../lib/prisma';
+import { getUser } from "../lib/user";
+import { User as IUser } from '@prisma/client';
 
 export interface Context {
   prisma: PrismaClient;
-  req: NextApiRequest // HTTP request carrying the `Authorization` header
+  req: NextApiRequest; // HTTP request carrying the `Authorization` header
+  res: NextApiResponse;
+  user: IUser;
 }
 
-export function createContext(req: NextApiRequest) {
+interface ICreateContextProps {
+  req: NextApiRequest;
+  res: NextApiResponse;
+}
+
+export async function createContext({ req, res }: ICreateContextProps) {
+
+  const user = await getUser(req, prisma);
 
   return {
-    ...req,
     prisma,
+    /*...*/req,
+    /*...*/res,
+    user,
   }
 }

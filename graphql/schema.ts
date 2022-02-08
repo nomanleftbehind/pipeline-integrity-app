@@ -22,7 +22,7 @@ export const schemaWithoutPermissions = makeSchema({
         alias: 'prisma',
       },
     ],
-    debug: true
+    // debug: true
   },
 })
 
