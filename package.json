@@ -37,8 +37,10 @@
     "connect-redis": "^6.0.0",
     "cookie": "^0.4.1",
     "date-fns": "^2.27.0",
+    "deepmerge": "^4.2.2",
     "dotenv": "^10.0.0",
     "express-session": "^1.17.2",
+    "formik": "^2.2.9",
     "graphql": "^15.6.1",
     "graphql-middleware": "^6.1.10",
     "graphql-scalars": "^1.12.0",
@@ -53,7 +55,8 @@
     "react-dom": "^17.0.2",
     "redis": "^3.1.2",
     "swr": "^1.0.1",
-    "tedious": "^14.1.0"
+    "tedious": "^14.1.0",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "2.2.2",

@@ -1,6 +1,24 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 
 import { setContext } from '@apollo/client/link/context';
+import { schema } from '../graphql/schema';
+import { SchemaLink } from '@apollo/client/link/schema';
+import { HttpLink } from '@apollo/client/link/http';
+
+function createIsomorphLink() {
+  if (typeof window === 'undefined') {
+    // Extremely important to import them here because otherwise we get `Module not found: Can't resolve 'fs'` error.
+    const { SchemaLink } = require("@apollo/client/link/schema");
+    const { schema } = require("../graphql/schema");
+    return new SchemaLink({ schema });
+  } else {
+    return new HttpLink({
+      uri: '/api',
+      credentials: 'same-origin',
+    });
+  }
+}
+
 
 const httpLink = createHttpLink({
   uri: '/api',
@@ -47,7 +65,8 @@ const apolloClient = new ApolloClient({
       }
     }
   }),
-  link: httpLink,//authLink.concat(httpLink),
+  link: createIsomorphLink(),//httpLink,//authLink.concat(httpLink),
+  // ssrMode: typeof window === 'undefined',
 })
 
 export default apolloClient

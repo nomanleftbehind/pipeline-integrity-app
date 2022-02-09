@@ -20,10 +20,5 @@ export async function createContext({ req, res }: ICreateContextProps) {
 
   const user = await getUser(req, prisma);
 
-  return {
-    prisma,
-    /*...*/req,
-    /*...*/res,
-    user,
-  }
+  return { prisma, req, res, user }
 }
