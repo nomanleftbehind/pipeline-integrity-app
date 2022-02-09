@@ -10,7 +10,8 @@ import Field from '../components/field';
 
 import { useAuth } from '../context/AuthContext';
 import { Form, Formik, FormikHelpers } from 'formik';
-import Yup from 'yup';
+import FormikFormControl from '../components/FormikFormControl';
+import * as Yup from 'yup';
 
 interface Values {
   email: string;
@@ -23,7 +24,7 @@ const LoginSchema = Yup.object().shape({
 });
 
 export default function Login() {
-  const { setUser } = useAuth();
+  const { setUser } = useAuth() || {};
   const client = useApolloClient();
   const router = useRouter();
 
@@ -39,14 +40,18 @@ export default function Login() {
           values: Values,
           { setFieldError }: FormikHelpers<Values>
         ) => {
+
           try {
             await client.resetStore();
-            const { data, errors } = await login({
+            const { data } = await login({
               variables: {
-                userInput: values,
+                email: values.email,
+                password: values.password,
               },
             });
-            if (data?.login) {
+            if (data?.login?.user && setUser) {
+              console.log('data.login.user', data.login.user);
+              
               setUser(data.login.user);
               await router.push('/');
             }

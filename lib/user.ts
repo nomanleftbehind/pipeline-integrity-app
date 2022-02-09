@@ -3,11 +3,11 @@ import { NextApiRequest } from 'next';
 import { getLoginSession } from './auth';
 
 export const getUser = async (req: NextApiRequest, prisma: PrismaClient) => {
-  
+
   const session = await getLoginSession(req);
   console.log('session', session);
   if (session) {
-    return prisma.user.findFirst({ where: { id: session.id } });
+    return prisma.user.findUnique({ where: { id: session.id } });
   }
   return null;
 };

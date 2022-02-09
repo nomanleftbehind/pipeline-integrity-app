@@ -8,12 +8,12 @@ import { UserContext } from './_app';
 import { useAuth } from '../context/AuthContext';
 
 export default function Index() {
-  const { user, authLoading } = useAuth();
+  const { user, authLoading } = useAuth() || {};
   const router = useRouter();
 
   useEffect(() => {
     console.log('user', user, 'authLoading', authLoading);
-    
+
     if (!user && !authLoading) {
       router.push('/login');
     }

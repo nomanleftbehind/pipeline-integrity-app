@@ -468,7 +468,7 @@ export function databaseEnumToServerEnum<T>(object: T, value: T[keyof T] | null 
 
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
-type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 type IPipelinePartialBy = PartialBy<IPipeline, 'id' | 'createdAt' | 'updatedAt'>
 
 export const PipelineMutation = extendType({

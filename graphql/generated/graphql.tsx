@@ -18,7 +18,6 @@ export type Scalars = {
 
 export type AuthPayload = {
   errors?: Maybe<Array<Maybe<FieldError>>>;
-  token?: Maybe<Scalars['String']>;
   user?: Maybe<User>;
 };
 
@@ -342,6 +341,7 @@ export type Mutation = {
   editRisk?: Maybe<Risk>;
   editSatellite?: Maybe<Satellite>;
   login?: Maybe<AuthPayload>;
+  logout?: Maybe<Scalars['String']>;
   signup?: Maybe<AuthPayload>;
 };
 
@@ -1216,7 +1216,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { login?: { token?: string | null | undefined, user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, errors?: Array<{ field?: string | null | undefined, message?: string | null | undefined } | null | undefined> | null | undefined } | null | undefined };
+export type LoginMutation = { login?: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, errors?: Array<{ field?: string | null | undefined, message?: string | null | undefined } | null | undefined> | null | undefined } | null | undefined };
 
 export type DeletePipelineMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1488,7 +1488,6 @@ export type SideBarQuery = { sideBar?: Array<{ id: string, name: string, satelli
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
-    token
     user {
       id
       email

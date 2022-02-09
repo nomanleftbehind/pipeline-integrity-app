@@ -8,7 +8,7 @@ export interface Context {
   prisma: PrismaClient;
   req: NextApiRequest; // HTTP request carrying the `Authorization` header
   res: NextApiResponse;
-  user: IUser;
+  user: IUser | null;
 }
 
 interface ICreateContextProps {
@@ -16,9 +16,9 @@ interface ICreateContextProps {
   res: NextApiResponse;
 }
 
-export async function createContext({ req, res }: ICreateContextProps) {
+export async function createContext({ req, res }: ICreateContextProps): Promise<Context> {
 
   const user = await getUser(req, prisma);
 
-  return { prisma, req, res, user }
+  return { prisma, req, res, user };
 }

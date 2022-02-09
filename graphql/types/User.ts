@@ -1,5 +1,4 @@
-import { enumType, objectType, inputObjectType, stringArg, nonNull, arg, asNexusMethod } from 'nexus';
-import { extendType } from 'nexus';
+import { enumType, objectType, extendType, inputObjectType, stringArg, nonNull, arg, asNexusMethod } from 'nexus';
 import { DateTimeResolver } from 'graphql-scalars';
 import { Context } from '../context';
 import { APP_SECRET, getUserId } from '../utils';
@@ -158,13 +157,15 @@ export const UserQuery = extendType({
     t.field('me', {
       type: 'User',
       resolve: (_parent, _args, ctx: Context) => {
-        const userId = getUserId(ctx)
 
-        return ctx.prisma.user.findUnique({
-          where: {
-            id: String(userId),
-          },
-        })
+        return ctx.user;
+        // const userId = ctx.user//getUserId(ctx)
+
+        // return ctx.prisma.user.findUnique({
+        //   where: {
+        //     id: String(userId),
+        //   },
+        // })
       },
     })
   }
@@ -207,7 +208,7 @@ export const UserCreateInput = inputObjectType({
     t.list.field('pipelines', { type: 'PipelineCreateInput' })
     t.list.field('injectionPoints', { type: 'InjectionPointCreateInput' })
   },
-})
+});
 
 export const UserUniqueInput = inputObjectType({
   name: 'UserUniqueInput',
@@ -215,7 +216,7 @@ export const UserUniqueInput = inputObjectType({
     t.string('id')
     t.string('email')
   },
-})
+});
 
 export const FieldError = objectType({
   name: 'FieldError',
@@ -223,16 +224,15 @@ export const FieldError = objectType({
     t.string('field')
     t.string('message')
   }
-})
+});
 
 export const AuthPayload = objectType({
   name: 'AuthPayload',
   definition(t) {
-    // t.string('token')
     t.field('user', { type: 'User' })
     t.list.field('errors', { type: 'FieldError' })
   },
-})
+});
 
 export const AuthMutation = extendType({
   type: 'Mutation',
@@ -281,7 +281,6 @@ export const AuthMutation = extendType({
           },
         })
         return {
-          // token: sign({ userId: user.id }, APP_SECRET!),
           user,
         }
       },
@@ -294,13 +293,13 @@ export const AuthMutation = extendType({
         password: nonNull(stringArg()),
       },
       resolve: async (_parent, { email, password }, ctx: Context) => {
-        console.log('email password', email, password);
+
         const user = await ctx.prisma.user.findUnique({
           where: {
             email,
           },
-        })
-        console.log('user:', user);
+        });
+
         if (!user) {
           return {
             errors: [
@@ -310,10 +309,9 @@ export const AuthMutation = extendType({
               },
             ]
           }
-          // throw new Error(`No user found for email: ${email}`)
         }
 
-        const passwordValid = await compare(password, user.password)
+        const passwordValid = await compare(password, user.password);
         if (!passwordValid) {
           return {
             errors: [
@@ -322,23 +320,14 @@ export const AuthMutation = extendType({
                 message: 'incorrect password'
               },
             ]
-            // throw new Error('Invalid password')
           }
         }
 
-
-        await setLoginSession(ctx.res, user);
-
-        ctx.req.cookies = user;
-
-
-        console.log('ctx.req.cookies:', ctx.req.cookies);
-
-        // return payload;
+        const userNoPassword = { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role };
+        await setLoginSession(ctx.res, userNoPassword);
 
         return {
-          // token: sign({ userId: user.id }, APP_SECRET!),
-          user,
+          user
         }
       },
     })
@@ -346,7 +335,7 @@ export const AuthMutation = extendType({
     t.string('logout', {
       resolve: async (_parent, _args, ctx: Context) => {
         removeTokenCookie(ctx.res);
-        return "Logged out";
+        return 'Logged out';
       }
     })
   }

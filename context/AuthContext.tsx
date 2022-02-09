@@ -23,7 +23,7 @@ interface IContextProps {
   loadUser: (options?: QueryLazyOptions<Exact<{ [key: string]: never; }>> | undefined) => void;
 }
 
-const AuthContext = createContext<IContextProps>(null);
+const AuthContext = createContext<IContextProps | null>(null);
 
 interface IAuthProviderProps {
   children: ReactNode
@@ -31,21 +31,25 @@ interface IAuthProviderProps {
 
 export default function AuthProvider({ children }: IAuthProviderProps) {
   const [user, setUser] = useState<IUser>(null);
-  const [authLoading, setAuthLoading] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
   const [authError, setAuthError] = useState<string>('');
 
-  const [loadUser, { data, loading }] = useMeLazyQuery({
+  const [loadUser, { data, loading, error }] = useMeLazyQuery({
     onCompleted: () => {
-      console.log(data);
+      console.log('on completed', data);
       setUser(data?.me);
       setAuthLoading(loading);
     },
     onError: (err) => {
+      console.log('onError', err);
+      
       setAuthError(err.message);
     },
   });
 
-  useEffect(() => loadUser(), [loadUser]);
+  useEffect(() => loadUser(), []);
+
+  useEffect(() => console.log('data',data), [data]);
 
   return (
     <AuthContext.Provider
