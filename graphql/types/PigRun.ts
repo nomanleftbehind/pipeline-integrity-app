@@ -1,5 +1,4 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
-import { getUserId } from '../utils';
 import { Context } from '../context';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 
@@ -102,7 +101,6 @@ export const PigRunMutation = extendType({
 				operatorId: stringArg(),
 			},
 			resolve: async (_parent, args, ctx: Context) => {
-				const userId = getUserId(ctx);
 				return ctx.prisma.pigRun.update({
 					where: { id: args.id },
 					data: {
@@ -113,7 +111,7 @@ export const PigRunMutation = extendType({
 						pigSenderReceiverInspection: args.pigSenderReceiverInspection,
 						comment: args.comment,
 						operatorId: args.operatorId,
-						updatedById: String(userId),
+						updatedById: String(ctx.user?.id),
 					},
 				})
 			},
@@ -124,7 +122,7 @@ export const PigRunMutation = extendType({
 				pipelineId: nonNull(stringArg()),
 			},
 			resolve: async (_parent, { pipelineId }, ctx: Context) => {
-				const userId = getUserId(ctx);
+				const userId = String(ctx.user?.id);
 				const pipelinePigRuns = await ctx.prisma.pigRun.findMany({
 					where: { pipelineId },
 					select: { dateIn: true }
@@ -136,8 +134,8 @@ export const PigRunMutation = extendType({
 					data: {
 						pipelineId: pipelineId,
 						dateIn,
-						createdById: String(userId),
-						updatedById: String(userId),
+						createdById: userId,
+						updatedById: userId,
 					}
 				});
 				return result;

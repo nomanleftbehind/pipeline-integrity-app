@@ -1,9 +1,7 @@
 import { enumType, objectType, extendType, inputObjectType, stringArg, nonNull, arg, asNexusMethod } from 'nexus';
 import { DateTimeResolver } from 'graphql-scalars';
 import { Context } from '../context';
-import { APP_SECRET, getUserId } from '../utils';
-import { compare, hash } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
+import { compare, genSalt, hash } from 'bcryptjs';
 import { setLoginSession } from '../../lib/auth';
 import { removeTokenCookie } from '../../lib/auth-cookies';
 import { serverEnumToDatabaseEnum } from './Pipeline';
@@ -157,15 +155,7 @@ export const UserQuery = extendType({
     t.field('me', {
       type: 'User',
       resolve: (_parent, _args, ctx: Context) => {
-
         return ctx.user;
-        // const userId = ctx.user//getUserId(ctx)
-
-        // return ctx.prisma.user.findUnique({
-        //   where: {
-        //     id: String(userId),
-        //   },
-        // })
       },
     })
   }
@@ -245,11 +235,9 @@ export const AuthMutation = extendType({
         email: nonNull(stringArg()),
         password: nonNull(stringArg()),
       },
-      resolve: async (_parent, args, ctx: Context) => {
+      resolve: async (_parent, { email, password, firstName, lastName }, ctx: Context) => {
         const userExists = await ctx.prisma.user.findUnique({
-          where: {
-            email: args.email
-          }
+          where: { email }
         });
         if (userExists) {
           return {
@@ -261,7 +249,7 @@ export const AuthMutation = extendType({
             ]
           }
         }
-        if (args.password.length < 8) {
+        if (password.length < 8) {
           return {
             errors: [
               {
@@ -271,18 +259,17 @@ export const AuthMutation = extendType({
             ]
           }
         }
-        const hashedPassword = await hash(args.password, 10)
+        const salt = await genSalt(10);
+        const hashedPassword = await hash(password, salt);
         const user = await ctx.prisma.user.create({
           data: {
-            firstName: args.firstName,
-            lastName: args.lastName,
-            email: args.email,
+            firstName,
+            lastName,
+            email,
             password: hashedPassword,
           },
-        })
-        return {
-          user,
-        }
+        });
+        return { user };
       },
     })
 
@@ -326,9 +313,7 @@ export const AuthMutation = extendType({
         const userNoPassword = { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role };
         await setLoginSession(ctx.res, userNoPassword);
 
-        return {
-          user
-        }
+        return { user };
       },
     })
 

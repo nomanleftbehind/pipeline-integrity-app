@@ -1,6 +1,5 @@
 import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
-import { getUserId } from '../utils';
 
 
 export const gasAssociatedLiquidsCalc = (gas: number) => {
@@ -121,7 +120,6 @@ export const InjectionPointMutation = extendType({
         pvNodeId: stringArg()
       },
       resolve: async (_, args, ctx: Context) => {
-        const userId = getUserId(ctx);
         try {
           return ctx.prisma.injectionPoint.update({
             where: { id: args.id },
@@ -136,7 +134,7 @@ export const InjectionPointMutation = extendType({
               firstInjection: args.firstInjection || undefined,
               lastInjection: args.lastInjection || undefined,
               pvNodeId: args.pvNodeId || undefined,
-              updatedById: String(userId),
+              updatedById: String(ctx.user?.id),
             },
           })
         } catch (e) {

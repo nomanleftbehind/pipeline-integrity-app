@@ -1,14 +1,18 @@
-import * as React from 'react';
-import { useContext } from 'react';
-import { UserContext } from '../pages/_app';
+import { useState } from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+// import { User } from '@prisma/client';
 
-export default function DropdownMenu() {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+import { IUser } from '../context/AuthContext';
+
+interface IDropdownMenuProps {
+  user: NonNullable<IUser>;
+}
+
+export default function DropdownMenu({ user }: IDropdownMenuProps) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const { user } = useContext(UserContext);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -23,11 +27,11 @@ export default function DropdownMenu() {
         aria-controls="basic-menu"
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
-        style={{textTransform: 'none', padding: 0}}
+        style={{ textTransform: 'none', padding: 0 }}
         color="inherit"
         onClick={handleClick}
       >
-        {user?.email}
+        {user.email}
       </Button>
       <Menu
         id="basic-menu"

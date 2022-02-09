@@ -2,7 +2,6 @@ import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, bo
 import { databaseEnumToServerEnum, TypeEnumMembers, MaterialEnumMembers } from './Pipeline';
 import { SubstanceEnumMembers, StatusEnumMembers } from './LicenseChange';
 import { totalFluidsCalc } from './InjectionPoint';
-import { getUserId } from '../utils';
 import { Context } from '../context';
 
 
@@ -292,7 +291,6 @@ export const RiskMutation = extendType({
         safeguardExternalCoating: booleanArg(),
       },
       resolve: async (_, args, ctx: Context) => {
-        const userId = getUserId(ctx);
 
         return ctx.prisma.risk.update({
           where: { id: args.id },
@@ -314,7 +312,7 @@ export const RiskMutation = extendType({
             probabilityGeo: args.probabilityGeo,
             safeguardInternalProtection: args.safeguardInternalProtection,
             safeguardExternalCoating: args.safeguardExternalCoating,
-            updatedById: String(userId),
+            updatedById: String(ctx.user?.id),
           },
         })
 
@@ -326,12 +324,12 @@ export const RiskMutation = extendType({
         id: nonNull(stringArg()),
       },
       resolve: (_parent, { id }, ctx: Context) => {
-        const userId = getUserId(ctx);
+        const userId = String(ctx.user?.id);
         return ctx.prisma.risk.create({
           data: {
             id,
-            createdById: String(userId),
-            updatedById: String(userId),
+            createdById: userId,
+            updatedById: userId,
           }
         })
       }

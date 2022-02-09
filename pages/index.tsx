@@ -2,8 +2,6 @@ import Layout from '../components/layout';
 import MenuBar from '../components/menubar';
 import { useContext, ReactNode, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useMeQuery } from '../graphql/generated/graphql';
-import { UserContext } from './_app';
 
 import { useAuth } from '../context/AuthContext';
 
@@ -86,12 +84,12 @@ export default function Index() {
 // }
 
 
-Index.getLayout = function getLayout(page: ReactNode) {
+// Index.getLayout = function getLayout(page: ReactNode) {
 
-  return (
-    <Layout>
-      <MenuBar />
-      {page}
-    </Layout>
-  )
-}
+//   return (
+//     <Layout>
+//       <MenuBar />
+//       {page}
+//     </Layout>
+//   )
+// }

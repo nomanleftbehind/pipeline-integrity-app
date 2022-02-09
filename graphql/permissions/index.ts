@@ -1,21 +1,12 @@
-import { rule, shield } from 'graphql-shield'
-import { getUserId } from '../utils'
-import { Context } from '../context'
+import { rule, shield } from 'graphql-shield';
+import { Context } from '../context';
 
 const rules = {
   isAuthenticatedUser: rule()((_parent, _args, ctx: Context) => {
-    const userId = getUserId(ctx);
-    return Boolean(userId)
+    return Boolean(ctx.user);
   }),
   hasMutationPrivileges: rule()(async (_parent, _args, ctx: Context) => {
-    const userId = getUserId(ctx);
-    const user = await ctx.prisma.user
-      .findUnique({
-        where: {
-          id: userId,
-        },
-      })
-    return user?.role === 'ADMIN'
+    return ctx.user?.role === 'ADMIN';
   }),
 }
 

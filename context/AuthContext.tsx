@@ -13,7 +13,7 @@ import {
 
 import { useMeLazyQuery, MeQuery, Exact } from '../graphql/generated/graphql';
 
-type IUser = MeQuery['me'];
+export type IUser = MeQuery['me'];
 
 interface IContextProps {
   user: IUser;
@@ -34,22 +34,18 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
   const [authLoading, setAuthLoading] = useState(true);
   const [authError, setAuthError] = useState<string>('');
 
-  const [loadUser, { data, loading, error }] = useMeLazyQuery({
+  const [loadUser, { data, loading }] = useMeLazyQuery({
     onCompleted: () => {
       console.log('on completed', data);
       setUser(data?.me);
       setAuthLoading(loading);
     },
     onError: (err) => {
-      console.log('onError', err);
-      
       setAuthError(err.message);
     },
   });
 
   useEffect(() => loadUser(), []);
-
-  useEffect(() => console.log('data',data), [data]);
 
   return (
     <AuthContext.Provider

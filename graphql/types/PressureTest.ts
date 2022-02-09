@@ -1,6 +1,5 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
 import { databaseEnumToServerEnum } from './Pipeline';
-import { getUserId } from '../utils';
 import { Context } from '../context';
 
 
@@ -101,7 +100,6 @@ export const PressureTestMutation = extendType({
         comment: stringArg(),
       },
       resolve: async (_, args, ctx: Context) => {
-        const userId = getUserId(ctx);
         return ctx.prisma.pressureTest.update({
           where: { id: args.id },
           data: {
@@ -113,7 +111,7 @@ export const PressureTestMutation = extendType({
             pressureTestReceivedDate: args.pressureTestReceivedDate || undefined,
             integritySheetUpdated: args.integritySheetUpdated || undefined,
             comment: args.comment || undefined,
-            updatedById: String(userId),
+            updatedById: String(ctx.user?.id),
           },
         })
 
@@ -125,12 +123,12 @@ export const PressureTestMutation = extendType({
         pipelineId: nonNull(stringArg()),
       },
       resolve: (_parent, { pipelineId }, ctx: Context) => {
-        const userId = getUserId(ctx);
+        const userId = String(ctx.user?.id);
         return ctx.prisma.pressureTest.create({
           data: {
             pipelineId,
-            createdById: String(userId),
-            updatedById: String(userId),
+            createdById: userId,
+            updatedById: userId,
           }
         })
       }

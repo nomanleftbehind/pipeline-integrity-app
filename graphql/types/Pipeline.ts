@@ -1,7 +1,6 @@
 import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg, booleanArg } from 'nexus';
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
-import { getUserId } from '../utils';
 import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
 
 
@@ -500,7 +499,6 @@ export const PipelineMutation = extendType({
         piggingFrequency: intArg(),
       },
       resolve: async (_, args, ctx: Context) => {
-        const userId = getUserId(ctx);
         try {
           return ctx.prisma.pipeline.update({
             where: { id: args.id },
@@ -524,7 +522,7 @@ export const PipelineMutation = extendType({
               internalProtection: databaseEnumToServerEnum(InternalProtectionEnumMembers, args.internalProtection),
               piggable: args.piggable || undefined,
               piggingFrequency: args.piggingFrequency || undefined,
-              updatedById: String(userId),
+              updatedById: String(ctx.user?.id),
             },
           })
         } catch (e) {
@@ -551,7 +549,7 @@ export const PipelineMutation = extendType({
         id: nonNull(stringArg()),
       },
       resolve: async (_parent, { id }, ctx: Context) => {
-        const userId = getUserId(ctx);
+        const userId = String(ctx.user?.id);
         const p = await ctx.prisma.pipeline.findUnique({
           where: { id }
         }) as IPipelinePartialBy
@@ -561,8 +559,8 @@ export const PipelineMutation = extendType({
           delete p.id;
           delete p.createdAt;
           delete p.updatedAt;
-          p.createdById = String(userId);
-          p.updatedById = String(userId);
+          p.createdById = userId;
+          p.updatedById = userId;
           return ctx.prisma.pipeline.create({
             data: p
           })
@@ -577,7 +575,6 @@ export const PipelineMutation = extendType({
         flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
       },
       resolve: async (_parent, { id, connectPipelineId, flowCalculationDirection }, ctx: Context) => {
-        const userId = getUserId(ctx);
 
         const result = await ctx.prisma.pipeline.update({
           where: { id },
@@ -590,7 +587,7 @@ export const PipelineMutation = extendType({
             } : undefined,
             updatedBy: {
               update: {
-                id: String(userId),
+                id: String(ctx.user?.id),
               }
             }
           }
@@ -606,7 +603,6 @@ export const PipelineMutation = extendType({
         flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
       },
       resolve: async (_parent, { id, disconnectPipelineId, flowCalculationDirection }, ctx: Context) => {
-        const userId = getUserId(ctx);
 
         const result = await ctx.prisma.pipeline.update({
           where: { id },
@@ -619,7 +615,7 @@ export const PipelineMutation = extendType({
             } : undefined,
             updatedBy: {
               update: {
-                id: String(userId),
+                id: String(ctx.user?.id),
               }
             }
           }
@@ -634,7 +630,6 @@ export const PipelineMutation = extendType({
         sourceId: nonNull(stringArg()),
       },
       resolve: async (_parent, { id, sourceId }, ctx: Context) => {
-        const userId = getUserId(ctx);
         return ctx.prisma.pipeline.update({
           where: { id },
           data: {
@@ -645,7 +640,7 @@ export const PipelineMutation = extendType({
             },
             updatedBy: {
               update: {
-                id: String(userId),
+                id: String(ctx.user?.id),
               }
             }
           }
@@ -659,7 +654,6 @@ export const PipelineMutation = extendType({
         sourceId: nonNull(stringArg()),
       },
       resolve: async (_parent, { id, sourceId }, ctx: Context) => {
-        const userId = getUserId(ctx);
         return ctx.prisma.pipeline.update({
           where: { id },
           data: {
@@ -668,7 +662,7 @@ export const PipelineMutation = extendType({
             },
             updatedBy: {
               update: {
-                id: String(userId),
+                id: String(ctx.user?.id),
               }
             }
           }

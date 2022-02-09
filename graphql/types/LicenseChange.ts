@@ -1,6 +1,5 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
 import { databaseEnumToServerEnum, serverEnumToDatabaseEnum } from './Pipeline';
-import { getUserId } from '../utils';
 import { Context } from '../context';
 
 
@@ -144,7 +143,6 @@ export const LicenseChangeMutation = extendType({
         linkToDocumentation: stringArg(),
       },
       resolve: async (_parent, args, ctx: Context) => {
-        const userId = getUserId(ctx);
         return ctx.prisma.licenseChange.update({
           where: { id: args.id },
           data: {
@@ -153,7 +151,7 @@ export const LicenseChangeMutation = extendType({
             substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
             date: args.date || undefined,
             linkToDocumentation: args.linkToDocumentation || undefined,
-            updatedById: String(userId),
+            updatedById: String(ctx.user?.id),
           },
         })
       },
@@ -164,15 +162,15 @@ export const LicenseChangeMutation = extendType({
         pipelineId: nonNull(stringArg()),
       },
       resolve: (_parent, { pipelineId }, ctx: Context) => {
-        const userId = getUserId(ctx);
+        const userId = String(ctx.user?.id);
         const date = new Date();
         date.setHours(0, 0, 0, 0);
         return ctx.prisma.licenseChange.create({
           data: {
             pipelineId,
             date,
-            createdById: String(userId),
-            updatedById: String(userId),
+            createdById: userId,
+            updatedById: userId,
           }
         })
       }

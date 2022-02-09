@@ -1,6 +1,5 @@
 import { extendType, objectType, inputObjectType, stringArg, nonNull, arg } from 'nexus';
 import { Context } from '../context';
-import { getUserId } from '../utils';
 
 
 export const Satellite = objectType({
@@ -97,7 +96,6 @@ export const SatelliteMutation = extendType({
         facilityUniqueInput: arg({ type: 'FacilityUniqueInput' }),
       },
       resolve: async (_, args, ctx: Context) => {
-        const userId = getUserId(ctx);
         try {
           return ctx.prisma.satellite.update({
             where: { id: args.id },
@@ -111,7 +109,7 @@ export const SatelliteMutation = extendType({
               } : undefined,
               updatedBy: {
                 connect: {
-                  id: String(userId),
+                  id: String(ctx.user?.id),
                 }
               },
             },

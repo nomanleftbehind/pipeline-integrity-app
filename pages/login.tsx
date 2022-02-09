@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useContext, useEffect, ReactNode } from 'react';
-import { UserContext } from '../pages/_app';
 import { useApolloClient, ApolloError } from '@apollo/client';
 import { useLoginMutation, useMeQuery } from '../graphql/generated/graphql';
 import Layout from '../components/layout';

@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { User } from '@prisma/client';
 import { getTokenCookie, MAX_AGE, setTokenCookie } from './auth-cookies';
 
-type UserNoPassword = Omit<User, 'password'>;
+export type UserNoPassword = Omit<User, 'password'>;
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET!;
 
