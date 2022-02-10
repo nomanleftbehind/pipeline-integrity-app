@@ -1,6 +1,4 @@
-import Layout from '../components/layout';
-import MenuBar from '../components/menubar';
-import { useContext, ReactNode, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 import { useAuth } from '../context/AuthContext';
@@ -10,8 +8,6 @@ export default function Index() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log('user', user, 'authLoading', authLoading);
-
     if (!user && !authLoading) {
       router.push('/login');
     }
@@ -81,15 +77,4 @@ export default function Index() {
 //         (loading ? <NoteSkeleton /> : data && <NotesList notes={data.notes} />)}
 //     </Layout>
 //   );
-// }
-
-
-// Index.getLayout = function getLayout(page: ReactNode) {
-
-//   return (
-//     <Layout>
-//       <MenuBar />
-//       {page}
-//     </Layout>
-//   )
 // }

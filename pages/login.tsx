@@ -1,10 +1,7 @@
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { useContext, useEffect, ReactNode } from 'react';
 import { useApolloClient, ApolloError } from '@apollo/client';
 import { useLoginMutation, useMeQuery } from '../graphql/generated/graphql';
-import Layout from '../components/layout';
-import MenuBar from '../components/menubar';
 import Field from '../components/field';
 
 import { useAuth } from '../context/AuthContext';
@@ -204,15 +201,4 @@ export default function Login() {
   //     </form>
   //   </>
   // )
-}
-
-
-Login.getLayout = function getLayout(page: ReactNode) {
-
-  return (
-    <Layout>
-      <MenuBar />
-      {page}
-    </Layout>
-  )
 }

@@ -1,6 +1,3 @@
-import Layout from '../components/layout';
-import MenuBar from '../components/menubar';
-
 import { sum_flow } from '../wasm/pkg/pipeline_database_wasm_bg';
 
 
@@ -14,14 +11,5 @@ export default function WebAssembly() {
     <div>
       {obj1}
     </div>
-  )
-}
-
-WebAssembly.getLayout = function getLayout(page: React.ReactNode) {
-  return (
-    <Layout>
-      <MenuBar />
-      {page}
-    </Layout>
   )
 }

@@ -1,6 +1,3 @@
-import Layout from '../components/layout';
-import MenuBar from '../components/menubar';
-import { ReactNode } from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -22,14 +19,5 @@ export default function Facilities() {
         <Copyright /> */}
       </Box>
     </Container>
-  )
-}
-
-Facilities.getLayout = function getLayout(page: ReactNode) {
-  return (
-    <Layout>
-      <MenuBar />
-      {page}
-    </Layout>
   )
 }

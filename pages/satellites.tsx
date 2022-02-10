@@ -1,6 +1,3 @@
-import Layout from '../components/layout';
-import MenuBar from '../components/menubar';
-import React, { ReactNode } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { Facility, Satellite } from '@prisma/client';
 
@@ -56,13 +53,4 @@ export default function SatelliteFacilityList() {
   } else {
     return <p>Loading......</p>;
   }
-}
-
-SatelliteFacilityList.getLayout = function getLayout(page: ReactNode) {
-  return (
-    <Layout>
-      <MenuBar />
-      {page}
-    </Layout>
-  )
 }

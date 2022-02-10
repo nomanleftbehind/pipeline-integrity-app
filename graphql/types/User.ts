@@ -4,7 +4,7 @@ import { Context } from '../context';
 import { compare, genSalt, hash } from 'bcryptjs';
 import { setLoginSession } from '../../lib/auth';
 import { removeTokenCookie } from '../../lib/auth-cookies';
-import { serverEnumToDatabaseEnum } from './Pipeline';
+import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 
 
 export const DateTime = asNexusMethod(DateTimeResolver, 'date');
@@ -190,13 +190,11 @@ export const UserPipelines = extendType({
 export const UserCreateInput = inputObjectType({
   name: 'UserCreateInput',
   definition(t) {
-    t.nonNull.string('email')
     t.nonNull.string('firstName')
     t.nonNull.string('lastName')
-    t.list.field('facilities', { type: 'FacilityCreateInput' })
-    t.list.field('satellites', { type: 'SatelliteCreateInput' })
-    t.list.field('pipelines', { type: 'PipelineCreateInput' })
-    t.list.field('injectionPoints', { type: 'InjectionPointCreateInput' })
+    t.nonNull.string('email')
+    t.nonNull.string('password')
+    t.field('role', { type: 'UserRoleEnum' })
   },
 });
 
@@ -230,12 +228,10 @@ export const AuthMutation = extendType({
     t.field('signup', {
       type: 'AuthPayload',
       args: {
-        firstName: nonNull(stringArg()),
-        lastName: nonNull(stringArg()),
-        email: nonNull(stringArg()),
-        password: nonNull(stringArg()),
+        userCreateInput: nonNull(arg({ type: 'UserCreateInput' })),
       },
-      resolve: async (_parent, { email, password, firstName, lastName }, ctx: Context) => {
+      resolve: async (_parent, { userCreateInput }, ctx: Context) => {
+        const { firstName, lastName, email, password, role } = userCreateInput;
         const userExists = await ctx.prisma.user.findUnique({
           where: { email }
         });
@@ -267,6 +263,7 @@ export const AuthMutation = extendType({
             lastName,
             email,
             password: hashedPassword,
+            role: databaseEnumToServerEnum(UserRoleEnumMembers, role) || undefined,
           },
         });
         return { user };

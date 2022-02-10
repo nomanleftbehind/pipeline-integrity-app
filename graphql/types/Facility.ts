@@ -85,7 +85,7 @@ export const FacilityCreateInput = inputObjectType({
   name: 'FacilityCreateInput',
   definition(t) {
     t.nonNull.string('name')
-    t.list.field('satellites', { type: SatelliteCreateInput })
+    t.list.field('satellites', { type: 'SatelliteCreateInput' })
   },
 })
 

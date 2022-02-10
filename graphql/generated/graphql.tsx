@@ -549,10 +549,7 @@ export type MutationLoginArgs = {
 
 
 export type MutationSignupArgs = {
-  email: Scalars['String'];
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  password: Scalars['String'];
+  userCreateInput: UserCreateInput;
 };
 
 export enum PigInspectionEnum {
@@ -1159,12 +1156,10 @@ export type User = {
 
 export type UserCreateInput = {
   email: Scalars['String'];
-  facilities?: Maybe<Array<Maybe<FacilityCreateInput>>>;
   firstName: Scalars['String'];
-  injectionPoints?: Maybe<Array<Maybe<InjectionPointCreateInput>>>;
   lastName: Scalars['String'];
-  pipelines?: Maybe<Array<Maybe<PipelineCreateInput>>>;
-  satellites?: Maybe<Array<Maybe<SatelliteCreateInput>>>;
+  password: Scalars['String'];
+  role?: Maybe<UserRoleEnum>;
 };
 
 export enum UserRoleEnum {
@@ -1217,6 +1212,13 @@ export type LoginMutationVariables = Exact<{
 
 
 export type LoginMutation = { login?: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, errors?: Array<{ field?: string | null | undefined, message?: string | null | undefined } | null | undefined> | null | undefined } | null | undefined };
+
+export type SignupMutationVariables = Exact<{
+  userCreateInput: UserCreateInput;
+}>;
+
+
+export type SignupMutation = { signup?: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, errors?: Array<{ field?: string | null | undefined, message?: string | null | undefined } | null | undefined> | null | undefined } | null | undefined };
 
 export type DeletePipelineMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1529,6 +1531,49 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const SignupDocument = gql`
+    mutation Signup($userCreateInput: UserCreateInput!) {
+  signup(userCreateInput: $userCreateInput) {
+    user {
+      id
+      email
+      firstName
+      lastName
+      role
+    }
+    errors {
+      field
+      message
+    }
+  }
+}
+    `;
+export type SignupMutationFn = Apollo.MutationFunction<SignupMutation, SignupMutationVariables>;
+
+/**
+ * __useSignupMutation__
+ *
+ * To run a mutation, you first call `useSignupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSignupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [signupMutation, { data, loading, error }] = useSignupMutation({
+ *   variables: {
+ *      userCreateInput: // value for 'userCreateInput'
+ *   },
+ * });
+ */
+export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<SignupMutation, SignupMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SignupMutation, SignupMutationVariables>(SignupDocument, options);
+      }
+export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
+export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
+export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
 export const DeletePipelineDocument = gql`
     mutation deletePipeline($id: String!) {
   deletePipeline(id: $id) {

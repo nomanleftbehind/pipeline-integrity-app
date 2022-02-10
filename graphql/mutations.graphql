@@ -14,6 +14,22 @@ mutation Login($email: String!, $password: String!) {
   }
 }
 
+mutation Signup($userCreateInput: UserCreateInput!) {
+  signup(userCreateInput: $userCreateInput) {
+    user {
+      id
+      email
+      firstName
+      lastName
+      role
+    }
+    errors {
+      field
+      message
+    }
+  }
+}
+
 mutation deletePipeline($id: String!) {
   deletePipeline(id: $id) {
     id

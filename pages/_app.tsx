@@ -4,12 +4,10 @@ import AuthProvider from "../context/AuthContext";
 import { useApollo } from '../graphql/client';
 import '../styles/globals.css';
 import Layout from '../components/layout';
+// import '../styles/styles-formik.css';
+// import '../styles/styles-custom-formik.css';
 
 
-// export const UserContext = createContext({
-//   user: undefined as MeQuery['me'],
-//   setUser: (user: MeQuery['me']) => { user }
-// });
 
 export default function MyApp({ Component, pageProps }: AppLayoutProps) {
 

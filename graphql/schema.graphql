@@ -333,7 +333,7 @@ type Mutation {
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
   login(email: String!, password: String!): AuthPayload
   logout: String
-  signup(email: String!, firstName: String!, lastName: String!, password: String!): AuthPayload
+  signup(userCreateInput: UserCreateInput!): AuthPayload
 }
 
 enum PigInspectionEnum {
@@ -866,12 +866,10 @@ type User {
 
 input UserCreateInput {
   email: String!
-  facilities: [FacilityCreateInput]
   firstName: String!
-  injectionPoints: [InjectionPointCreateInput]
   lastName: String!
-  pipelines: [PipelineCreateInput]
-  satellites: [SatelliteCreateInput]
+  password: String!
+  role: UserRoleEnum
 }
 
 enum UserRoleEnum {

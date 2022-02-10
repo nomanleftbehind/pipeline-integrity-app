@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import Layout from '../components/layout';
-import MenuBar from '../components/menubar';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+
+import { useAuth } from '../context/AuthContext';
 import RenderPipeline from '../components/rows/RenderPipeline';
 import Header from '../components/Header';
 import SideNavBar from '../components/SideNavBar';
@@ -26,6 +27,14 @@ export interface IHeader {
 }
 
 export default function PipelineDatabase() {
+  const { user, authLoading } = useAuth() || {};
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user && !authLoading) {
+      router.push('/login');
+    }
+  }, [user, authLoading]);
 
   const header: IHeader = { license: "", segment: "", substance: "", from: "", fromFeature: "", to: "", toFeature: "", injectionPoints: "", status: "" };
   const [filterText, setFilterText] = useState<IHeader>(header);
@@ -120,13 +129,4 @@ export default function PipelineDatabase() {
       </TableContainer>
     </div>
   );
-}
-
-PipelineDatabase.getLayout = function getLayout(page: React.ReactNode) {
-  return (
-    <Layout>
-      <MenuBar />
-      {page}
-    </Layout>
-  )
 }
