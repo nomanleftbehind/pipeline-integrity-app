@@ -571,6 +571,27 @@ query ValidatorsRisk {
   }
 }
 
+query validatorsPressureTest {
+  validators {
+    limitingSpecEnum {
+      ANSI150
+      ANSI300
+      ANSI600
+    }
+    anyTextMatchPattern
+  }
+}
+
+query ValidatorUserRole {
+  validators {
+    userRoleEnum {
+      USER
+      ADMIN
+      CONTRACTOR
+    }
+  }
+}
+
 query PressureTestsByPipelineId($pipelineId: String) {
   pressureTestsByPipelineId(pipelineId: $pipelineId) {
     id

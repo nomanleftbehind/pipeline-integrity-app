@@ -5,7 +5,7 @@ import { useApollo } from '../graphql/client';
 import '../styles/globals.css';
 import Layout from '../components/layout';
 // import '../styles/styles-formik.css';
-// import '../styles/styles-custom-formik.css';
+import '../styles/styles-custom-formik.css';
 
 
 
@@ -16,7 +16,7 @@ export default function MyApp({ Component, pageProps }: AppLayoutProps) {
   return (
     <ApolloProvider client={apolloClient}>
       <AuthProvider>
-        <Layout title="Pipeline Database">
+        <Layout title='Pipeline Database'>
           <Component {...pageProps} />
         </Layout>
       </AuthProvider>

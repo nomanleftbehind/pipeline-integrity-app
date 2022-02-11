@@ -75,13 +75,3 @@ export default function VerticalTabs() {
     </Box>
   );
 }
-
-
-VerticalTabs.getLayout = function getLayout(page: React.ReactNode) {
-  return (
-    <Layout>
-      <MenuBar />
-      {page}
-    </Layout>
-  )
-}

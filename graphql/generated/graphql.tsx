@@ -1452,6 +1452,11 @@ export type ValidatorsRiskQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ValidatorsRiskQuery = { validators?: { environmentProximityToEnum: { WB1: string, WB3: string, WB4: string, WB5: string, WC1: string, WC2: string, WC3: string, WC4: string }, geotechnicalFacingEnum: { N: string, NE: string, E: string, SE: string, S: string, SW: string, W: string, NW: string } } | null | undefined };
 
+export type ValidatorUserRoleQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ValidatorUserRoleQuery = { validators?: { userRoleEnum: { USER: string, ADMIN: string, CONTRACTOR: string } } | null | undefined };
+
 export type PressureTestsByPipelineIdQueryVariables = Exact<{
   pipelineId?: Maybe<Scalars['String']>;
 }>;
@@ -3125,6 +3130,44 @@ export function useValidatorsRiskLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type ValidatorsRiskQueryHookResult = ReturnType<typeof useValidatorsRiskQuery>;
 export type ValidatorsRiskLazyQueryHookResult = ReturnType<typeof useValidatorsRiskLazyQuery>;
 export type ValidatorsRiskQueryResult = Apollo.QueryResult<ValidatorsRiskQuery, ValidatorsRiskQueryVariables>;
+export const ValidatorUserRoleDocument = gql`
+    query ValidatorUserRole {
+  validators {
+    userRoleEnum {
+      USER
+      ADMIN
+      CONTRACTOR
+    }
+  }
+}
+    `;
+
+/**
+ * __useValidatorUserRoleQuery__
+ *
+ * To run a query within a React component, call `useValidatorUserRoleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorUserRoleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatorUserRoleQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useValidatorUserRoleQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorUserRoleQuery, ValidatorUserRoleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorUserRoleQuery, ValidatorUserRoleQueryVariables>(ValidatorUserRoleDocument, options);
+      }
+export function useValidatorUserRoleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorUserRoleQuery, ValidatorUserRoleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorUserRoleQuery, ValidatorUserRoleQueryVariables>(ValidatorUserRoleDocument, options);
+        }
+export type ValidatorUserRoleQueryHookResult = ReturnType<typeof useValidatorUserRoleQuery>;
+export type ValidatorUserRoleLazyQueryHookResult = ReturnType<typeof useValidatorUserRoleLazyQuery>;
+export type ValidatorUserRoleQueryResult = Apollo.QueryResult<ValidatorUserRoleQuery, ValidatorUserRoleQueryVariables>;
 export const PressureTestsByPipelineIdDocument = gql`
     query PressureTestsByPipelineId($pipelineId: String) {
   pressureTestsByPipelineId(pipelineId: $pipelineId) {
