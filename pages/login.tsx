@@ -174,7 +174,7 @@ export default function Login() {
   //         label='Password'
   //       />
   //       <button type='submit'>Sign in</button> or{' '}
-  //       <Link href='/signup'>
+  //       <Link href='/register'>
   //         <a>Sign up</a>
   //       </Link>
   //       <style jsx>{`

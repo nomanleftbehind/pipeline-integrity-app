@@ -8,6 +8,10 @@ query Me {
   }
 }
 
+query UserCount {
+  userCount
+}
+
 query pipelinesByIdQuery($table: String, $id: String) {
   pipelinesById(table: $table, id: $id) {
     id

@@ -32,7 +32,7 @@ export default function PipelineDatabase() {
 
   useEffect(() => {
     if (!user && !authLoading) {
-      router.push('/login');
+      router.push('/register');
     }
   }, [user, authLoading]);
 

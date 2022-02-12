@@ -341,7 +341,7 @@ export type Mutation = {
   editRisk?: Maybe<Risk>;
   editSatellite?: Maybe<Satellite>;
   login?: Maybe<AuthPayload>;
-  logout?: Maybe<Scalars['String']>;
+  logout?: Maybe<Scalars['Boolean']>;
   signup?: Maybe<AuthPayload>;
 };
 
@@ -883,6 +883,7 @@ export type Query = {
   riskById?: Maybe<Risk>;
   sideBar?: Maybe<Array<Maybe<SideBar>>>;
   sourceOptions?: Maybe<Array<Maybe<SourceOptions>>>;
+  userCount?: Maybe<Scalars['Int']>;
   validators?: Maybe<Validator>;
 };
 
@@ -1223,7 +1224,7 @@ export type SignupMutation = { signup?: { user?: { id: string, email: string, fi
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LogoutMutation = { logout?: string | null | undefined };
+export type LogoutMutation = { logout?: boolean | null | undefined };
 
 export type DeletePipelineMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1399,6 +1400,11 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { me?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined };
+
+export type UserCountQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserCountQuery = { userCount?: number | null | undefined };
 
 export type PipelinesByIdQueryQueryVariables = Exact<{
   table?: Maybe<Scalars['String']>;
@@ -2318,6 +2324,38 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const UserCountDocument = gql`
+    query UserCount {
+  userCount
+}
+    `;
+
+/**
+ * __useUserCountQuery__
+ *
+ * To run a query within a React component, call `useUserCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserCountQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUserCountQuery(baseOptions?: Apollo.QueryHookOptions<UserCountQuery, UserCountQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserCountQuery, UserCountQueryVariables>(UserCountDocument, options);
+      }
+export function useUserCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserCountQuery, UserCountQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserCountQuery, UserCountQueryVariables>(UserCountDocument, options);
+        }
+export type UserCountQueryHookResult = ReturnType<typeof useUserCountQuery>;
+export type UserCountLazyQueryHookResult = ReturnType<typeof useUserCountLazyQuery>;
+export type UserCountQueryResult = Apollo.QueryResult<UserCountQuery, UserCountQueryVariables>;
 export const PipelinesByIdQueryDocument = gql`
     query pipelinesByIdQuery($table: String, $id: String) {
   pipelinesById(table: $table, id: $id) {

@@ -13,6 +13,7 @@ export default function ManuBar() {
   }, [user]);
 
   const links = [
+    { href: '/', a: 'Home' },
     { href: 'pipelines', a: 'Pipelines' },
     { href: 'pressuretests', a: 'Pressure Tests' },
     { href: 'pigruns', a: 'Pig Runs' },
@@ -24,24 +25,6 @@ export default function ManuBar() {
   return (
     <nav className={styles.nav}>
       <ul>
-        <li><Link href="/">
-          <a>Home</a>
-        </Link>
-        </li>
-        {!user && (
-          <>
-            <li>
-              <Link href="/login">
-                <a>Login</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/signup">
-                <a>Signup</a>
-              </Link>
-            </li>
-          </>
-        )}
         {user && (
           <>
             {links.map(({ href, a }) =>
@@ -57,6 +40,13 @@ export default function ManuBar() {
           </>
         )
         }
+        {(!user || user.role === 'ADMIN') && (
+          <li>
+            <Link href="/register">
+              <a>Register</a>
+            </Link>
+          </li>
+        )}
       </ul>
     </nav>
   )

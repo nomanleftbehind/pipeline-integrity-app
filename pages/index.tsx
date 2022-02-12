@@ -9,7 +9,7 @@ export default function Index() {
 
   useEffect(() => {
     if (!user && !authLoading) {
-      router.push('/login');
+      router.push('/register');
     }
   }, [user, authLoading]);
 
@@ -28,7 +28,7 @@ export default function Index() {
 
   // // useEffect(() => {
   // //   if (shouldRedirect) {
-  // //     router.push('/login')
+  // //     router.push('/register')
   // //   }
   // // }, [shouldRedirect])
 
@@ -67,7 +67,7 @@ export default function Index() {
 
 //   useEffect(() => {
 //     if (!user && !authLoading) {
-//       router.push("/login");
+//       router.push("/register");
 //     }
 //   }, [user, authLoading]);
 

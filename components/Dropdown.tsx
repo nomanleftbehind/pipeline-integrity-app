@@ -33,7 +33,7 @@ export default function DropdownMenu({ user }: IDropdownMenuProps) {
     logout().then(() => {
       client.resetStore().then(() => {
         setUser && setUser(null);
-        router.push('/login');
+        router.push('/register');
       })
     })
   }

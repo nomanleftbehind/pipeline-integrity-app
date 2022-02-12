@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { prisma } from '../lib/prisma';
+import { Context } from '../graphql/context';
+import { UserNoPassword } from '../lib/auth';
+interface IGetServerSideProps extends Pick<Context, 'req' | 'res'> { };
+
+
 import { useApolloClient, ApolloError } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { Formik, Form, FormikHelpers, useField, FieldHookConfig } from 'formik';
 import Box from '@mui/material/Box';
-import Popper from '@mui/material/Popper';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
@@ -12,31 +16,30 @@ import MenuItem from '@mui/material/MenuItem';
 import * as Yup from 'yup';
 import { useAuth } from '../context/AuthContext';
 import { useLoginMutation, useSignupMutation, UserCreateInput, UserRoleEnum, useValidatorUserRoleQuery } from '../graphql/generated/graphql';
+import { getUser } from "../lib/user";
 
 type IInput = {
   label: string;
 } & FieldHookConfig<string>;
 
-export default function Signup() {
-  const [isSignup, setIsSignup] = useState(false);
+interface IRegisterProps {
+  userCount: number;
+  user: UserNoPassword | null;
+}
 
-  const title = isSignup ? 'Signup' : 'Login';
-  const buttonText = isSignup ? 'Login' : 'Signup';
+function Register({ userCount, user }: IRegisterProps) {
 
-  const { user, setUser } = useAuth() || {};
+  const router = useRouter();
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const isSignup = userCount === 0 || user?.role === 'ADMIN';
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(anchorEl ? null : event.currentTarget);
-  };
+  const { setUser } = useAuth() || {};
 
   const { data: dataUserRole } = useValidatorUserRoleQuery();
   const client = useApolloClient();
-  const router = useRouter();
 
   const [login] = useLoginMutation();
-  const [signup, { data }] = useSignupMutation();
+  const [signup] = useSignupMutation();
 
   const emailYupSchema = Yup.string().email('Invalid email address').required('Required');
   const passwordYupSchema = Yup.string().required('Required').min(8, 'Minimum 8 characters required');
@@ -55,7 +58,7 @@ export default function Signup() {
 
   return (
     <Box sx={{ minWidth: 500, margin: '0 auto' }}>
-      <h1>{title}</h1>
+      <h1>{isSignup ? 'Signup' : 'Login'}</h1>
       <Formik
         initialValues={{
           firstName: '',
@@ -71,41 +74,42 @@ export default function Signup() {
         ) => {
           try {
             await client.resetStore();
-            console.log(isSignup);
-
-
             if (!isSignup) {
-              const { data: dataLogin } = await login({
+              const { data, errors } = await login({
                 variables: {
                   email: values.email,
                   password: values.password,
                 },
               });
-              if (dataLogin?.login?.user && setUser) {
-                console.log('data.login.user', dataLogin.login.user);
-
-                setUser(dataLogin.login.user);
+              if (data?.login?.user && setUser) {
+                setUser(data.login.user);
                 await router.push('/');
               }
+              if (data?.login?.error) {
+                setFieldError('email', data.login.error.message);
+              }
+              if (errors) {
+                setFieldError('email', errors.map(error => error.message).join('; '));
+              }
             } else {
-              const { data: dataSignup } = await signup({
+              const { data, errors } = await signup({
                 variables: {
                   userCreateInput: values
                 },
               });
-
-              if (dataSignup?.signup?.user) {
+              if (data?.signup?.user) {
                 await router.push('/');
+              }
+              if (data?.signup?.error) {
+                setFieldError('email', data.signup.error.message);
+              }
+              if (errors) {
+                setFieldError('email', errors.map(error => error.message).join('; '));
               }
             }
           } catch (err) {
             const apolloErr = err as ApolloError;
-
-            if (apolloErr.message.includes('password')) {
-              setFieldError('password', apolloErr.message);
-            } else {
-              setFieldError('email', apolloErr.message);
-            }
+            setFieldError('email', apolloErr.message);
           }
         }
         }
@@ -152,20 +156,9 @@ export default function Signup() {
                   </MenuItem>)}
               </RoleInput>}
 
-              <Button color='primary' variant='contained' type='submit' onClick={handleClick}>
+              <Button fullWidth color='primary' variant='contained' type='submit'>
                 Submit
               </Button>
-
-              <Popper open={Boolean(data?.signup?.error)} anchorEl={anchorEl}>
-                <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }}>
-                  {data?.signup?.error?.message}
-                </Box>
-              </Popper>
-
-              {user && user.role === 'ADMIN' && <Button onClick={() => setIsSignup(!isSignup)}>
-                {buttonText}
-              </Button>}
-
             </Form>
           )
         }}
@@ -205,3 +198,38 @@ const RoleInput = ({ label, ...props }: IInput) => {
     </>
   );
 };
+
+
+// This gets called on every request
+export async function getServerSideProps({ req }: IGetServerSideProps) {
+
+  const userCount = await prisma.user.count();
+  const user = await getUser(req, prisma);
+
+  // Only when first user of the app is registering, he/she is allowed to register themself and is automatically made ADMIN.
+  // Any future users are only possible to be added by users with ADMIN privilages.
+  // If user is logged in and is not an ADMIN they are not allowed to visit the register page.
+  if (userCount > 0 && user && user.role !== 'ADMIN') {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {
+      userCount,
+      user: user ? {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      } : null
+    }
+  }
+}
+
+export default Register;

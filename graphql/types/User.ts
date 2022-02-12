@@ -158,6 +158,12 @@ export const UserQuery = extendType({
         return ctx.user;
       },
     })
+    t.int('userCount', {
+      resolve: async (_parent, _args, ctx: Context) => {
+        const userCount = await ctx.prisma.user.count();
+        return userCount;
+      }
+    })
   }
 })
 
@@ -309,10 +315,10 @@ export const AuthMutation = extendType({
       },
     })
 
-    t.string('logout', {
+    t.boolean('logout', {
       resolve: async (_parent, _args, ctx: Context) => {
         removeTokenCookie(ctx.res);
-        return 'Logged out';
+        return true;
       }
     })
   }
