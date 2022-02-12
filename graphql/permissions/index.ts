@@ -12,6 +12,7 @@ const rules = {
 
 export const permissions = shield({
   Query: {
+    // pipelinesById: rules.isAuthenticatedUser
     // allUsers: rules.isAuthenticatedUser,
     // pipelines: rules.isAuthenticatedUser,
     // me: rules.isAuthenticatedUser,

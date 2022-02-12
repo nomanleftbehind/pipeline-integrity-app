@@ -35,9 +35,9 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
   const [authError, setAuthError] = useState<string>('');
 
   const [loadUser, { data, loading }] = useMeLazyQuery({
-    onCompleted: () => {
+    onCompleted: (data) => {
       console.log('on completed', data);
-      setUser(data?.me);
+      setUser(data.me);
       setAuthLoading(loading);
     },
     onError: (err) => {

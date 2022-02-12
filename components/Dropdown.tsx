@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { useApolloClient } from '@apollo/client';
+import { useAuth } from '../context/AuthContext';
+import { useRouter } from 'next/router';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-// import { User } from '@prisma/client';
+import { useLogoutMutation } from '../graphql/generated/graphql';
 
 import { IUser } from '../context/AuthContext';
 
@@ -11,8 +14,12 @@ interface IDropdownMenuProps {
 }
 
 export default function DropdownMenu({ user }: IDropdownMenuProps) {
+  const { setUser } = useAuth() || {};
+  const client = useApolloClient();
+  const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -20,21 +27,30 @@ export default function DropdownMenu({ user }: IDropdownMenuProps) {
     setAnchorEl(null);
   };
 
+  const [logout] = useLogoutMutation();
+
+  const handleLogout = () => {
+    logout().then(() => {
+      client.resetStore().then(() => {
+        setUser && setUser(null);
+        router.push('/login');
+      })
+    })
+  }
+
   return (
     <div>
       <Button
-        id="basic-button"
-        aria-controls="basic-menu"
-        aria-haspopup="true"
+        aria-controls='basic-menu'
+        aria-haspopup='true'
         aria-expanded={open ? 'true' : undefined}
         style={{ textTransform: 'none', padding: 0 }}
-        color="inherit"
+        color='inherit'
         onClick={handleClick}
       >
         {user.email}
       </Button>
       <Menu
-        id="basic-menu"
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
@@ -42,9 +58,7 @@ export default function DropdownMenu({ user }: IDropdownMenuProps) {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        {/* <MenuItem onClick={handleClose}>My account</MenuItem> */}
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </div>
   );

@@ -2,7 +2,6 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useApolloClient, ApolloError } from '@apollo/client';
 import { useLoginMutation, useMeQuery } from '../graphql/generated/graphql';
-import Field from '../components/field';
 
 import { useAuth } from '../context/AuthContext';
 import { Form, Formik, FormikHelpers } from 'formik';

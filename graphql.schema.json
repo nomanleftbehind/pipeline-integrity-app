@@ -14,17 +14,13 @@
         "description": null,
         "fields": [
           {
-            "name": "errors",
+            "name": "error",
             "description": null,
             "args": [],
             "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "FieldError",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "FieldError",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -488,9 +484,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -10999,9 +10999,13 @@
             "name": "role",
             "description": null,
             "type": {
-              "kind": "ENUM",
-              "name": "UserRoleEnum",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "UserRoleEnum",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,

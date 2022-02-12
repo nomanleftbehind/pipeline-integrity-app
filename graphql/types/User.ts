@@ -194,7 +194,7 @@ export const UserCreateInput = inputObjectType({
     t.nonNull.string('lastName')
     t.nonNull.string('email')
     t.nonNull.string('password')
-    t.field('role', { type: 'UserRoleEnum' })
+    t.nonNull.field('role', { type: 'UserRoleEnum' })
   },
 });
 
@@ -210,7 +210,7 @@ export const FieldError = objectType({
   name: 'FieldError',
   definition(t) {
     t.string('field')
-    t.string('message')
+    t.nonNull.string('message')
   }
 });
 
@@ -218,7 +218,7 @@ export const AuthPayload = objectType({
   name: 'AuthPayload',
   definition(t) {
     t.field('user', { type: 'User' })
-    t.list.field('errors', { type: 'FieldError' })
+    t.field('error', { type: 'FieldError' })
   },
 });
 
@@ -237,22 +237,19 @@ export const AuthMutation = extendType({
         });
         if (userExists) {
           return {
-            errors: [
-              {
-                field: 'email',
-                message: 'user with specified email already exists'
-              }
-            ]
+            error: {
+              field: 'email',
+              message: 'user with specified email already exists'
+            }
           }
         }
         if (password.length < 8) {
           return {
-            errors: [
-              {
-                field: 'password',
-                message: 'password must be at least 8 characters long'
-              }
-            ]
+            error: {
+              field: 'password',
+              message: 'password must be at least 8 characters long'
+            }
+
           }
         }
         const salt = await genSalt(10);
@@ -286,24 +283,22 @@ export const AuthMutation = extendType({
 
         if (!user) {
           return {
-            errors: [
-              {
-                field: 'email',
-                message: "user with that email doesn't exist"
-              },
-            ]
+            error: {
+              field: 'email',
+              message: "user with that email doesn't exist"
+            },
+
           }
         }
 
         const passwordValid = await compare(password, user.password);
         if (!passwordValid) {
           return {
-            errors: [
-              {
-                field: 'password',
-                message: 'incorrect password'
-              },
-            ]
+            error: {
+              field: 'password',
+              message: 'incorrect password'
+            },
+
           }
         }
 

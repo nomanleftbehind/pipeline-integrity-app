@@ -165,7 +165,7 @@ a {
   border-bottom: unset;
 }
 
-.MuiButtonBase-root {
+/* .MuiButtonBase-root {
   color: inherit;
   border: 0;
   cursor: pointer;
@@ -184,7 +184,7 @@ a {
   background-color: transparent;
   -webkit-appearance: none;
   -webkit-tap-highlight-color: transparent;
-}
+} */
 
 .MuiIconButton-root {
   flex: 0 0 auto;
@@ -294,9 +294,9 @@ nav ul li div {
   color: azure;
 }
 
-.app {
+/* .app {
   padding-top: 55px;
-}
+} */
 
 .side-bar {
   color: black;

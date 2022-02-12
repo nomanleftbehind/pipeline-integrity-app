@@ -17,7 +17,7 @@ export type Scalars = {
 };
 
 export type AuthPayload = {
-  errors?: Maybe<Array<Maybe<FieldError>>>;
+  error?: Maybe<FieldError>;
   user?: Maybe<User>;
 };
 
@@ -65,7 +65,7 @@ export type FacilityUniqueInput = {
 
 export type FieldError = {
   field?: Maybe<Scalars['String']>;
-  message?: Maybe<Scalars['String']>;
+  message: Scalars['String'];
 };
 
 export enum FlowCalculationDirectionEnum {
@@ -1159,7 +1159,7 @@ export type UserCreateInput = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   password: Scalars['String'];
-  role?: Maybe<UserRoleEnum>;
+  role: UserRoleEnum;
 };
 
 export enum UserRoleEnum {
@@ -1211,14 +1211,19 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { login?: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, errors?: Array<{ field?: string | null | undefined, message?: string | null | undefined } | null | undefined> | null | undefined } | null | undefined };
+export type LoginMutation = { login?: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, error?: { field?: string | null | undefined, message: string } | null | undefined } | null | undefined };
 
 export type SignupMutationVariables = Exact<{
   userCreateInput: UserCreateInput;
 }>;
 
 
-export type SignupMutation = { signup?: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, errors?: Array<{ field?: string | null | undefined, message?: string | null | undefined } | null | undefined> | null | undefined } | null | undefined };
+export type SignupMutation = { signup?: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, error?: { field?: string | null | undefined, message: string } | null | undefined } | null | undefined };
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = { logout?: string | null | undefined };
 
 export type DeletePipelineMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1502,7 +1507,7 @@ export const LoginDocument = gql`
       lastName
       role
     }
-    errors {
+    error {
       field
       message
     }
@@ -1546,7 +1551,7 @@ export const SignupDocument = gql`
       lastName
       role
     }
-    errors {
+    error {
       field
       message
     }
@@ -1579,6 +1584,36 @@ export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<Signu
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout
+}
+    `;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
+
+/**
+ * __useLogoutMutation__
+ *
+ * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
+      }
+export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
+export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const DeletePipelineDocument = gql`
     mutation deletePipeline($id: String!) {
   deletePipeline(id: $id) {

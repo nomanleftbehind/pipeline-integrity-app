@@ -2,9 +2,9 @@ input[type="email"],
 input[type="text"],
 input[type="number"],
 textarea,
-select {
+/* select {
   width: 400px;
-}
+} */
 
 label {
   margin-top: 1rem;
