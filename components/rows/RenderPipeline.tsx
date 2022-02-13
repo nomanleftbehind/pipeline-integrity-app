@@ -31,6 +31,7 @@ const isEven = (value: number): "even" | "odd" => {
 export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRenderPipelineProps) {
 
   const { user } = useAuth() || {};
+  const { role } = user || {};
 
   const [open, setOpen] = useState(false);
   const [showDeletePipelineModal, setShowDeletePipelineModal] = useState(false);
@@ -68,7 +69,7 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        {user?.role === 'USER' && <TableCell>
+        {role && ['ADMIN', 'ENGINEER'].includes(role) && <TableCell>
           <IconButton aria-label="delete row" size="small" onClick={showModalDeletePipeline}>
             <DeleteOutlineOutlinedIcon />
           </IconButton>
@@ -84,7 +85,6 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
         <EntryField id={id} record={fromFeature} columnName="fromFeature" validator={validators?.fromToFeatureEnum} />
         <EntryField id={id} record={to} columnName="to" validator={validators?.fromToMatchPattern} />
         <EntryField id={id} record={toFeature} columnName="toFeature" validator={validators?.fromToFeatureEnum} />
-        <TableCell align="right">{injectionPoints ? injectionPoints.length === 1 ? "1 well" : `${injectionPoints.length} wells` : null}</TableCell>
         <EntryField id={id} record={status} columnName="status" validator={validators?.statusEnum} />
       </TableRow>
       <PipelineData

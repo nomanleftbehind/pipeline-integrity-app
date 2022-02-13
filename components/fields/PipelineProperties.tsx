@@ -16,7 +16,7 @@ import { ITable } from '../rows/PipelineData';
 
 type PipelinePropertyObject<T1, T2> = { columnName: string; record: T1[keyof T1]; validator?: T2[keyof T2]; table?: ITable };
 
-type IPipelineProperty = PipelinePropertyObject<Omit<IPipeline, 'satellite' | 'injectionPoints' | 'upstream' | 'createdBy'>, NonNullable<IValidators>>;
+type IPipelineProperty = PipelinePropertyObject<Omit<IPipeline, 'satellite' | 'injectionPoints' | 'upstream' | 'createdBy' | 'updatedBy'>, NonNullable<IValidators>>;
 
 export type IRecord = IPipelineProperty['record'];
 

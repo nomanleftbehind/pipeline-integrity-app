@@ -12,16 +12,23 @@ type HeaderProps = {
 export default function Header({ onFilterTextChange, filterText }: HeaderProps): JSX.Element {
 
   const { user } = useAuth() || {};
+  const { role } = user || {};
+
+  const prettifyColumnName = (columnName: string) => columnName
+    .split(/(?=[A-Z])/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 
   return (
     <TableHead style={{ position: "sticky", zIndex: 999, backgroundColor: "gold" }}>
       <TableRow>
         <TableCell />
-        {user?.role === 'USER' && <TableCell />}
+        {role && ['ADMIN', 'ENGINEER'].includes(role) && <TableCell />}
         {Object.entries(filterText).map(([key, value], index) => {
+          const columnNamePretty = prettifyColumnName(key);
           return (
             <TableCell key={index} align="right" scope="col">
-              <div>{key.replace('_', ' ').toUpperCase()}</div>
+              <div>{columnNamePretty}</div>
               <div>
                 <form className={`form-${key}`}>
                   <input

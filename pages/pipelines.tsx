@@ -24,13 +24,12 @@ export interface IHeader {
   fromFeature: string;
   to: string;
   toFeature: string;
-  injectionPoints: string;
-  status: string
+  status: string;
 }
 
 function PipelineDatabase() {
 
-  const header: IHeader = { license: "", segment: "", substance: "", from: "", fromFeature: "", to: "", toFeature: "", injectionPoints: "", status: "" };
+  const header: IHeader = { license: "", segment: "", substance: "", from: "", fromFeature: "", to: "", toFeature: "", status: "" };
   const [filterText, setFilterText] = useState<IHeader>(header);
   const [filterTextCaseInsensitive, setFilterTextCaseInsensitive] = useState<IHeader>(header);
 
@@ -75,11 +74,11 @@ function PipelineDatabase() {
             {loading && <TableRow><TableCell>Loading...</TableCell></TableRow>}
             {error && <TableRow><TableCell>{error.message}</TableCell></TableRow>}
             {data?.pipelinesById && data.pipelinesById.filter(pipeline => {
-              const inj_pt_source =
+              /*const inj_pt_source =
                 pipeline && pipeline.injectionPoints ?
                   pipeline.injectionPoints.map(injectionPoints =>
                     injectionPoints ? injectionPoints.source : undefined) :
-                  undefined;
+                  undefined;*/
               return (
                 pipeline && (
                   pipeline.license.toUpperCase().includes(filterTextCaseInsensitive.license) &&
@@ -89,7 +88,7 @@ function PipelineDatabase() {
                   (pipeline.fromFeature ? valuesFromEnum(pipeline.fromFeature, validators?.fromToFeatureEnum).toUpperCase().includes(filterTextCaseInsensitive.fromFeature) : filterTextCaseInsensitive.fromFeature.length === 0) &&
                   pipeline.to.toUpperCase().includes(filterTextCaseInsensitive.to) &&
                   (pipeline.toFeature ? valuesFromEnum(pipeline.toFeature, validators?.fromToFeatureEnum).toUpperCase().includes(filterTextCaseInsensitive.toFeature) : filterTextCaseInsensitive.toFeature.length === 0) &&
-                  (inj_pt_source === undefined ||
+                  /*(inj_pt_source === undefined ||
                     (inj_pt_source.length === 0 && filterTextCaseInsensitive.injectionPoints.length === 0) ||
                     inj_pt_source.some(i => {
                       switch (i) {
@@ -98,7 +97,7 @@ function PipelineDatabase() {
                         default:
                           return i.toUpperCase().includes(filterTextCaseInsensitive.injectionPoints)
                       }
-                    })) &&
+                    })) &&*/
                   (pipeline.status ? valuesFromEnum(pipeline.status, validators?.statusEnum).toUpperCase().includes(filterTextCaseInsensitive.status) : filterTextCaseInsensitive.status.length === 0)
                 )
               );
@@ -131,7 +130,7 @@ export async function getServerSideProps({ req }: IGetServerSideProps) {
   }
 
   return {
-    props: { }
+    props: {}
   }
 }
 
