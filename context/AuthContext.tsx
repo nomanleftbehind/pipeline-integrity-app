@@ -15,6 +15,8 @@ import { useMeLazyQuery, MeQuery, Exact } from '../graphql/generated/graphql';
 
 export type IUser = MeQuery['me'];
 
+export type IUserNonNull = NonNullable<IUser>;
+
 interface IContextProps {
   user: IUser;
   setUser: Dispatch<SetStateAction<IUser>>;
@@ -44,6 +46,8 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
       setAuthError(err.message);
     },
   });
+
+  useEffect(() => console.log('AuthContext user', user), [user]);
 
   useEffect(() => loadUser(), []);
 

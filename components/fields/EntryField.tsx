@@ -17,6 +17,7 @@ import {
 } from '../../graphql/generated/graphql';
 import { IValidator, IRecord } from '../fields/PipelineProperties';
 import { ITable } from '../rows/PipelineData';
+import { useAuth } from '../../context/AuthContext';
 
 
 // We are taking `validators` type which is a union of many objects, a string and undefined.
@@ -39,9 +40,12 @@ interface ITextFieldProps {
 }
 
 export default function EntryField({ id, table, columnName, record, validator, deleteField }: ITextFieldProps): JSX.Element {
+
+  const { user } = useAuth() || {};
+
   const [edit, setEdit] = useState(false);
   const [valid, setValid] = useState(true);
-  const [state, setState] = useState(record?.toString() || "");
+  const [state, setState] = useState(record?.toString() || '');
 
   const [editPipeline, { data: dataPipeline }] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
   const [editPigRun, { data: dataPigRun }] = useEditPigRunMutation({ refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
@@ -70,9 +74,9 @@ export default function EntryField({ id, table, columnName, record, validator, d
   }
 
   useEffect(() => {
-    console.log('columnName:', columnName, 'record:', record);
+    console.log('EntryField user:', user);
 
-  }, [record])
+  }, [user])
 
   const recordDisplay = switchRecordDisplay();
 

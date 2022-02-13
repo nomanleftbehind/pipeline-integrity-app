@@ -2,21 +2,22 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import { IHeader } from '../pages/pipelines';
-import { UserNoPassword } from '../lib/auth';
+import { useAuth } from '../context/AuthContext';
 
 type HeaderProps = {
   onFilterTextChange: (e: React.FormEvent<HTMLInputElement>) => void;
   filterText: IHeader;
-  userRole: UserNoPassword['role'];
 }
 
-export default function Header({ onFilterTextChange, filterText, userRole }: HeaderProps): JSX.Element {
+export default function Header({ onFilterTextChange, filterText }: HeaderProps): JSX.Element {
+
+  const { user } = useAuth() || {};
 
   return (
     <TableHead style={{ position: "sticky", zIndex: 999, backgroundColor: "gold" }}>
       <TableRow>
         <TableCell />
-        {userRole === 'USER' ? <TableCell /> : null}
+        {user?.role === 'USER' && <TableCell />}
         {Object.entries(filterText).map(([key, value], index) => {
           return (
             <TableCell key={index} align="right" scope="col">

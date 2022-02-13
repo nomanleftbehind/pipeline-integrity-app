@@ -9,7 +9,7 @@ import '../styles/styles-custom-formik.css';
 
 
 
-export default function MyApp({ Component, pageProps }: AppLayoutProps) {
+export default function PipelineIntegrityApp({ Component, pageProps }: AppLayoutProps) {
 
   const apolloClient = useApollo(pageProps.initialApolloState);
 

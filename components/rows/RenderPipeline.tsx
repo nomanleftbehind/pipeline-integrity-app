@@ -9,7 +9,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import { UserNoPassword } from '../../lib/auth';
+import { useAuth } from '../../context/AuthContext';
 import { useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation, PipelinesByIdQueryQuery, GetValidatorsQuery } from '../../graphql/generated/graphql';
 
 
@@ -20,7 +20,6 @@ interface IRenderPipelineProps {
   ppl_idx: number;
   pipeline: IPipeline;
   validators: IValidators;
-  userRole: UserNoPassword['role'];
 }
 
 const isEven = (value: number): "even" | "odd" => {
@@ -29,7 +28,10 @@ const isEven = (value: number): "even" | "odd" => {
   else return "odd";
 }
 
-export default function RenderPipeline({ ppl_idx, pipeline, validators, userRole }: IRenderPipelineProps) {
+export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRenderPipelineProps) {
+
+  const { user } = useAuth() || {};
+
   const [open, setOpen] = useState(false);
   const [showDeletePipelineModal, setShowDeletePipelineModal] = useState(false);
 
@@ -66,7 +68,7 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators, userRole
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        {userRole === 'USER' ? <TableCell>
+        {user?.role === 'USER' && <TableCell>
           <IconButton aria-label="delete row" size="small" onClick={showModalDeletePipeline}>
             <DeleteOutlineOutlinedIcon />
           </IconButton>
@@ -74,7 +76,7 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators, userRole
             <AddCircleOutlineOutlinedIcon />
           </IconButton>
           {modalDeletePipeline}
-        </TableCell> : null}
+        </TableCell>}
         <EntryField id={id} record={license} columnName="license" validator={validators?.licenseMatchPattern} />
         <EntryField id={id} record={segment} columnName="segment" validator={validators?.segmentMatchPattern} />
         <EntryField id={id} record={substance} columnName="substance" validator={validators?.substanceEnum} />

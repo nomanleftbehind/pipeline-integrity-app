@@ -29,11 +29,11 @@ export interface IServerSideProps {
 
 function Register({ userCount, user }: IServerSideProps) {
 
+  const { setUser } = useAuth() || {};
+
   const router = useRouter();
 
   const isSignup = userCount === 0 || user?.role === 'ADMIN';
-
-  const { setUser } = useAuth() || {};
 
   const { data: dataUserRole } = useValidatorUserRoleQuery();
   const client = useApolloClient();

@@ -7,10 +7,10 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useLogoutMutation } from '../graphql/generated/graphql';
 
-import { IUser } from '../context/AuthContext';
+import { IUserNonNull } from '../context/AuthContext';
 
 interface IDropdownMenuProps {
-  user: NonNullable<IUser>;
+  user: IUserNonNull;
 }
 
 export default function DropdownMenu({ user }: IDropdownMenuProps) {

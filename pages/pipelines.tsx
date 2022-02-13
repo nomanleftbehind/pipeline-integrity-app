@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { prisma } from '../lib/prisma';
-import { getUser } from "../lib/user";
-import { UserNoPassword } from '../lib/auth';
+import { getUser } from '../lib/user';
 
 import RenderPipeline from '../components/rows/RenderPipeline';
 import Header from '../components/Header';
@@ -29,11 +28,7 @@ export interface IHeader {
   status: string
 }
 
-export interface IServerSideProps {
-  user: UserNoPassword;
-}
-
-function PipelineDatabase({ user }: IServerSideProps) {
+function PipelineDatabase() {
 
   const header: IHeader = { license: "", segment: "", substance: "", from: "", fromFeature: "", to: "", toFeature: "", injectionPoints: "", status: "" };
   const [filterText, setFilterText] = useState<IHeader>(header);
@@ -75,8 +70,7 @@ function PipelineDatabase({ user }: IServerSideProps) {
         <Table stickyHeader aria-label="collapsible table">
           <Header
             filterText={filterText}
-            onFilterTextChange={handleFilterTextChange}
-            userRole={user.role} />
+            onFilterTextChange={handleFilterTextChange} />
           <TableBody>
             {loading && <TableRow><TableCell>Loading...</TableCell></TableRow>}
             {error && <TableRow><TableCell>{error.message}</TableCell></TableRow>}
@@ -113,7 +107,6 @@ function PipelineDatabase({ user }: IServerSideProps) {
               ppl_idx={ppl_idx}
               pipeline={pipeline}
               validators={validators}
-              userRole={user.role}
             />
             )}
           </TableBody>
@@ -137,18 +130,8 @@ export async function getServerSideProps({ req }: IGetServerSideProps) {
     }
   }
 
-  const { id, firstName, lastName, email, role } = user;
-
   return {
-    props: {
-      user: {
-        id,
-        firstName,
-        lastName,
-        email,
-        role,
-      }
-    }
+    props: {}
   }
 }
 
