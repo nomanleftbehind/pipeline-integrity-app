@@ -1,7 +1,7 @@
 import { prisma } from '../lib/prisma';
 import { Context } from '../graphql/context';
 import { UserNoPassword } from '../lib/auth';
-interface IGetServerSideProps extends Pick<Context, 'req' | 'res'> { };
+export interface IGetServerSideProps extends Pick<Context, 'req' | 'res'> { };
 
 
 import { useApolloClient, ApolloError } from '@apollo/client';
@@ -22,12 +22,12 @@ type IInput = {
   label: string;
 } & FieldHookConfig<string>;
 
-interface IRegisterProps {
+export interface IServerSideProps {
   userCount: number;
   user: UserNoPassword | null;
 }
 
-function Register({ userCount, user }: IRegisterProps) {
+function Register({ userCount, user }: IServerSideProps) {
 
   const router = useRouter();
 

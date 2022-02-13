@@ -1,16 +1,15 @@
 import { useState, Fragment } from 'react';
 import EntryField from '../fields/EntryField';
-import { useRouter } from 'next/router';
 import { ModalDeletePipeline } from '../Modal';
 import PipelineData from './PipelineData';
 import IconButton from '@mui/material/IconButton';
-import Button from '@mui/material/Button';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import { UserNoPassword } from '../../lib/auth';
 import { useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation, PipelinesByIdQueryQuery, GetValidatorsQuery } from '../../graphql/generated/graphql';
 
 
@@ -21,6 +20,7 @@ interface IRenderPipelineProps {
   ppl_idx: number;
   pipeline: IPipeline;
   validators: IValidators;
+  userRole: UserNoPassword['role'];
 }
 
 const isEven = (value: number): "even" | "odd" => {
@@ -29,14 +29,12 @@ const isEven = (value: number): "even" | "odd" => {
   else return "odd";
 }
 
-export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRenderPipelineProps) {
+export default function RenderPipeline({ ppl_idx, pipeline, validators, userRole }: IRenderPipelineProps) {
   const [open, setOpen] = useState(false);
   const [showDeletePipelineModal, setShowDeletePipelineModal] = useState(false);
 
   const [deletePipeline, { data: dataDeletePipeline }] = useDeletePipelineMutation({ variables: { id: pipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
-  const [duplicatePipeline, { data: dataDuplicatePipeline }] = useDuplicatePipelineMutation({ variables: { id: pipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })
-
-  const router = useRouter();
+  const [duplicatePipeline, { data: dataDuplicatePipeline }] = useDuplicatePipelineMutation({ variables: { id: pipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
 
   function showModalDeletePipeline() {
     setShowDeletePipelineModal(true);
@@ -68,7 +66,7 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell>
+        {userRole === 'USER' ? <TableCell>
           <IconButton aria-label="delete row" size="small" onClick={showModalDeletePipeline}>
             <DeleteOutlineOutlinedIcon />
           </IconButton>
@@ -76,12 +74,7 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
             <AddCircleOutlineOutlinedIcon />
           </IconButton>
           {modalDeletePipeline}
-        </TableCell>
-        <TableCell>
-          <Button color="secondary" variant="outlined" sx={{ color: 'blue' }} aria-label="navigate to pipeline" size="small" onClick={() => router.push(`/pipeline/${id}`)}>
-            Details
-          </Button>
-        </TableCell>
+        </TableCell> : null}
         <EntryField id={id} record={license} columnName="license" validator={validators?.licenseMatchPattern} />
         <EntryField id={id} record={segment} columnName="segment" validator={validators?.segmentMatchPattern} />
         <EntryField id={id} record={substance} columnName="substance" validator={validators?.substanceEnum} />
