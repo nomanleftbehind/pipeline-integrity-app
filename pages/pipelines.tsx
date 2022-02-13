@@ -131,7 +131,7 @@ export async function getServerSideProps({ req }: IGetServerSideProps) {
   }
 
   return {
-    props: {}
+    props: { }
   }
 }
 
