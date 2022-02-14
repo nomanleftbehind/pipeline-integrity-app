@@ -60,11 +60,18 @@ query pipelinesByIdQuery($table: String, $id: String) {
       license
       segment
     }
+    downstream {
+      id
+      license
+      segment
+    }
     createdBy {
+      id
       email
     }
     createdAt
     updatedBy {
+      id
       email
     }
     updatedAt
@@ -96,10 +103,12 @@ query PipelineById($id: String!) {
     piggable
     piggingFrequency
     createdBy {
+      id
       email
     }
     createdAt
     updatedBy {
+      id
       email
     }
     updatedAt
@@ -152,10 +161,12 @@ query PigRunsByPipelineId($pipelineId: String!) {
       email
     }
     createdBy {
+      id
       email
     }
     createdAt
     updatedBy {
+      id
       email
     }
     updatedAt
@@ -611,10 +622,12 @@ query PressureTestsByPipelineId($pipelineId: String) {
     integritySheetUpdated
     comment
     createdBy {
+      id
       email
     }
     createdAt
     updatedBy {
+      id
       email
     }
     updatedAt
@@ -646,10 +659,12 @@ query RiskById($id: String!, $substance: SubstanceEnum, $oil: Float, $water: Flo
     safeguardInternalProtection
     safeguardExternalCoating
     createdBy {
+      id
       email
     }
     createdAt
     updatedBy {
+      id
       email
     }
     updatedAt

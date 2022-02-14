@@ -52,7 +52,8 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
     setShowDeletePipelineModal(false);
   }
 
-  const { id, license, segment, substance, from, fromFeature, to, toFeature, injectionPoints, status } = pipeline;
+  const { id, license, segment, substance, from, fromFeature, to, toFeature, status, createdBy } = pipeline;
+  const { id: createdById } = createdBy;
 
   const modalDeletePipeline = showDeletePipelineModal ?
     <ModalDeletePipeline
@@ -78,14 +79,14 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
           </IconButton>
           {modalDeletePipeline}
         </TableCell>}
-        <EntryField id={id} record={license} columnName="license" validator={validators?.licenseMatchPattern} />
-        <EntryField id={id} record={segment} columnName="segment" validator={validators?.segmentMatchPattern} />
-        <EntryField id={id} record={substance} columnName="substance" validator={validators?.substanceEnum} />
-        <EntryField id={id} record={from} columnName="from" validator={validators?.fromToMatchPattern} />
-        <EntryField id={id} record={fromFeature} columnName="fromFeature" validator={validators?.fromToFeatureEnum} />
-        <EntryField id={id} record={to} columnName="to" validator={validators?.fromToMatchPattern} />
-        <EntryField id={id} record={toFeature} columnName="toFeature" validator={validators?.fromToFeatureEnum} />
-        <EntryField id={id} record={status} columnName="status" validator={validators?.statusEnum} />
+        <EntryField id={id} createdById={createdById} record={license} columnName="license" validator={validators?.licenseMatchPattern} />
+        <EntryField id={id} createdById={createdById} record={segment} columnName="segment" validator={validators?.segmentMatchPattern} />
+        <EntryField id={id} createdById={createdById} record={substance} columnName="substance" validator={validators?.substanceEnum} />
+        <EntryField id={id} createdById={createdById} record={from} columnName="from" validator={validators?.fromToMatchPattern} />
+        <EntryField id={id} createdById={createdById} record={fromFeature} columnName="fromFeature" validator={validators?.fromToFeatureEnum} />
+        <EntryField id={id} createdById={createdById} record={to} columnName="to" validator={validators?.fromToMatchPattern} />
+        <EntryField id={id} createdById={createdById} record={toFeature} columnName="toFeature" validator={validators?.fromToFeatureEnum} />
+        <EntryField id={id} createdById={createdById} record={status} columnName="status" validator={validators?.statusEnum} />
       </TableRow>
       <PipelineData
         key={`${id} injection points`}

@@ -31,6 +31,7 @@ type IValidatorEnumsToOneObject = IntersectionToObject<UnionToIntersection<Remov
 
 interface ITextFieldProps {
   id: string;
+  createdById: string;
   table?: ITable;
   columnName: string;
   record: IRecord;
@@ -39,9 +40,12 @@ interface ITextFieldProps {
   validator?: IValidator;
 }
 
-export default function EntryField({ id, table, columnName, record, validator, deleteField }: ITextFieldProps): JSX.Element {
+export default function EntryField({ id, createdById, table, columnName, record, validator, deleteField }: ITextFieldProps): JSX.Element {
 
   const { user } = useAuth() || {};
+  const { role, id: userId } = user || {};
+
+  const authorized = (role === 'ADMIN' /*|| user === 'ENGINEER'*/) || (role === 'USER' && createdById === userId && (table === 'pressure tests' || table === 'pig runs')) || (role === 'CONTRACTOR' && createdById === userId/* && (table === 'chemicals')*/);
 
   const [edit, setEdit] = useState(false);
   const [valid, setValid] = useState(true);
@@ -177,15 +181,14 @@ export default function EntryField({ id, table, columnName, record, validator, d
     <TableCell align="right">
       {validator ?
         <div className="cell-wrapper">
-          <div className="cell-r">
+          {authorized && <div className="cell-r">
             <IconButton aria-label="edit cell" size="small" onClick={toggleEdit}>
               {edit ? <BlockOutlinedIcon /> : <EditOutlinedIcon />}
             </IconButton>
             {deleteField && <IconButton aria-label="delete field" size="small" onClick={deleteField}>
               <RemoveCircleOutlineOutlinedIcon />
             </IconButton>}
-
-          </div>
+          </div>}
           {edit ?
             <form className="cell-l" name={state} onSubmit={handleSubmit}>
               <div className="form-l">

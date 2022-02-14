@@ -88,6 +88,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               <PipelineProperties
                 open={open}
                 id={id}
+                createdById={createdBy.id}
                 propertiesName="Mechanical Properties"
                 pipelineProperties={mechanicalProperties}
               />
@@ -132,6 +133,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               <PipelineProperties
                 open={open}
                 id={id}
+                createdById={createdBy.id}
                 propertiesName="System Fields"
                 pipelineProperties={systemFields}
               />

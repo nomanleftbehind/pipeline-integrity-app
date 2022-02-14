@@ -25,6 +25,7 @@ export type IValidator = IPipelineProperty['validator'];
 
 interface IPipelinePropertiesProps {
   id?: string;
+  createdById: string;
   open: boolean;
   propertiesName: string;
   pipelineProperties: IPipelineProperty[];
@@ -33,7 +34,7 @@ interface IPipelinePropertiesProps {
 }
 
 
-export default function PipelineProperties({ id, open, propertiesName, pipelineProperties, addProperties, deleteProperties }: IPipelinePropertiesProps): JSX.Element {
+export default function PipelineProperties({ id, createdById, open, propertiesName, pipelineProperties, addProperties, deleteProperties }: IPipelinePropertiesProps): JSX.Element {
 
   const prettifyColumnName = (columnName: string) => columnName
     .split(/(?=[A-Z])/)
@@ -68,7 +69,7 @@ export default function PipelineProperties({ id, open, propertiesName, pipelineP
               return (
                 <TableRow key={columnName}>
                   <TableCell>{columnNamePretty}</TableCell>
-                  <EntryField id={id} table={table} record={record} columnName={columnName} validator={validator} />
+                  <EntryField id={id} createdById={createdById} table={table} record={record} columnName={columnName} validator={validator} />
                 </TableRow>
               );
             })}
