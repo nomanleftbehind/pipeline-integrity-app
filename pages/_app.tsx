@@ -5,7 +5,7 @@ import { useApollo } from '../graphql/client';
 import '../styles/globals.css';
 import Layout from '../components/layout';
 // import '../styles/styles-formik.css';
-import '../styles/styles-custom-formik.css';
+// import '../styles/styles-custom-formik.css';
 
 
 

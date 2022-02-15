@@ -22,10 +22,10 @@ interface IRenderPipelineProps {
   validators: IValidators;
 }
 
-const isEven = (value: number): "even" | "odd" => {
+const isEven = (value: number): 'even' | 'odd' => {
   if (value % 2 === 0)
-    return "even";
-  else return "odd";
+    return 'even';
+  else return 'odd';
 }
 
 export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRenderPipelineProps) {
@@ -66,27 +66,27 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
     <Fragment>
       <TableRow sx={{ '& > td': { borderBottom: 'unset' } }}>
         <TableCell>
-          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+          <IconButton aria-label='expand row' size='small' onClick={() => setOpen(!open)}>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
         {role && ['ADMIN', 'ENGINEER'].includes(role) && <TableCell>
-          <IconButton aria-label="delete row" size="small" onClick={showModalDeletePipeline}>
+          <IconButton aria-label='delete row' size='small' onClick={showModalDeletePipeline}>
             <DeleteOutlineOutlinedIcon />
           </IconButton>
-          <IconButton aria-label="add row" size="small" onClick={() => duplicatePipeline()}>
+          <IconButton aria-label='add row' size='small' onClick={() => duplicatePipeline()}>
             <AddCircleOutlineOutlinedIcon />
           </IconButton>
           {modalDeletePipeline}
         </TableCell>}
-        <EntryField id={id} createdById={createdById} record={license} columnName="license" validator={validators?.licenseMatchPattern} />
-        <EntryField id={id} createdById={createdById} record={segment} columnName="segment" validator={validators?.segmentMatchPattern} />
-        <EntryField id={id} createdById={createdById} record={substance} columnName="substance" validator={validators?.substanceEnum} />
-        <EntryField id={id} createdById={createdById} record={from} columnName="from" validator={validators?.fromToMatchPattern} />
-        <EntryField id={id} createdById={createdById} record={fromFeature} columnName="fromFeature" validator={validators?.fromToFeatureEnum} />
-        <EntryField id={id} createdById={createdById} record={to} columnName="to" validator={validators?.fromToMatchPattern} />
-        <EntryField id={id} createdById={createdById} record={toFeature} columnName="toFeature" validator={validators?.fromToFeatureEnum} />
-        <EntryField id={id} createdById={createdById} record={status} columnName="status" validator={validators?.statusEnum} />
+        <EntryField id={id} createdById={createdById} record={license} columnName='license' columnType='string' validator={validators?.licenseMatchPattern} />
+        <EntryField id={id} createdById={createdById} record={segment} columnName='segment' columnType='string' validator={validators?.segmentMatchPattern} />
+        <EntryField id={id} createdById={createdById} record={substance} columnName='substance' columnType='string' validator={validators?.substanceEnum} />
+        <EntryField id={id} createdById={createdById} record={from} columnName='from' columnType='string' validator={validators?.fromToMatchPattern} />
+        <EntryField id={id} createdById={createdById} record={fromFeature} columnName='fromFeature' columnType='string' validator={validators?.fromToFeatureEnum} />
+        <EntryField id={id} createdById={createdById} record={to} columnName='to' columnType='string' validator={validators?.fromToMatchPattern} />
+        <EntryField id={id} createdById={createdById} record={toFeature} columnName='toFeature' columnType='string' validator={validators?.fromToFeatureEnum} />
+        <EntryField id={id} createdById={createdById} record={status} columnName='status' columnType='string' validator={validators?.statusEnum} />
       </TableRow>
       <PipelineData
         key={`${id} injection points`}

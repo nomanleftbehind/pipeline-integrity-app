@@ -49,9 +49,6 @@ export default function InjectionPointForm({ injectionPointId, injectionPointTyp
   }
 
   function renderOptions() {
-    function substanceValue(substance: IPipelineOption['substance'], substanceEnum: ISubstanceEnum) {
-      return substanceEnum ? substanceEnum[substance] : substance;
-    }
     const arr = [];
 
     if (dataUpstreamPipelineOptions && dataUpstreamPipelineOptions.pipelineOptions) {
@@ -61,7 +58,7 @@ export default function InjectionPointForm({ injectionPointId, injectionPointTyp
       for (let i = 0; i < arr1.length; i++) {
         const pipelineOption = arr1[i];
         if (pipelineOption) {
-          const { facility, satellite, substance, id, license, segment } = pipelineOption;
+          const { facility, satellite, id, license, segment } = pipelineOption;
 
           // if (arr1[i - 1]?.facility !== facility) {
           //   arr.push({ disabled: true, value: facility, id: `fac-${id}`, k: `fac-${i}` });

@@ -63,28 +63,35 @@ export default function EntryField({ id, createdById, table, columnName, columnT
   const validatorIsString = typeof validator === "string";
 
   const switchRecordDisplay = () => {
-    switch (typeof record) {
-      case 'string':
-        if (record.length === 24 && record.slice(-1) === 'Z') {
+    switch (columnType) {
+      case 'date':
+        if (typeof record === 'string') {
           return record.slice(0, 10);
+        } else {
+          return record;
         }
-        if (typeof validator === 'object' && validator !== null) {
-          // Using previously defined object type that represents all validator properties.
-          return (validator as IValidatorEnumsToOneObject)[record as keyof IValidatorEnumsToOneObject];
-        }
-        return record;
       case 'boolean':
-        // Material UI doesn't allow boolean values be displayed in it's components.
-        return record === true ? 'Y' : 'N';
+        if (typeof record === 'boolean') {
+          // Material UI doesn't allow boolean values be displayed in it's components.
+          return record === true ? 'Y' : 'N';
+        } else {
+          return record;
+        }
+      case 'string':
+        if (typeof record === 'string') {
+          if (typeof validator === 'object' && validator !== null) {
+            // Using previously defined object type that represents all validator properties.
+            return (validator as IValidatorEnumsToOneObject)[record as keyof IValidatorEnumsToOneObject];
+          } else {
+            return record;
+          }
+        } else {
+          return record;
+        }
       default:
         return record;
     }
   }
-
-  useEffect(() => {
-    console.log('EntryField user:', user);
-
-  }, [user])
 
   const recordDisplay = switchRecordDisplay();
 
@@ -128,10 +135,9 @@ export default function EntryField({ id, createdById, table, columnName, columnT
     const mutationOptions = {
       variables: {
         id,
-        [columnName]: validatorIsString && typeof record === "number" ? Number(e.currentTarget.name) : e.currentTarget.name
+        [columnName]: columnType === 'number' ? Number(e.currentTarget.name) : e.currentTarget.name
       }
     }
-    console.log('submitted:', e.currentTarget.name);
 
     switch (table) {
       case 'pig runs':
@@ -172,6 +178,8 @@ export default function EntryField({ id, createdById, table, columnName, columnT
       return (
         <select name={columnName} value={state} onChange={handleChange}>
           {Object.entries(validator).map(([serverEnum, dbEnum]) => {
+            console.log(serverEnum, dbEnum);
+
             return (
               <option key={serverEnum} value={serverEnum}>{dbEnum}</option>
             );
