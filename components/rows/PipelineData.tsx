@@ -12,6 +12,7 @@ import Collapse from '@mui/material/Collapse';
 import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import { IPipelineProperty } from '../fields/PipelineProperties';
 
 import { TabPanel, a11yProps } from '../../pages/pipeline/[id]/index';
 
@@ -31,24 +32,24 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
 
   const { licenseMatchPattern, segmentMatchPattern, substanceEnum, fromToMatchPattern, fromToFeatureEnum, statusEnum, lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
 
-  const mechanicalProperties = [
-    { columnName: 'length', record: length, validator: lengthMatchPattern },
-    { columnName: 'type', record: type, validator: typeEnum },
-    { columnName: 'grade', record: grade, validator: gradeEnum },
-    { columnName: 'yieldStrength', record: yieldStrength, validator: yieldStrengthMatchPattern },
-    { columnName: 'outsideDiameter', record: outsideDiameter, validator: outsideDiameterMatchPattern },
-    { columnName: 'wallThickness', record: wallThickness, validator: wallThicknessMatchPattern },
-    { columnName: 'material', record: material, validator: materialEnum },
-    { columnName: 'mop', record: mop, validator: mopMatchPattern },
-    { columnName: 'internalProtection', record: internalProtection, validator: internalProtectionEnum }
+  const mechanicalProperties: IPipelineProperty[] = [
+    { columnName: 'length', record: length, columnType: 'number', validator: lengthMatchPattern },
+    { columnName: 'type', record: type, columnType: 'string', validator: typeEnum },
+    { columnName: 'grade', record: grade, columnType: 'string', validator: gradeEnum },
+    { columnName: 'yieldStrength', record: yieldStrength, columnType: 'number', validator: yieldStrengthMatchPattern },
+    { columnName: 'outsideDiameter', record: outsideDiameter, columnType: 'number', validator: outsideDiameterMatchPattern },
+    { columnName: 'wallThickness', record: wallThickness, columnType: 'number', validator: wallThicknessMatchPattern },
+    { columnName: 'material', record: material, columnType: 'string', validator: materialEnum },
+    { columnName: 'mop', record: mop, columnType: 'number', validator: mopMatchPattern },
+    { columnName: 'internalProtection', record: internalProtection, columnType: 'string', validator: internalProtectionEnum }
   ];
 
-  const systemFields = [
-    { columnName: 'createdBy', record: createdBy.email, validator: undefined },
-    { columnName: 'createdAt', record: createdAt, validator: undefined },
-    { columnName: 'updatedBy', record: updatedBy.email, validator: undefined },
-    { columnName: 'updatedAt', record: updatedAt, validator: undefined },
-    { columnName: 'id', record: id, validator: undefined },
+  const systemFields: IPipelineProperty[] = [
+    { columnName: 'createdBy', record: createdBy.email, columnType: 'string' },
+    { columnName: 'createdAt', record: createdAt, columnType: 'date' },
+    { columnName: 'updatedBy', record: updatedBy.email, columnType: 'string' },
+    { columnName: 'updatedAt', record: updatedAt, columnType: 'date' },
+    { columnName: 'id', record: id, columnType: 'string' },
   ];
 
   const handleChange = (_e: React.SyntheticEvent, newValue: number) => {

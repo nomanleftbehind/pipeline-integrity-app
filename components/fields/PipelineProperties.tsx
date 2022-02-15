@@ -13,10 +13,11 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import { IPipeline, IValidators } from '../rows/RenderPipeline';
 import { ITable } from '../rows/PipelineData';
 
+export type IColumnType = 'string' | 'number' | 'date' | 'boolean';
 
-type PipelinePropertyObject<T1, T2> = { columnName: string; record: T1[keyof T1]; validator?: T2[keyof T2]; table?: ITable };
+type PipelinePropertyObject<T1, T2> = { columnName: string; columnType: IColumnType; record: T1[keyof T1]; validator?: T2[keyof T2]; table?: ITable };
 
-type IPipelineProperty = PipelinePropertyObject<Omit<IPipeline, 'satellite' | 'injectionPoints' | 'upstream' | 'createdBy' | 'updatedBy'>, NonNullable<IValidators>>;
+export type IPipelineProperty = PipelinePropertyObject<Omit<IPipeline, 'satellite' | 'injectionPoints' | 'upstream' | 'downstream' | 'createdBy' | 'updatedBy'>, NonNullable<IValidators>>;
 
 export type IRecord = IPipelineProperty['record'];
 
@@ -34,7 +35,7 @@ interface IPipelinePropertiesProps {
 }
 
 
-export default function PipelineProperties({ id, createdById, open, propertiesName, pipelineProperties, addProperties, deleteProperties }: IPipelinePropertiesProps): JSX.Element {
+export default function PipelineProperties({ id, createdById, open, propertiesName, pipelineProperties, addProperties, deleteProperties }: IPipelinePropertiesProps) {
 
   const prettifyColumnName = (columnName: string) => columnName
     .split(/(?=[A-Z])/)
@@ -64,12 +65,12 @@ export default function PipelineProperties({ id, createdById, open, propertiesNa
             </TableRow>
           </TableHead>
           <TableBody>
-            {pipelineProperties.map(({ columnName, record, validator, table }) => {
+            {pipelineProperties.map(({ columnName, record, columnType, validator, table }) => {
               const columnNamePretty = prettifyColumnName(columnName);
               return (
                 <TableRow key={columnName}>
                   <TableCell>{columnNamePretty}</TableCell>
-                  <EntryField id={id} createdById={createdById} table={table} record={record} columnName={columnName} validator={validator} />
+                  <EntryField id={id} createdById={createdById} table={table} record={record} columnName={columnName} columnType={columnType} validator={validator} />
                 </TableRow>
               );
             })}

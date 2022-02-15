@@ -11,6 +11,7 @@ import {
 } from '../../graphql/generated/graphql';
 
 import { ITable } from './PipelineData';
+import { IPipelineProperty } from '../fields/PipelineProperties';
 
 
 export interface IRiskProps {
@@ -42,31 +43,31 @@ export default function Risk({ id, open, flowCalculationDirection, substance, st
       dateSlopeChecked, oilReleaseCost, gasReleaseCost, probabilityGeo, probabilityInterior, repairTimeDays, releaseTimeDays, costPerM3Released, riskPeople, enviroRisk, assetRisk, safeguardExternalCoating, safeguardInternalProtection, createdBy, createdAt, updatedAt } = data.riskById;
     const { environmentProximityToEnum, geotechnicalFacingEnum } = dataValidatorsRisk.validators;
 
-    const riskProperties = [
-      { columnName: 'arielReview', record: arielReview, table },
-      { columnName: 'environmentProximityTo', record: environmentProximityTo, validator: environmentProximityToEnum, table },
-      { columnName: 'geotechnicalFacingS1', record: geotechnicalFacingS1, validator: geotechnicalFacingEnum, table },
-      { columnName: 'geotechnicalHeightS1', record: geotechnicalHeightS1, table },
-      { columnName: 'geotechnicalSlopeAngleS1', record: geotechnicalSlopeAngleS1, table },
-      { columnName: 'geotechnicalFacingS2', record: geotechnicalFacingS2, validator: geotechnicalFacingEnum, table },
-      { columnName: 'geotechnicalHeightS2', record: geotechnicalHeightS2, table },
-      { columnName: 'geotechnicalSlopeAngleS2', record: geotechnicalSlopeAngleS2, table },
-      { columnName: 'dateSlopeChecked', record: dateSlopeChecked, table },
-      { columnName: 'oilReleaseCost', record: oilReleaseCost, table },
-      { columnName: 'gasReleaseCost', record: gasReleaseCost, table },
-      { columnName: 'probabilityGeo', record: probabilityGeo, table },
-      { columnName: 'probabilityInterior', record: probabilityInterior },
-      { columnName: 'repairTimeDays', record: repairTimeDays, table },
-      { columnName: 'releaseTimeDays', record: releaseTimeDays, table },
-      { columnName: 'costPerM3Released', record: costPerM3Released },
-      { columnName: 'riskPeople', record: riskPeople, table },
-      { columnName: 'enviroRisk', record: enviroRisk },
-      { columnName: 'assetRisk', record: assetRisk },
-      { columnName: 'safeguardExternalCoating', record: safeguardExternalCoating, table },
-      { columnName: 'safeguardInternalProtection', record: safeguardInternalProtection, table },
-      { columnName: 'createdBy', record: createdBy?.email, table },
-      { columnName: 'createdAt', record: createdAt, table },
-      { columnName: 'updatedAt', record: updatedAt, table },
+    const riskProperties: IPipelineProperty[] = [
+      { columnName: 'arielReview', record: arielReview, columnType: 'boolean', table },
+      { columnName: 'environmentProximityTo', record: environmentProximityTo, columnType: 'string', validator: environmentProximityToEnum, table },
+      { columnName: 'geotechnicalFacingS1', record: geotechnicalFacingS1, columnType: 'string', validator: geotechnicalFacingEnum, table },
+      { columnName: 'geotechnicalHeightS1', record: geotechnicalHeightS1, columnType: 'number', table },
+      { columnName: 'geotechnicalSlopeAngleS1', record: geotechnicalSlopeAngleS1, columnType: 'number', table },
+      { columnName: 'geotechnicalFacingS2', record: geotechnicalFacingS2, columnType: 'string', validator: geotechnicalFacingEnum, table },
+      { columnName: 'geotechnicalHeightS2', record: geotechnicalHeightS2, columnType: 'number', table },
+      { columnName: 'geotechnicalSlopeAngleS2', record: geotechnicalSlopeAngleS2, columnType: 'number', table },
+      { columnName: 'dateSlopeChecked', record: dateSlopeChecked, columnType: 'date', table },
+      { columnName: 'oilReleaseCost', record: oilReleaseCost, columnType: 'number', table },
+      { columnName: 'gasReleaseCost', record: gasReleaseCost, columnType: 'number', table },
+      { columnName: 'probabilityGeo', record: probabilityGeo, columnType: 'number', table },
+      { columnName: 'probabilityInterior', record: probabilityInterior, columnType: 'number' },
+      { columnName: 'repairTimeDays', record: repairTimeDays, table, columnType: 'number' },
+      { columnName: 'releaseTimeDays', record: releaseTimeDays, columnType: 'number', table },
+      { columnName: 'costPerM3Released', record: costPerM3Released, columnType: 'number' },
+      { columnName: 'riskPeople', record: riskPeople, columnType: 'number', table },
+      { columnName: 'enviroRisk', record: enviroRisk, columnType: 'number' },
+      { columnName: 'assetRisk', record: assetRisk, columnType: 'number' },
+      { columnName: 'safeguardExternalCoating', record: safeguardExternalCoating, columnType: 'boolean', table },
+      { columnName: 'safeguardInternalProtection', record: safeguardInternalProtection, columnType: 'boolean', table },
+      { columnName: 'createdBy', record: createdBy?.email, columnType: 'string', table },
+      { columnName: 'createdAt', record: createdAt, columnType: 'date', table },
+      { columnName: 'updatedAt', record: updatedAt, columnType: 'date', table },
     ];
 
     return (

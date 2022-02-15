@@ -18,6 +18,7 @@ import {
 import { IValidator, IRecord } from '../fields/PipelineProperties';
 import { ITable } from '../rows/PipelineData';
 import { useAuth } from '../../context/AuthContext';
+import { IColumnType } from './PipelineProperties';
 
 
 // We are taking `validators` type which is a union of many objects, a string and undefined.
@@ -34,18 +35,21 @@ interface ITextFieldProps {
   createdById: string;
   table?: ITable;
   columnName: string;
+  columnType: IColumnType;
   record: IRecord;
-  columnType?: 'string' | 'number';
   deleteField?: () => void;
   validator?: IValidator;
 }
 
-export default function EntryField({ id, createdById, table, columnName, record, validator, deleteField }: ITextFieldProps): JSX.Element {
+export default function EntryField({ id, createdById, table, columnName, columnType, record, validator, deleteField }: ITextFieldProps): JSX.Element {
 
   const { user } = useAuth() || {};
   const { role, id: userId } = user || {};
 
-  const authorized = (role === 'ADMIN' /*|| user === 'ENGINEER'*/) || (role === 'USER' && createdById === userId && (table === 'pressure tests' || table === 'pig runs')) || (role === 'CONTRACTOR' && createdById === userId/* && (table === 'chemicals')*/);
+  const authorized =
+    (role === 'ADMIN' /*|| user === 'ENGINEER'*/) ||
+    (role === 'USER' && createdById === userId && (table === 'pressure tests' || table === 'pig runs')) ||
+    (role === 'CONTRACTOR' && createdById === userId/* && (table === 'chemicals')*/);
 
   const [edit, setEdit] = useState(false);
   const [valid, setValid] = useState(true);
