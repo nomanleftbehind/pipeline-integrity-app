@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "user_role" AS ENUM ('User', 'Admin', 'Contractor');
+CREATE TYPE "user_role" AS ENUM ('Admin', 'Engineer', 'Office', 'Operator', 'Chemical', 'Cathodic', 'Contractor');
 
 -- CreateEnum
 CREATE TYPE "substance" AS ENUM ('Natural Gas', 'Fresh Water', 'Salt Water', 'Crude Oil', 'Oil Well Effluent', 'LVP Products', 'Fuel Gas', 'Sour Natural Gas');
@@ -47,7 +47,7 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
-    "role" "user_role" NOT NULL DEFAULT E'User',
+    "role" "user_role" NOT NULL DEFAULT E'Operator',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -87,7 +87,6 @@ CREATE TABLE "Pipeline" (
     "fromFeature" "from_to_feature",
     "to" TEXT NOT NULL,
     "toFeature" "from_to_feature",
-    "licenseDate" TIMESTAMP(3),
     "length" DOUBLE PRECISION NOT NULL,
     "type" "type",
     "grade" "grade",
@@ -165,7 +164,7 @@ CREATE TABLE "PressureTest" (
 -- CreateTable
 CREATE TABLE "Risk" (
     "id" TEXT NOT NULL,
-    "arielReview" BOOLEAN,
+    "aerialReview" BOOLEAN,
     "environmentProximityTo" "environment_proximity_to",
     "geotechnicalSlopeAngleS1" INTEGER,
     "geotechnicalFacingS1" "geotechnical_facing",

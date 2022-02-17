@@ -39,12 +39,12 @@ export default function Risk({ id, open, flowCalculationDirection, substance, st
   const table: ITable = 'risk';
 
   if (data?.riskById && dataValidatorsRisk?.validators) {
-    const { id, arielReview, environmentProximityTo, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS1, geotechnicalFacingS2, geotechnicalHeightS2, geotechnicalSlopeAngleS2,
+    const { id, aerialReview, environmentProximityTo, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS1, geotechnicalFacingS2, geotechnicalHeightS2, geotechnicalSlopeAngleS2,
       dateSlopeChecked, oilReleaseCost, gasReleaseCost, probabilityGeo, probabilityInterior, repairTimeDays, releaseTimeDays, costPerM3Released, riskPeople, enviroRisk, assetRisk, safeguardExternalCoating, safeguardInternalProtection, createdBy, createdAt, updatedAt } = data.riskById;
     const { environmentProximityToEnum, geotechnicalFacingEnum } = dataValidatorsRisk.validators;
 
     const riskProperties: IPipelineProperty[] = [
-      { columnName: 'arielReview', record: arielReview, columnType: 'boolean', table },
+      { columnName: 'aerialReview', record: aerialReview, columnType: 'boolean', table },
       { columnName: 'environmentProximityTo', record: environmentProximityTo, columnType: 'string', validator: environmentProximityToEnum, table },
       { columnName: 'geotechnicalFacingS1', record: geotechnicalFacingS1, columnType: 'string', validator: geotechnicalFacingEnum, table },
       { columnName: 'geotechnicalHeightS1', record: geotechnicalHeightS1, columnType: 'number', table },

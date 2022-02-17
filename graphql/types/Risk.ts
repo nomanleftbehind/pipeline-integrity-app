@@ -22,7 +22,7 @@ export const Risk = objectType({
         return result!;
       }
     })
-    t.boolean('arielReview')
+    t.boolean('aerialReview')
     t.field('environmentProximityTo', { type: 'EnvironmentProximityToEnum' })
     t.int('geotechnicalSlopeAngleS1')
     t.field('geotechnicalFacingS1', { type: 'GeotechnicalFacingEnum' })
@@ -272,7 +272,7 @@ export const RiskMutation = extendType({
       type: 'Risk',
       args: {
         id: nonNull(stringArg()),
-        arielReview: booleanArg(),
+        aerialReview: booleanArg(),
         environmentProximityTo: arg({ type: 'EnvironmentProximityToEnum' }),
         geotechnicalSlopeAngleS1: intArg(),
         geotechnicalFacingS1: arg({ type: 'GeotechnicalFacingEnum' }),
@@ -295,7 +295,7 @@ export const RiskMutation = extendType({
         return ctx.prisma.risk.update({
           where: { id: args.id },
           data: {
-            arielReview: args.arielReview,
+            aerialReview: args.aerialReview,
             environmentProximityTo: databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, args.environmentProximityTo),
             geotechnicalSlopeAngleS1: args.geotechnicalSlopeAngleS1,
             geotechnicalFacingS1: databaseEnumToServerEnum(GeotechnicalFacingEnumMembers, args.geotechnicalFacingS1),

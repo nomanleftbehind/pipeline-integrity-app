@@ -247,7 +247,7 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
   function renderBody(data: IGenericTableData) {
     const { id, limitingSpec, infoSentOutDate, ddsDate, pressureTestDate, pressureTestReceivedDate, integritySheetUpdated, comment, createdBy,
       pigType, date, operator, createdAt, updatedAt,
-      arielReview, environmentProximityTo, geotechnicalSlopeAngleS1, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS2, geotechnicalFacingS2, geotechnicalHeightS2, dateSlopeChecked } = data;
+      aerialReview, environmentProximityTo, geotechnicalSlopeAngleS1, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS2, geotechnicalFacingS2, geotechnicalHeightS2, dateSlopeChecked } = data;
     switch (table) {
       case 'pressure tests':
         return (
@@ -281,7 +281,7 @@ export default function GenericTable({ pipelineId, in_tab_panel, table }: IGener
       case 'risk':
         return (
           <>
-            <EntryField table={table} id={id} record={arielReview} columnName="arielReview" />
+            <EntryField table={table} id={id} record={aerialReview} columnName="aerialReview" />
             <EntryField table={table} id={id} record={environmentProximityTo} columnName="environmentProximityTo" validator={dataValidatorsRisk?.validators?.environmentProximityToEnum} />
             <EntryField table={table} id={id} record={geotechnicalSlopeAngleS1} columnName="geotechnicalSlopeAngleS1" />
             <EntryField table={table} id={id} record={geotechnicalFacingS1} columnName="geotechnicalFacingS1" validator={dataValidatorsRisk?.validators?.geotechnicalFacingEnum} />

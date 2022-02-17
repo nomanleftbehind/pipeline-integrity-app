@@ -637,7 +637,7 @@ query PressureTestsByPipelineId($pipelineId: String) {
 query RiskById($id: String!, $substance: SubstanceEnum, $oil: Float, $water: Float, $gas: Float, $status: StatusEnum, $type: TypeEnum, $material: MaterialEnum) {
   riskById(id: $id) {
     id
-    arielReview
+    aerialReview
     environmentProximityTo
     geotechnicalSlopeAngleS1
     geotechnicalFacingS1

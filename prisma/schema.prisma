@@ -13,7 +13,7 @@ model User {
   password                 String
   firstName                String
   lastName                 String
-  role                     UserRoleEnum     @default(USER)
+  role                     UserRoleEnum     @default(OPERATOR)
   facilitiesCreatedBy      Facility[]       @relation("facilityCreatedBy")
   facilitiesUpdatedBy      Facility[]       @relation("facilityUpdatedBy")
   satellitesCreatedBy      Satellite[]      @relation("satelliteCreatedBy")
@@ -34,8 +34,12 @@ model User {
 }
 
 enum UserRoleEnum {
-  USER        @map("User")
   ADMIN       @map("Admin")
+  ENGINEER    @map("Engineer")
+  OFFICE      @map("Office")
+  OPERATOR    @map("Operator")
+  CHEMICAL    @map("Chemical")
+  CATHODIC    @map("Cathodic")
   CONTRACTOR  @map("Contractor")
 
   @@map("user_role")
@@ -83,7 +87,6 @@ model Pipeline {
   to                       String
   toFeature                FromToFeatureEnum?
   licenseChanges           LicenseChange[]
-  licenseDate              DateTime?
   length                   Float
   type                     TypeEnum?
   grade                    GradeEnum?
@@ -169,7 +172,7 @@ model PressureTest {
 model Risk {
   pipeline                    Pipeline                    @relation(fields: [id], references: [id])
   id                          String                      @id
-  arielReview                 Boolean?
+  aerialReview                Boolean?
   environmentProximityTo      EnvironmentProximityToEnum?
   geotechnicalSlopeAngleS1    Int?
   geotechnicalFacingS1        GeotechnicalFacingEnum?
