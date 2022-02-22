@@ -1,5 +1,5 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
-import { databaseEnumToServerEnum } from './Pipeline';
+import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 import { Context } from '../context';
 
 
@@ -23,7 +23,7 @@ export const PressureTest = objectType({
     t.field('limitingSpec', {
       type: 'LimitingSpecEnum',
       resolve: ({ limitingSpec }) => {
-        const result = limitingSpec !== null ? LimitingSpecEnumMembers[limitingSpec] as keyof typeof LimitingSpecEnumMembers : null;
+        const result = limitingSpec && serverEnumToDatabaseEnum(LimitingSpecEnumMembers, limitingSpec);
         return result;
       }
     })

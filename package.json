@@ -23,7 +23,7 @@
     "@mui/lab": "^5.0.0-alpha.59",
     "@mui/material": "^5.0.6",
     "@mui/x-data-grid": "^5.2.2",
-    "@prisma/client": "^3.9.1",
+    "@prisma/client": "^3.10.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/cookie": "^0.4.1",
     "@types/jsonwebtoken": "^8.5.5",

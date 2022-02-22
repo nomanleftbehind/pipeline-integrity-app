@@ -4352,7 +4352,7 @@
             "description": null,
             "args": [
               {
-                "name": "arielReview",
+                "name": "aerialReview",
                 "description": null,
                 "type": {
                   "kind": "SCALAR",
@@ -5121,12 +5121,6 @@
             "deprecationReason": null
           },
           {
-            "name": "PigType3inARGUS",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "PigType3inArgus",
             "description": null,
             "isDeprecated": false,
@@ -5152,12 +5146,6 @@
           },
           {
             "name": "PigType3inGreenRibbed",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "PigType3inGscr",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -5224,6 +5212,12 @@
           },
           {
             "name": "PigType3inredscrape",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PigType3inredstubby",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -5885,22 +5879,6 @@
             "deprecationReason": null
           },
           {
-            "name": "PigType3inARGUS",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "PigType3inArgus",
             "description": null,
             "args": [],
@@ -5966,22 +5944,6 @@
           },
           {
             "name": "PigType3inGreenRibbed",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "PigType3inGscr",
             "description": null,
             "args": [],
             "type": {
@@ -6158,6 +6120,22 @@
           },
           {
             "name": "PigType3inredscrape",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PigType3inredstubby",
             "description": null,
             "args": [],
             "type": {
@@ -8669,7 +8647,7 @@
         "description": null,
         "fields": [
           {
-            "name": "arielReview",
+            "name": "aerialReview",
             "description": null,
             "args": [],
             "type": {
@@ -11043,13 +11021,37 @@
             "deprecationReason": null
           },
           {
+            "name": "CATHODIC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CHEMICAL",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "CONTRACTOR",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "USER",
+            "name": "ENGINEER",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "OFFICE",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "OPERATOR",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -11079,6 +11081,38 @@
             "deprecationReason": null
           },
           {
+            "name": "CATHODIC",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CHEMICAL",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "CONTRACTOR",
             "description": null,
             "args": [],
@@ -11095,7 +11129,39 @@
             "deprecationReason": null
           },
           {
-            "name": "USER",
+            "name": "ENGINEER",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "OFFICE",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "OPERATOR",
             "description": null,
             "args": [],
             "type": {

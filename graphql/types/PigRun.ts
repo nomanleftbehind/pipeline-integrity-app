@@ -168,6 +168,7 @@ export const PigTypeEnumMembers = {
 	PigType3inscraper: '3in scraper',
 	Foam: 'Foam',
 	RedStubby: 'Red Stubby',
+	PigType3inredstubby: '3in red stubby',
 	PigType3inGSCR: '3in GSCR',
 	PigType2inGSCR: '2in GSCR',
 	NoSender: 'No Sender',
@@ -232,7 +233,6 @@ export const PigTypeEnumMembers = {
 	SI_GOINGTOTAQA: 'SI - GOING TO TAQA',
 	Red4inscraper: 'Red 4in scraper',
 	Blue3inscraper: 'Blue 3in scraper',
-	PigType3inARGUS: '3inARGUS',
 	PigType4inBlueDisc: '4inBlue Disc',
 	PigType8inBlackDisc: '8in Black Disc',
 	PigType4inGreendisc: '4in Green disc',
@@ -247,7 +247,6 @@ export const PigTypeEnumMembers = {
 	PigType3inbluescraper: '3in blue scraper',
 	PigType6ingreenscraper: '6in green scraper',
 	Purple3inDisc: 'Purple 3in Disc',
-	PigType3inGscr: '3in G scr',
 }
 
 export const PigTypeEnum = enumType({

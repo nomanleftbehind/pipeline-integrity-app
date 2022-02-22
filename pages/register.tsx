@@ -65,7 +65,7 @@ function Register({ userCount, user }: IServerSideProps) {
           lastName: '',
           email: '',
           password: '',
-          role: UserRoleEnum['User'],
+          role: UserRoleEnum['Operator'],
         }}
         validationSchema={isSignup ? SignupSchema : LoginSchema}
         onSubmit={async (

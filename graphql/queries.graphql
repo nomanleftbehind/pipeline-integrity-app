@@ -251,7 +251,6 @@ query ValidatorsPigRun {
       SI_GOINGTOTAQA
       Red4inscraper
       Blue3inscraper
-      PigType3inARGUS
       PigType4inBlueDisc
       PigType8inBlackDisc
       PigType4inGreendisc
@@ -266,7 +265,6 @@ query ValidatorsPigRun {
       PigType3inbluescraper
       PigType6ingreenscraper
       Purple3inDisc
-      PigType3inGscr
     }
     pigInspectionEnum {
       Failed
@@ -486,7 +484,6 @@ query getValidators {
       SI_GOINGTOTAQA
       Red4inscraper
       Blue3inscraper
-      PigType3inARGUS
       PigType4inBlueDisc
       PigType8inBlackDisc
       PigType4inGreendisc
@@ -501,7 +498,6 @@ query getValidators {
       PigType3inbluescraper
       PigType6ingreenscraper
       Purple3inDisc
-      PigType3inGscr
     }
     pigInspectionEnum {
       Failed
@@ -600,8 +596,12 @@ query validatorsPressureTest {
 query ValidatorUserRole {
   validators {
     userRoleEnum {
-      USER
       ADMIN
+      ENGINEER
+      OFFICE
+      OPERATOR
+      CHEMICAL
+      CATHODIC
       CONTRACTOR
     }
   }

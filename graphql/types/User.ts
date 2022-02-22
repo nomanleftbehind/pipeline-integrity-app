@@ -128,8 +128,12 @@ export const User = objectType({
 
 
 export const UserRoleEnumMembers = {
-  USER: 'User',
   ADMIN: 'Admin',
+  ENGINEER: 'Engineer',
+  OFFICE: 'Office',
+  OPERATOR: 'Operator',
+  CHEMICAL: 'Chemical',
+  CATHODIC: 'Cathodic',
   CONTRACTOR: 'Contractor',
 }
 

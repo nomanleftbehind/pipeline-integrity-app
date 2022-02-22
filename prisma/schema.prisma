@@ -383,6 +383,7 @@ enum PigTypeEnum {
   PigType3inscraper        @map("3in scraper")
   Foam                     @map("Foam")
   RedStubby                @map("Red Stubby")
+  PigType3inredstubby      @map("3in red stubby")
   PigType3inGSCR           @map("3in GSCR")
   PigType2inGSCR           @map("2in GSCR")
   NoSender                 @map("No Sender")
@@ -447,7 +448,6 @@ enum PigTypeEnum {
   SI_GOINGTOTAQA           @map("SI - GOING TO TAQA")
   Red4inscraper            @map("Red 4in scraper")
   Blue3inscraper           @map("Blue 3in scraper")
-  PigType3inARGUS          @map("3inARGUS")
   PigType4inBlueDisc       @map("4inBlue Disc")
   PigType8inBlackDisc      @map("8in Black Disc")
   PigType4inGreendisc      @map("4in Green disc")
@@ -462,7 +462,6 @@ enum PigTypeEnum {
   PigType3inbluescraper    @map("3in blue scraper")
   PigType6ingreenscraper   @map("6in green scraper")
   Purple3inDisc            @map("Purple 3in Disc")
-  PigType3inGscr           @map("3in G scr")
 
   @@map("pig_type")
 }

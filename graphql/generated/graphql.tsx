@@ -514,7 +514,7 @@ export type MutationEditPressureTestArgs = {
 
 
 export type MutationEditRiskArgs = {
-  arielReview?: Maybe<Scalars['Boolean']>;
+  aerialReview?: Maybe<Scalars['Boolean']>;
   dateSlopeChecked?: Maybe<Scalars['DateTime']>;
   environmentProximityTo?: Maybe<EnvironmentProximityToEnum>;
   gasReleaseCost?: Maybe<Scalars['Float']>;
@@ -600,13 +600,11 @@ export enum PigTypeEnum {
   PigType3BrownRibbed = 'PigType3BrownRibbed',
   PigType3GreenRibbed = 'PigType3GreenRibbed',
   PigType3Scrapper = 'PigType3_scrapper',
-  PigType3inArgus = 'PigType3inARGUS',
   PigType3inArgus = 'PigType3inArgus',
   PigType3inBlueRibbed = 'PigType3inBlueRibbed',
   PigType3inGscr = 'PigType3inGSCR',
   PigType3inGreenDisc = 'PigType3inGreenDisc',
   PigType3inGreenRibbed = 'PigType3inGreenRibbed',
-  PigType3inGscr = 'PigType3inGscr',
   PigType3inPscr = 'PigType3inPSCR',
   PigType3inPurpleScraper = 'PigType3inPurpleScraper',
   PigType3inPurpleStubby = 'PigType3inPurpleStubby',
@@ -618,6 +616,7 @@ export enum PigTypeEnum {
   PigType3inpurple2disc = 'PigType3inpurple2disc',
   PigType3inpurpledisc = 'PigType3inpurpledisc',
   PigType3inredscrape = 'PigType3inredscrape',
+  PigType3inredstubby = 'PigType3inredstubby',
   PigType3inscapper = 'PigType3inscapper',
   PigType3inscr = 'PigType3inscr',
   PigType3inscraper = 'PigType3inscraper',
@@ -694,13 +693,11 @@ export type PigTypeEnumObject = {
   PigType3BrownRibbed: Scalars['String'];
   PigType3GreenRibbed: Scalars['String'];
   PigType3_scrapper: Scalars['String'];
-  PigType3inARGUS: Scalars['String'];
   PigType3inArgus: Scalars['String'];
   PigType3inBlueRibbed: Scalars['String'];
   PigType3inGSCR: Scalars['String'];
   PigType3inGreenDisc: Scalars['String'];
   PigType3inGreenRibbed: Scalars['String'];
-  PigType3inGscr: Scalars['String'];
   PigType3inPSCR: Scalars['String'];
   PigType3inPurpleScraper: Scalars['String'];
   PigType3inPurpleStubby: Scalars['String'];
@@ -712,6 +709,7 @@ export type PigTypeEnumObject = {
   PigType3inpurple2disc: Scalars['String'];
   PigType3inpurpledisc: Scalars['String'];
   PigType3inredscrape: Scalars['String'];
+  PigType3inredstubby: Scalars['String'];
   PigType3inscapper: Scalars['String'];
   PigType3inscr: Scalars['String'];
   PigType3inscraper: Scalars['String'];
@@ -930,7 +928,7 @@ export type QueryRiskByIdArgs = {
 };
 
 export type Risk = {
-  arielReview?: Maybe<Scalars['Boolean']>;
+  aerialReview?: Maybe<Scalars['Boolean']>;
   assetRisk?: Maybe<Scalars['Int']>;
   costPerM3Released?: Maybe<Scalars['Float']>;
   createdAt: Scalars['DateTime'];
@@ -1165,14 +1163,22 @@ export type UserCreateInput = {
 
 export enum UserRoleEnum {
   Admin = 'ADMIN',
+  Cathodic = 'CATHODIC',
+  Chemical = 'CHEMICAL',
   Contractor = 'CONTRACTOR',
-  User = 'USER'
+  Engineer = 'ENGINEER',
+  Office = 'OFFICE',
+  Operator = 'OPERATOR'
 }
 
 export type UserRoleEnumObject = {
   ADMIN: Scalars['String'];
+  CATHODIC: Scalars['String'];
+  CHEMICAL: Scalars['String'];
   CONTRACTOR: Scalars['String'];
-  USER: Scalars['String'];
+  ENGINEER: Scalars['String'];
+  OFFICE: Scalars['String'];
+  OPERATOR: Scalars['String'];
 };
 
 export type UserUniqueInput = {
@@ -1360,7 +1366,7 @@ export type DeletePigRunMutation = { deletePigRun?: { id: string } | null | unde
 
 export type EditRiskMutationVariables = Exact<{
   id: Scalars['String'];
-  arielReview?: Maybe<Scalars['Boolean']>;
+  aerialReview?: Maybe<Scalars['Boolean']>;
   environmentProximityTo?: Maybe<EnvironmentProximityToEnum>;
   geotechnicalSlopeAngleS1?: Maybe<Scalars['Int']>;
   geotechnicalFacingS1?: Maybe<GeotechnicalFacingEnum>;
@@ -1441,12 +1447,12 @@ export type PigRunsByPipelineIdQuery = { pigRunsByPipelineId?: Array<{ id: strin
 export type ValidatorsPigRunQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorsPigRunQuery = { validators?: { anyTextMatchPattern: string, pigTypeEnum: { Scrapper: string, PigType4inArgus: string, PigType6inArgus: string, ScraperP400: string, PigType3inPurpleScraper: string, ScraperP304: string, PigType3inscapper: string, PigType3inscrapper: string, PigType3inscraper: string, Foam: string, RedStubby: string, PigType3inGSCR: string, PigType2inGSCR: string, NoSender: string, PigType2ingscr: string, PigType2inGSCR_GFP: string, PigType4inGSCR: string, PigType2inPSCR_FLM: string, PigType3inPSCR: string, Highline: string, PigType2inPSCR: string, PigType3_scrapper: string, ScraperP401: string, ScraperP300: string, ScraperP301: string, ScraperP309: string, ScraperP314: string, ScaperP314: string, ScaperPP309: string, ScraperP204: string, ScraperP208: string, PigType3inArgus: string, Ball: string, REVERSEFLOWDUETOTAQA: string, PigType3: string, SIMAY2018: string, ScraperP206: string, ScraperP200: string, PigType3inRscr: string, PigType3inPurpleStubby: string, PigType3inSCRAPER: string, Red3inscraper: string, PigType3inGreenDisc: string, PigType4inGreenDisc: string, PigType4green2disc: string, PigType4gree2disc: string, PigType3ingreendisc: string, PigType3inpurpledisc: string, PigType2inPurpleDisc: string, disc: string, PigType2purple2disc: string, Shutin: string, PigType3inpurple2disc: string, PigType2green2disc: string, bullet: string, PigType8inFoam: string, PigType3inscr: string, ScraperP305: string, ScraperP312: string, ScraperP303: string, ScraperP311: string, ScrapperP307: string, PigType4inpurplescraper: string, Torpedo: string, PigType3BrownRibbed: string, PigType3GreenRibbed: string, PigType3inBlueRibbed: string, PigType3inGreenRibbed: string, PigType3BlueRibbed: string, BlueRibbed: string, M_D_Foamy: string, PigType6inGreenRibbed: string, SI_GOINGTOTAQA: string, Red4inscraper: string, Blue3inscraper: string, PigType3inARGUS: string, PigType4inBlueDisc: string, PigType8inBlackDisc: string, PigType4inGreendisc: string, PigType6inGreenDisc: string, PigType6inscrapper: string, PigType4inscrapper: string, PigType4inFoam: string, PigType3inredscrape: string, GSCR: string, PigType3inStubby: string, PigType4_GreenRibbed: string, PigType3inbluescraper: string, PigType6ingreenscraper: string, Purple3inDisc: string, PigType3inGscr: string }, pigInspectionEnum: { Failed: string, Good: string } } | null | undefined };
+export type ValidatorsPigRunQuery = { validators?: { anyTextMatchPattern: string, pigTypeEnum: { Scrapper: string, PigType4inArgus: string, PigType6inArgus: string, ScraperP400: string, PigType3inPurpleScraper: string, ScraperP304: string, PigType3inscapper: string, PigType3inscrapper: string, PigType3inscraper: string, Foam: string, RedStubby: string, PigType3inGSCR: string, PigType2inGSCR: string, NoSender: string, PigType2ingscr: string, PigType2inGSCR_GFP: string, PigType4inGSCR: string, PigType2inPSCR_FLM: string, PigType3inPSCR: string, Highline: string, PigType2inPSCR: string, PigType3_scrapper: string, ScraperP401: string, ScraperP300: string, ScraperP301: string, ScraperP309: string, ScraperP314: string, ScaperP314: string, ScaperPP309: string, ScraperP204: string, ScraperP208: string, PigType3inArgus: string, Ball: string, REVERSEFLOWDUETOTAQA: string, PigType3: string, SIMAY2018: string, ScraperP206: string, ScraperP200: string, PigType3inRscr: string, PigType3inPurpleStubby: string, PigType3inSCRAPER: string, Red3inscraper: string, PigType3inGreenDisc: string, PigType4inGreenDisc: string, PigType4green2disc: string, PigType4gree2disc: string, PigType3ingreendisc: string, PigType3inpurpledisc: string, PigType2inPurpleDisc: string, disc: string, PigType2purple2disc: string, Shutin: string, PigType3inpurple2disc: string, PigType2green2disc: string, bullet: string, PigType8inFoam: string, PigType3inscr: string, ScraperP305: string, ScraperP312: string, ScraperP303: string, ScraperP311: string, ScrapperP307: string, PigType4inpurplescraper: string, Torpedo: string, PigType3BrownRibbed: string, PigType3GreenRibbed: string, PigType3inBlueRibbed: string, PigType3inGreenRibbed: string, PigType3BlueRibbed: string, BlueRibbed: string, M_D_Foamy: string, PigType6inGreenRibbed: string, SI_GOINGTOTAQA: string, Red4inscraper: string, Blue3inscraper: string, PigType4inBlueDisc: string, PigType8inBlackDisc: string, PigType4inGreendisc: string, PigType6inGreenDisc: string, PigType6inscrapper: string, PigType4inscrapper: string, PigType4inFoam: string, PigType3inredscrape: string, GSCR: string, PigType3inStubby: string, PigType4_GreenRibbed: string, PigType3inbluescraper: string, PigType6ingreenscraper: string, Purple3inDisc: string }, pigInspectionEnum: { Failed: string, Good: string } } | null | undefined };
 
 export type GetValidatorsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string }, pigTypeEnum: { Scrapper: string, PigType4inArgus: string, PigType6inArgus: string, ScraperP400: string, PigType3inPurpleScraper: string, ScraperP304: string, PigType3inscapper: string, PigType3inscrapper: string, PigType3inscraper: string, Foam: string, RedStubby: string, PigType3inGSCR: string, PigType2inGSCR: string, NoSender: string, PigType2ingscr: string, PigType2inGSCR_GFP: string, PigType4inGSCR: string, PigType2inPSCR_FLM: string, PigType3inPSCR: string, Highline: string, PigType2inPSCR: string, PigType3_scrapper: string, ScraperP401: string, ScraperP300: string, ScraperP301: string, ScraperP309: string, ScraperP314: string, ScaperP314: string, ScaperPP309: string, ScraperP204: string, ScraperP208: string, PigType3inArgus: string, Ball: string, REVERSEFLOWDUETOTAQA: string, PigType3: string, SIMAY2018: string, ScraperP206: string, ScraperP200: string, PigType3inRscr: string, PigType3inPurpleStubby: string, PigType3inSCRAPER: string, Red3inscraper: string, PigType3inGreenDisc: string, PigType4inGreenDisc: string, PigType4green2disc: string, PigType4gree2disc: string, PigType3ingreendisc: string, PigType3inpurpledisc: string, PigType2inPurpleDisc: string, disc: string, PigType2purple2disc: string, Shutin: string, PigType3inpurple2disc: string, PigType2green2disc: string, bullet: string, PigType8inFoam: string, PigType3inscr: string, ScraperP305: string, ScraperP312: string, ScraperP303: string, ScraperP311: string, ScrapperP307: string, PigType4inpurplescraper: string, Torpedo: string, PigType3BrownRibbed: string, PigType3GreenRibbed: string, PigType3inBlueRibbed: string, PigType3inGreenRibbed: string, PigType3BlueRibbed: string, BlueRibbed: string, M_D_Foamy: string, PigType6inGreenRibbed: string, SI_GOINGTOTAQA: string, Red4inscraper: string, Blue3inscraper: string, PigType3inARGUS: string, PigType4inBlueDisc: string, PigType8inBlackDisc: string, PigType4inGreendisc: string, PigType6inGreenDisc: string, PigType6inscrapper: string, PigType4inscrapper: string, PigType4inFoam: string, PigType3inredscrape: string, GSCR: string, PigType3inStubby: string, PigType4_GreenRibbed: string, PigType3inbluescraper: string, PigType6ingreenscraper: string, Purple3inDisc: string, PigType3inGscr: string }, pigInspectionEnum: { Failed: string, Good: string }, limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string }, environmentProximityToEnum: { WB1: string, WB3: string, WB4: string, WB5: string, WC1: string, WC2: string, WC3: string, WC4: string }, geotechnicalFacingEnum: { N: string, NE: string, E: string, SE: string, S: string, SW: string, W: string, NW: string } } | null | undefined };
+export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string }, pigTypeEnum: { Scrapper: string, PigType4inArgus: string, PigType6inArgus: string, ScraperP400: string, PigType3inPurpleScraper: string, ScraperP304: string, PigType3inscapper: string, PigType3inscrapper: string, PigType3inscraper: string, Foam: string, RedStubby: string, PigType3inGSCR: string, PigType2inGSCR: string, NoSender: string, PigType2ingscr: string, PigType2inGSCR_GFP: string, PigType4inGSCR: string, PigType2inPSCR_FLM: string, PigType3inPSCR: string, Highline: string, PigType2inPSCR: string, PigType3_scrapper: string, ScraperP401: string, ScraperP300: string, ScraperP301: string, ScraperP309: string, ScraperP314: string, ScaperP314: string, ScaperPP309: string, ScraperP204: string, ScraperP208: string, PigType3inArgus: string, Ball: string, REVERSEFLOWDUETOTAQA: string, PigType3: string, SIMAY2018: string, ScraperP206: string, ScraperP200: string, PigType3inRscr: string, PigType3inPurpleStubby: string, PigType3inSCRAPER: string, Red3inscraper: string, PigType3inGreenDisc: string, PigType4inGreenDisc: string, PigType4green2disc: string, PigType4gree2disc: string, PigType3ingreendisc: string, PigType3inpurpledisc: string, PigType2inPurpleDisc: string, disc: string, PigType2purple2disc: string, Shutin: string, PigType3inpurple2disc: string, PigType2green2disc: string, bullet: string, PigType8inFoam: string, PigType3inscr: string, ScraperP305: string, ScraperP312: string, ScraperP303: string, ScraperP311: string, ScrapperP307: string, PigType4inpurplescraper: string, Torpedo: string, PigType3BrownRibbed: string, PigType3GreenRibbed: string, PigType3inBlueRibbed: string, PigType3inGreenRibbed: string, PigType3BlueRibbed: string, BlueRibbed: string, M_D_Foamy: string, PigType6inGreenRibbed: string, SI_GOINGTOTAQA: string, Red4inscraper: string, Blue3inscraper: string, PigType4inBlueDisc: string, PigType8inBlackDisc: string, PigType4inGreendisc: string, PigType6inGreenDisc: string, PigType6inscrapper: string, PigType4inscrapper: string, PigType4inFoam: string, PigType3inredscrape: string, GSCR: string, PigType3inStubby: string, PigType4_GreenRibbed: string, PigType3inbluescraper: string, PigType6ingreenscraper: string, Purple3inDisc: string }, pigInspectionEnum: { Failed: string, Good: string }, limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string }, environmentProximityToEnum: { WB1: string, WB3: string, WB4: string, WB5: string, WC1: string, WC2: string, WC3: string, WC4: string }, geotechnicalFacingEnum: { N: string, NE: string, E: string, SE: string, S: string, SW: string, W: string, NW: string } } | null | undefined };
 
 export type ValidatorSubstanceQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1466,7 +1472,7 @@ export type ValidatorsRiskQuery = { validators?: { environmentProximityToEnum: {
 export type ValidatorUserRoleQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorUserRoleQuery = { validators?: { userRoleEnum: { USER: string, ADMIN: string, CONTRACTOR: string } } | null | undefined };
+export type ValidatorUserRoleQuery = { validators?: { userRoleEnum: { ADMIN: string, ENGINEER: string, OFFICE: string, OPERATOR: string, CHEMICAL: string, CATHODIC: string, CONTRACTOR: string } } | null | undefined };
 
 export type PressureTestsByPipelineIdQueryVariables = Exact<{
   pipelineId?: Maybe<Scalars['String']>;
@@ -1487,7 +1493,7 @@ export type RiskByIdQueryVariables = Exact<{
 }>;
 
 
-export type RiskByIdQuery = { riskById?: { id: string, arielReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, enviroRisk?: number | null | undefined, assetRisk?: number | null | undefined, probabilityInterior?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
+export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, enviroRisk?: number | null | undefined, assetRisk?: number | null | undefined, probabilityInterior?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
 
 export type PipelineFlowQueryVariables = Exact<{
   idList: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
@@ -2152,10 +2158,10 @@ export type DeletePigRunMutationHookResult = ReturnType<typeof useDeletePigRunMu
 export type DeletePigRunMutationResult = Apollo.MutationResult<DeletePigRunMutation>;
 export type DeletePigRunMutationOptions = Apollo.BaseMutationOptions<DeletePigRunMutation, DeletePigRunMutationVariables>;
 export const EditRiskDocument = gql`
-    mutation EditRisk($id: String!, $arielReview: Boolean, $environmentProximityTo: EnvironmentProximityToEnum, $geotechnicalSlopeAngleS1: Int, $geotechnicalFacingS1: GeotechnicalFacingEnum, $geotechnicalHeightS1: Int, $geotechnicalSlopeAngleS2: Int, $geotechnicalFacingS2: GeotechnicalFacingEnum, $geotechnicalHeightS2: Int, $dateSlopeChecked: DateTime, $repairTimeDays: Int, $releaseTimeDays: Int, $oilReleaseCost: Float, $gasReleaseCost: Float, $riskPeople: Int, $probabilityGeo: Float, $safeguardInternalProtection: Boolean, $safeguardExternalCoating: Boolean) {
+    mutation EditRisk($id: String!, $aerialReview: Boolean, $environmentProximityTo: EnvironmentProximityToEnum, $geotechnicalSlopeAngleS1: Int, $geotechnicalFacingS1: GeotechnicalFacingEnum, $geotechnicalHeightS1: Int, $geotechnicalSlopeAngleS2: Int, $geotechnicalFacingS2: GeotechnicalFacingEnum, $geotechnicalHeightS2: Int, $dateSlopeChecked: DateTime, $repairTimeDays: Int, $releaseTimeDays: Int, $oilReleaseCost: Float, $gasReleaseCost: Float, $riskPeople: Int, $probabilityGeo: Float, $safeguardInternalProtection: Boolean, $safeguardExternalCoating: Boolean) {
   editRisk(
     id: $id
-    arielReview: $arielReview
+    aerialReview: $aerialReview
     environmentProximityTo: $environmentProximityTo
     geotechnicalSlopeAngleS1: $geotechnicalSlopeAngleS1
     geotechnicalFacingS1: $geotechnicalFacingS1
@@ -2193,7 +2199,7 @@ export type EditRiskMutationFn = Apollo.MutationFunction<EditRiskMutation, EditR
  * const [editRiskMutation, { data, loading, error }] = useEditRiskMutation({
  *   variables: {
  *      id: // value for 'id'
- *      arielReview: // value for 'arielReview'
+ *      aerialReview: // value for 'aerialReview'
  *      environmentProximityTo: // value for 'environmentProximityTo'
  *      geotechnicalSlopeAngleS1: // value for 'geotechnicalSlopeAngleS1'
  *      geotechnicalFacingS1: // value for 'geotechnicalFacingS1'
@@ -2740,7 +2746,6 @@ export const ValidatorsPigRunDocument = gql`
       SI_GOINGTOTAQA
       Red4inscraper
       Blue3inscraper
-      PigType3inARGUS
       PigType4inBlueDisc
       PigType8inBlackDisc
       PigType4inGreendisc
@@ -2755,7 +2760,6 @@ export const ValidatorsPigRunDocument = gql`
       PigType3inbluescraper
       PigType6ingreenscraper
       Purple3inDisc
-      PigType3inGscr
     }
     pigInspectionEnum {
       Failed
@@ -3003,7 +3007,6 @@ export const GetValidatorsDocument = gql`
       SI_GOINGTOTAQA
       Red4inscraper
       Blue3inscraper
-      PigType3inARGUS
       PigType4inBlueDisc
       PigType8inBlackDisc
       PigType4inGreendisc
@@ -3018,7 +3021,6 @@ export const GetValidatorsDocument = gql`
       PigType3inbluescraper
       PigType6ingreenscraper
       Purple3inDisc
-      PigType3inGscr
     }
     pigInspectionEnum {
       Failed
@@ -3218,8 +3220,12 @@ export const ValidatorUserRoleDocument = gql`
     query ValidatorUserRole {
   validators {
     userRoleEnum {
-      USER
       ADMIN
+      ENGINEER
+      OFFICE
+      OPERATOR
+      CHEMICAL
+      CATHODIC
       CONTRACTOR
     }
   }
@@ -3312,7 +3318,7 @@ export const RiskByIdDocument = gql`
     query RiskById($id: String!, $substance: SubstanceEnum, $oil: Float, $water: Float, $gas: Float, $status: StatusEnum, $type: TypeEnum, $material: MaterialEnum) {
   riskById(id: $id) {
     id
-    arielReview
+    aerialReview
     environmentProximityTo
     geotechnicalSlopeAngleS1
     geotechnicalFacingS1

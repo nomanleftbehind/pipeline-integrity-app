@@ -47,8 +47,8 @@ export default function EntryField({ id, createdById, table, columnName, columnT
   const { role, id: userId } = user || {};
 
   const authorized =
-    (role === 'ADMIN' /*|| user === 'ENGINEER'*/) ||
-    (role === 'USER' && createdById === userId && (table === 'pressure tests' || table === 'pig runs')) ||
+    (role === 'ADMIN' || role === 'ENGINEER') ||
+    (role === 'OPERATOR' && createdById === userId && (table === 'pressure tests' || table === 'pig runs')) ||
     (role === 'CONTRACTOR' && createdById === userId/* && (table === 'chemicals')*/);
 
   const [edit, setEdit] = useState(false);

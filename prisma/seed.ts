@@ -23,6 +23,7 @@ import {
   pigRunData8,
   pigRunData9,
   pigRunData10,
+  pigRunData11,
 } from './SeedPigRunData';
 
 const prisma = new PrismaClient(/*{
@@ -174,6 +175,13 @@ async function main() {
   }
 
   for (const u of pigRunData10) {
+    const pigRun = await prisma.pigRun.create({
+      data: u,
+    })
+    console.log(`Created pig run with id: ${pigRun.id}`)
+  }
+
+  for (const u of pigRunData11) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
