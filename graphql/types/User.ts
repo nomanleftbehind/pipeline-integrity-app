@@ -242,9 +242,11 @@ export const AuthMutation = extendType({
       },
       resolve: async (_parent, { userCreateInput }, ctx: Context) => {
         const { firstName, lastName, email, password, role } = userCreateInput;
+
         const userExists = await ctx.prisma.user.findUnique({
           where: { email }
         });
+
         if (userExists) {
           return {
             error: {
@@ -262,6 +264,8 @@ export const AuthMutation = extendType({
 
           }
         }
+        const userCount = await ctx.prisma.user.count();
+
         const salt = await genSalt(10);
         const hashedPassword = await hash(password, salt);
         const user = await ctx.prisma.user.create({
@@ -270,7 +274,7 @@ export const AuthMutation = extendType({
             lastName,
             email,
             password: hashedPassword,
-            role: databaseEnumToServerEnum(UserRoleEnumMembers, role) || undefined,
+            role: userCount === 0 ? 'ADMIN' : databaseEnumToServerEnum(UserRoleEnumMembers, role) || undefined,
           },
         });
         return { user };
@@ -291,22 +295,12 @@ export const AuthMutation = extendType({
           },
         });
 
-        if (!user) {
-          return {
-            error: {
-              field: 'email',
-              message: "user with that email doesn't exist"
-            },
-
-          }
-        }
-
-        const passwordValid = await compare(password, user.password);
+        const passwordValid = user && await compare(password, user.password);
         if (!passwordValid) {
           return {
             error: {
-              field: 'password',
-              message: 'incorrect password'
+              field: 'email',
+              message: "Provided email and password don't correspond",
             },
 
           }

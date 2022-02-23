@@ -115,6 +115,7 @@ function Register({ userCount, user }: IServerSideProps) {
         }
       >
         {({ errors, touched, isSubmitting }) => {
+          
           return (
             <Form>
               {isSignup && <TextInput
@@ -145,7 +146,7 @@ function Register({ userCount, user }: IServerSideProps) {
                 autoComplete='off'
               />
 
-              {isSignup && <RoleInput label='Role' name='role'>
+              {isSignup && userCount > 0 && <RoleInput label='Role' name='role'>
                 {dataUserRole?.validators && Object
                   .entries(dataUserRole.validators.userRoleEnum)
                   .map(([roleServer, roleDatabase]) => <MenuItem
