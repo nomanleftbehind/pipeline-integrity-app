@@ -531,8 +531,19 @@ query getValidators {
   }
 }
 
-query validatorSubstance {
+query ValidatorsLicenseChange {
   validators {
+    statusEnum {
+      Operating
+      Discontinued
+      Abandoned
+      Removed
+      ToBeConstructed
+      Active
+      Cancelled
+      New
+      NotConstructed
+    }
     substanceEnum {
       NaturalGas
       FreshWater
@@ -604,6 +615,26 @@ query ValidatorUserRole {
       CATHODIC
       CONTRACTOR
     }
+  }
+}
+
+query LicenseChangesByPipelineId($pipelineId: String!) {
+  licenseChangesByPipelineId(pipelineId: $pipelineId) {
+    id
+    status
+    substance
+    date
+    linkToDocumentation
+    createdBy {
+      id
+      email
+    }
+    createdAt
+    updatedBy {
+      id
+      email
+    }
+    updatedAt
   }
 }
 

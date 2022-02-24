@@ -113,7 +113,6 @@ export default function EntryField({ id, createdById, table, columnName, columnT
   useEffect(() => { validateForm() }, [state]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-    console.log(e.currentTarget.value);
 
     if (e.currentTarget.type === 'date') {
       const date = new Date(e.currentTarget.value);
@@ -178,7 +177,6 @@ export default function EntryField({ id, createdById, table, columnName, columnT
       return (
         <select name={columnName} value={state} onChange={handleChange}>
           {Object.entries(validator).map(([serverEnum, dbEnum]) => {
-            console.log(serverEnum, dbEnum);
 
             return (
               <option key={serverEnum} value={serverEnum}>{dbEnum}</option>

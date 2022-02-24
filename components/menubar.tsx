@@ -1,16 +1,10 @@
 import Link from 'next/link';
-import { useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import DropDown from './Dropdown';
 import styles from './sidebar.module.css';
 
 export default function ManuBar() {
   const { user } = useAuth() || {};
-
-  useEffect(() => {
-    console.log('menubar user:', user);
-
-  }, [user]);
 
   const links = [
     { href: '/', a: 'Home' },

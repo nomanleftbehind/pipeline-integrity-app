@@ -64,7 +64,7 @@ export type FacilityUniqueInput = {
 };
 
 export type FieldError = {
-  field?: Maybe<Scalars['String']>;
+  field: Scalars['String'];
   message: Scalars['String'];
 };
 
@@ -457,7 +457,6 @@ export type MutationEditLicenseChangeArgs = {
   date?: Maybe<Scalars['DateTime']>;
   id: Scalars['String'];
   linkToDocumentation?: Maybe<Scalars['String']>;
-  pipelineId?: Maybe<Scalars['String']>;
   status?: Maybe<StatusEnum>;
   substance?: Maybe<SubstanceEnum>;
 };
@@ -887,7 +886,7 @@ export type Query = {
 
 
 export type QueryLicenseChangesByPipelineIdArgs = {
-  pipelineId?: Maybe<Scalars['String']>;
+  pipelineId: Scalars['String'];
 };
 
 
@@ -1218,14 +1217,14 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { login?: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, error?: { field?: string | null | undefined, message: string } | null | undefined } | null | undefined };
+export type LoginMutation = { login?: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type SignupMutationVariables = Exact<{
   userCreateInput: UserCreateInput;
 }>;
 
 
-export type SignupMutation = { signup?: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, error?: { field?: string | null | undefined, message: string } | null | undefined } | null | undefined };
+export type SignupMutation = { signup?: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1306,6 +1305,17 @@ export type EditPipelineMutationVariables = Exact<{
 
 
 export type EditPipelineMutation = { editPipeline?: { id: string, license: string, segment: string } | null | undefined };
+
+export type EditLicenseChangeMutationVariables = Exact<{
+  id: Scalars['String'];
+  status?: Maybe<StatusEnum>;
+  substance?: Maybe<SubstanceEnum>;
+  date?: Maybe<Scalars['DateTime']>;
+  linkToDocumentation?: Maybe<Scalars['String']>;
+}>;
+
+
+export type EditLicenseChangeMutation = { editLicenseChange?: { id: string } | null | undefined };
 
 export type EditPressureTestMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1454,10 +1464,10 @@ export type GetValidatorsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string }, pigTypeEnum: { Scrapper: string, PigType4inArgus: string, PigType6inArgus: string, ScraperP400: string, PigType3inPurpleScraper: string, ScraperP304: string, PigType3inscapper: string, PigType3inscrapper: string, PigType3inscraper: string, Foam: string, RedStubby: string, PigType3inGSCR: string, PigType2inGSCR: string, NoSender: string, PigType2ingscr: string, PigType2inGSCR_GFP: string, PigType4inGSCR: string, PigType2inPSCR_FLM: string, PigType3inPSCR: string, Highline: string, PigType2inPSCR: string, PigType3_scrapper: string, ScraperP401: string, ScraperP300: string, ScraperP301: string, ScraperP309: string, ScraperP314: string, ScaperP314: string, ScaperPP309: string, ScraperP204: string, ScraperP208: string, PigType3inArgus: string, Ball: string, REVERSEFLOWDUETOTAQA: string, PigType3: string, SIMAY2018: string, ScraperP206: string, ScraperP200: string, PigType3inRscr: string, PigType3inPurpleStubby: string, PigType3inSCRAPER: string, Red3inscraper: string, PigType3inGreenDisc: string, PigType4inGreenDisc: string, PigType4green2disc: string, PigType4gree2disc: string, PigType3ingreendisc: string, PigType3inpurpledisc: string, PigType2inPurpleDisc: string, disc: string, PigType2purple2disc: string, Shutin: string, PigType3inpurple2disc: string, PigType2green2disc: string, bullet: string, PigType8inFoam: string, PigType3inscr: string, ScraperP305: string, ScraperP312: string, ScraperP303: string, ScraperP311: string, ScrapperP307: string, PigType4inpurplescraper: string, Torpedo: string, PigType3BrownRibbed: string, PigType3GreenRibbed: string, PigType3inBlueRibbed: string, PigType3inGreenRibbed: string, PigType3BlueRibbed: string, BlueRibbed: string, M_D_Foamy: string, PigType6inGreenRibbed: string, SI_GOINGTOTAQA: string, Red4inscraper: string, Blue3inscraper: string, PigType4inBlueDisc: string, PigType8inBlackDisc: string, PigType4inGreendisc: string, PigType6inGreenDisc: string, PigType6inscrapper: string, PigType4inscrapper: string, PigType4inFoam: string, PigType3inredscrape: string, GSCR: string, PigType3inStubby: string, PigType4_GreenRibbed: string, PigType3inbluescraper: string, PigType6ingreenscraper: string, Purple3inDisc: string }, pigInspectionEnum: { Failed: string, Good: string }, limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string }, environmentProximityToEnum: { WB1: string, WB3: string, WB4: string, WB5: string, WC1: string, WC2: string, WC3: string, WC4: string }, geotechnicalFacingEnum: { N: string, NE: string, E: string, SE: string, S: string, SW: string, W: string, NW: string } } | null | undefined };
 
-export type ValidatorSubstanceQueryVariables = Exact<{ [key: string]: never; }>;
+export type ValidatorsLicenseChangeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorSubstanceQuery = { validators?: { substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string } } | null | undefined };
+export type ValidatorsLicenseChangeQuery = { validators?: { statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string } } | null | undefined };
 
 export type ValidatorsPressureTestQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1473,6 +1483,13 @@ export type ValidatorUserRoleQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ValidatorUserRoleQuery = { validators?: { userRoleEnum: { ADMIN: string, ENGINEER: string, OFFICE: string, OPERATOR: string, CHEMICAL: string, CATHODIC: string, CONTRACTOR: string } } | null | undefined };
+
+export type LicenseChangesByPipelineIdQueryVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type LicenseChangesByPipelineIdQuery = { licenseChangesByPipelineId?: Array<{ id: string, status: StatusEnum, substance: SubstanceEnum, date: string, linkToDocumentation?: string | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type PressureTestsByPipelineIdQueryVariables = Exact<{
   pipelineId?: Maybe<Scalars['String']>;
@@ -1925,6 +1942,49 @@ export function useEditPipelineMutation(baseOptions?: Apollo.MutationHookOptions
 export type EditPipelineMutationHookResult = ReturnType<typeof useEditPipelineMutation>;
 export type EditPipelineMutationResult = Apollo.MutationResult<EditPipelineMutation>;
 export type EditPipelineMutationOptions = Apollo.BaseMutationOptions<EditPipelineMutation, EditPipelineMutationVariables>;
+export const EditLicenseChangeDocument = gql`
+    mutation EditLicenseChange($id: String!, $status: StatusEnum, $substance: SubstanceEnum, $date: DateTime, $linkToDocumentation: String) {
+  editLicenseChange(
+    id: $id
+    status: $status
+    substance: $substance
+    date: $date
+    linkToDocumentation: $linkToDocumentation
+  ) {
+    id
+  }
+}
+    `;
+export type EditLicenseChangeMutationFn = Apollo.MutationFunction<EditLicenseChangeMutation, EditLicenseChangeMutationVariables>;
+
+/**
+ * __useEditLicenseChangeMutation__
+ *
+ * To run a mutation, you first call `useEditLicenseChangeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditLicenseChangeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editLicenseChangeMutation, { data, loading, error }] = useEditLicenseChangeMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      status: // value for 'status'
+ *      substance: // value for 'substance'
+ *      date: // value for 'date'
+ *      linkToDocumentation: // value for 'linkToDocumentation'
+ *   },
+ * });
+ */
+export function useEditLicenseChangeMutation(baseOptions?: Apollo.MutationHookOptions<EditLicenseChangeMutation, EditLicenseChangeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditLicenseChangeMutation, EditLicenseChangeMutationVariables>(EditLicenseChangeDocument, options);
+      }
+export type EditLicenseChangeMutationHookResult = ReturnType<typeof useEditLicenseChangeMutation>;
+export type EditLicenseChangeMutationResult = Apollo.MutationResult<EditLicenseChangeMutation>;
+export type EditLicenseChangeMutationOptions = Apollo.BaseMutationOptions<EditLicenseChangeMutation, EditLicenseChangeMutationVariables>;
 export const EditPressureTestDocument = gql`
     mutation EditPressureTest($id: String!, $pipelineId: String, $limitingSpec: LimitingSpecEnum, $infoSentOutDate: DateTime, $ddsDate: DateTime, $pressureTestDate: DateTime, $pressureTestReceivedDate: DateTime, $integritySheetUpdated: DateTime, $comment: String) {
   editPressureTest(
@@ -3081,9 +3141,20 @@ export function useGetValidatorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetValidatorsQueryHookResult = ReturnType<typeof useGetValidatorsQuery>;
 export type GetValidatorsLazyQueryHookResult = ReturnType<typeof useGetValidatorsLazyQuery>;
 export type GetValidatorsQueryResult = Apollo.QueryResult<GetValidatorsQuery, GetValidatorsQueryVariables>;
-export const ValidatorSubstanceDocument = gql`
-    query validatorSubstance {
+export const ValidatorsLicenseChangeDocument = gql`
+    query ValidatorsLicenseChange {
   validators {
+    statusEnum {
+      Operating
+      Discontinued
+      Abandoned
+      Removed
+      ToBeConstructed
+      Active
+      Cancelled
+      New
+      NotConstructed
+    }
     substanceEnum {
       NaturalGas
       FreshWater
@@ -3099,31 +3170,31 @@ export const ValidatorSubstanceDocument = gql`
     `;
 
 /**
- * __useValidatorSubstanceQuery__
+ * __useValidatorsLicenseChangeQuery__
  *
- * To run a query within a React component, call `useValidatorSubstanceQuery` and pass it any options that fit your needs.
- * When your component renders, `useValidatorSubstanceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useValidatorsLicenseChangeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorsLicenseChangeQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useValidatorSubstanceQuery({
+ * const { data, loading, error } = useValidatorsLicenseChangeQuery({
  *   variables: {
  *   },
  * });
  */
-export function useValidatorSubstanceQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorSubstanceQuery, ValidatorSubstanceQueryVariables>) {
+export function useValidatorsLicenseChangeQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorsLicenseChangeQuery, ValidatorsLicenseChangeQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ValidatorSubstanceQuery, ValidatorSubstanceQueryVariables>(ValidatorSubstanceDocument, options);
+        return Apollo.useQuery<ValidatorsLicenseChangeQuery, ValidatorsLicenseChangeQueryVariables>(ValidatorsLicenseChangeDocument, options);
       }
-export function useValidatorSubstanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorSubstanceQuery, ValidatorSubstanceQueryVariables>) {
+export function useValidatorsLicenseChangeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorsLicenseChangeQuery, ValidatorsLicenseChangeQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ValidatorSubstanceQuery, ValidatorSubstanceQueryVariables>(ValidatorSubstanceDocument, options);
+          return Apollo.useLazyQuery<ValidatorsLicenseChangeQuery, ValidatorsLicenseChangeQueryVariables>(ValidatorsLicenseChangeDocument, options);
         }
-export type ValidatorSubstanceQueryHookResult = ReturnType<typeof useValidatorSubstanceQuery>;
-export type ValidatorSubstanceLazyQueryHookResult = ReturnType<typeof useValidatorSubstanceLazyQuery>;
-export type ValidatorSubstanceQueryResult = Apollo.QueryResult<ValidatorSubstanceQuery, ValidatorSubstanceQueryVariables>;
+export type ValidatorsLicenseChangeQueryHookResult = ReturnType<typeof useValidatorsLicenseChangeQuery>;
+export type ValidatorsLicenseChangeLazyQueryHookResult = ReturnType<typeof useValidatorsLicenseChangeLazyQuery>;
+export type ValidatorsLicenseChangeQueryResult = Apollo.QueryResult<ValidatorsLicenseChangeQuery, ValidatorsLicenseChangeQueryVariables>;
 export const ValidatorsPressureTestDocument = gql`
     query validatorsPressureTest {
   validators {
@@ -3258,6 +3329,55 @@ export function useValidatorUserRoleLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type ValidatorUserRoleQueryHookResult = ReturnType<typeof useValidatorUserRoleQuery>;
 export type ValidatorUserRoleLazyQueryHookResult = ReturnType<typeof useValidatorUserRoleLazyQuery>;
 export type ValidatorUserRoleQueryResult = Apollo.QueryResult<ValidatorUserRoleQuery, ValidatorUserRoleQueryVariables>;
+export const LicenseChangesByPipelineIdDocument = gql`
+    query LicenseChangesByPipelineId($pipelineId: String!) {
+  licenseChangesByPipelineId(pipelineId: $pipelineId) {
+    id
+    status
+    substance
+    date
+    linkToDocumentation
+    createdBy {
+      id
+      email
+    }
+    createdAt
+    updatedBy {
+      id
+      email
+    }
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useLicenseChangesByPipelineIdQuery__
+ *
+ * To run a query within a React component, call `useLicenseChangesByPipelineIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLicenseChangesByPipelineIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLicenseChangesByPipelineIdQuery({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useLicenseChangesByPipelineIdQuery(baseOptions: Apollo.QueryHookOptions<LicenseChangesByPipelineIdQuery, LicenseChangesByPipelineIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LicenseChangesByPipelineIdQuery, LicenseChangesByPipelineIdQueryVariables>(LicenseChangesByPipelineIdDocument, options);
+      }
+export function useLicenseChangesByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LicenseChangesByPipelineIdQuery, LicenseChangesByPipelineIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LicenseChangesByPipelineIdQuery, LicenseChangesByPipelineIdQueryVariables>(LicenseChangesByPipelineIdDocument, options);
+        }
+export type LicenseChangesByPipelineIdQueryHookResult = ReturnType<typeof useLicenseChangesByPipelineIdQuery>;
+export type LicenseChangesByPipelineIdLazyQueryHookResult = ReturnType<typeof useLicenseChangesByPipelineIdLazyQuery>;
+export type LicenseChangesByPipelineIdQueryResult = Apollo.QueryResult<LicenseChangesByPipelineIdQuery, LicenseChangesByPipelineIdQueryVariables>;
 export const PressureTestsByPipelineIdDocument = gql`
     query PressureTestsByPipelineId($pipelineId: String) {
   pressureTestsByPipelineId(pipelineId: $pipelineId) {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import InjectionPoints from '../fields/injection_points/InjectionPoints';
 import PipelineProperties from '../fields/PipelineProperties';
+import LicenseChanges from './LicenseChanges';
 import GenericTable from './GenericTable';
 import PigRuns from './PigRuns';
 import Risk from './Risk';
@@ -16,7 +17,7 @@ import { IPipelineProperty } from '../fields/PipelineProperties';
 
 import { TabPanel, a11yProps } from '../../pages/pipeline/[id]/index';
 
-export type ITable = 'pressure tests' | 'pig runs' | 'risk';
+export type ITable = 'pressure tests' | 'pig runs' | 'risk' | 'license change';
 
 export interface IPipelineDataProps {
   open: boolean;
@@ -69,14 +70,20 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               aria-label="Vertical tabs example"
               sx={{ borderRight: 1, borderColor: 'divider' }}
             >
-              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Injection Points" {...a11yProps(0)} />
-              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Mechanical Properties" {...a11yProps(1)} />
-              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Pressure Tests" {...a11yProps(2)} />
-              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Pig Runs" {...a11yProps(3)} />
-              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Risk" {...a11yProps(4)} />
-              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="System Fields" {...a11yProps(5)} />
+              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="License Changes" {...a11yProps(0)} />
+              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Injection Points" {...a11yProps(1)} />
+              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Mechanical Properties" {...a11yProps(2)} />
+              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Pressure Tests" {...a11yProps(3)} />
+              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Pig Runs" {...a11yProps(4)} />
+              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="Risk" {...a11yProps(5)} />
+              <Tab sx={{ textTransform: 'none' }} style={{ marginRight: 8 }} label="System Fields" {...a11yProps(6)} />
             </Tabs>
             <TabPanel value={value} index={0}>
+              <LicenseChanges
+                pipelineId={id}
+              />
+            </TabPanel>
+            <TabPanel value={value} index={1}>
               <InjectionPoints
                 open={open}
                 id={id}
@@ -85,7 +92,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
                 injectionPoints={{ injectionPoints, upstream }}
               />
             </TabPanel>
-            <TabPanel value={value} index={1}>
+            <TabPanel value={value} index={2}>
               <PipelineProperties
                 open={open}
                 id={id}
@@ -95,7 +102,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               />
             </TabPanel>
             {/* <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={2} /> */}
-            <TabPanel value={value} index={2}>
+            <TabPanel value={value} index={3}>
               <Collapse in={open} timeout="auto" unmountOnExit>
                 <Box sx={{ margin: 1 }}>
                   <Typography variant="h6" gutterBottom component="div">
@@ -109,7 +116,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
                 </Box>
               </Collapse>
             </TabPanel>
-            <TabPanel value={value} index={3}>
+            <TabPanel value={value} index={4}>
               <Collapse in={open} timeout="auto" unmountOnExit>
                 <Box sx={{ margin: 1 }}>
                   <Typography variant="h6" gutterBottom component="div">
@@ -119,7 +126,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
                 </Box>
               </Collapse>
             </TabPanel>
-            <TabPanel value={value} index={4}>
+            <TabPanel value={value} index={5}>
               <Risk
                 id={id}
                 open={open}
@@ -130,7 +137,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
                 material={material}
               />
             </TabPanel>
-            <TabPanel value={value} index={5}>
+            <TabPanel value={value} index={6}>
               <PipelineProperties
                 open={open}
                 id={id}

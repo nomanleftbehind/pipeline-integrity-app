@@ -109,20 +109,14 @@ export const LicenseChangeQuery = extendType({
     t.list.field('licenseChangesByPipelineId', {
       type: 'LicenseChange',
       args: {
-        pipelineId: stringArg(),
+        pipelineId: nonNull(stringArg()),
       },
       resolve: async (_parent, { pipelineId }, ctx: Context) => {
-        if (pipelineId) {
-          return ctx.prisma.licenseChange.findMany({
-            where: { pipelineId },
-            orderBy: { createdAt: 'desc' },
-          })
-        } else {
-          return ctx.prisma.licenseChange.findMany({
-            orderBy:
-              { createdAt: 'desc' },
-          })
-        }
+        const result = await ctx.prisma.licenseChange.findMany({
+          where: { pipelineId },
+          orderBy: { createdAt: 'desc' },
+        })
+        return result;
       }
     })
   }
@@ -136,7 +130,6 @@ export const LicenseChangeMutation = extendType({
       type: 'LicenseChange',
       args: {
         id: nonNull(stringArg()),
-        pipelineId: stringArg(),
         status: arg({ type: 'StatusEnum' }),
         substance: arg({ type: 'SubstanceEnum' }),
         date: arg({ type: 'DateTime' }),
@@ -146,12 +139,11 @@ export const LicenseChangeMutation = extendType({
         return ctx.prisma.licenseChange.update({
           where: { id: args.id },
           data: {
-            pipelineId: args.pipelineId || undefined,
             status: databaseEnumToServerEnum(StatusEnumMembers, args.status) || undefined,
             substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
             date: args.date || undefined,
             linkToDocumentation: args.linkToDocumentation || undefined,
-            updatedById: String(ctx.user?.id),
+            updatedById: /*'606c4f5b-1af7-4720-b649-65f8fc20e64f'*/String(ctx.user?.id),
           },
         })
       },

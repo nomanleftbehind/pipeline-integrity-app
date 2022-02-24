@@ -26,13 +26,10 @@ export const removeTokenCookie = (res: NextApiResponse) => {
 
 export const parseCookies = (req: NextApiRequest) => {
   // For API Routes we don't need to parse the cookies.
-  console.log('parseCookies req:', req.cookies);
-
   if (req.cookies) return req.cookies;
 
   // For pages we do need to parse the cookies.
   const cookie = req.headers?.cookie;
-  console.log('parseCookies cookie:', cookie);
   return parse(cookie || '');
 };
 

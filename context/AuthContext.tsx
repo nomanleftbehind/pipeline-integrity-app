@@ -38,7 +38,6 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
 
   const [loadUser, { data, loading }] = useMeLazyQuery({
     onCompleted: (data) => {
-      console.log('on completed', data);
       setUser(data.me);
       setAuthLoading(loading);
     },
@@ -46,8 +45,6 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
       setAuthError(err.message);
     },
   });
-
-  useEffect(() => console.log('AuthContext user', user), [user]);
 
   useEffect(() => loadUser(), []);
 

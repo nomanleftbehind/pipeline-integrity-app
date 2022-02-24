@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import MenuBar from './menubar';
 import { ReactNode } from 'react';
-import styles from './layout.module.css';
+// import styles from './layout.module.css';
 
 interface LayoutProps {
   children: ReactNode;
@@ -16,7 +16,7 @@ export default function Layout({ children, title }: LayoutProps) {
       </Head>
       <MenuBar />
       <div className="app" style={{ paddingTop: '55px' }} >
-        <main className={styles.main}>{children}</main>
+        <main /*className={styles.main}*/>{children}</main>
       </div>
     </>
   );

@@ -19,7 +19,7 @@ import { useLoginMutation, useSignupMutation, UserCreateInput, UserRoleEnum, use
 import { getUser } from "../lib/user";
 
 type IInput = {
-  label: string;
+  label?: string;
 } & FieldHookConfig<string>;
 
 export interface IServerSideProps {
@@ -42,7 +42,7 @@ function Register({ userCount, user }: IServerSideProps) {
   const [signup] = useSignupMutation();
 
   const emailYupSchema = Yup.string().email('Invalid email address').required('Required');
-  const passwordYupSchema = Yup.string().required('Required').min(8, 'Minimum 8 characters required');
+  const passwordYupSchema = Yup.string().required('Required').min(8, 'password must be at least 8 characters long');
 
   const SignupSchema = Yup.object().shape({
     firstName: Yup.string().required('Required'),
@@ -86,7 +86,7 @@ function Register({ userCount, user }: IServerSideProps) {
                 await router.push('/');
               }
               if (data?.login?.error) {
-                setFieldError('email', data.login.error.message);
+                setFieldError(data.login.error.field, data.login.error.message);
               }
               if (errors) {
                 setFieldError('email', errors.map(error => error.message).join('; '));
@@ -101,7 +101,7 @@ function Register({ userCount, user }: IServerSideProps) {
                 await router.push('/');
               }
               if (data?.signup?.error) {
-                setFieldError('email', data.signup.error.message);
+                setFieldError(data.signup.error.field, data.signup.error.message);
               }
               if (errors) {
                 setFieldError('email', errors.map(error => error.message).join('; '));
@@ -115,7 +115,7 @@ function Register({ userCount, user }: IServerSideProps) {
         }
       >
         {({ errors, touched, isSubmitting }) => {
-          
+
           return (
             <Form>
               {isSignup && <TextInput
@@ -146,7 +146,7 @@ function Register({ userCount, user }: IServerSideProps) {
                 autoComplete='off'
               />
 
-              {isSignup && userCount > 0 && <RoleInput label='Role' name='role'>
+              {isSignup && userCount > 0 && <SelectInput label='Role' name='role'>
                 {dataUserRole?.validators && Object
                   .entries(dataUserRole.validators.userRoleEnum)
                   .map(([roleServer, roleDatabase]) => <MenuItem
@@ -155,7 +155,7 @@ function Register({ userCount, user }: IServerSideProps) {
                   >
                     {roleDatabase}
                   </MenuItem>)}
-              </RoleInput>}
+              </SelectInput>}
 
               <Button fullWidth color='primary' variant='contained' type='submit'>
                 Submit
@@ -169,7 +169,7 @@ function Register({ userCount, user }: IServerSideProps) {
 };
 
 
-const TextInput = ({ label, ...props }: IInput) => {
+export const TextInput = ({ label, ...props }: IInput) => {
   // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
   // which we can spread on <input>. We can use field meta to show an error
   // message if the field is invalid and it has been touched (i.e. visited)
@@ -186,7 +186,7 @@ const TextInput = ({ label, ...props }: IInput) => {
   );
 };
 
-const RoleInput = ({ label, ...props }: IInput) => {
+export const SelectInput = ({ label, ...props }: IInput) => {
   const [field, meta] = useField(props);
 
   return (

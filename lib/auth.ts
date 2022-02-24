@@ -23,7 +23,6 @@ export const getLoginSession = async (req: NextApiRequest) => {
 
   const session = await Iron.unseal(token, TOKEN_SECRET, Iron.defaults) as UserNoPassword & { createdAt: number; maxAge: number };
   const expiresAt = session.createdAt + session.maxAge * 1000;
-  console.log('getLoginSession session:', session);
 
   // Validate the expiration date of the session
   if (Date.now() > expiresAt) {

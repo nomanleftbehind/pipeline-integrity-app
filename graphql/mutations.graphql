@@ -88,6 +88,12 @@ mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $seg
   }
 }
 
+mutation EditLicenseChange($id: String!, $status: StatusEnum, $substance: SubstanceEnum, $date: DateTime, $linkToDocumentation: String) {
+  editLicenseChange(id: $id, status: $status, substance: $substance, date: $date, linkToDocumentation: $linkToDocumentation) {
+    id
+  }
+}
+
 mutation EditPressureTest($id: String!, $pipelineId: String, $limitingSpec: LimitingSpecEnum, $infoSentOutDate: DateTime, $ddsDate: DateTime, $pressureTestDate: DateTime, $pressureTestReceivedDate: DateTime, $integritySheetUpdated: DateTime, $comment: String) {
   editPressureTest(id: $id, pipelineId: $pipelineId, limitingSpec: $limitingSpec, infoSentOutDate: $infoSentOutDate, ddsDate: $ddsDate, pressureTestDate: $pressureTestDate, pressureTestReceivedDate: $pressureTestReceivedDate, integritySheetUpdated: $integritySheetUpdated, comment: $comment) {
     id

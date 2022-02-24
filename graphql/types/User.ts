@@ -219,7 +219,7 @@ export const UserUniqueInput = inputObjectType({
 export const FieldError = objectType({
   name: 'FieldError',
   definition(t) {
-    t.string('field')
+    t.nonNull.string('field')
     t.nonNull.string('message')
   }
 });
