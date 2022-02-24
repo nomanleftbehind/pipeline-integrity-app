@@ -177,7 +177,7 @@ export const TextInput = ({ label, ...props }: IInput) => {
 
   return (
     <>
-      <InputLabel htmlFor={props.id || props.name}>{label}</InputLabel>
+      {label && <InputLabel htmlFor={props.id || props.name}>{label}</InputLabel>}
       <TextField fullWidth className='text-input' {...field} {...props as any /* Fix type error */} />
       {meta.touched && meta.error ? (
         <div className='error' style={{ color: 'red' }}>{meta.error}</div>
@@ -191,7 +191,7 @@ export const SelectInput = ({ label, ...props }: IInput) => {
 
   return (
     <>
-      <InputLabel htmlFor={props.id || props.name}>{label}</InputLabel>
+      {label && <InputLabel htmlFor={props.id || props.name}>{label}</InputLabel>}
       <Select fullWidth {...field} {...props as any /* Fix type error */} />
       {meta.touched && meta.error ? (
         <div className='error' style={{ color: 'red' }}>{meta.error}</div>

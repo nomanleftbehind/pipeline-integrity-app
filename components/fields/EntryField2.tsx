@@ -130,7 +130,9 @@ export default function EntryField({ id, createdById, columnName, columnType, re
           {({ errors, touched, isSubmitting }) => {
 
             return (
-              <Form>
+              <Form
+                className='entry-field-form'
+              >
                 {validatorIsObject ?
                   <SelectInput name={columnName}>
                     {validator && Object
@@ -144,12 +146,14 @@ export default function EntryField({ id, createdById, columnName, columnType, re
                   </SelectInput> :
                   <TextInput
                     name={columnName}
-                    type='text'
+                    type={columnType === 'date' ? 'date' : 'text'}
                     autoComplete='off'
                   />}
-                <IconButton aria-label="submit cell" size="small" type="submit" disabled={!valid}>
-                  <CheckCircleOutlineIcon />
-                </IconButton>
+                <div>
+                  <IconButton aria-label="submit cell" size="small" type="submit" disabled={!valid}>
+                    <CheckCircleOutlineIcon />
+                  </IconButton>
+                </div>
               </Form>
             )
           }}
