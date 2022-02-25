@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { ApolloError } from '@apollo/client';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
@@ -47,7 +47,7 @@ export interface IEditRecord {
   newRecord: IRecord;
 }
 
-interface IEntryFieldProps {
+interface IRecordEntryProps {
   id: string;
   createdById: string;
   table: ITable;
@@ -59,9 +59,27 @@ interface IEntryFieldProps {
   editRecord?: ({ id, columnName, columnType, newRecord }: IEditRecord) => void;
 }
 
-export default function EntryField({ id, createdById, columnName, columnType, record, table, validator, editRecord }: IEntryFieldProps) {
+export default function RecordEntry({ id, createdById, columnName, columnType, record, table, validator, editRecord }: IRecordEntryProps) {
   const [edit, setEdit] = useState(false);
   const [valid, setValid] = useState(true);
+
+  const ref = useRef</*HTMLDivElement*/HTMLInputElement>(null);
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside/*, false*/);
+    return () => {
+      document.removeEventListener('click', handleClickOutside/*, false*/);
+    };
+  }, []);
+
+
+
+  const handleClickOutside = (event: Event) => {
+    console.log('ref: ', ref.current, 'target: ', event.target);
+    if (ref.current && !ref.current.contains(event.target as Node)) {
+      // setEdit(false);
+    }
+  };
 
   const toggleEdit = (): void => {
     setEdit(!edit);
@@ -107,6 +125,7 @@ export default function EntryField({ id, createdById, columnName, columnType, re
   return (
     <div style={{ padding: '4px' }}>
       <div
+        ref={ref}
         className='entry-field'
         tabIndex={-1}
         onDoubleClick={toggleEdit}
@@ -134,7 +153,10 @@ export default function EntryField({ id, createdById, columnName, columnType, re
                 className='entry-field-form'
               >
                 {validatorIsObject ?
-                  <SelectInput name={columnName}>
+                  <SelectInput
+                    ref={ref}
+                    name={columnName}
+                  >
                     {validator && Object
                       .entries(validator)
                       .map(([validatorServer, validatorDatabase]) => <MenuItem
