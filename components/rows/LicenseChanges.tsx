@@ -37,11 +37,11 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
           const { statusEnum, substanceEnum } = dataValidators?.validators || {};
           return (
             <div key={id} style={{ display: 'flex', flexDirection: 'row' }}>
-              <EntryField id={id} createdById={createdBy.id} columnName='date' columnType='date' record={date} editRecord={editRecord} table={table} />
+              {/* <EntryField id={id} createdById={createdBy.id} columnName='date' columnType='date' record={date} editRecord={editRecord} table={table} /> */}
               <EntryField id={id} createdById={createdBy.id} columnName='status' columnType='string' record={status} validator={statusEnum} editRecord={editRecord} table={table} />
-              <EntryField id={id} createdById={createdBy.id} columnName='substance' columnType='string' record={substance} validator={substanceEnum} editRecord={editRecord} table={table} />
-              <EntryField id={id} createdById={createdBy.id} columnName='linkToDocumentation' columnType='string' record={linkToDocumentation} editRecord={editRecord} table={table} />
-              <EntryField id={id} createdById={createdBy.id} columnName='id' columnType='string' record={id} table={table} />
+              {/* <EntryField id={id} createdById={createdBy.id} columnName='substance' columnType='string' record={substance} validator={substanceEnum} editRecord={editRecord} table={table} /> */}
+              {/* <EntryField id={id} createdById={createdBy.id} columnName='linkToDocumentation' columnType='string' record={linkToDocumentation} editRecord={editRecord} table={table} /> */}
+              {/* <EntryField id={id} createdById={createdBy.id} columnName='id' columnType='string' record={id} table={table} /> */}
             </div>
           )
         }

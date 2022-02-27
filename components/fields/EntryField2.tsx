@@ -63,7 +63,7 @@ export default function RecordEntry({ id, createdById, columnName, columnType, r
   const [edit, setEdit] = useState(false);
   const [valid, setValid] = useState(true);
 
-  const ref = useRef</*HTMLDivElement*/HTMLInputElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside/*, false*/);
@@ -72,16 +72,18 @@ export default function RecordEntry({ id, createdById, columnName, columnType, r
     };
   }, []);
 
-
-
   const handleClickOutside = (event: Event) => {
-    console.log('ref: ', ref.current, 'target: ', event.target);
-    if (ref.current && !ref.current.contains(event.target as Node)) {
-      // setEdit(false);
+    const div = document.getElementById(`menu-${columnName}`);
+    const target = event.target as Node;
+
+    console.log('ref: ', ref.current, 'target: ', target, 'div', div, 'contains:', target.contains(div));
+    if ((ref.current && !ref.current.contains(target)) || (!target.contains(div))) {
+
+      setEdit(false);
     }
   };
 
-  const toggleEdit = (): void => {
+  const toggleEdit = () => {
     setEdit(!edit);
   }
 
@@ -154,7 +156,6 @@ export default function RecordEntry({ id, createdById, columnName, columnType, r
               >
                 {validatorIsObject ?
                   <SelectInput
-                    ref={ref}
                     name={columnName}
                   >
                     {validator && Object
@@ -185,4 +186,3 @@ export default function RecordEntry({ id, createdById, columnName, columnType, r
     </div>
   );
 }
-
