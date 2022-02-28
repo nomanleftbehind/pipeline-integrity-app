@@ -20,7 +20,7 @@ import {
 import { IValidator, IRecord } from '../fields/PipelineProperties';
 import { ITable } from '../rows/PipelineData';
 import { useAuth } from '../../context/AuthContext';
-import { TextInput, SelectInput } from '../../pages/register';
+import { TextInput, DOMSelectInput } from '../../pages/register';
 import { Formik, Form, FormikHelpers, useField, FieldHookConfig } from 'formik';
 import * as Yup from 'yup';
 
@@ -66,19 +66,18 @@ export default function RecordEntry({ id, createdById, columnName, columnType, r
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.addEventListener('click', handleClickOutside/*, false*/);
+    document.addEventListener('click', handleClickOutside, false);
     return () => {
-      document.removeEventListener('click', handleClickOutside/*, false*/);
+      document.removeEventListener('click', handleClickOutside, false);
     };
   }, []);
 
   const handleClickOutside = (event: Event) => {
     const div = document.getElementById(`menu-${columnName}`);
     const target = event.target as Node;
+    console.log('current', ref.current, 'target', target,);
 
-    console.log('ref: ', ref.current, 'target: ', target, 'div', div, 'contains:', target.contains(div));
-    if ((ref.current && !ref.current.contains(target)) || (!target.contains(div))) {
-
+    if (ref.current && !ref.current.contains(target)) {
       setEdit(false);
     }
   };
@@ -125,64 +124,63 @@ export default function RecordEntry({ id, createdById, columnName, columnType, r
   const validationSchema = Yup.object().shape({ [columnName]: Yup.string().required('required').nullable(true), });
 
   return (
-    <div style={{ padding: '4px' }}>
-      <div
-        ref={ref}
-        className='entry-field'
-        tabIndex={-1}
-        onDoubleClick={toggleEdit}
-      >{edit && editRecord ?
-        <Formik
-          initialValues={{
-            [columnName]: record === null ? '' : record,
-          }}
-          validationSchema={validationSchema}
-          onSubmit={(values: IValues, { setFieldError }: FormikHelpers<IValues>) => {
-            try {
-              editRecord({ id, columnName, columnType, newRecord: values[columnName] });
-            } catch (err) {
-              const apolloErr = err as ApolloError;
-              setFieldError(columnName, apolloErr.message);
-            }
-            setEdit(false);
+    <div
+      ref={ref}
+      className='entry-field'
+      tabIndex={-1}
+      onDoubleClick={toggleEdit}
+    >{edit && editRecord ?
+      <Formik
+        initialValues={{
+          [columnName]: record === null ? '' : (columnType === 'date' && typeof record === 'string') ? record.slice(0, 10) : record,
+        }}
+        validationSchema={validationSchema}
+        onSubmit={(values: IValues, { setFieldError }: FormikHelpers<IValues>) => {
+          try {
+            editRecord({ id, columnName, columnType, newRecord: values[columnName] });
+          } catch (err) {
+            const apolloErr = err as ApolloError;
+            setFieldError(columnName, apolloErr.message);
           }
-          }
-        >
-          {({ errors, touched, isSubmitting }) => {
+          setEdit(false);
+        }
+        }
+      >
+        {({ errors, touched, isSubmitting }) => {
 
-            return (
-              <Form
-                className='entry-field-form'
-              >
-                {validatorIsObject ?
-                  <SelectInput
-                    name={columnName}
-                  >
-                    {validator && Object
-                      .entries(validator)
-                      .map(([validatorServer, validatorDatabase]) => <MenuItem
-                        key={validatorServer}
-                        value={validatorServer}
-                      >
-                        {validatorDatabase}
-                      </MenuItem>)}
-                  </SelectInput> :
-                  <TextInput
-                    name={columnName}
-                    type={columnType === 'date' ? 'date' : 'text'}
-                    autoComplete='off'
-                  />}
-                <div>
-                  <IconButton aria-label="submit cell" size="small" type="submit" disabled={!valid}>
-                    <CheckCircleOutlineIcon />
-                  </IconButton>
-                </div>
-              </Form>
-            )
-          }}
-        </Formik> :
-        recordDisplay}
-      </div>
+          return (
+            <Form
+              className='entry-field-form'
+            >
+              {validatorIsObject ?
+                <DOMSelectInput
+                  className='record-entry-select'
+                  name={columnName}
+                >
+                  {validator && Object
+                    .entries(validator)
+                    .map(([validatorServer, validatorDatabase]) => <option
+                      key={validatorServer}
+                      value={validatorServer}
+                    >
+                      {validatorDatabase}
+                    </option>)}
+                </DOMSelectInput> :
+                <TextInput
+                  name={columnName}
+                  type={columnType === 'date' ? 'date' : 'text'}
+                  autoComplete='off'
+                />}
+              <div>
+                <IconButton aria-label='submit cell' size='small' type='submit' disabled={!valid}>
+                  <CheckCircleOutlineIcon />
+                </IconButton>
+              </div>
+            </Form>
+          )
+        }}
+      </Formik> :
+      recordDisplay}
     </div>
   );
 }

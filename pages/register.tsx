@@ -200,6 +200,22 @@ export const SelectInput = ({ label, ...props }: IInput) => {
   );
 };
 
+// We will use DOM <select /> in RecordEntry component because Material UI <Select /> component
+// creates a portal to independent <div /> that doesn't get registered by refs that we are using to detect clicking outside of component.
+export const DOMSelectInput = ({ label, ...props }: IInput) => {
+  const [field, meta] = useField(props);
+
+  return (
+    <div>
+      {label && <label htmlFor={props.id || props.name}>{label}</label>}
+      <select {...field} {...props as any /* Fix type error */} />
+      {meta.touched && meta.error ? (
+        <div className='error' style={{ color: 'red' }}>{meta.error}</div>
+      ) : null}
+    </div>
+  );
+};
+
 
 // This gets called on every request
 export async function getServerSideProps({ req }: IGetServerSideProps) {

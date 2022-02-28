@@ -8,8 +8,15 @@
   box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
 }
 
+.record-entry-select {
+  padding: 6px;
+  background-color: #fff;
+  border: 2px solid rgb(25 118 210);
+  border-radius: 4px;
+}
+
 .entry-field:focus {
-  border: solid #007fff 1px;
+  border: solid rgb(25 118 210) 1px;
 }
 
 .entry-field-form {
