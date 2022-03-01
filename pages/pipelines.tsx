@@ -19,17 +19,15 @@ import { usePipelinesByIdQueryLazyQuery, useGetValidatorsQuery } from '../graphq
 export interface IHeader {
   license: string;
   segment: string;
-  substance: string;
   from: string;
   fromFeature: string;
   to: string;
   toFeature: string;
-  status: string;
 }
 
 function PipelineDatabase() {
 
-  const header: IHeader = { license: "", segment: "", substance: "", from: "", fromFeature: "", to: "", toFeature: "", status: "" };
+  const header: IHeader = { license: "", segment: "", from: "", fromFeature: "", to: "", toFeature: "" };
   const [filterText, setFilterText] = useState<IHeader>(header);
   const [filterTextCaseInsensitive, setFilterTextCaseInsensitive] = useState<IHeader>(header);
 
@@ -83,12 +81,12 @@ function PipelineDatabase() {
                 pipeline && (
                   pipeline.license.toUpperCase().includes(filterTextCaseInsensitive.license) &&
                   pipeline.segment.toUpperCase().includes(filterTextCaseInsensitive.segment) &&
-                  (pipeline.substance ? valuesFromEnum(pipeline.substance, validators?.substanceEnum).toUpperCase().includes(filterTextCaseInsensitive.substance) : filterTextCaseInsensitive.substance.length === 0) &&
+                  // (pipeline.substance ? valuesFromEnum(pipeline.substance, validators?.substanceEnum).toUpperCase().includes(filterTextCaseInsensitive.substance) : filterTextCaseInsensitive.substance.length === 0) &&
                   pipeline.from.toUpperCase().includes(filterTextCaseInsensitive.from) &&
                   (pipeline.fromFeature ? valuesFromEnum(pipeline.fromFeature, validators?.fromToFeatureEnum).toUpperCase().includes(filterTextCaseInsensitive.fromFeature) : filterTextCaseInsensitive.fromFeature.length === 0) &&
                   pipeline.to.toUpperCase().includes(filterTextCaseInsensitive.to) &&
-                  (pipeline.toFeature ? valuesFromEnum(pipeline.toFeature, validators?.fromToFeatureEnum).toUpperCase().includes(filterTextCaseInsensitive.toFeature) : filterTextCaseInsensitive.toFeature.length === 0) &&
-                  /*(inj_pt_source === undefined ||
+                  (pipeline.toFeature ? valuesFromEnum(pipeline.toFeature, validators?.fromToFeatureEnum).toUpperCase().includes(filterTextCaseInsensitive.toFeature) : filterTextCaseInsensitive.toFeature.length === 0)/* &&
+                  (inj_pt_source === undefined ||
                     (inj_pt_source.length === 0 && filterTextCaseInsensitive.injectionPoints.length === 0) ||
                     inj_pt_source.some(i => {
                       switch (i) {
@@ -97,8 +95,8 @@ function PipelineDatabase() {
                         default:
                           return i.toUpperCase().includes(filterTextCaseInsensitive.injectionPoints)
                       }
-                    })) &&*/
-                  (pipeline.status ? valuesFromEnum(pipeline.status, validators?.statusEnum).toUpperCase().includes(filterTextCaseInsensitive.status) : filterTextCaseInsensitive.status.length === 0)
+                    })) &&
+                  (pipeline.status ? valuesFromEnum(pipeline.status, validators?.statusEnum).toUpperCase().includes(filterTextCaseInsensitive.status) : filterTextCaseInsensitive.status.length === 0)*/
                 )
               );
             }).map((pipeline, ppl_idx) => pipeline && <RenderPipeline

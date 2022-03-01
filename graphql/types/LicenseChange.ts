@@ -142,7 +142,7 @@ export const LicenseChangeMutation = extendType({
             status: databaseEnumToServerEnum(StatusEnumMembers, args.status) || undefined,
             substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
             date: args.date || undefined,
-            linkToDocumentation: args.linkToDocumentation || undefined,
+            linkToDocumentation: args.linkToDocumentation,
             updatedById: /*'606c4f5b-1af7-4720-b649-65f8fc20e64f'*/String(ctx.user?.id),
           },
         })
@@ -153,18 +153,43 @@ export const LicenseChangeMutation = extendType({
       args: {
         pipelineId: nonNull(stringArg()),
       },
-      resolve: (_parent, { pipelineId }, ctx: Context) => {
+      resolve: async (_parent, { pipelineId }, ctx: Context) => {
         const userId = String(ctx.user?.id);
-        const date = new Date();
-        date.setHours(0, 0, 0, 0);
-        return ctx.prisma.licenseChange.create({
+
+        const pipelineLicenseChange = await ctx.prisma.licenseChange.findMany({
+          where: {
+            pipelineId,
+          },
+          select: {
+            date: true,
+          }
+        });
+
+        // When adding new license change entry, date when license was changed is mandatory and has to be unique,
+        // so we set it to today and will keep increasing it by 1 until it's unique.
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const date = pipelineLicenseChange.reduce(
+          (a, b) => {
+            if (a.date.valueOf() === b.date.valueOf()) {
+              a.date.setDate(a.date.getDate() + 1);
+            }
+            console.log('a:', a.date.toDateString(), 'b:', b.date.toDateString());
+            console.log(a.date.valueOf() === b.date.valueOf());
+            
+            return a.date > b.date ? a : b
+          },
+          { date: today }).date;
+
+        const result = await ctx.prisma.licenseChange.create({
           data: {
             pipelineId,
             date,
             createdById: userId,
             updatedById: userId,
           }
-        })
+        });
+        return result;
       }
     })
     t.field('deleteLicenseChange', {

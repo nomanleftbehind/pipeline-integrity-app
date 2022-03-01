@@ -81,12 +81,10 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
         </TableCell>}
         <EntryField id={id} createdById={createdById} record={license} columnName='license' columnType='string' validator={validators?.licenseMatchPattern} />
         <EntryField id={id} createdById={createdById} record={segment} columnName='segment' columnType='string' validator={validators?.segmentMatchPattern} />
-        <EntryField id={id} createdById={createdById} record={substance} columnName='substance' columnType='string' validator={validators?.substanceEnum} />
         <EntryField id={id} createdById={createdById} record={from} columnName='from' columnType='string' validator={validators?.fromToMatchPattern} />
         <EntryField id={id} createdById={createdById} record={fromFeature} columnName='fromFeature' columnType='string' validator={validators?.fromToFeatureEnum} />
         <EntryField id={id} createdById={createdById} record={to} columnName='to' columnType='string' validator={validators?.fromToMatchPattern} />
         <EntryField id={id} createdById={createdById} record={toFeature} columnName='toFeature' columnType='string' validator={validators?.fromToFeatureEnum} />
-        <EntryField id={id} createdById={createdById} record={status} columnName='status' columnType='string' validator={validators?.statusEnum} />
       </TableRow>
       <PipelineData
         key={`${id} injection points`}

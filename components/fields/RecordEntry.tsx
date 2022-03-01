@@ -50,17 +50,17 @@ export interface IEditRecord {
 interface IRecordEntryProps {
   id: string;
   createdById: string;
-  table: ITable;
   columnName: string;
   columnType: IColumnType;
+  nullable: boolean;
   record: IRecord;
-  // deleteField?: () => void;
   validator?: IValidator;
   editRecord?: ({ id, columnName, columnType, newRecord }: IEditRecord) => void;
 }
 
-export default function RecordEntry({ id, createdById, columnName, columnType, record, table, validator, editRecord }: IRecordEntryProps) {
+export default function RecordEntry({ id, createdById, columnName, columnType, nullable, record, validator, editRecord }: IRecordEntryProps) {
   const [edit, setEdit] = useState(false);
+  const [selected, setSelected] = useState(false);
   const [valid, setValid] = useState(true);
 
   const ref = useRef<HTMLDivElement>(null);
@@ -73,12 +73,10 @@ export default function RecordEntry({ id, createdById, columnName, columnType, r
   }, []);
 
   const handleClickOutside = (event: Event) => {
-    const div = document.getElementById(`menu-${columnName}`);
     const target = event.target as Node;
-    console.log('current', ref.current, 'target', target,);
-
     if (ref.current && !ref.current.contains(target)) {
       setEdit(false);
+      setSelected(false);
     }
   };
 
@@ -128,7 +126,8 @@ export default function RecordEntry({ id, createdById, columnName, columnType, r
       ref={ref}
       className='entry-field'
       tabIndex={-1}
-      onDoubleClick={toggleEdit}
+      onDoubleClick={() => setEdit(true)}
+      onClick={() => setSelected(true)}
     >{edit && editRecord ?
       <Formik
         initialValues={{
@@ -143,6 +142,7 @@ export default function RecordEntry({ id, createdById, columnName, columnType, r
             setFieldError(columnName, apolloErr.message);
           }
           setEdit(false);
+          setSelected(false);
         }
         }
       >
@@ -180,7 +180,17 @@ export default function RecordEntry({ id, createdById, columnName, columnType, r
           )
         }}
       </Formik> :
-      recordDisplay}
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div>
+          {recordDisplay}
+        </div>
+        {nullable && editRecord && selected && <div>
+          <IconButton aria-label="expand row" size="small" onClick={() => editRecord({ id, columnName, columnType, newRecord: null })}>
+            <BlockOutlinedIcon />
+          </IconButton>
+        </div>}
+      </div>}
     </div>
+
   );
 }

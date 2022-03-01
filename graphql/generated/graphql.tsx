@@ -1317,6 +1317,20 @@ export type EditLicenseChangeMutationVariables = Exact<{
 
 export type EditLicenseChangeMutation = { editLicenseChange?: { id: string } | null | undefined };
 
+export type AddLicenseChangeMutationVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type AddLicenseChangeMutation = { addLicenseChange?: { id: string } | null | undefined };
+
+export type DeleteLicenseChangeMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteLicenseChangeMutation = { deleteLicenseChange?: { id: string } | null | undefined };
+
 export type EditPressureTestMutationVariables = Exact<{
   id: Scalars['String'];
   pipelineId?: Maybe<Scalars['String']>;
@@ -1985,6 +1999,72 @@ export function useEditLicenseChangeMutation(baseOptions?: Apollo.MutationHookOp
 export type EditLicenseChangeMutationHookResult = ReturnType<typeof useEditLicenseChangeMutation>;
 export type EditLicenseChangeMutationResult = Apollo.MutationResult<EditLicenseChangeMutation>;
 export type EditLicenseChangeMutationOptions = Apollo.BaseMutationOptions<EditLicenseChangeMutation, EditLicenseChangeMutationVariables>;
+export const AddLicenseChangeDocument = gql`
+    mutation AddLicenseChange($pipelineId: String!) {
+  addLicenseChange(pipelineId: $pipelineId) {
+    id
+  }
+}
+    `;
+export type AddLicenseChangeMutationFn = Apollo.MutationFunction<AddLicenseChangeMutation, AddLicenseChangeMutationVariables>;
+
+/**
+ * __useAddLicenseChangeMutation__
+ *
+ * To run a mutation, you first call `useAddLicenseChangeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddLicenseChangeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addLicenseChangeMutation, { data, loading, error }] = useAddLicenseChangeMutation({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useAddLicenseChangeMutation(baseOptions?: Apollo.MutationHookOptions<AddLicenseChangeMutation, AddLicenseChangeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddLicenseChangeMutation, AddLicenseChangeMutationVariables>(AddLicenseChangeDocument, options);
+      }
+export type AddLicenseChangeMutationHookResult = ReturnType<typeof useAddLicenseChangeMutation>;
+export type AddLicenseChangeMutationResult = Apollo.MutationResult<AddLicenseChangeMutation>;
+export type AddLicenseChangeMutationOptions = Apollo.BaseMutationOptions<AddLicenseChangeMutation, AddLicenseChangeMutationVariables>;
+export const DeleteLicenseChangeDocument = gql`
+    mutation DeleteLicenseChange($id: String!) {
+  deleteLicenseChange(id: $id) {
+    id
+  }
+}
+    `;
+export type DeleteLicenseChangeMutationFn = Apollo.MutationFunction<DeleteLicenseChangeMutation, DeleteLicenseChangeMutationVariables>;
+
+/**
+ * __useDeleteLicenseChangeMutation__
+ *
+ * To run a mutation, you first call `useDeleteLicenseChangeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteLicenseChangeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteLicenseChangeMutation, { data, loading, error }] = useDeleteLicenseChangeMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteLicenseChangeMutation(baseOptions?: Apollo.MutationHookOptions<DeleteLicenseChangeMutation, DeleteLicenseChangeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteLicenseChangeMutation, DeleteLicenseChangeMutationVariables>(DeleteLicenseChangeDocument, options);
+      }
+export type DeleteLicenseChangeMutationHookResult = ReturnType<typeof useDeleteLicenseChangeMutation>;
+export type DeleteLicenseChangeMutationResult = Apollo.MutationResult<DeleteLicenseChangeMutation>;
+export type DeleteLicenseChangeMutationOptions = Apollo.BaseMutationOptions<DeleteLicenseChangeMutation, DeleteLicenseChangeMutationVariables>;
 export const EditPressureTestDocument = gql`
     mutation EditPressureTest($id: String!, $pipelineId: String, $limitingSpec: LimitingSpecEnum, $infoSentOutDate: DateTime, $ddsDate: DateTime, $pressureTestDate: DateTime, $pressureTestReceivedDate: DateTime, $integritySheetUpdated: DateTime, $comment: String) {
   editPressureTest(
