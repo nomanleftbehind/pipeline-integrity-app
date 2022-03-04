@@ -1483,6 +1483,11 @@ export type ValidatorsLicenseChangeQueryVariables = Exact<{ [key: string]: never
 
 export type ValidatorsLicenseChangeQuery = { validators?: { statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string } } | null | undefined };
 
+export type ValidatorsMechanicalPropertiesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ValidatorsMechanicalPropertiesQuery = { validators?: { yieldStrengthMatchPattern: string, lengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade25: string, Grade2902: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string } } | null | undefined };
+
 export type ValidatorsPressureTestQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3275,6 +3280,132 @@ export function useValidatorsLicenseChangeLazyQuery(baseOptions?: Apollo.LazyQue
 export type ValidatorsLicenseChangeQueryHookResult = ReturnType<typeof useValidatorsLicenseChangeQuery>;
 export type ValidatorsLicenseChangeLazyQueryHookResult = ReturnType<typeof useValidatorsLicenseChangeLazyQuery>;
 export type ValidatorsLicenseChangeQueryResult = Apollo.QueryResult<ValidatorsLicenseChangeQuery, ValidatorsLicenseChangeQueryVariables>;
+export const ValidatorsMechanicalPropertiesDocument = gql`
+    query ValidatorsMechanicalProperties {
+  validators {
+    typeEnum {
+      Type515
+      Type2306
+      Type3406
+      Type3408
+      Type6063
+      Type6351
+      Type5A
+      Type5L
+      Type5LX
+      TypeA106
+      TypeA120
+      TypeA53
+      TypeAMERON
+      TypeB515
+      TypeB51S
+      TypeB5IS
+      TypeCENTRON
+      TypeCIBA
+      TypeFSLP
+      TypeREDTHR
+      TypeSMITH
+      TypeSTAR
+      TypeTBS
+      TypeWSLP
+      TypeZ2451
+      TypeZ2453
+    }
+    gradeEnum {
+      GradeA
+      Grade3592
+      GradeB
+      GradeX42
+      GradeBW1
+      Grade2500
+      Grade3591
+      Grade2901
+      GradeT4
+      Grade300
+      Grade3593
+      Grade11
+      GradeJ55
+      Grade2250
+      GradeX52
+      Grade2750
+      Grade25
+      Grade2902
+      Grade241
+      Grade2413
+      Grade2411
+      Grade155
+      Grade150
+      Grade1000
+      Grade800
+      GradeT1A
+      Grade2010
+      GradeT4A
+      Grade1250
+      Grade17
+      Grade900
+      GradeT1B
+      Grade810
+      Grade35
+      Grade5
+      Grade9
+      Grade200
+      Grade1200
+      Grade1103
+    }
+    yieldStrengthMatchPattern
+    lengthMatchPattern
+    outsideDiameterMatchPattern
+    wallThicknessMatchPattern
+    materialEnum {
+      Steel
+      PolyvinylChloride
+      Composite
+      Fiberglass
+      Aluminum
+      Polyethylene
+      CelluloseAcetateButyrate
+      Unknown
+      AsbestosCement
+    }
+    mopMatchPattern
+    internalProtectionEnum {
+      Uncoated
+      FreeStandingSlipLined
+      Unknown
+      Cement
+      ExpandedPolyethylene
+      ThinFilm
+    }
+  }
+}
+    `;
+
+/**
+ * __useValidatorsMechanicalPropertiesQuery__
+ *
+ * To run a query within a React component, call `useValidatorsMechanicalPropertiesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorsMechanicalPropertiesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatorsMechanicalPropertiesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useValidatorsMechanicalPropertiesQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorsMechanicalPropertiesQuery, ValidatorsMechanicalPropertiesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorsMechanicalPropertiesQuery, ValidatorsMechanicalPropertiesQueryVariables>(ValidatorsMechanicalPropertiesDocument, options);
+      }
+export function useValidatorsMechanicalPropertiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorsMechanicalPropertiesQuery, ValidatorsMechanicalPropertiesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorsMechanicalPropertiesQuery, ValidatorsMechanicalPropertiesQueryVariables>(ValidatorsMechanicalPropertiesDocument, options);
+        }
+export type ValidatorsMechanicalPropertiesQueryHookResult = ReturnType<typeof useValidatorsMechanicalPropertiesQuery>;
+export type ValidatorsMechanicalPropertiesLazyQueryHookResult = ReturnType<typeof useValidatorsMechanicalPropertiesLazyQuery>;
+export type ValidatorsMechanicalPropertiesQueryResult = Apollo.QueryResult<ValidatorsMechanicalPropertiesQuery, ValidatorsMechanicalPropertiesQueryVariables>;
 export const ValidatorsPressureTestDocument = gql`
     query validatorsPressureTest {
   validators {

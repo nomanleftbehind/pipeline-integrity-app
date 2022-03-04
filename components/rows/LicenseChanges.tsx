@@ -28,6 +28,9 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
     const switchNewRecord = () => {
       switch (columnType) {
         case 'number':
+          if (newRecord === null) {
+            return null;
+          }
           return Number(newRecord);
         case 'date':
           if (newRecord && typeof newRecord !== 'boolean') {

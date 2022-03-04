@@ -37,7 +37,7 @@ type IValidatorEnumsToOneObject = IntersectionToObject<UnionToIntersection<Remov
 export type IColumnType = 'string' | 'number' | 'date' | 'boolean';
 
 interface IValues {
-  [x: string]: Exclude<IRecord, null>;
+  [x: string]: NonNullable<IRecord>;
 }
 
 export interface IEditRecord {
@@ -80,11 +80,17 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
     }
   };
 
-  const toggleEdit = () => {
-    setEdit(!edit);
-  }
-
   const validatorIsObject = typeof validator === 'object' && !Array.isArray(validator) && validator !== null;
+
+  // const validateForm = () => {
+  //   if (typeof validator === 'string') {
+  //     const validatorRegexp = new RegExp(validator);
+  //     const isValid = validatorRegexp.test(state);
+  //     setValid(isValid)
+  //   } else {
+  //     setValid(true);
+  //   }
+  // }
 
   const switchRecordDisplay = () => {
     switch (columnType) {
@@ -131,7 +137,7 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
     >{edit && editRecord ?
       <Formik
         initialValues={{
-          [columnName]: record === null ? '' : (columnType === 'date' && typeof record === 'string') ? record.slice(0, 10) : record,
+          [columnName]: record == null ? validatorIsObject ? Object.keys(validator)[0] : '' : (columnType === 'date' && typeof record === 'string') ? record.slice(0, 10) : record,
         }}
         validationSchema={validationSchema}
         onSubmit={(values: IValues, { setFieldError }: FormikHelpers<IValues>) => {
@@ -168,7 +174,7 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
                 </DOMSelectInput> :
                 <TextInput
                   name={columnName}
-                  type={columnType === 'date' ? 'date' : 'text'}
+                  type={columnType === 'date' ? 'date' : columnType === 'number' ? 'number' : 'text'}
                   autoComplete='off'
                 />}
               <div>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import InjectionPoints from '../fields/injection_points/InjectionPoints';
 import PipelineProperties from '../fields/PipelineProperties';
 import LicenseChanges from './LicenseChanges';
+import MechanicalProperties from './MechanicalProperties';
 import GenericTable from './GenericTable';
 import PigRuns from './PigRuns';
 import Risk from './Risk';
@@ -93,13 +94,26 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               />
             </TabPanel>
             <TabPanel value={value} index={2}>
-              <PipelineProperties
+              <MechanicalProperties
+                id={id}
+                createdBy={createdBy}
+                length={length}
+                type={type}
+                grade={grade}
+                yieldStrength={yieldStrength}
+                outsideDiameter={outsideDiameter}
+                wallThickness={wallThickness}
+                material={material}
+                mop={mop}
+                internalProtection={internalProtection}
+              />
+              {/* <PipelineProperties
                 open={open}
                 id={id}
                 createdById={createdBy.id}
                 propertiesName="Mechanical Properties"
                 pipelineProperties={mechanicalProperties}
-              />
+              /> */}
             </TabPanel>
             {/* <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={2} /> */}
             <TabPanel value={value} index={3}>
