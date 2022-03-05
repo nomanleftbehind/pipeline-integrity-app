@@ -107,15 +107,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
                 mop={mop}
                 internalProtection={internalProtection}
               />
-              {/* <PipelineProperties
-                open={open}
-                id={id}
-                createdById={createdBy.id}
-                propertiesName="Mechanical Properties"
-                pipelineProperties={mechanicalProperties}
-              /> */}
             </TabPanel>
-            {/* <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={2} /> */}
             <TabPanel value={value} index={3}>
               <Collapse in={open} timeout="auto" unmountOnExit>
                 <Box sx={{ margin: 1 }}>
@@ -131,14 +123,7 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               </Collapse>
             </TabPanel>
             <TabPanel value={value} index={4}>
-              <Collapse in={open} timeout="auto" unmountOnExit>
-                <Box sx={{ margin: 1 }}>
-                  <Typography variant="h6" gutterBottom component="div">
-                    Pig Runs
-                  </Typography>
-                  <PigRuns pipelineId={id} />
-                </Box>
-              </Collapse>
+              <PigRuns pipelineId={id} />
             </TabPanel>
             <TabPanel value={value} index={5}>
               <Risk

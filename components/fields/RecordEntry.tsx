@@ -1,25 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
 import { ApolloError } from '@apollo/client';
-import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
-import MenuItem from '@mui/material/MenuItem';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
-import {
-  useEditPipelineMutation,
-  PipelinesByIdQueryDocument,
-  useEditPigRunMutation,
-  PigRunsByPipelineIdDocument,
-  useEditPressureTestMutation,
-  PressureTestsByPipelineIdDocument,
-  useEditRiskMutation,
-  RiskByIdDocument,
-} from '../../graphql/generated/graphql';
 import { IValidator, IRecord } from '../fields/PipelineProperties';
 import { TextInput, DOMSelectInput } from '../../pages/register';
-import { Formik, Form, FormikHelpers, useField, FieldHookConfig } from 'formik';
+import { Formik, Form, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 
 

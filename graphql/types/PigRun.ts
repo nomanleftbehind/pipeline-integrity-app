@@ -105,7 +105,7 @@ export const PigRunMutation = extendType({
 					where: { id: args.id },
 					data: {
 						pigType: databaseEnumToServerEnum(PigTypeEnumMembers, args.pigType),
-						dateIn: args.dateIn,
+						dateIn: args.dateIn || undefined,
 						dateOut: args.dateOut,
 						isolationValveFunctionTest: args.isolationValveFunctionTest,
 						pigSenderReceiverInspection: args.pigSenderReceiverInspection,

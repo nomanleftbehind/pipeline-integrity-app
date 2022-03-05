@@ -25,6 +25,8 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
   const [addRecord] = useAddLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId'] });
   const [deleteRecord] = useDeleteLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId'] });
 
+  const { statusEnum, substanceEnum } = dataValidators?.validators || {};
+
   const { user } = useAuth() || {};
   const { role, id: userId } = user || {};
 
@@ -68,9 +70,9 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
 
       {data?.licenseChangesByPipelineId?.map((licenseChange, i) => {
         i += 2;
+
         if (licenseChange) {
           const { id, date, status, substance, linkToDocumentation, createdBy, updatedBy } = licenseChange;
-          const { statusEnum, substanceEnum } = dataValidators?.validators || {};
           const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'OFFICE' && createdBy.id === userId);
           return (
             <Fragment key={id}>

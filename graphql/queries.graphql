@@ -270,7 +270,6 @@ query ValidatorsPigRun {
       Failed
       Good
     }
-    anyTextMatchPattern
   }
 }
 
@@ -655,7 +654,7 @@ query ValidatorsMechanicalProperties {
   }
 }
 
-query validatorsPressureTest {
+query ValidatorsPressureTest {
   validators {
     limitingSpecEnum {
       ANSI150
@@ -688,17 +687,6 @@ query ValidatorsRisk {
       W
       NW
     }
-  }
-}
-
-query validatorsPressureTest {
-  validators {
-    limitingSpecEnum {
-      ANSI150
-      ANSI300
-      ANSI600
-    }
-    anyTextMatchPattern
   }
 }
 
