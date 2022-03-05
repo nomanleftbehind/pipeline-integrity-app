@@ -18,8 +18,6 @@ import {
   RiskByIdDocument,
 } from '../../graphql/generated/graphql';
 import { IValidator, IRecord } from '../fields/PipelineProperties';
-import { ITable } from '../rows/PipelineData';
-import { useAuth } from '../../context/AuthContext';
 import { TextInput, DOMSelectInput } from '../../pages/register';
 import { Formik, Form, FormikHelpers, useField, FieldHookConfig } from 'formik';
 import * as Yup from 'yup';
@@ -55,10 +53,11 @@ interface IRecordEntryProps {
   nullable: boolean;
   record: IRecord;
   validator?: IValidator;
+  authorized: boolean;
   editRecord?: ({ id, columnName, columnType, newRecord }: IEditRecord) => void;
 }
 
-export default function RecordEntry({ id, createdById, columnName, columnType, nullable, record, validator, editRecord }: IRecordEntryProps) {
+export default function RecordEntry({ id, createdById, columnName, columnType, nullable, record, validator, authorized, editRecord }: IRecordEntryProps) {
   const [edit, setEdit] = useState(false);
   const [selected, setSelected] = useState(false);
   const [valid, setValid] = useState(true);
@@ -82,15 +81,15 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
 
   const validatorIsObject = typeof validator === 'object' && !Array.isArray(validator) && validator !== null;
 
-  // const validateForm = () => {
-  //   if (typeof validator === 'string') {
-  //     const validatorRegexp = new RegExp(validator);
-  //     const isValid = validatorRegexp.test(state);
-  //     setValid(isValid)
-  //   } else {
-  //     setValid(true);
-  //   }
-  // }
+  const handleValidation = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    if (typeof validator === 'string') {
+      const validatorRegexp = new RegExp(validator);
+      const isValid = validatorRegexp.test(e.currentTarget.value);
+      setValid(isValid)
+    } else {
+      setValid(true);
+    }
+  }
 
   const switchRecordDisplay = () => {
     switch (columnType) {
@@ -130,11 +129,15 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
   return (
     <div
       ref={ref}
-      className='entry-field'
+      className={authorized && editRecord ? 'entry-field' : undefined}
       tabIndex={-1}
       onDoubleClick={() => setEdit(true)}
       onClick={() => setSelected(true)}
-    >{edit && editRecord ?
+      style={{
+        padding: '8px', backgroundColor: authorized && editRecord ? '#fff' : 'rgb(220, 220, 220)', borderRadius: '4px', color: 'rgba(0, 0, 0, 0.6)', height: '50px', lineHeight: '35px',
+        boxShadow: '0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)'
+      }}
+    >{edit && editRecord && authorized ?
       <Formik
         initialValues={{
           [columnName]: record == null ? validatorIsObject ? Object.keys(validator)[0] : '' : (columnType === 'date' && typeof record === 'string') ? record.slice(0, 10) : record,
@@ -152,8 +155,7 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
         }
         }
       >
-        {({ errors, touched, isSubmitting }) => {
-
+        {({ errors, touched, isSubmitting, handleChange }) => {
           return (
             <Form
               className='entry-field-form'
@@ -173,7 +175,12 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
                     </option>)}
                 </DOMSelectInput> :
                 <TextInput
+                  className={valid ? 'valid' : 'invalid'}
                   name={columnName}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+                    handleValidation(e);
+                    handleChange(e);
+                  }}
                   type={columnType === 'date' ? 'date' : columnType === 'number' ? 'number' : 'text'}
                   autoComplete='off'
                 />}
@@ -190,7 +197,7 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
         <div>
           {recordDisplay}
         </div>
-        {nullable && editRecord && selected && <div>
+        {nullable && editRecord && authorized && selected && <div>
           <IconButton aria-label="expand row" size="small" onClick={() => editRecord({ id, columnName, columnType, newRecord: null })}>
             <BlockOutlinedIcon />
           </IconButton>

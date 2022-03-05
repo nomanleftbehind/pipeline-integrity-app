@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import {
   useLicenseChangesByPipelineIdQuery,
   useValidatorsLicenseChangeQuery,
@@ -24,6 +25,9 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
   const [addRecord] = useAddLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId'] });
   const [deleteRecord] = useDeleteLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId'] });
 
+  const { user } = useAuth() || {};
+  const { role, id: userId } = user || {};
+
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {
       switch (columnType) {
@@ -46,48 +50,57 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '30px 220px 200px 200px 200px auto', gap: '10px', gridAutoRows: 'minmax(40px, auto)' }}>
-      <div style={{ padding: '4px', gridColumn: 1, gridRow: 1 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '30px 220px 200px 200px 200px auto', gap: '5px', gridAutoRows: 'minmax(40px, auto)' }}>
+      {(role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') && <div style={{ padding: '4px', gridColumn: 1, gridRow: 1 }}>
         <IconButton
           style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
           aria-label='add row' size='small' onClick={() => addRecord({ variables: { pipelineId } })}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
-      </div>
+      </div>}
       <div style={{ padding: '4px', gridColumn: 2, gridRow: 1 }}>Date</div>
       <div style={{ padding: '4px', gridColumn: 3, gridRow: 1 }}>Status</div>
       <div style={{ padding: '4px', gridColumn: 4, gridRow: 1 }}>Substance</div>
       <div style={{ padding: '4px', gridColumn: 5, gridRow: 1 }}>Link To Documentation</div>
-      <div style={{ padding: '4px', gridColumn: 6, gridRow: 1 }}>ID</div>
+      <div style={{ padding: '4px', gridColumn: 6, gridRow: 1 }}>Created By</div>
+      <div style={{ padding: '4px', gridColumn: 7, gridRow: 1 }}>Updated By</div>
+      <div style={{ padding: '4px', gridColumn: 8, gridRow: 1 }}>ID</div>
 
       {data?.licenseChangesByPipelineId?.map((licenseChange, i) => {
         i += 2;
         if (licenseChange) {
-          const { id, date, status, substance, linkToDocumentation, createdBy } = licenseChange;
+          const { id, date, status, substance, linkToDocumentation, createdBy, updatedBy } = licenseChange;
           const { statusEnum, substanceEnum } = dataValidators?.validators || {};
+          const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'OFFICE' && createdBy.id === userId);
           return (
             <Fragment key={id}>
-              <div style={{ padding: '4px', gridColumn: 1, gridRow: i }}>
+              {authorized && <div style={{ padding: '4px', gridColumn: 1, gridRow: i }}>
                 <IconButton
                   style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
                   aria-label='delete row' size='small' onClick={() => deleteRecord({ variables: { id } })}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
-              </div>
+              </div>}
               <div style={{ padding: '4px', gridColumn: 2, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='date' columnType='date' nullable={false} record={date} editRecord={editRecord} />
+                <RecordEntry id={id} createdById={createdBy.id} columnName='date' columnType='date' nullable={false} record={date} authorized={authorized} editRecord={editRecord} />
               </div>
               <div style={{ padding: '4px', gridColumn: 3, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='status' columnType='string' nullable={false} record={status} validator={statusEnum} editRecord={editRecord} />
+                <RecordEntry id={id} createdById={createdBy.id} columnName='status' columnType='string' nullable={false} record={status} validator={statusEnum} authorized={authorized} editRecord={editRecord} />
               </div>
               <div style={{ padding: '4px', gridColumn: 4, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='substance' columnType='string' nullable={false} record={substance} validator={substanceEnum} editRecord={editRecord} />
+                <RecordEntry id={id} createdById={createdBy.id} columnName='substance' columnType='string' nullable={false} record={substance} validator={substanceEnum} authorized={authorized} editRecord={editRecord} />
               </div>
               <div style={{ padding: '4px', gridColumn: 5, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='linkToDocumentation' columnType='string' nullable={true} record={linkToDocumentation} editRecord={editRecord} />
+                <RecordEntry id={id} createdById={createdBy.id} columnName='linkToDocumentation' columnType='string' nullable={true} record={linkToDocumentation} authorized={authorized} editRecord={editRecord} />
               </div>
               <div style={{ padding: '4px', gridColumn: 6, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='id' columnType='string' nullable={false} record={id} />
+                <RecordEntry id={id} createdById={createdBy.id} columnName='createdBy' columnType='string' nullable={false} record={createdBy.email} authorized={authorized} />
+              </div>
+              <div style={{ padding: '4px', gridColumn: 7, gridRow: i }}>
+                <RecordEntry id={id} createdById={createdBy.id} columnName='updatedBy' columnType='string' nullable={false} record={updatedBy.email} authorized={authorized} />
+              </div>
+              <div style={{ padding: '4px', gridColumn: 8, gridRow: i }}>
+                <RecordEntry id={id} createdById={createdBy.id} columnName='id' columnType='string' nullable={false} record={id} authorized={authorized} />
               </div>
             </Fragment>
           )
