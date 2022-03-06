@@ -279,6 +279,11 @@ export type LicenseChange = {
   updatedBy: User;
 };
 
+export type LicenseChangePayload = {
+  error?: Maybe<FieldError>;
+  licenseChange?: Maybe<LicenseChange>;
+};
+
 export enum LimitingSpecEnum {
   Ansi150 = 'ANSI150',
   Ansi300 = 'ANSI300',
@@ -316,7 +321,7 @@ export type MaterialEnumObject = {
 };
 
 export type Mutation = {
-  addLicenseChange?: Maybe<LicenseChange>;
+  addLicenseChange?: Maybe<LicenseChangePayload>;
   addPigRun?: Maybe<PigRun>;
   addPressureTest?: Maybe<PressureTest>;
   addRisk?: Maybe<Risk>;
@@ -1322,7 +1327,7 @@ export type AddLicenseChangeMutationVariables = Exact<{
 }>;
 
 
-export type AddLicenseChangeMutation = { addLicenseChange?: { id: string } | null | undefined };
+export type AddLicenseChangeMutation = { addLicenseChange?: { licenseChange?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type DeleteLicenseChangeMutationVariables = Exact<{
   id: Scalars['String'];
@@ -2007,7 +2012,13 @@ export type EditLicenseChangeMutationOptions = Apollo.BaseMutationOptions<EditLi
 export const AddLicenseChangeDocument = gql`
     mutation AddLicenseChange($pipelineId: String!) {
   addLicenseChange(pipelineId: $pipelineId) {
-    id
+    licenseChange {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
     `;

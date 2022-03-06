@@ -2693,6 +2693,41 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "LicenseChangePayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "error",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "FieldError",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "licenseChange",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "LicenseChange",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "ENUM",
         "name": "LimitingSpecEnum",
         "description": null,
@@ -3028,7 +3063,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "LicenseChange",
+              "name": "LicenseChangePayload",
               "ofType": null
             },
             "isDeprecated": false,

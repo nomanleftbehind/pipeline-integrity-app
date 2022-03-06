@@ -270,6 +270,11 @@ type LicenseChange {
   updatedBy: User!
 }
 
+type LicenseChangePayload {
+  error: FieldError
+  licenseChange: LicenseChange
+}
+
 enum LimitingSpecEnum {
   ANSI150
   ANSI300
@@ -307,7 +312,7 @@ type MaterialEnumObject {
 }
 
 type Mutation {
-  addLicenseChange(pipelineId: String!): LicenseChange
+  addLicenseChange(pipelineId: String!): LicenseChangePayload
   addPigRun(pipelineId: String!): PigRun
   addPressureTest(pipelineId: String!): PressureTest
   addRisk(id: String!): Risk

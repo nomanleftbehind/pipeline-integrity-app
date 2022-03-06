@@ -1,5 +1,6 @@
 import React, { useEffect, useState, ReactNode } from 'react';
 import ReactDOM from 'react-dom';
+import { FieldError } from '../graphql/generated/graphql';
 
 
 interface IModalProps {
@@ -8,7 +9,7 @@ interface IModalProps {
 
 function Modal({ children }: IModalProps) {
 
-  const [isBrowser, setIsBrowser] = useState<boolean>(false);
+  const [isBrowser, setIsBrowser] = useState(false);
   const modalRoot = document.getElementById('modal-root');
   const el = document.createElement('div');
 
@@ -69,6 +70,29 @@ export function ModalDuplicateInjectionPoint({ hideDuplicateInjectionPointModal 
             Selected source already is injection point to the respective pipeline!
           </div>
           <button onClick={hideDuplicateInjectionPointModal}>OK</button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+
+interface IModalFieldErrorProps {
+  fieldError: FieldError;
+  hideFieldError: () => void;
+}
+
+export function ModalFieldError({ fieldError, hideFieldError }: IModalFieldErrorProps) {
+  const { field, message } = fieldError;
+  return (
+    <Modal>
+      <div className="modal">
+        <div className="modal-box">
+          <div>
+            {`Field: ${field}`}<br />
+            {`Message: ${message}`}
+          </div>
+          <button onClick={hideFieldError}>OK</button>
         </div>
       </div>
     </Modal>

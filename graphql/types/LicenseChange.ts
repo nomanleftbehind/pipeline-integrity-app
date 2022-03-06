@@ -114,13 +114,22 @@ export const LicenseChangeQuery = extendType({
       resolve: async (_parent, { pipelineId }, ctx: Context) => {
         const result = await ctx.prisma.licenseChange.findMany({
           where: { pipelineId },
-          orderBy: { createdAt: 'desc' },
+          orderBy: { date: 'desc' },
         })
         return result;
       }
     })
   }
-})
+});
+
+
+export const LicenseChangePayload = objectType({
+  name: 'LicenseChangePayload',
+  definition(t) {
+    t.field('licenseChange', { type: 'LicenseChange' })
+    t.field('error', { type: 'FieldError' })
+  },
+});
 
 
 export const LicenseChangeMutation = extendType({
@@ -143,53 +152,60 @@ export const LicenseChangeMutation = extendType({
             substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
             date: args.date || undefined,
             linkToDocumentation: args.linkToDocumentation,
-            updatedById: /*'606c4f5b-1af7-4720-b649-65f8fc20e64f'*/String(ctx.user?.id),
+            updatedById: String(ctx.user?.id),
           },
         })
       },
     })
     t.field('addLicenseChange', {
-      type: 'LicenseChange',
+      type: 'LicenseChangePayload',
       args: {
         pipelineId: nonNull(stringArg()),
       },
       resolve: async (_parent, { pipelineId }, ctx: Context) => {
-        const userId = String(ctx.user?.id);
 
-        const pipelineLicenseChange = await ctx.prisma.licenseChange.findMany({
-          where: {
-            pipelineId,
-          },
-          select: {
-            date: true,
-          }
-        });
+        const user = ctx.user;
 
-        // When adding new license change entry, date when license was changed is mandatory and has to be unique,
-        // so we set it to today and will keep increasing it by 1 until it's unique.
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const date = pipelineLicenseChange.reduce(
-          (a, b) => {
-            if (a.date.valueOf() === b.date.valueOf()) {
-              a.date.setDate(a.date.getDate() + 1);
+        if (user && ['ADMIN', 'ENGINEER', 'OFFICE'].includes(user.role)) {
+          const userId = user.id;
+          const pipelineLicenseChange = await ctx.prisma.licenseChange.findMany({
+            where: {
+              pipelineId,
+            },
+            select: {
+              date: true,
+            },
+            orderBy: {
+              date: 'asc'
             }
-            console.log('a:', a.date.toDateString(), 'b:', b.date.toDateString());
-            console.log(a.date.valueOf() === b.date.valueOf());
-            
-            return a.date > b.date ? a : b
-          },
-          { date: today }).date;
-
-        const result = await ctx.prisma.licenseChange.create({
-          data: {
-            pipelineId,
-            date,
-            createdById: userId,
-            updatedById: userId,
+          });
+          // When adding new license change entry, date when license was changed is mandatory and has to be unique,
+          // so we set it to today and check if it already exists in which case we will keep increasing it by 1 until it's unique.
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          for (const i of pipelineLicenseChange) {
+            if (i.date.getTime() === today.getTime()) {
+              today.setDate(today.getDate() + 1);
+            }
           }
-        });
-        return result;
+
+          const licenseChange = await ctx.prisma.licenseChange.create({
+            data: {
+              pipelineId,
+              date: today,
+              createdById: userId,
+              updatedById: userId,
+            }
+          });
+          return { licenseChange };
+        }
+        
+        return {
+          error: {
+            field: 'user',
+            message: 'not authorized',
+          }
+        }
       }
     })
     t.field('deleteLicenseChange', {
