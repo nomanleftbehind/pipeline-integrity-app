@@ -3861,7 +3861,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "LicenseChange",
+              "name": "LicenseChangePayload",
               "ofType": null
             },
             "isDeprecated": false,

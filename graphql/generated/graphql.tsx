@@ -339,7 +339,7 @@ export type Mutation = {
   duplicatePipeline?: Maybe<Pipeline>;
   editFacility?: Maybe<Facility>;
   editInjectionPoint?: Maybe<InjectionPoint>;
-  editLicenseChange?: Maybe<LicenseChange>;
+  editLicenseChange?: Maybe<LicenseChangePayload>;
   editPigRun?: Maybe<PigRun>;
   editPipeline?: Maybe<Pipeline>;
   editPressureTest?: Maybe<PressureTest>;
@@ -1320,7 +1320,7 @@ export type EditLicenseChangeMutationVariables = Exact<{
 }>;
 
 
-export type EditLicenseChangeMutation = { editLicenseChange?: { id: string } | null | undefined };
+export type EditLicenseChangeMutation = { editLicenseChange?: { licenseChange?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type AddLicenseChangeMutationVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -1975,7 +1975,13 @@ export const EditLicenseChangeDocument = gql`
     date: $date
     linkToDocumentation: $linkToDocumentation
   ) {
-    id
+    licenseChange {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
     `;

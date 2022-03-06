@@ -90,7 +90,13 @@ mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $seg
 
 mutation EditLicenseChange($id: String!, $status: StatusEnum, $substance: SubstanceEnum, $date: DateTime, $linkToDocumentation: String) {
   editLicenseChange(id: $id, status: $status, substance: $substance, date: $date, linkToDocumentation: $linkToDocumentation) {
-    id
+    licenseChange {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
 

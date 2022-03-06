@@ -136,7 +136,7 @@ export const LicenseChangeMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editLicenseChange', {
-      type: 'LicenseChange',
+      type: 'LicenseChangePayload',
       args: {
         id: nonNull(stringArg()),
         status: arg({ type: 'StatusEnum' }),
@@ -145,16 +145,70 @@ export const LicenseChangeMutation = extendType({
         linkToDocumentation: stringArg(),
       },
       resolve: async (_parent, args, ctx: Context) => {
-        return ctx.prisma.licenseChange.update({
-          where: { id: args.id },
-          data: {
-            status: databaseEnumToServerEnum(StatusEnumMembers, args.status) || undefined,
-            substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
-            date: args.date || undefined,
-            linkToDocumentation: args.linkToDocumentation,
-            updatedById: String(ctx.user?.id),
-          },
-        })
+
+        const user = ctx.user;
+
+        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'OFFICE')) {
+
+          const { id: userId, firstName, role } = user;
+
+          const currentLicenseChange = await ctx.prisma.licenseChange.findUnique({
+            where: { id: args.id },
+            select: {
+              pipelineId: true,
+              createdById: true,
+              date: true,
+            }
+          });
+
+          if (currentLicenseChange) {
+
+            const { pipelineId, createdById, date } = currentLicenseChange;
+
+            const pipelineLicenseChanges = await ctx.prisma.licenseChange.findMany({
+              where: { pipelineId },
+              select: { date: true, }
+            });
+
+            const licenseChangeDates = pipelineLicenseChanges.map(licenseChange => licenseChange.date.getTime());
+
+            if (args.date && licenseChangeDates.includes(args.date.getTime()) && args.date.getTime() !== date.getTime()) {
+              return {
+                error: {
+                  field: 'License change date',
+                  message: `License change date ${args.date.toISOString().split('T')[0]} is already entered for this pipeline. One pipeline cannot have multiple license changes on the same date.`,
+                }
+              }
+            }
+
+            if (role === 'OFFICE' && createdById !== userId) {
+              return {
+                error: {
+                  field: 'License change',
+                  message: `Hi ${firstName}. Your user privilages do not allow you to edit license change entries not authored by you.`,
+                }
+              }
+            }
+          }
+
+          const licenseChange = await ctx.prisma.licenseChange.update({
+            where: { id: args.id },
+            data: {
+              status: databaseEnumToServerEnum(StatusEnumMembers, args.status) || undefined,
+              substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
+              date: args.date || undefined,
+              linkToDocumentation: args.linkToDocumentation,
+              updatedById: userId,
+            },
+          });
+          return { licenseChange }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
       },
     })
     t.field('addLicenseChange', {
@@ -182,7 +236,7 @@ export const LicenseChangeMutation = extendType({
           // When adding new license change entry, date when license was changed is mandatory and has to be unique,
           // so we set it to today and check if it already exists in which case we will keep increasing it by 1 until it's unique.
           const today = new Date();
-          today.setHours(0, 0, 0, 0);
+          today.setUTCHours(0, 0, 0, 0);
           for (const i of pipelineLicenseChange) {
             if (i.date.getTime() === today.getTime()) {
               today.setDate(today.getDate() + 1);
@@ -199,11 +253,11 @@ export const LicenseChangeMutation = extendType({
           });
           return { licenseChange };
         }
-        
+
         return {
           error: {
-            field: 'user',
-            message: 'not authorized',
+            field: 'User',
+            message: 'Not authorized',
           }
         }
       }
