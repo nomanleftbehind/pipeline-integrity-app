@@ -1,6 +1,7 @@
-import { Fragment } from 'react';
+import { useState, Fragment } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import RecordEntry, { IEditRecord } from '../fields/RecordEntry';
+import { ModalFieldError } from '../Modal';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -21,16 +22,26 @@ export interface IPigRunsProps {
 export default function PigRuns({ pipelineId }: IPigRunsProps) {
   const { data, loading, error } = usePigRunsByPipelineIdQuery({ variables: { pipelineId } });
   const { data: dataValidators } = useValidatorsPigRunQuery();
-  const [editPigRun] = useEditPigRunMutation({ refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
-  const [addRecord] = useAddPigRunMutation({ refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
-  const [deleteRecord] = useDeletePigRunMutation({ refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
+  const [editPigRun, { data: dataEditPigRunMutation }] = useEditPigRunMutation({ refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
+  const [addPigRun, { data: dataAddPigRunMutation }] = useAddPigRunMutation({ variables: { pipelineId }, refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
+  const [deletePigRun, { data: dataDeletePigRunMutation }] = useDeletePigRunMutation({ refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
+
+  const [fieldErrorModal, setFieldErrorModal] = useState(false);
 
   const { pigTypeEnum, pigInspectionEnum } = dataValidators?.validators || {};
+  const { error: errorEditPigRun } = dataEditPigRunMutation?.editPigRun || {};
+  const { error: errorAddPigRun } = dataAddPigRunMutation?.addPigRun || {};
+  const { error: errorDeletePigRun } = dataDeletePigRunMutation?.deletePigRun || {};
 
   const { user } = useAuth() || {};
   const { role, id: userId } = user || {};
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
+
+    if (errorEditPigRun) {
+      setFieldErrorModal(true);
+    }
+
     const switchNewRecord = () => {
       switch (columnType) {
         case 'number':
@@ -51,15 +62,45 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
     editPigRun({ variables: { id, [columnName]: newRecord } });
   }
 
+  const addRecord = () => {
+    if (errorAddPigRun) {
+      setFieldErrorModal(true);
+    }
+    addPigRun();
+  }
+
+  const deleteRecord = (id: string) => {
+    if (errorDeletePigRun) {
+      setFieldErrorModal(true);
+    }
+    deletePigRun({ variables: { id } });
+  }
+
+  const hideFieldErrorModal = () => {
+    setFieldErrorModal(false);
+  }
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '30px 290px 220px 220px auto 130px 130px 200px auto', gap: '5px', gridAutoRows: 'minmax(40px, auto)' }}>
       {(role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR') && <div style={{ padding: '4px', gridColumn: 1, gridRow: 1 }}>
         <IconButton
           style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
-          aria-label='add row' size='small' onClick={() => addRecord({ variables: { pipelineId } })}>
+          aria-label='add row' size='small' onClick={addRecord}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>}
+      {fieldErrorModal && errorAddPigRun && <ModalFieldError
+        fieldError={errorAddPigRun}
+        hideFieldError={hideFieldErrorModal}
+      />}
+      {fieldErrorModal && errorEditPigRun && <ModalFieldError
+        fieldError={errorEditPigRun}
+        hideFieldError={hideFieldErrorModal}
+      />}
+      {fieldErrorModal && errorDeletePigRun && <ModalFieldError
+        fieldError={errorDeletePigRun}
+        hideFieldError={hideFieldErrorModal}
+      />}
       <div style={{ padding: '4px', gridColumn: 2, gridRow: 1 }}>Pig Type</div>
       <div style={{ padding: '4px', gridColumn: 3, gridRow: 1 }}>Date In</div>
       <div style={{ padding: '4px', gridColumn: 4, gridRow: 1 }}>Date Out</div>
@@ -82,7 +123,7 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
               {authorized && <div style={{ padding: '4px', gridColumn: 1, gridRow: i }}>
                 <IconButton
                   style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
-                  aria-label='delete row' size='small' onClick={() => deleteRecord({ variables: { id } })}>
+                  aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </div>}

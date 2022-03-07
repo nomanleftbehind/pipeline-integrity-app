@@ -222,7 +222,7 @@ export const LicenseChangeMutation = extendType({
 
         if (user && ['ADMIN', 'ENGINEER', 'OFFICE'].includes(user.role)) {
           const userId = user.id;
-          const pipelineLicenseChange = await ctx.prisma.licenseChange.findMany({
+          const pipelineLicenseChanges = await ctx.prisma.licenseChange.findMany({
             where: {
               pipelineId,
             },
@@ -237,7 +237,7 @@ export const LicenseChangeMutation = extendType({
           // so we set it to today and check if it already exists in which case we will keep increasing it by 1 until it's unique.
           const today = new Date();
           today.setUTCHours(0, 0, 0, 0);
-          for (const i of pipelineLicenseChange) {
+          for (const i of pipelineLicenseChanges) {
             if (i.date.getTime() === today.getTime()) {
               today.setDate(today.getDate() + 1);
             }
@@ -263,14 +263,49 @@ export const LicenseChangeMutation = extendType({
       }
     })
     t.field('deleteLicenseChange', {
-      type: 'LicenseChange',
+      type: 'LicenseChangePayload',
       args: {
         id: nonNull(stringArg()),
       },
-      resolve: (_parent, { id }, ctx: Context) => {
-        return ctx.prisma.licenseChange.delete({
-          where: { id }
-        })
+      resolve: async (_parent, { id }, ctx: Context) => {
+
+        const user = ctx.user;
+
+        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'OFFICE')) {
+
+          const { id: userId, firstName, role } = user;
+
+          if (role === 'OFFICE') {
+            const currentLicenseChange = await ctx.prisma.licenseChange.findUnique({
+              where: { id },
+              select: {
+                createdById: true,
+              }
+            });
+
+            if (currentLicenseChange && currentLicenseChange.createdById !== userId) {
+              return {
+                error: {
+                  field: 'License change created by',
+                  message: `Hi ${firstName}. Your user privilages do not allow you to delete license change entries not authored by you.`,
+                }
+              }
+            }
+          }
+
+          const licenseChange = await ctx.prisma.licenseChange.delete({
+            where: { id }
+          });
+
+          return { licenseChange }
+        }
+
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
       }
     })
   }

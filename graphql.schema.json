@@ -3092,7 +3092,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PigRun",
+              "name": "PigRunPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3314,7 +3314,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "LicenseChange",
+              "name": "LicenseChangePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3343,7 +3343,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PigRun",
+              "name": "PigRunPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3974,7 +3974,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PigRun",
+              "name": "PigRunPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -5003,6 +5003,41 @@
                 "name": "User",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "PigRunPayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "error",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "FieldError",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pigRun",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "PigRun",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

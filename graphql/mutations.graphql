@@ -114,7 +114,13 @@ mutation AddLicenseChange($pipelineId: String!) {
 
 mutation DeleteLicenseChange($id: String!) {
   deleteLicenseChange(id: $id) {
-    id
+    licenseChange {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
 
@@ -138,19 +144,37 @@ mutation DeletePressureTest($id: String!) {
 
 mutation EditPigRun($id: String!, $pigType: PigTypeEnum, $dateIn: DateTime, $dateOut: DateTime, $isolationValveFunctionTest: PigInspectionEnum, $pigSenderReceiverInspection: PigInspectionEnum, $comment: String, $operatorId: String) {
   editPigRun(id: $id, pigType: $pigType, dateIn: $dateIn, dateOut: $dateOut, isolationValveFunctionTest: $isolationValveFunctionTest, pigSenderReceiverInspection: $pigSenderReceiverInspection, comment: $comment, operatorId: $operatorId) {
-    id
+    pigRun {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
 
 mutation AddPigRun($pipelineId: String!) {
   addPigRun(pipelineId: $pipelineId) {
-    id
+    pigRun {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
 
 mutation DeletePigRun($id: String!) {
   deletePigRun(id: $id) {
-    id
+    pigRun {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
 

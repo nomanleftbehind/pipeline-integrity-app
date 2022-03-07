@@ -24,13 +24,14 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
   const { data: dataValidators } = useValidatorsLicenseChangeQuery();
   const [editLicenseChange, { data: dataEditLicenseChangeMutation }] = useEditLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId'] });
   const [addLicenseChange, { data: dataAddLicenseChangeMutation }] = useAddLicenseChangeMutation({ variables: { pipelineId }, refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId'] });
-  const [deleteRecord] = useDeleteLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId'] });
+  const [deleteLicenseChange, { data: dataDeleteLicenseChangeMutation }] = useDeleteLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId'] });
 
   const [fieldErrorModal, setFieldErrorModal] = useState(false);
 
   const { statusEnum, substanceEnum } = dataValidators?.validators || {};
   const { error: errorEditLicenseChange } = dataEditLicenseChangeMutation?.editLicenseChange || {};
   const { error: errorAddLicenseChange } = dataAddLicenseChangeMutation?.addLicenseChange || {};
+  const { error: errorDeleteLicenseChange } = dataDeleteLicenseChangeMutation?.deleteLicenseChange || {};
 
   const { user } = useAuth() || {};
   const { role, id: userId } = user || {};
@@ -68,6 +69,13 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
     addLicenseChange();
   }
 
+  const deleteRecord = (id: string) => {
+    if (errorDeleteLicenseChange) {
+      setFieldErrorModal(true);
+    }
+    deleteLicenseChange({ variables: { id } });
+  }
+
   const hideFieldErrorModal = () => {
     setFieldErrorModal(false);
   }
@@ -83,6 +91,14 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
       </div>}
       {fieldErrorModal && errorAddLicenseChange && <ModalFieldError
         fieldError={errorAddLicenseChange}
+        hideFieldError={hideFieldErrorModal}
+      />}
+      {fieldErrorModal && errorEditLicenseChange && <ModalFieldError
+        fieldError={errorEditLicenseChange}
+        hideFieldError={hideFieldErrorModal}
+      />}
+      {fieldErrorModal && errorDeleteLicenseChange && <ModalFieldError
+        fieldError={errorDeleteLicenseChange}
         hideFieldError={hideFieldErrorModal}
       />}
       <div style={{ padding: '4px', gridColumn: 2, gridRow: 1 }}>Date</div>
@@ -104,14 +120,10 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
               {authorized && <div style={{ padding: '4px', gridColumn: 1, gridRow: i }}>
                 <IconButton
                   style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
-                  aria-label='delete row' size='small' onClick={() => deleteRecord({ variables: { id } })}>
+                  aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </div>}
-              {fieldErrorModal && errorEditLicenseChange && <ModalFieldError
-                fieldError={errorEditLicenseChange}
-                hideFieldError={hideFieldErrorModal}
-              />}
               <div style={{ padding: '4px', gridColumn: 2, gridRow: i }}>
                 <RecordEntry id={id} createdById={createdBy.id} columnName='date' columnType='date' nullable={false} record={date} authorized={authorized} editRecord={editRecord} />
               </div>

@@ -322,14 +322,14 @@ export type MaterialEnumObject = {
 
 export type Mutation = {
   addLicenseChange?: Maybe<LicenseChangePayload>;
-  addPigRun?: Maybe<PigRun>;
+  addPigRun?: Maybe<PigRunPayload>;
   addPressureTest?: Maybe<PressureTest>;
   addRisk?: Maybe<Risk>;
   connectPipeline?: Maybe<Pipeline>;
   connectSource?: Maybe<Pipeline>;
   createFacility?: Maybe<Facility>;
-  deleteLicenseChange?: Maybe<LicenseChange>;
-  deletePigRun?: Maybe<PigRun>;
+  deleteLicenseChange?: Maybe<LicenseChangePayload>;
+  deletePigRun?: Maybe<PigRunPayload>;
   deletePipeline?: Maybe<Pipeline>;
   deletePressureTest?: Maybe<PressureTest>;
   deleteRisk?: Maybe<Risk>;
@@ -340,7 +340,7 @@ export type Mutation = {
   editFacility?: Maybe<Facility>;
   editInjectionPoint?: Maybe<InjectionPoint>;
   editLicenseChange?: Maybe<LicenseChangePayload>;
-  editPigRun?: Maybe<PigRun>;
+  editPigRun?: Maybe<PigRunPayload>;
   editPipeline?: Maybe<Pipeline>;
   editPressureTest?: Maybe<PressureTest>;
   editRisk?: Maybe<Risk>;
@@ -580,6 +580,11 @@ export type PigRun = {
   pipeline: Pipeline;
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
+};
+
+export type PigRunPayload = {
+  error?: Maybe<FieldError>;
+  pigRun?: Maybe<PigRun>;
 };
 
 export enum PigTypeEnum {
@@ -1334,7 +1339,7 @@ export type DeleteLicenseChangeMutationVariables = Exact<{
 }>;
 
 
-export type DeleteLicenseChangeMutation = { deleteLicenseChange?: { id: string } | null | undefined };
+export type DeleteLicenseChangeMutation = { deleteLicenseChange?: { licenseChange?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type EditPressureTestMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1377,21 +1382,21 @@ export type EditPigRunMutationVariables = Exact<{
 }>;
 
 
-export type EditPigRunMutation = { editPigRun?: { id: string } | null | undefined };
+export type EditPigRunMutation = { editPigRun?: { pigRun?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type AddPigRunMutationVariables = Exact<{
   pipelineId: Scalars['String'];
 }>;
 
 
-export type AddPigRunMutation = { addPigRun?: { id: string } | null | undefined };
+export type AddPigRunMutation = { addPigRun?: { pigRun?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type DeletePigRunMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type DeletePigRunMutation = { deletePigRun?: { id: string } | null | undefined };
+export type DeletePigRunMutation = { deletePigRun?: { pigRun?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type EditRiskMutationVariables = Exact<{
   id: Scalars['String'];
@@ -2057,7 +2062,13 @@ export type AddLicenseChangeMutationOptions = Apollo.BaseMutationOptions<AddLice
 export const DeleteLicenseChangeDocument = gql`
     mutation DeleteLicenseChange($id: String!) {
   deleteLicenseChange(id: $id) {
-    id
+    licenseChange {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
     `;
@@ -2216,7 +2227,13 @@ export const EditPigRunDocument = gql`
     comment: $comment
     operatorId: $operatorId
   ) {
-    id
+    pigRun {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
     `;
@@ -2256,7 +2273,13 @@ export type EditPigRunMutationOptions = Apollo.BaseMutationOptions<EditPigRunMut
 export const AddPigRunDocument = gql`
     mutation AddPigRun($pipelineId: String!) {
   addPigRun(pipelineId: $pipelineId) {
-    id
+    pigRun {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
     `;
@@ -2289,7 +2312,13 @@ export type AddPigRunMutationOptions = Apollo.BaseMutationOptions<AddPigRunMutat
 export const DeletePigRunDocument = gql`
     mutation DeletePigRun($id: String!) {
   deletePigRun(id: $id) {
-    id
+    pigRun {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
     `;
