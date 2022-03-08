@@ -81,7 +81,13 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
     switch (columnType) {
       case 'date':
         if (typeof record === 'string') {
-          return record.slice(0, 10);
+          if (['createdAt', 'updatedAt'].includes(columnName)) {
+            const dateFormat = new Date(record);
+            return dateFormat.toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+          } else {
+            return record.slice(0, 10);
+          }
         } else {
           return record;
         }

@@ -124,21 +124,39 @@ mutation DeleteLicenseChange($id: String!) {
   }
 }
 
-mutation EditPressureTest($id: String!, $pipelineId: String, $limitingSpec: LimitingSpecEnum, $infoSentOutDate: DateTime, $ddsDate: DateTime, $pressureTestDate: DateTime, $pressureTestReceivedDate: DateTime, $integritySheetUpdated: DateTime, $comment: String) {
-  editPressureTest(id: $id, pipelineId: $pipelineId, limitingSpec: $limitingSpec, infoSentOutDate: $infoSentOutDate, ddsDate: $ddsDate, pressureTestDate: $pressureTestDate, pressureTestReceivedDate: $pressureTestReceivedDate, integritySheetUpdated: $integritySheetUpdated, comment: $comment) {
-    id
+mutation EditPressureTest($id: String!, $limitingSpec: LimitingSpecEnum, $infoSentOutDate: DateTime, $ddsDate: DateTime, $pressureTestDate: DateTime, $pressureTestReceivedDate: DateTime, $integritySheetUpdated: DateTime, $comment: String) {
+  editPressureTest(id: $id, limitingSpec: $limitingSpec, infoSentOutDate: $infoSentOutDate, ddsDate: $ddsDate, pressureTestDate: $pressureTestDate, pressureTestReceivedDate: $pressureTestReceivedDate, integritySheetUpdated: $integritySheetUpdated, comment: $comment) {
+    pressureTest {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
 
 mutation AddPressureTest($pipelineId: String!) {
   addPressureTest(pipelineId: $pipelineId) {
-    id
+    pressureTest {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
 
 mutation DeletePressureTest($id: String!) {
   deletePressureTest(id: $id) {
-    id
+    pressureTest {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
 

@@ -661,7 +661,6 @@ query ValidatorsPressureTest {
       ANSI300
       ANSI600
     }
-    anyTextMatchPattern
   }
 }
 
@@ -724,14 +723,17 @@ query LicenseChangesByPipelineId($pipelineId: String!) {
   }
 }
 
-query PressureTestsByPipelineId($pipelineId: String) {
+query PressureTestsByPipelineId($pipelineId: String!, $length: Float!, $mop: Int, $outsideDiameter: Float, $yieldStrength: Int, $wallThickness: Float) {
   pressureTestsByPipelineId(pipelineId: $pipelineId) {
     id
-    pipeline {
-      license
-      segment
-    }
+    requiredWTForMop(mop: $mop, outsideDiameter: $outsideDiameter, yieldStrength: $yieldStrength)
+    mopTestPressure(mop: $mop, outsideDiameter: $outsideDiameter, yieldStrength: $yieldStrength)
     limitingSpec
+    maxPressureOfLimitingSpec
+    pressureTestPressure(mop: $mop, outsideDiameter: $outsideDiameter, yieldStrength: $yieldStrength)
+    requiredWTForTestPressure(mop: $mop, outsideDiameter: $outsideDiameter, yieldStrength: $yieldStrength)
+    pressureTestCorrosionAllowance(mop: $mop, outsideDiameter: $outsideDiameter, yieldStrength: $yieldStrength)
+    waterForPigging(length: $length, outsideDiameter: $outsideDiameter, wallThickness: $wallThickness)
     infoSentOutDate
     ddsDate
     pressureTestDate

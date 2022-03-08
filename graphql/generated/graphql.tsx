@@ -323,7 +323,7 @@ export type MaterialEnumObject = {
 export type Mutation = {
   addLicenseChange?: Maybe<LicenseChangePayload>;
   addPigRun?: Maybe<PigRunPayload>;
-  addPressureTest?: Maybe<PressureTest>;
+  addPressureTest?: Maybe<PressureTestPayload>;
   addRisk?: Maybe<Risk>;
   connectPipeline?: Maybe<Pipeline>;
   connectSource?: Maybe<Pipeline>;
@@ -331,7 +331,7 @@ export type Mutation = {
   deleteLicenseChange?: Maybe<LicenseChangePayload>;
   deletePigRun?: Maybe<PigRunPayload>;
   deletePipeline?: Maybe<Pipeline>;
-  deletePressureTest?: Maybe<PressureTest>;
+  deletePressureTest?: Maybe<PressureTestPayload>;
   deleteRisk?: Maybe<Risk>;
   deleteSatellite?: Maybe<Satellite>;
   disconnectPipeline?: Maybe<Pipeline>;
@@ -342,7 +342,7 @@ export type Mutation = {
   editLicenseChange?: Maybe<LicenseChangePayload>;
   editPigRun?: Maybe<PigRunPayload>;
   editPipeline?: Maybe<Pipeline>;
-  editPressureTest?: Maybe<PressureTest>;
+  editPressureTest?: Maybe<PressureTestPayload>;
   editRisk?: Maybe<Risk>;
   editSatellite?: Maybe<Satellite>;
   login?: Maybe<AuthPayload>;
@@ -511,7 +511,6 @@ export type MutationEditPressureTestArgs = {
   infoSentOutDate?: Maybe<Scalars['DateTime']>;
   integritySheetUpdated?: Maybe<Scalars['DateTime']>;
   limitingSpec?: Maybe<LimitingSpecEnum>;
-  pipelineId?: Maybe<Scalars['String']>;
   pressureTestDate?: Maybe<Scalars['DateTime']>;
   pressureTestReceivedDate?: Maybe<Scalars['DateTime']>;
 };
@@ -866,11 +865,65 @@ export type PressureTest = {
   infoSentOutDate?: Maybe<Scalars['DateTime']>;
   integritySheetUpdated?: Maybe<Scalars['DateTime']>;
   limitingSpec?: Maybe<LimitingSpecEnum>;
+  maxPressureOfLimitingSpec?: Maybe<Scalars['Float']>;
+  mopTestPressure?: Maybe<Scalars['Float']>;
   pipeline: Pipeline;
+  pressureTestCorrosionAllowance?: Maybe<Scalars['Float']>;
   pressureTestDate?: Maybe<Scalars['DateTime']>;
+  pressureTestPressure?: Maybe<Scalars['Float']>;
   pressureTestReceivedDate?: Maybe<Scalars['DateTime']>;
+  requiredWTForMop?: Maybe<Scalars['Float']>;
+  requiredWTForTestPressure?: Maybe<Scalars['Float']>;
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
+  waterForPigging?: Maybe<Scalars['Float']>;
+};
+
+
+export type PressureTestMopTestPressureArgs = {
+  mop?: Maybe<Scalars['Int']>;
+  outsideDiameter?: Maybe<Scalars['Float']>;
+  yieldStrength?: Maybe<Scalars['Int']>;
+};
+
+
+export type PressureTestPressureTestCorrosionAllowanceArgs = {
+  mop?: Maybe<Scalars['Int']>;
+  outsideDiameter?: Maybe<Scalars['Float']>;
+  yieldStrength?: Maybe<Scalars['Int']>;
+};
+
+
+export type PressureTestPressureTestPressureArgs = {
+  mop?: Maybe<Scalars['Int']>;
+  outsideDiameter?: Maybe<Scalars['Float']>;
+  yieldStrength?: Maybe<Scalars['Int']>;
+};
+
+
+export type PressureTestRequiredWtForMopArgs = {
+  mop?: Maybe<Scalars['Int']>;
+  outsideDiameter?: Maybe<Scalars['Float']>;
+  yieldStrength?: Maybe<Scalars['Int']>;
+};
+
+
+export type PressureTestRequiredWtForTestPressureArgs = {
+  mop?: Maybe<Scalars['Int']>;
+  outsideDiameter?: Maybe<Scalars['Float']>;
+  yieldStrength?: Maybe<Scalars['Int']>;
+};
+
+
+export type PressureTestWaterForPiggingArgs = {
+  length: Scalars['Float'];
+  outsideDiameter?: Maybe<Scalars['Float']>;
+  wallThickness?: Maybe<Scalars['Float']>;
+};
+
+export type PressureTestPayload = {
+  error?: Maybe<FieldError>;
+  pressureTest?: Maybe<PressureTest>;
 };
 
 export type Query = {
@@ -928,7 +981,7 @@ export type QueryPipelinesByUserArgs = {
 
 
 export type QueryPressureTestsByPipelineIdArgs = {
-  pipelineId?: Maybe<Scalars['String']>;
+  pipelineId: Scalars['String'];
 };
 
 
@@ -1343,7 +1396,6 @@ export type DeleteLicenseChangeMutation = { deleteLicenseChange?: { licenseChang
 
 export type EditPressureTestMutationVariables = Exact<{
   id: Scalars['String'];
-  pipelineId?: Maybe<Scalars['String']>;
   limitingSpec?: Maybe<LimitingSpecEnum>;
   infoSentOutDate?: Maybe<Scalars['DateTime']>;
   ddsDate?: Maybe<Scalars['DateTime']>;
@@ -1354,21 +1406,21 @@ export type EditPressureTestMutationVariables = Exact<{
 }>;
 
 
-export type EditPressureTestMutation = { editPressureTest?: { id: string } | null | undefined };
+export type EditPressureTestMutation = { editPressureTest?: { pressureTest?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type AddPressureTestMutationVariables = Exact<{
   pipelineId: Scalars['String'];
 }>;
 
 
-export type AddPressureTestMutation = { addPressureTest?: { id: string } | null | undefined };
+export type AddPressureTestMutation = { addPressureTest?: { pressureTest?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type DeletePressureTestMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type DeletePressureTestMutation = { deletePressureTest?: { id: string } | null | undefined };
+export type DeletePressureTestMutation = { deletePressureTest?: { pressureTest?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type EditPigRunMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1501,7 +1553,7 @@ export type ValidatorsMechanicalPropertiesQuery = { validators?: { yieldStrength
 export type ValidatorsPressureTestQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorsPressureTestQuery = { validators?: { anyTextMatchPattern: string, limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string } } | null | undefined };
+export type ValidatorsPressureTestQuery = { validators?: { limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string } } | null | undefined };
 
 export type ValidatorsRiskQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1521,11 +1573,16 @@ export type LicenseChangesByPipelineIdQueryVariables = Exact<{
 export type LicenseChangesByPipelineIdQuery = { licenseChangesByPipelineId?: Array<{ id: string, status: StatusEnum, substance: SubstanceEnum, date: string, linkToDocumentation?: string | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type PressureTestsByPipelineIdQueryVariables = Exact<{
-  pipelineId?: Maybe<Scalars['String']>;
+  pipelineId: Scalars['String'];
+  length: Scalars['Float'];
+  mop?: Maybe<Scalars['Int']>;
+  outsideDiameter?: Maybe<Scalars['Float']>;
+  yieldStrength?: Maybe<Scalars['Int']>;
+  wallThickness?: Maybe<Scalars['Float']>;
 }>;
 
 
-export type PressureTestsByPipelineIdQuery = { pressureTestsByPipelineId?: Array<{ id: string, limitingSpec?: LimitingSpecEnum | null | undefined, infoSentOutDate?: string | null | undefined, ddsDate?: string | null | undefined, pressureTestDate?: string | null | undefined, pressureTestReceivedDate?: string | null | undefined, integritySheetUpdated?: string | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, pipeline: { license: string, segment: string }, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type PressureTestsByPipelineIdQuery = { pressureTestsByPipelineId?: Array<{ id: string, requiredWTForMop?: number | null | undefined, mopTestPressure?: number | null | undefined, limitingSpec?: LimitingSpecEnum | null | undefined, maxPressureOfLimitingSpec?: number | null | undefined, pressureTestPressure?: number | null | undefined, requiredWTForTestPressure?: number | null | undefined, pressureTestCorrosionAllowance?: number | null | undefined, waterForPigging?: number | null | undefined, infoSentOutDate?: string | null | undefined, ddsDate?: string | null | undefined, pressureTestDate?: string | null | undefined, pressureTestReceivedDate?: string | null | undefined, integritySheetUpdated?: string | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type RiskByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -2099,10 +2156,9 @@ export type DeleteLicenseChangeMutationHookResult = ReturnType<typeof useDeleteL
 export type DeleteLicenseChangeMutationResult = Apollo.MutationResult<DeleteLicenseChangeMutation>;
 export type DeleteLicenseChangeMutationOptions = Apollo.BaseMutationOptions<DeleteLicenseChangeMutation, DeleteLicenseChangeMutationVariables>;
 export const EditPressureTestDocument = gql`
-    mutation EditPressureTest($id: String!, $pipelineId: String, $limitingSpec: LimitingSpecEnum, $infoSentOutDate: DateTime, $ddsDate: DateTime, $pressureTestDate: DateTime, $pressureTestReceivedDate: DateTime, $integritySheetUpdated: DateTime, $comment: String) {
+    mutation EditPressureTest($id: String!, $limitingSpec: LimitingSpecEnum, $infoSentOutDate: DateTime, $ddsDate: DateTime, $pressureTestDate: DateTime, $pressureTestReceivedDate: DateTime, $integritySheetUpdated: DateTime, $comment: String) {
   editPressureTest(
     id: $id
-    pipelineId: $pipelineId
     limitingSpec: $limitingSpec
     infoSentOutDate: $infoSentOutDate
     ddsDate: $ddsDate
@@ -2111,7 +2167,13 @@ export const EditPressureTestDocument = gql`
     integritySheetUpdated: $integritySheetUpdated
     comment: $comment
   ) {
-    id
+    pressureTest {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
     `;
@@ -2131,7 +2193,6 @@ export type EditPressureTestMutationFn = Apollo.MutationFunction<EditPressureTes
  * const [editPressureTestMutation, { data, loading, error }] = useEditPressureTestMutation({
  *   variables: {
  *      id: // value for 'id'
- *      pipelineId: // value for 'pipelineId'
  *      limitingSpec: // value for 'limitingSpec'
  *      infoSentOutDate: // value for 'infoSentOutDate'
  *      ddsDate: // value for 'ddsDate'
@@ -2152,7 +2213,13 @@ export type EditPressureTestMutationOptions = Apollo.BaseMutationOptions<EditPre
 export const AddPressureTestDocument = gql`
     mutation AddPressureTest($pipelineId: String!) {
   addPressureTest(pipelineId: $pipelineId) {
-    id
+    pressureTest {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
     `;
@@ -2185,7 +2252,13 @@ export type AddPressureTestMutationOptions = Apollo.BaseMutationOptions<AddPress
 export const DeletePressureTestDocument = gql`
     mutation DeletePressureTest($id: String!) {
   deletePressureTest(id: $id) {
-    id
+    pressureTest {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
     `;
@@ -3459,7 +3532,6 @@ export const ValidatorsPressureTestDocument = gql`
       ANSI300
       ANSI600
     }
-    anyTextMatchPattern
   }
 }
     `;
@@ -3635,14 +3707,41 @@ export type LicenseChangesByPipelineIdQueryHookResult = ReturnType<typeof useLic
 export type LicenseChangesByPipelineIdLazyQueryHookResult = ReturnType<typeof useLicenseChangesByPipelineIdLazyQuery>;
 export type LicenseChangesByPipelineIdQueryResult = Apollo.QueryResult<LicenseChangesByPipelineIdQuery, LicenseChangesByPipelineIdQueryVariables>;
 export const PressureTestsByPipelineIdDocument = gql`
-    query PressureTestsByPipelineId($pipelineId: String) {
+    query PressureTestsByPipelineId($pipelineId: String!, $length: Float!, $mop: Int, $outsideDiameter: Float, $yieldStrength: Int, $wallThickness: Float) {
   pressureTestsByPipelineId(pipelineId: $pipelineId) {
     id
-    pipeline {
-      license
-      segment
-    }
+    requiredWTForMop(
+      mop: $mop
+      outsideDiameter: $outsideDiameter
+      yieldStrength: $yieldStrength
+    )
+    mopTestPressure(
+      mop: $mop
+      outsideDiameter: $outsideDiameter
+      yieldStrength: $yieldStrength
+    )
     limitingSpec
+    maxPressureOfLimitingSpec
+    pressureTestPressure(
+      mop: $mop
+      outsideDiameter: $outsideDiameter
+      yieldStrength: $yieldStrength
+    )
+    requiredWTForTestPressure(
+      mop: $mop
+      outsideDiameter: $outsideDiameter
+      yieldStrength: $yieldStrength
+    )
+    pressureTestCorrosionAllowance(
+      mop: $mop
+      outsideDiameter: $outsideDiameter
+      yieldStrength: $yieldStrength
+    )
+    waterForPigging(
+      length: $length
+      outsideDiameter: $outsideDiameter
+      wallThickness: $wallThickness
+    )
     infoSentOutDate
     ddsDate
     pressureTestDate
@@ -3676,10 +3775,15 @@ export const PressureTestsByPipelineIdDocument = gql`
  * const { data, loading, error } = usePressureTestsByPipelineIdQuery({
  *   variables: {
  *      pipelineId: // value for 'pipelineId'
+ *      length: // value for 'length'
+ *      mop: // value for 'mop'
+ *      outsideDiameter: // value for 'outsideDiameter'
+ *      yieldStrength: // value for 'yieldStrength'
+ *      wallThickness: // value for 'wallThickness'
  *   },
  * });
  */
-export function usePressureTestsByPipelineIdQuery(baseOptions?: Apollo.QueryHookOptions<PressureTestsByPipelineIdQuery, PressureTestsByPipelineIdQueryVariables>) {
+export function usePressureTestsByPipelineIdQuery(baseOptions: Apollo.QueryHookOptions<PressureTestsByPipelineIdQuery, PressureTestsByPipelineIdQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<PressureTestsByPipelineIdQuery, PressureTestsByPipelineIdQueryVariables>(PressureTestsByPipelineIdDocument, options);
       }

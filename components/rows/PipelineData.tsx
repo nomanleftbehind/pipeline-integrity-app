@@ -3,7 +3,7 @@ import InjectionPoints from '../fields/injection_points/InjectionPoints';
 import PipelineProperties from '../fields/PipelineProperties';
 import LicenseChanges from './LicenseChanges';
 import MechanicalProperties from './MechanicalProperties';
-import GenericTable from './GenericTable';
+import PressureTests from './PressureTests';
 import PigRuns from './PigRuns';
 import Risk from './Risk';
 import { IPipeline, IValidators } from './RenderPipeline';
@@ -11,7 +11,6 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
-import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { IPipelineProperty } from '../fields/PipelineProperties';
@@ -109,18 +108,14 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
               />
             </TabPanel>
             <TabPanel value={value} index={3}>
-              <Collapse in={open} timeout="auto" unmountOnExit>
-                <Box sx={{ margin: 1 }}>
-                  <Typography variant="h6" gutterBottom component="div">
-                    Pressure Tests
-                  </Typography>
-                  <GenericTable
-                    pipelineId={id}
-                    in_tab_panel={true}
-                    table='pressure tests'
-                  />
-                </Box>
-              </Collapse>
+              <PressureTests
+                pipelineId={id}
+                length={length}
+                mop={mop}
+                outsideDiameter={outsideDiameter}
+                wallThickness={wallThickness}
+                yieldStrength={yieldStrength}
+              />
             </TabPanel>
             <TabPanel value={value} index={4}>
               <PigRuns pipelineId={id} />
