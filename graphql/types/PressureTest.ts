@@ -303,9 +303,12 @@ export const PressureTestMutation = extendType({
 
         if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'OPERATOR')) {
           const userId = user.id;
+          const today = new Date();
+          today.setUTCHours(0, 0, 0, 0);
           const pressureTest = await ctx.prisma.pressureTest.create({
             data: {
               pipelineId,
+              pressureTestDate: today,
               createdById: userId,
               updatedById: userId,
             }
@@ -372,9 +375,9 @@ export const PressureTestMutation = extendType({
 
 
 export const LimitingSpecEnumMembers = {
-  ANSI150: "ANSI 150",
-  ANSI300: "ANSI 300",
-  ANSI600: "ANSI 600"
+  ANSI150: 'ANSI 150',
+  ANSI300: 'ANSI 300',
+  ANSI600: 'ANSI 600'
 }
 
 export const LimitingSpecEnum = enumType({

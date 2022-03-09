@@ -31,7 +31,7 @@ export interface IEditRecord {
   newRecord: IRecord;
 }
 
-interface IRecordEntryProps {
+export interface IRecordEntryProps {
   id: string;
   createdById: string;
   columnName: string;
