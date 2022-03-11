@@ -67,15 +67,15 @@ function PipelineDatabase() {
           />
         </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '30px 30px 30px 220px 100px 220px 240px 220px 240px', rowGap: '2px', columnGap: '4px', gridAutoRows: 'min-content', border: 'rgb(40 155 151) 2px solid', backgroundColor: 'rgb(37 35 53)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '30px 30px 30px 220px 100px 220px 240px 220px 240px 230px', rowGap: '2px', columnGap: '4px', gridAutoRows: 'min-content', border: 'rgb(40 155 151) 2px solid' }}>
 
         <div style={{ padding: '4px', gridColumn: '1 / 4', gridRow: 1 }}></div>
-        <div style={{ padding: '4px', gridColumn: 4, gridRow: 1, fontWeight, textAlign, color }}>License</div>
-        <div style={{ padding: '4px', gridColumn: 5, gridRow: 1, fontWeight, textAlign, color }}>Segment</div>
-        <div style={{ padding: '4px', gridColumn: 6, gridRow: 1, fontWeight, textAlign, color }}>From</div>
-        <div style={{ padding: '4px', gridColumn: 7, gridRow: 1, fontWeight, textAlign, color }}>From Feature</div>
-        <div style={{ padding: '4px', gridColumn: 8, gridRow: 1, fontWeight, textAlign, color }}>To</div>
-        <div style={{ padding: '4px', gridColumn: 9, gridRow: 1, fontWeight, textAlign, color }}>To Feature</div>
+        <div style={{ padding: '4px', gridColumn: 4, gridRow: 1, fontWeight, textAlign }}>License</div>
+        <div style={{ padding: '4px', gridColumn: 5, gridRow: 1, fontWeight, textAlign }}>Segment</div>
+        <div style={{ padding: '4px', gridColumn: 6, gridRow: 1, fontWeight, textAlign }}>From</div>
+        <div style={{ padding: '4px', gridColumn: 7, gridRow: 1, fontWeight, textAlign }}>From Feature</div>
+        <div style={{ padding: '4px', gridColumn: 8, gridRow: 1, fontWeight, textAlign }}>To</div>
+        <div style={{ padding: '4px', gridColumn: 9, gridRow: 1, fontWeight, textAlign }}>To Feature</div>
 
         {loading && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>Loading...</div>}
         {error && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>{error.message}</div>}

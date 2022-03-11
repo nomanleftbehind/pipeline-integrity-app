@@ -12,10 +12,11 @@ import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
+// import Tab from '@mui/material/Tab';
 import { IPipelineProperty } from '../fields/PipelineProperties';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-import { TabPanel, a11yProps } from '../../pages/pipeline/[id]/index';
+// import { TabPanel, a11yProps } from '../../pages/pipeline/[id]/index';
 
 export type ITable = 'pressure tests' | 'pig runs' | 'risk' | 'license change';
 
@@ -27,12 +28,21 @@ export interface IPipelineDataProps {
   isEven: "even" | "odd";
 }
 
+type IView = 'license change' | 'injection point' | 'mechanical properties' | 'pressure test' | 'pig run' | 'risk' | 'system fields';
+
+interface ITabPanelProps {
+  title: string;
+  view: IView;
+  handleViewClick: (view: IView) => void;
+}
+
 const border = 'rgb(40 155 151) 2px solid';
 const borderRadius = '6px';
 const color = 'white';
 
-export default function PipelineData({ ppl_idx, open, pipeline, validators, isEven }: IPipelineDataProps): JSX.Element {
+export default function PipelineData({ ppl_idx, open, pipeline, validators, isEven }: IPipelineDataProps) {
   const [value, setValue] = useState(0);
+  const [view, setView] = useState<IView>('license change');
 
   const { id, createdAt, updatedAt, createdBy, updatedBy, license, segment, substance, flowCalculationDirection, from, fromFeature, to, toFeature, injectionPoints, upstream, status, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
 
@@ -62,28 +72,113 @@ export default function PipelineData({ ppl_idx, open, pipeline, validators, isEv
     setValue(newValue);
   };
 
+  const handleViewClick = (view: IView) => {
+    console.log(view);
+
+    setView(view);
+  }
+
+  const renderView = () => {
+    if (view === 'license change') {
+      return <LicenseChanges
+        pipelineId={id}
+      />
+    }
+    if (view === 'injection point') {
+      return <InjectionPoints
+        open={open}
+        id={id}
+        flowCalculationDirection={flowCalculationDirection}
+        upstream={upstream}
+        injectionPoints={{ injectionPoints, upstream }}
+      />
+    }
+    if (view === 'mechanical properties') {
+      return <MechanicalProperties
+        id={id}
+        createdBy={createdBy}
+        length={length}
+        type={type}
+        grade={grade}
+        yieldStrength={yieldStrength}
+        outsideDiameter={outsideDiameter}
+        wallThickness={wallThickness}
+        material={material}
+        mop={mop}
+        internalProtection={internalProtection}
+      />
+    }
+    if (view === 'pressure test') {
+      return <PressureTests
+        pipelineId={id}
+        length={length}
+        mop={mop}
+        outsideDiameter={outsideDiameter}
+        wallThickness={wallThickness}
+        yieldStrength={yieldStrength}
+      />
+    }
+    if (view === 'pig run') {
+      return <PigRuns pipelineId={id} />
+    }
+    if (view === 'risk') {
+      <Risk
+        id={id}
+        open={open}
+        flowCalculationDirection={flowCalculationDirection}
+        substance={substance}
+        status={status}
+        type={type}
+        material={material}
+      />
+    }
+    if (view === 'system fields') {
+      <PipelineProperties
+        open={open}
+        id={id}
+        createdById={createdBy.id}
+        propertiesName="System Fields"
+        pipelineProperties={systemFields}
+      />
+    }
+  }
 
 
   return (
     <div style={{ gridColumn: '1 / 10', gridRow: ppl_idx + 1 }}>
       <Collapse in={open} timeout="auto" unmountOnExit>
-        <div style={{ display: 'grid', gridTemplateColumns: '200px auto', rowGap: '2px', columnGap: '4px', gridAutoRows: 'minmax(40px, auto)', padding: '0 4px 0 4px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', border, borderRadius, color, gridColumn: 1, gridRow: 1 }}>
-            <div style={{ padding: '4px', textAlign: 'center' }}>License Changes</div>
-            <div style={{ padding: '4px', textAlign: 'center' }}>Injection Points</div>
-            <div style={{ padding: '4px', textAlign: 'center' }}>Mechanical Properties</div>
-            <div style={{ padding: '4px', textAlign: 'center' }}>Pressure Tests</div>
-            <div style={{ padding: '4px', textAlign: 'center' }}>Pig Runs</div>
-            <div style={{ padding: '4px', textAlign: 'center' }}>Risk</div>
-            <div style={{ padding: '4px', textAlign: 'center' }}>System Fields</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '220px auto', rowGap: '2px', columnGap: '4px', gridAutoRows: 'minmax(40px, auto)', padding: '4px' }}>
+          <div className='tabs'>
+            <nav role='navigation'>
+              <ol>
+                <TabPanel title='License Changes' view='license change' handleViewClick={handleViewClick} />
+                <TabPanel title='Injection Points' view='injection point' handleViewClick={handleViewClick} />
+                <TabPanel title='Mechanical Properties' view='mechanical properties' handleViewClick={handleViewClick} />
+                <TabPanel title='Pressure Tests' view='pressure test' handleViewClick={handleViewClick} />
+                <TabPanel title='Pig Runs' view='pig run' handleViewClick={handleViewClick} />
+                <TabPanel title='Risk' view='risk' handleViewClick={handleViewClick} />
+                <TabPanel title='System Fields' view='system fields' handleViewClick={handleViewClick} />
+              </ol>
+            </nav>
           </div>
-          <div style={{ gridColumn: 2, gridRow: 1, border, borderRadius, color }}>
-            Rest
+          <div style={{ gridColumn: 2, gridRow: 1, border, borderRadius, padding: '4px' }}>
+            {renderView()}
           </div>
         </div>
       </Collapse>
     </div>
   );
+}
+
+function TabPanel({ title, view, handleViewClick }: ITabPanelProps) {
+  return (
+    <li className='tab-panel' onClick={() => handleViewClick(view)}>
+      <div style={{ padding: '4px' }}>{title}</div>
+      <div style={{ padding: '4px' }}>
+        <ArrowForwardIosIcon />
+      </div>
+    </li>
+  )
 }
 
 

@@ -1,0 +1,33 @@
+.tabs {
+  display: flex;
+  flex-direction: column;
+  border: #00b9f7 1px solid;
+  border-radius: 6px;
+  grid-column: 1;
+  grid-row: 1;
+  padding: 4px;
+}
+
+.tabs nav {
+  width: 100%;
+}
+
+.tabs ol {
+  padding: unset;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-panel:not(:last-child) {
+  border-bottom: unset;
+}
+
+.tab-panel {
+  display: flex;
+  justify-content: space-between;
+  border: #00b9f7 1px solid;
+}
+
+.tab-panel:hover {
+  font-weight: bold;
+}

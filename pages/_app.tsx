@@ -4,6 +4,7 @@ import AuthProvider from '../context/AuthContext';
 import { useApollo } from '../graphql/client';
 import '../styles/globals.css';
 import '../styles/style-entry-field.css';
+import '../styles/tab-panel.css';
 import Layout from '../components/layout';
 // import '../styles/styles-formik.css';
 // import '../styles/styles-custom-formik.css';

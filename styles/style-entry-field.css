@@ -5,8 +5,12 @@
   border-radius: 4px;
 }
 
+.entry-field {
+  border: rgb(40 155 151) 2px solid;
+}
+
 .entry-field:focus {
-  border: solid rgb(25 118 210) 1px;
+  border: solid rgb(25 118 210) 2px;
 }
 
 .entry-field-form {
