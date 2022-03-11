@@ -54,6 +54,10 @@ function PipelineDatabase() {
     return validator ? validator[property] : property;
   }
 
+  const fontWeight = 'bold';
+  const textAlign = 'center';
+  const color = 'white';
+
   return (
     <div className="pipeline-database-wrapper">
       <div className="pipeline-database-side-bar">
@@ -63,52 +67,33 @@ function PipelineDatabase() {
           />
         </div>
       </div>
-      <TableContainer component={Paper} sx={{ maxHeight: 'calc(100vh - 73px)' }} >
-        <Table stickyHeader aria-label="collapsible table">
-          <Header
-            filterText={filterText}
-            onFilterTextChange={handleFilterTextChange} />
-          <TableBody>
-            {loading && <TableRow><TableCell>Loading...</TableCell></TableRow>}
-            {error && <TableRow><TableCell>{error.message}</TableCell></TableRow>}
-            {data?.pipelinesById && data.pipelinesById.filter(pipeline => {
-              /*const inj_pt_source =
-                pipeline && pipeline.injectionPoints ?
-                  pipeline.injectionPoints.map(injectionPoints =>
-                    injectionPoints ? injectionPoints.source : undefined) :
-                  undefined;*/
-              return (
-                pipeline && (
-                  pipeline.license.toUpperCase().includes(filterTextCaseInsensitive.license) &&
-                  pipeline.segment.toUpperCase().includes(filterTextCaseInsensitive.segment) &&
-                  // (pipeline.substance ? valuesFromEnum(pipeline.substance, validators?.substanceEnum).toUpperCase().includes(filterTextCaseInsensitive.substance) : filterTextCaseInsensitive.substance.length === 0) &&
-                  pipeline.from.toUpperCase().includes(filterTextCaseInsensitive.from) &&
-                  (pipeline.fromFeature ? valuesFromEnum(pipeline.fromFeature, validators?.fromToFeatureEnum).toUpperCase().includes(filterTextCaseInsensitive.fromFeature) : filterTextCaseInsensitive.fromFeature.length === 0) &&
-                  pipeline.to.toUpperCase().includes(filterTextCaseInsensitive.to) &&
-                  (pipeline.toFeature ? valuesFromEnum(pipeline.toFeature, validators?.fromToFeatureEnum).toUpperCase().includes(filterTextCaseInsensitive.toFeature) : filterTextCaseInsensitive.toFeature.length === 0)/* &&
-                  (inj_pt_source === undefined ||
-                    (inj_pt_source.length === 0 && filterTextCaseInsensitive.injectionPoints.length === 0) ||
-                    inj_pt_source.some(i => {
-                      switch (i) {
-                        case undefined:
-                          return filterTextCaseInsensitive.injectionPoints.length === 0;
-                        default:
-                          return i.toUpperCase().includes(filterTextCaseInsensitive.injectionPoints)
-                      }
-                    })) &&
-                  (pipeline.status ? valuesFromEnum(pipeline.status, validators?.statusEnum).toUpperCase().includes(filterTextCaseInsensitive.status) : filterTextCaseInsensitive.status.length === 0)*/
-                )
-              );
-            }).map((pipeline, ppl_idx) => pipeline && <RenderPipeline
-              key={pipeline.id}
-              ppl_idx={ppl_idx}
-              pipeline={pipeline}
-              validators={validators}
-            />
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <div style={{ display: 'grid', gridTemplateColumns: '30px 30px 30px 220px 100px 220px 240px 220px 240px', rowGap: '2px', columnGap: '4px', gridAutoRows: 'min-content', border: 'rgb(40 155 151) 2px solid', backgroundColor: 'rgb(37 35 53)' }}>
+
+        <div style={{ padding: '4px', gridColumn: '1 / 4', gridRow: 1 }}></div>
+        <div style={{ padding: '4px', gridColumn: 4, gridRow: 1, fontWeight, textAlign, color }}>License</div>
+        <div style={{ padding: '4px', gridColumn: 5, gridRow: 1, fontWeight, textAlign, color }}>Segment</div>
+        <div style={{ padding: '4px', gridColumn: 6, gridRow: 1, fontWeight, textAlign, color }}>From</div>
+        <div style={{ padding: '4px', gridColumn: 7, gridRow: 1, fontWeight, textAlign, color }}>From Feature</div>
+        <div style={{ padding: '4px', gridColumn: 8, gridRow: 1, fontWeight, textAlign, color }}>To</div>
+        <div style={{ padding: '4px', gridColumn: 9, gridRow: 1, fontWeight, textAlign, color }}>To Feature</div>
+
+        {loading && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>Loading...</div>}
+        {error && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>{error.message}</div>}
+        {data && data.pipelinesById && data.pipelinesById.map((pipeline, i) => {
+          const j = i;
+          i *= 2;
+          i += 2;
+          console.log('i:', i, 'j:', j);
+
+          return pipeline && <RenderPipeline
+            key={pipeline.id}
+            ppl_idx={i}
+            pipeline={pipeline}
+            validators={validators}
+          />
+        }
+        )}
+      </div>
     </div>
   );
 }
@@ -133,3 +118,52 @@ export async function getServerSideProps({ req }: IGetServerSideProps) {
 }
 
 export default PipelineDatabase;
+
+
+
+/*<TableContainer component={Paper} sx={{ maxHeight: 'calc(100vh - 73px)' }} >
+<Table stickyHeader aria-label="collapsible table">
+  <Header
+    filterText={filterText}
+    onFilterTextChange={handleFilterTextChange} />
+  <TableBody>
+    {loading && <TableRow><TableCell>Loading...</TableCell></TableRow>}
+    {error && <TableRow><TableCell>{error.message}</TableCell></TableRow>}
+    {data?.pipelinesById && data.pipelinesById.filter(pipeline => {
+      /*const inj_pt_source =
+        pipeline && pipeline.injectionPoints ?
+          pipeline.injectionPoints.map(injectionPoints =>
+            injectionPoints ? injectionPoints.source : undefined) :
+          undefined;*/
+/*return (
+  pipeline && (
+    pipeline.license.toUpperCase().includes(filterTextCaseInsensitive.license) &&
+    pipeline.segment.toUpperCase().includes(filterTextCaseInsensitive.segment) &&
+    // (pipeline.substance ? valuesFromEnum(pipeline.substance, validators?.substanceEnum).toUpperCase().includes(filterTextCaseInsensitive.substance) : filterTextCaseInsensitive.substance.length === 0) &&
+    pipeline.from.toUpperCase().includes(filterTextCaseInsensitive.from) &&
+    (pipeline.fromFeature ? valuesFromEnum(pipeline.fromFeature, validators?.fromToFeatureEnum).toUpperCase().includes(filterTextCaseInsensitive.fromFeature) : filterTextCaseInsensitive.fromFeature.length === 0) &&
+    pipeline.to.toUpperCase().includes(filterTextCaseInsensitive.to) &&
+    (pipeline.toFeature ? valuesFromEnum(pipeline.toFeature, validators?.fromToFeatureEnum).toUpperCase().includes(filterTextCaseInsensitive.toFeature) : filterTextCaseInsensitive.toFeature.length === 0)/* &&
+    (inj_pt_source === undefined ||
+      (inj_pt_source.length === 0 && filterTextCaseInsensitive.injectionPoints.length === 0) ||
+      inj_pt_source.some(i => {
+        switch (i) {
+          case undefined:
+            return filterTextCaseInsensitive.injectionPoints.length === 0;
+          default:
+            return i.toUpperCase().includes(filterTextCaseInsensitive.injectionPoints)
+        }
+      })) &&
+    (pipeline.status ? valuesFromEnum(pipeline.status, validators?.statusEnum).toUpperCase().includes(filterTextCaseInsensitive.status) : filterTextCaseInsensitive.status.length === 0)*/
+/*    )
+  );
+}).map((pipeline, ppl_idx) => pipeline && <RenderPipeline
+  key={pipeline.id}
+  ppl_idx={ppl_idx}
+  pipeline={pipeline}
+  validators={validators}
+/>
+)}
+</TableBody>
+</Table>
+</TableContainer>*/

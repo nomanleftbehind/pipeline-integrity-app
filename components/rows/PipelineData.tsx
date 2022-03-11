@@ -20,13 +20,18 @@ import { TabPanel, a11yProps } from '../../pages/pipeline/[id]/index';
 export type ITable = 'pressure tests' | 'pig runs' | 'risk' | 'license change';
 
 export interface IPipelineDataProps {
+  ppl_idx: number;
   open: boolean;
   pipeline: IPipeline;
   validators: IValidators;
   isEven: "even" | "odd";
 }
 
-export default function PipelineData({ open, pipeline, validators, isEven }: IPipelineDataProps): JSX.Element {
+const border = 'rgb(40 155 151) 2px solid';
+const borderRadius = '6px';
+const color = 'white';
+
+export default function PipelineData({ ppl_idx, open, pipeline, validators, isEven }: IPipelineDataProps): JSX.Element {
   const [value, setValue] = useState(0);
 
   const { id, createdAt, updatedAt, createdBy, updatedBy, license, segment, substance, flowCalculationDirection, from, fromFeature, to, toFeature, injectionPoints, upstream, status, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
@@ -57,8 +62,33 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
     setValue(newValue);
   };
 
+
+
   return (
-    <TableRow data-target={"pipeline index is " + isEven}>
+    <div style={{ gridColumn: '1 / 10', gridRow: ppl_idx + 1 }}>
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <div style={{ display: 'grid', gridTemplateColumns: '200px auto', rowGap: '2px', columnGap: '4px', gridAutoRows: 'minmax(40px, auto)', padding: '0 4px 0 4px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', border, borderRadius, color, gridColumn: 1, gridRow: 1 }}>
+            <div style={{ padding: '4px', textAlign: 'center' }}>License Changes</div>
+            <div style={{ padding: '4px', textAlign: 'center' }}>Injection Points</div>
+            <div style={{ padding: '4px', textAlign: 'center' }}>Mechanical Properties</div>
+            <div style={{ padding: '4px', textAlign: 'center' }}>Pressure Tests</div>
+            <div style={{ padding: '4px', textAlign: 'center' }}>Pig Runs</div>
+            <div style={{ padding: '4px', textAlign: 'center' }}>Risk</div>
+            <div style={{ padding: '4px', textAlign: 'center' }}>System Fields</div>
+          </div>
+          <div style={{ gridColumn: 2, gridRow: 1, border, borderRadius, color }}>
+            Rest
+          </div>
+        </div>
+      </Collapse>
+    </div>
+  );
+}
+
+
+
+/*<TableRow data-target={"pipeline index is " + isEven}>
       <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
         <Collapse in={open} timeout="auto" unmountOnExit>
           <Box sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex' }}>
@@ -143,6 +173,4 @@ export default function PipelineData({ open, pipeline, validators, isEven }: IPi
           </Box>
         </Collapse>
       </TableCell>
-    </TableRow>
-  );
-}
+    </TableRow>*/

@@ -126,7 +126,7 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
       onDoubleClick={() => setEdit(true)}
       onClick={() => setSelected(true)}
       style={{
-        padding: '8px', backgroundColor: authorized && editRecord ? '#fff' : 'rgb(220, 220, 220)', borderRadius: '4px', color: 'rgba(0, 0, 0, 0.6)', height: '50px', lineHeight: '35px',
+        padding: '8px', backgroundColor: 'rgb(37 35 53)', borderRadius: '6px', border: 'rgb(40 155 151) 2px solid', color: 'white', height: '50px', lineHeight: '35px',
         boxShadow: '0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)'
       }}
     >{edit && editRecord && authorized ?
@@ -186,11 +186,11 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
         }}
       </Formik> :
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div>
+        <div style={{ fontSize: 'medium' }}>
           {recordDisplay}
         </div>
         {nullable && editRecord && authorized && selected && <div>
-          <IconButton aria-label="expand row" size="small" onClick={() => editRecord({ id, columnName, columnType, newRecord: null })}>
+          <IconButton aria-label="expand row" size='small' onClick={() => editRecord({ id, columnName, columnType, newRecord: null })}>
             <BlockOutlinedIcon />
           </IconButton>
         </div>}
