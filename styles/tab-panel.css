@@ -28,6 +28,12 @@
   border: #00b9f7 1px solid;
 }
 
+.highlighted {
+  border-right: #f78000 solid 10px;
+  font-weight: bold;
+}
+
 .tab-panel:hover {
   font-weight: bold;
+  cursor: pointer;
 }

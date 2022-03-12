@@ -33,6 +33,7 @@ type IView = 'license change' | 'injection point' | 'mechanical properties' | 'p
 interface ITabPanelProps {
   title: string;
   view: IView;
+  currentView: IView;
   handleViewClick: (view: IView) => void;
 }
 
@@ -147,17 +148,17 @@ export default function PipelineData({ ppl_idx, open, pipeline, validators, isEv
   return (
     <div style={{ gridColumn: '1 / 10', gridRow: ppl_idx + 1 }}>
       <Collapse in={open} timeout="auto" unmountOnExit>
-        <div style={{ display: 'grid', gridTemplateColumns: '220px auto', rowGap: '2px', columnGap: '4px', gridAutoRows: 'minmax(40px, auto)', padding: '4px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '230px auto', rowGap: '2px', columnGap: '4px', gridAutoRows: 'minmax(40px, auto)', padding: '4px' }}>
           <div className='tabs'>
             <nav role='navigation'>
               <ol>
-                <TabPanel title='License Changes' view='license change' handleViewClick={handleViewClick} />
-                <TabPanel title='Injection Points' view='injection point' handleViewClick={handleViewClick} />
-                <TabPanel title='Mechanical Properties' view='mechanical properties' handleViewClick={handleViewClick} />
-                <TabPanel title='Pressure Tests' view='pressure test' handleViewClick={handleViewClick} />
-                <TabPanel title='Pig Runs' view='pig run' handleViewClick={handleViewClick} />
-                <TabPanel title='Risk' view='risk' handleViewClick={handleViewClick} />
-                <TabPanel title='System Fields' view='system fields' handleViewClick={handleViewClick} />
+                <TabPanel title='License Changes' view='license change' currentView={view} handleViewClick={handleViewClick} />
+                <TabPanel title='Injection Points' view='injection point' currentView={view} handleViewClick={handleViewClick} />
+                <TabPanel title='Mechanical Properties' view='mechanical properties' currentView={view} handleViewClick={handleViewClick} />
+                <TabPanel title='Pressure Tests' view='pressure test' currentView={view} handleViewClick={handleViewClick} />
+                <TabPanel title='Pig Runs' view='pig run' currentView={view} handleViewClick={handleViewClick} />
+                <TabPanel title='Risk' view='risk' currentView={view} handleViewClick={handleViewClick} />
+                <TabPanel title='System Fields' view='system fields' currentView={view} handleViewClick={handleViewClick} />
               </ol>
             </nav>
           </div>
@@ -170,9 +171,10 @@ export default function PipelineData({ ppl_idx, open, pipeline, validators, isEv
   );
 }
 
-function TabPanel({ title, view, handleViewClick }: ITabPanelProps) {
+function TabPanel({ title, view, currentView, handleViewClick }: ITabPanelProps) {
+
   return (
-    <li className='tab-panel' onClick={() => handleViewClick(view)}>
+    <li className={currentView === view ? 'tab-panel highlighted' : 'tab-panel'} onClick={() => handleViewClick(view)}>
       <div style={{ padding: '4px' }}>{title}</div>
       <div style={{ padding: '4px' }}>
         <ArrowForwardIosIcon />
