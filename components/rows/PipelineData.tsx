@@ -30,9 +30,12 @@ export interface IPipelineDataProps {
 
 type IView = 'license change' | 'injection point' | 'mechanical properties' | 'pressure test' | 'pig run' | 'risk' | 'system fields';
 
-interface ITabPanelProps {
+interface ITabPanelMap {
   title: string;
   view: IView;
+}
+
+interface ITabPanelProps extends ITabPanelMap {
   currentView: IView;
   handleViewClick: (view: IView) => void;
 }
@@ -49,18 +52,6 @@ export default function PipelineData({ ppl_idx, open, pipeline, validators, isEv
 
   const { licenseMatchPattern, segmentMatchPattern, substanceEnum, fromToMatchPattern, fromToFeatureEnum, statusEnum, lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
 
-  const mechanicalProperties: IPipelineProperty[] = [
-    { columnName: 'length', record: length, columnType: 'number', validator: lengthMatchPattern },
-    { columnName: 'type', record: type, columnType: 'string', validator: typeEnum },
-    { columnName: 'grade', record: grade, columnType: 'string', validator: gradeEnum },
-    { columnName: 'yieldStrength', record: yieldStrength, columnType: 'number', validator: yieldStrengthMatchPattern },
-    { columnName: 'outsideDiameter', record: outsideDiameter, columnType: 'number', validator: outsideDiameterMatchPattern },
-    { columnName: 'wallThickness', record: wallThickness, columnType: 'number', validator: wallThicknessMatchPattern },
-    { columnName: 'material', record: material, columnType: 'string', validator: materialEnum },
-    { columnName: 'mop', record: mop, columnType: 'number', validator: mopMatchPattern },
-    { columnName: 'internalProtection', record: internalProtection, columnType: 'string', validator: internalProtectionEnum }
-  ];
-
   const systemFields: IPipelineProperty[] = [
     { columnName: 'createdBy', record: createdBy.email, columnType: 'string' },
     { columnName: 'createdAt', record: createdAt, columnType: 'date' },
@@ -74,8 +65,6 @@ export default function PipelineData({ ppl_idx, open, pipeline, validators, isEv
   };
 
   const handleViewClick = (view: IView) => {
-    console.log(view);
-
     setView(view);
   }
 
@@ -144,25 +133,29 @@ export default function PipelineData({ ppl_idx, open, pipeline, validators, isEv
     }
   }
 
+  const tabs: ITabPanelMap[] = [
+    { title: 'License Changes', view: 'license change' },
+    { title: 'Injection Points', view: 'injection point' },
+    { title: 'Mechanical Properties', view: 'mechanical properties' },
+    { title: 'Pressure Tests', view: 'pressure test' },
+    { title: 'Pig Runs', view: 'pig run' },
+    { title: 'Risk', view: 'risk' },
+    { title: 'System Fields', view: 'system fields' },
+  ]
+
 
   return (
-    <div style={{ gridColumn: '1 / 10', gridRow: ppl_idx + 1 }}>
+    <div style={{ gridColumn: '1 / 11', gridRow: ppl_idx + 1 }}>
       <Collapse in={open} timeout="auto" unmountOnExit>
-        <div style={{ display: 'grid', gridTemplateColumns: '230px auto', rowGap: '2px', columnGap: '4px', gridAutoRows: 'minmax(40px, auto)', padding: '4px' }}>
+        <div className='pipeline-data'>
           <div className='tabs'>
             <nav role='navigation'>
               <ol>
-                <TabPanel title='License Changes' view='license change' currentView={view} handleViewClick={handleViewClick} />
-                <TabPanel title='Injection Points' view='injection point' currentView={view} handleViewClick={handleViewClick} />
-                <TabPanel title='Mechanical Properties' view='mechanical properties' currentView={view} handleViewClick={handleViewClick} />
-                <TabPanel title='Pressure Tests' view='pressure test' currentView={view} handleViewClick={handleViewClick} />
-                <TabPanel title='Pig Runs' view='pig run' currentView={view} handleViewClick={handleViewClick} />
-                <TabPanel title='Risk' view='risk' currentView={view} handleViewClick={handleViewClick} />
-                <TabPanel title='System Fields' view='system fields' currentView={view} handleViewClick={handleViewClick} />
+                {tabs.map(({ title, view: mappedView }, i) => <TabPanel key={i} title={title} view={mappedView} currentView={view} handleViewClick={handleViewClick} />)}
               </ol>
             </nav>
           </div>
-          <div style={{ gridColumn: 2, gridRow: 1, border, borderRadius, padding: '4px' }}>
+          <div className='pipeline-data-view'>
             {renderView()}
           </div>
         </div>

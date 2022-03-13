@@ -81,7 +81,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '30px 220px 200px 200px 200px auto', gap: '5px', gridAutoRows: 'minmax(40px, auto)' }}>
+    <div className='license-change'>
       {(role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') && <div style={{ padding: '4px', gridColumn: 1, gridRow: 1 }}>
         <IconButton
           style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}

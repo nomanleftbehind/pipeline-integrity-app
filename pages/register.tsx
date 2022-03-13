@@ -177,8 +177,8 @@ export const TextInput = ({ label, ...props }: IInput) => {
 
   return (
     <>
-      {label && <InputLabel htmlFor={props.id || props.name}>{label}</InputLabel>}
-      <TextField fullWidth {...field} {...props as any /* Fix type error */} />
+      {label && <label htmlFor={props.id || props.name}>{label}</label>}
+      <input {...field} {...props as any /* Fix type error */} />
       {meta.touched && meta.error ? (
         <div className='error' style={{ color: 'red' }}>{meta.error}</div>
       ) : null}

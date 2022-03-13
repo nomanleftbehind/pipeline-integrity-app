@@ -1,0 +1,10 @@
+.pipelines-window {
+  display: grid;
+  grid-template-columns: 30px 30px 30px 220px 100px 220px 240px 220px 240px auto /*minmax(auto, auto)*/;
+  row-gap: 2px;
+  column-gap: 4px;
+  grid-auto-rows: min-content;
+  border: #00b9f7 2px solid;
+  border-radius: 6px;
+  height: fit-content;
+}

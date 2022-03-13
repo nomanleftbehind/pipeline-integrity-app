@@ -1,0 +1,12 @@
+.license-change {
+  display: grid;
+  grid-template-columns: 30px 120px 135px 135px 240px minmax(auto, auto);
+  gap: 5px;
+  grid-auto-rows: minmax(20px, auto);
+  /* font-size: xx-small; */
+}
+
+.license-change div {
+  /* height: fit-content; */
+  padding: unset;
+}

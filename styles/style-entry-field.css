@@ -1,23 +1,29 @@
-.record-entry-select {
-  padding: 6px;
+.record-entry-input {
+  /* padding: 6px; */
   background-color: #fff;
   border: 2px solid rgb(25 118 210);
   border-radius: 4px;
+  font-size: small;
+  /* height: min-content; */
+  width: 100px;
+}
+
+.record-entry-display {
+  font-size: small;
 }
 
 .entry-field {
-  border: rgb(40 155 151) 2px solid;
+  border: #00b9f7 1px solid;
+  font-size: small;
 }
 
 .entry-field:focus {
-  border: solid rgb(25 118 210) 2px;
+  border: solid #f78000 1px;
 }
 
 .entry-field-form {
   display: flex;
   flex-direction: row;
-}
-
-.entry-field-form div {
-  height: 30px;
+  /* height: min-content; */
+  justify-content: space-between;
 }

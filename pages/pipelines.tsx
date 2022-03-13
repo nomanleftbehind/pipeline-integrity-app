@@ -67,7 +67,7 @@ function PipelineDatabase() {
           />
         </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '30px 30px 30px 220px 100px 220px 240px 220px 240px 230px', rowGap: '2px', columnGap: '4px', gridAutoRows: 'min-content', border: 'rgb(40 155 151) 2px solid' }}>
+      <div className='pipelines-window'>
 
         <div style={{ padding: '4px', gridColumn: '1 / 4', gridRow: 1 }}></div>
         <div style={{ padding: '4px', gridColumn: 4, gridRow: 1, fontWeight, textAlign }}>License</div>
@@ -80,11 +80,8 @@ function PipelineDatabase() {
         {loading && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>Loading...</div>}
         {error && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>{error.message}</div>}
         {data && data.pipelinesById && data.pipelinesById.map((pipeline, i) => {
-          const j = i;
           i *= 2;
           i += 2;
-          console.log('i:', i, 'j:', j);
-
           return pipeline && <RenderPipeline
             key={pipeline.id}
             ppl_idx={i}

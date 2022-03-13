@@ -1,0 +1,8 @@
+.pipeline-data {
+  display: grid;
+  grid-template-columns: 230px minmax(20px, auto);
+  row-gap: 2px;
+  column-gap: 4px;
+  grid-auto-rows: minmax(40px, auto);
+  padding: 4px;
+}

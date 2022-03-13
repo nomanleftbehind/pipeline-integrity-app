@@ -154,7 +154,7 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
             >
               {validatorIsObject ?
                 <DOMSelectInput
-                  className='record-entry-select'
+                  className='record-entry-input'
                   name={columnName}
                 >
                   {validator && Object
@@ -167,7 +167,7 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
                     </option>)}
                 </DOMSelectInput> :
                 <TextInput
-                  className={valid ? 'valid' : 'invalid'}
+                  className={`record-entry-input${valid ? ' valid' : ' invalid'}`}
                   name={columnName}
                   onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
                     handleValidation(e);
@@ -185,8 +185,8 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
           )
         }}
       </Formik> :
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ fontSize: 'medium' }}>
+      <div className='entry-field-form'>
+        <div className='record-entry-display'>
           {recordDisplay}
         </div>
         {nullable && editRecord && authorized && selected && <div>
