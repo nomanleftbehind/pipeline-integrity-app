@@ -1,0 +1,14 @@
+.pig-run {
+  display: grid;
+  grid-template-columns: 30px 120px 120px 120px auto 80px 80px 150px auto;
+  gap: 5px;
+  grid-auto-rows: minmax(40px, auto);
+}
+
+.pig-run-header {
+  grid-row: 1;
+  font-weight: bold;
+  text-align: center;
+  padding: 4px;
+  font-size: x-small;
+}

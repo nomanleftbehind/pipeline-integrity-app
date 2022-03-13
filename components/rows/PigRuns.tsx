@@ -1,6 +1,6 @@
 import { useState, Fragment } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import RecordEntry, { IEditRecord } from '../fields/RecordEntry';
+import RecordEntry, { IEditRecord, IRecordEntryProps } from '../fields/RecordEntry';
 import { ModalFieldError } from '../Modal';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
@@ -14,6 +14,10 @@ import {
   useDeletePigRunMutation,
   PigRunsByPipelineIdDocument,
 } from '../../graphql/generated/graphql';
+
+
+type IRecordEntryMap = Omit<IRecordEntryProps, 'id' | 'createdById' | 'authorized'>;
+
 
 export interface IPigRunsProps {
   pipelineId: string;
@@ -80,8 +84,21 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
     setFieldErrorModal(false);
   }
 
+  const pigRunHeader = [
+    { title: 'Pig Type' },
+    { title: 'Date In' },
+    { title: 'Date Out' },
+    { title: 'Operator' },
+    { title: 'Isolation Valve Function Test' },
+    { title: 'Pig Sender/ Receiver Insp.' },
+    { title: 'Comment' },
+    { title: 'Created By' },
+    { title: 'Updated By' },
+    { title: 'ID' },
+  ]
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '30px 290px 220px 220px auto 130px 130px 200px auto', gap: '5px', gridAutoRows: 'minmax(40px, auto)' }}>
+    <div className='pig-run'>
       {(role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR') && <div style={{ padding: '4px', gridColumn: 1, gridRow: 1 }}>
         <IconButton
           style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
@@ -101,62 +118,46 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
         fieldError={errorDeletePigRun}
         hideFieldError={hideFieldErrorModal}
       />}
-      <div style={{ padding: '4px', gridColumn: 2, gridRow: 1 }}>Pig Type</div>
-      <div style={{ padding: '4px', gridColumn: 3, gridRow: 1 }}>Date In</div>
-      <div style={{ padding: '4px', gridColumn: 4, gridRow: 1 }}>Date Out</div>
-      <div style={{ padding: '4px', gridColumn: 5, gridRow: 1 }}>Operator</div>
-      <div style={{ padding: '4px', gridColumn: 6, gridRow: 1 }}>Isolation Valve Function Test</div>
-      <div style={{ padding: '4px', gridColumn: 7, gridRow: 1 }}>Pig Sender/ Receiver Insp.</div>
-      <div style={{ padding: '4px', gridColumn: 8, gridRow: 1 }}>Comment</div>
-      <div style={{ padding: '4px', gridColumn: 9, gridRow: 1 }}>Created By</div>
-      <div style={{ padding: '4px', gridColumn: 10, gridRow: 1 }}>Updated By</div>
-      <div style={{ padding: '4px', gridColumn: 11, gridRow: 1 }}>ID</div>
+      {pigRunHeader.map(({ title }, gridColumn) => {
+        gridColumn += 2;
+        return <div key={gridColumn} className='pig-run-header' style={{ gridColumn }}>{title}</div>
+      })}
       {loading && <div style={{ padding: '4px', gridColumn: 2, gridRow: 2 }}>Loading...</div>}
       {error && <div style={{ padding: '4px', gridColumn: 2, gridRow: 2 }}>{error.message}</div>}
-      {data?.pigRunsByPipelineId?.map((pigRun, i) => {
-        i += 2;
+      {data?.pigRunsByPipelineId?.map((pigRun, gridRow) => {
+        gridRow += 2;
         if (pigRun) {
           const { id, pigType, dateIn, dateOut, operator, isolationValveFunctionTest, pigSenderReceiverInspection, comment, createdBy, updatedBy } = pigRun;
           const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'OPERATOR' && createdBy.id === userId);
+          const pigRunColumns: IRecordEntryMap[] = [
+            { columnName: 'pigType', columnType: 'string', nullable: true, record: pigType, validator: pigTypeEnum, editRecord },
+            { columnName: 'dateIn', columnType: 'date', nullable: false, record: dateIn, editRecord },
+            { columnName: 'dateOut', columnType: 'date', nullable: true, record: dateOut, editRecord },
+            { columnName: 'operator', columnType: 'string', nullable: true, record: operator?.email },
+            { columnName: 'isolationValveFunctionTest', columnType: 'string', nullable: true, record: isolationValveFunctionTest, validator: pigInspectionEnum, editRecord },
+            { columnName: 'pigSenderReceiverInspection', columnType: 'string', nullable: true, record: pigSenderReceiverInspection, validator: pigInspectionEnum, editRecord },
+            { columnName: 'comment', columnType: 'string', nullable: true, record: comment, editRecord },
+            { columnName: 'createdBy', columnType: 'string', nullable: false, record: createdBy.email },
+            { columnName: 'updatedBy', columnType: 'string', nullable: false, record: updatedBy.email },
+            { columnName: 'id', columnType: 'string', nullable: false, record: id },
+          ];
           return (
             <Fragment key={id}>
-              {authorized && <div style={{ padding: '4px', gridColumn: 1, gridRow: i }}>
+              {authorized && <div style={{ padding: '4px', gridColumn: 1, gridRow }}>
                 <IconButton
                   style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
                   aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </div>}
-              <div style={{ padding: '4px', gridColumn: 2, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='pigType' columnType='string' nullable={true} record={pigType} validator={pigTypeEnum} authorized={authorized} editRecord={editRecord} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 3, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='dateIn' columnType='date' nullable={false} record={dateIn} authorized={authorized} editRecord={editRecord} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 4, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='dateOut' columnType='date' nullable={true} record={dateOut} authorized={authorized} editRecord={editRecord} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 5, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='operator' columnType='string' nullable={true} record={operator?.email} authorized={authorized} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 6, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='isolationValveFunctionTest' columnType='string' nullable={true} record={isolationValveFunctionTest} validator={pigInspectionEnum} authorized={authorized} editRecord={editRecord} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 7, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='pigSenderReceiverInspection' columnType='string' nullable={true} record={pigSenderReceiverInspection} validator={pigInspectionEnum} authorized={authorized} editRecord={editRecord} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 8, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='comment' columnType='string' nullable={true} record={comment} authorized={authorized} editRecord={editRecord} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 9, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='createdBy' columnType='string' nullable={false} record={createdBy.email} authorized={authorized} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 10, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='updatedBy' columnType='string' nullable={false} record={updatedBy.email} authorized={authorized} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 11, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='ID' columnType='string' nullable={false} record={id} authorized={authorized} />
-              </div>
+              {pigRunColumns.map(({ columnName, columnType, nullable, record, validator, editRecord }, gridColumn) => {
+                gridColumn += 2;
+                return (
+                  <div key={gridColumn} className='pig-run-row' style={{ gridColumn, gridRow }}>
+                    <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+                  </div>
+                );
+              })}
             </Fragment>
           );
         }
