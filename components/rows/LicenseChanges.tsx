@@ -134,7 +134,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
                 <RecordEntry id={id} createdById={createdBy.id} columnName='substance' columnType='string' nullable={false} record={substance} validator={substanceEnum} authorized={authorized} editRecord={editRecord} />
               </div>
               <div style={{ padding: '4px', gridColumn: 5, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='linkToDocumentation' columnType='string' nullable={true} record={linkToDocumentation} authorized={authorized} editRecord={editRecord} />
+                <RecordEntry id={id} createdById={createdBy.id} columnName='linkToDocumentation' columnType='link' nullable={true} record={linkToDocumentation} authorized={authorized} editRecord={editRecord} />
               </div>
               <div style={{ padding: '4px', gridColumn: 6, gridRow: i }}>
                 <RecordEntry id={id} createdById={createdBy.id} columnName='createdBy' columnType='string' nullable={false} record={createdBy.email} authorized={authorized} />

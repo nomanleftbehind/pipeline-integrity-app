@@ -18,7 +18,7 @@ type IntersectionToObject<I> = UnionToIntersection<I> extends infer O ? { [K in 
 
 type IValidatorEnumsToOneObject = IntersectionToObject<UnionToIntersection<RemoveStringFromUnion<NonNullable<IValidator>>>>;
 
-export type IColumnType = 'string' | 'number' | 'date' | 'boolean';
+export type IColumnType = 'string' | 'number' | 'date' | 'boolean' | 'link';
 
 interface IValues {
   [x: string]: NonNullable<IRecord>;
@@ -98,6 +98,12 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
         } else {
           return record;
         }
+      case 'link':
+        if (typeof record === 'string') {
+          return <a href={record} rel='stylesheet'>{record}</a>
+        } else {
+          return record;
+        }
       case 'string':
         if (typeof record === 'string') {
           if (validatorIsObject) {
@@ -121,14 +127,10 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
   return (
     <div
       ref={ref}
-      className={authorized && editRecord ? 'entry-field' : undefined}
+      className={`record-entry${authorized && editRecord ? ' editable' : ''}`}
       tabIndex={-1}
       onDoubleClick={() => setEdit(true)}
       onClick={() => setSelected(true)}
-      style={{
-        padding: '8px', borderRadius: '6px', /*border: 'rgb(40 155 151) 2px solid',*/ height: '50px', lineHeight: '35px',
-        boxShadow: '0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)'
-      }}
     >{edit && editRecord && authorized ?
       <Formik
         initialValues={{
@@ -173,7 +175,7 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
                     handleValidation(e);
                     handleChange(e);
                   }}
-                  type={columnType === 'date' ? 'date' : columnType === 'number' ? 'number' : 'text'}
+                  type={columnType === 'date' ? 'date' : columnType === 'number' ? 'number' : columnType === 'link' ? 'url' : 'text'}
                   autoComplete='off'
                 />}
               <div>

@@ -3,14 +3,7 @@ import { prisma } from '../lib/prisma';
 import { getUser } from '../lib/user';
 
 import RenderPipeline from '../components/rows/RenderPipeline';
-import Header from '../components/Header';
 import SideNavBar from '../components/SideNavBar';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 
 import { IGetServerSideProps } from './register';
 import { usePipelinesByIdQueryLazyQuery, useGetValidatorsQuery } from '../graphql/generated/graphql';
@@ -56,7 +49,6 @@ function PipelineDatabase() {
 
   const fontWeight = 'bold';
   const textAlign = 'center';
-  const color = 'white';
 
   return (
     <div className="pipeline-database-wrapper">
