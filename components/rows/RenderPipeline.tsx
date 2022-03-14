@@ -12,7 +12,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import { useAuth } from '../../context/AuthContext';
 import { useEditPipelineMutation, useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation, PipelinesByIdQueryQuery, GetValidatorsQuery } from '../../graphql/generated/graphql';
-
+import { IRecordEntryMap } from './LicenseChanges';
 
 export type IPipeline = PipelinesByIdQueryQuery['pipelinesById'] extends (infer U)[] | null | undefined ? NonNullable<U> : never;
 export type IValidators = GetValidatorsQuery['validators'];
@@ -77,9 +77,19 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
     setShowDeletePipelineModal(false);
   }
 
-  const { id, license, segment, from, fromFeature, to, toFeature, createdBy } = pipeline;
-  const { id: createdById } = createdBy;
-  const { licenseMatchPattern, segmentMatchPattern, fromToMatchPattern, fromToFeatureEnum } = validators || {};
+  const { id, license, segment, from, fromFeature, to, toFeature, currentStatus, currentSubstance, createdBy } = pipeline;
+  const { licenseMatchPattern, segmentMatchPattern, fromToMatchPattern, fromToFeatureEnum, statusEnum, substanceEnum } = validators || {};
+
+  const pipelineColumns: IRecordEntryMap[] = [
+    { columnName: 'license', columnType: 'string', nullable: false, record: license, validator: licenseMatchPattern, editRecord },
+    { columnName: 'segment', columnType: 'string', nullable: false, record: segment, validator: segmentMatchPattern, editRecord },
+    { columnName: 'from', columnType: 'string', nullable: false, record: from, validator: fromToMatchPattern, editRecord },
+    { columnName: 'fromFeature', columnType: 'string', nullable: true, record: fromFeature, validator: fromToFeatureEnum, editRecord },
+    { columnName: 'to', columnType: 'string', nullable: false, record: to, validator: fromToMatchPattern, editRecord },
+    { columnName: 'toFeature', columnType: 'string', nullable: true, record: toFeature, validator: fromToFeatureEnum, editRecord },
+    { columnName: 'currentStatus', columnType: 'string', nullable: false, record: currentStatus, validator: statusEnum },
+    { columnName: 'currentSubstance', columnType: 'string', nullable: false, record: currentSubstance, validator: substanceEnum },
+  ];
 
   const modalDeletePipeline = showDeletePipelineModal ?
     <ModalDeletePipeline
@@ -106,24 +116,14 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
         </IconButton>}
       </div>
       {modalDeletePipeline}
-      <div style={{ padding: '4px', gridColumn: 4, gridRow: ppl_idx }}>
-        <RecordEntry id={id} createdById={createdById} columnName='license' columnType='string' nullable={false} record={license} validator={licenseMatchPattern} authorized={authorized} editRecord={editRecord} />
-      </div>
-      <div style={{ padding: '4px', gridColumn: 5, gridRow: ppl_idx }}>
-        <RecordEntry id={id} createdById={createdById} columnName='segment' columnType='string' nullable={false} record={segment} validator={segmentMatchPattern} authorized={authorized} editRecord={editRecord} />
-      </div>
-      <div style={{ padding: '4px', gridColumn: 6, gridRow: ppl_idx }}>
-        <RecordEntry id={id} createdById={createdById} columnName='from' columnType='string' nullable={false} record={from} validator={fromToMatchPattern} authorized={authorized} editRecord={editRecord} />
-      </div>
-      <div style={{ padding: '4px', gridColumn: 7, gridRow: ppl_idx }}>
-        <RecordEntry id={id} createdById={createdById} columnName='fromFeature' columnType='string' nullable={true} record={fromFeature} validator={fromToFeatureEnum} authorized={authorized} editRecord={editRecord} />
-      </div>
-      <div style={{ padding: '4px', gridColumn: 8, gridRow: ppl_idx }}>
-        <RecordEntry id={id} createdById={createdById} columnName='to' columnType='string' nullable={false} record={to} validator={fromToMatchPattern} authorized={authorized} editRecord={editRecord} />
-      </div>
-      <div style={{ padding: '4px', gridColumn: 9, gridRow: ppl_idx }}>
-        <RecordEntry id={id} createdById={createdById} columnName='toFeature' columnType='string' nullable={true} record={toFeature} validator={fromToFeatureEnum} authorized={authorized} editRecord={editRecord} />
-      </div>
+      {pipelineColumns.map(({ columnName, columnType, nullable, record, validator, editRecord }, gridColumn) => {
+        gridColumn += 4;
+        return (
+          <div key={gridColumn} className='pipeline-row' style={{ gridColumn, gridRow: ppl_idx }}>
+            <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+          </div>
+        );
+      })}
       <PipelineData
         ppl_idx={ppl_idx}
         key={`${id} data`}

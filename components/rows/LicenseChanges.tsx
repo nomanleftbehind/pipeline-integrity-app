@@ -7,6 +7,7 @@ import {
   useAddLicenseChangeMutation,
   useDeleteLicenseChangeMutation,
   LicenseChangesByPipelineIdDocument,
+  PipelinesByIdQueryDocument,
 } from '../../graphql/generated/graphql';
 
 import RecordEntry, { IEditRecord, IRecordEntryProps } from '../fields/RecordEntry';
@@ -24,9 +25,9 @@ interface ILicenseChangesProps {
 export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
   const { data } = useLicenseChangesByPipelineIdQuery({ variables: { pipelineId } });
   const { data: dataValidators } = useValidatorsLicenseChangeQuery();
-  const [editLicenseChange, { data: dataEditLicenseChangeMutation }] = useEditLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId'] });
-  const [addLicenseChange, { data: dataAddLicenseChangeMutation }] = useAddLicenseChangeMutation({ variables: { pipelineId }, refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId'] });
-  const [deleteLicenseChange, { data: dataDeleteLicenseChangeMutation }] = useDeleteLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId'] });
+  const [editLicenseChange, { data: dataEditLicenseChangeMutation }] = useEditLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
+  const [addLicenseChange, { data: dataAddLicenseChangeMutation }] = useAddLicenseChangeMutation({ variables: { pipelineId }, refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
+  const [deleteLicenseChange, { data: dataDeleteLicenseChangeMutation }] = useDeleteLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
 
   const [fieldErrorModal, setFieldErrorModal] = useState(false);
 

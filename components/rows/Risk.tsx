@@ -18,20 +18,20 @@ export interface IRiskProps {
   id: string;
   open: boolean;
   flowCalculationDirection: IPipeline['flowCalculationDirection'];
-  substance: IPipeline['substance'];
-  status: IPipeline['status'];
+  currentSubstance: IPipeline['currentSubstance'];
+  currentStatus: IPipeline['currentStatus'];
   type: IPipeline['type'];
   material: IPipeline['material'];
 }
 
 
-export default function Risk({ id, open, flowCalculationDirection, substance, status, type, material }: IRiskProps) {
+export default function Risk({ id, open, flowCalculationDirection, currentSubstance, currentStatus, type, material }: IRiskProps) {
 
   const { data: dataPipelineFlow, loading: loadingPipelineFlow, error: errorPipelineFlow } = usePipelineFlowQuery({ variables: { idList: [id], flowCalculationDirection } });
 
   const { oil, water, gas } = dataPipelineFlow?.pipelineFlow?.[0] || {};
 
-  const { data, loading, error } = useRiskByIdQuery({ variables: { id, substance, status, type, material, oil, water, gas } });
+  const { data, loading, error } = useRiskByIdQuery({ variables: { id, substance: currentSubstance, status: currentStatus, type, material, oil, water, gas } });
   const { data: dataValidatorsRisk } = useValidatorsRiskQuery();
   const [addRisk, { data: dataAddRisk }] = useAddRiskMutation({ variables: { id }, refetchQueries: [RiskByIdDocument, 'RiskById'] });
   const [deleteRisk, { data: dataDeleteRisk }] = useDeleteRiskMutation({ variables: { id }, refetchQueries: [RiskByIdDocument, 'RiskById'] });

@@ -561,6 +561,8 @@ type PigTypeEnumObject {
 type Pipeline {
   createdAt: DateTime!
   createdBy: User!
+  currentStatus: StatusEnum
+  currentSubstance: SubstanceEnum
   downstream: [Pipeline]
   flowCalculationDirection: FlowCalculationDirectionEnum!
   from: String!
@@ -583,8 +585,6 @@ type Pipeline {
   risk: Risk
   satellite: Satellite
   segment: String!
-  status: StatusEnum
-  substance: SubstanceEnum
   to: String!
   toFeature: FromToFeatureEnum
   type: TypeEnum

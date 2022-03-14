@@ -775,6 +775,8 @@ export type PigTypeEnumObject = {
 export type Pipeline = {
   createdAt: Scalars['DateTime'];
   createdBy: User;
+  currentStatus?: Maybe<StatusEnum>;
+  currentSubstance?: Maybe<SubstanceEnum>;
   downstream?: Maybe<Array<Maybe<Pipeline>>>;
   flowCalculationDirection: FlowCalculationDirectionEnum;
   from: Scalars['String'];
@@ -797,8 +799,6 @@ export type Pipeline = {
   risk?: Maybe<Risk>;
   satellite?: Maybe<Satellite>;
   segment: Scalars['String'];
-  status?: Maybe<StatusEnum>;
-  substance?: Maybe<SubstanceEnum>;
   to: Scalars['String'];
   toFeature?: Maybe<FromToFeatureEnum>;
   type?: Maybe<TypeEnum>;
@@ -1504,14 +1504,14 @@ export type PipelinesByIdQueryQueryVariables = Exact<{
 }>;
 
 
-export type PipelinesByIdQueryQuery = { pipelinesById?: Array<{ id: string, license: string, segment: string, substance?: SubstanceEnum | null | undefined, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status?: StatusEnum | null | undefined, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, satellite?: { id: string, facility?: { id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ id: string, source: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined, upstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type PipelinesByIdQueryQuery = { pipelinesById?: Array<{ id: string, license: string, segment: string, currentSubstance?: SubstanceEnum | null | undefined, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, currentStatus?: StatusEnum | null | undefined, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, satellite?: { id: string, facility?: { id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ id: string, source: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined, upstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type PipelineByIdQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type PipelineByIdQuery = { pipelineById?: { id: string, license: string, segment: string, substance?: SubstanceEnum | null | undefined, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, status?: StatusEnum | null | undefined, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string }, upstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, satellite?: { name: string } | null | undefined, injectionPoints?: Array<{ source: string } | null | undefined> | null | undefined } | null | undefined };
+export type PipelineByIdQuery = { pipelineById?: { id: string, license: string, segment: string, currentSubstance?: SubstanceEnum | null | undefined, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, currentStatus?: StatusEnum | null | undefined, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string }, upstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, satellite?: { name: string } | null | undefined, injectionPoints?: Array<{ source: string } | null | undefined> | null | undefined } | null | undefined };
 
 export type PipelineOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2632,13 +2632,13 @@ export const PipelinesByIdQueryDocument = gql`
     id
     license
     segment
-    substance
+    currentSubstance
     flowCalculationDirection
     from
     fromFeature
     to
     toFeature
-    status
+    currentStatus
     licenseDate
     length
     type
@@ -2728,13 +2728,13 @@ export const PipelineByIdDocument = gql`
     id
     license
     segment
-    substance
+    currentSubstance
     flowCalculationDirection
     from
     fromFeature
     to
     toFeature
-    status
+    currentStatus
     licenseDate
     length
     type

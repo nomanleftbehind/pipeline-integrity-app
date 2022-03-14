@@ -49,7 +49,7 @@ export const Pipeline = objectType({
         return result;
       }
     })
-    t.field('status', {
+    t.field('currentStatus', {
       type: 'StatusEnum',
       resolve: async ({ id }, _args, ctx: Context) => {
         const { status } = await ctx.prisma.licenseChange.findFirst({
@@ -61,7 +61,7 @@ export const Pipeline = objectType({
         return result;
       }
     })
-    t.field('substance', {
+    t.field('currentSubstance', {
       type: 'SubstanceEnum',
       resolve: async ({ id }, _args, ctx: Context) => {
         const { substance } = await ctx.prisma.licenseChange.findFirst({

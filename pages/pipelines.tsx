@@ -8,7 +8,6 @@ import SideNavBar from '../components/SideNavBar';
 import { IGetServerSideProps } from './register';
 import { usePipelinesByIdQueryLazyQuery, useGetValidatorsQuery } from '../graphql/generated/graphql';
 
-
 export interface IHeader {
   license: string;
   segment: string;
@@ -54,6 +53,8 @@ function PipelineDatabase() {
     { label: 'From Feature' },
     { label: 'To' },
     { label: 'To Feature' },
+    { label: 'Current Status' },
+    { label: 'Current Substance' },
   ];
 
   return (
@@ -71,7 +72,7 @@ function PipelineDatabase() {
           gridColumn += 4;
           return <div key={gridColumn} className='pipeline-data-view-header sticky top' style={{ gridColumn }}>{label}</div>
         })}
-        <div className='pipeline-data-view-header sticky top' style={{ gridColumn: 10 }}></div>
+        <div className='pipeline-data-view-header sticky top' style={{ gridColumn: 12 }}></div>
         {loading && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>Loading...</div>}
         {error && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>{error.message}</div>}
         {data && data.pipelinesById && data.pipelinesById.map((pipeline, i) => {

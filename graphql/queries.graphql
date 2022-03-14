@@ -17,13 +17,13 @@ query pipelinesByIdQuery($table: String, $id: String) {
     id
     license
     segment
-    substance
+    currentSubstance
     flowCalculationDirection
     from
     fromFeature
     to
     toFeature
-    status
+    currentStatus
     licenseDate
     length
     type
@@ -83,13 +83,13 @@ query PipelineById($id: String!) {
     id
     license
     segment
-    substance
+    currentSubstance
     flowCalculationDirection
     from
     fromFeature
     to
     toFeature
-    status
+    currentStatus
     licenseDate
     length
     type

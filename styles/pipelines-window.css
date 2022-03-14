@@ -1,6 +1,6 @@
 .pipelines-window {
   display: grid;
-  grid-template-columns: 30px 30px 30px 220px 100px 220px 240px 220px 240px calc(100vw - 1690px);
+  grid-template-columns: 30px 30px 30px 130px 100px 180px 230px 180px 230px 140px 140px calc(100vw - 1785px);
   /*auto*/
   /*minmax(0, auto-fit)*/
   ;
@@ -13,6 +13,10 @@
   overflow: auto;
   /* overflow-y: auto; */
   /* overflow-x: hidden; */
+}
+
+.pipeline-row {
+  padding: 2px;
 }
 
 .pipelines-window > .pipeline-data-view-header {
@@ -41,7 +45,7 @@
 .pipelines-window > .pipeline-data-view-header:first-child {
   margin: 0 -2px 0 0;
 }
-.pipelines-window > .pipeline-data-view-header:nth-child(8) {
+.pipelines-window > .pipeline-data-view-header:nth-child(10) {
   margin: 0 0 0 -2px;
 }
 

@@ -48,7 +48,7 @@ export default function PipelineData({ ppl_idx, open, pipeline, validators, isEv
   const [value, setValue] = useState(0);
   const [view, setView] = useState<IView>('license change');
 
-  const { id, createdAt, updatedAt, createdBy, updatedBy, license, segment, substance, flowCalculationDirection, from, fromFeature, to, toFeature, injectionPoints, upstream, status, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
+  const { id, createdAt, updatedAt, createdBy, updatedBy, license, segment, currentSubstance, flowCalculationDirection, from, fromFeature, to, toFeature, injectionPoints, upstream, currentStatus, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
 
   const { licenseMatchPattern, segmentMatchPattern, substanceEnum, fromToMatchPattern, fromToFeatureEnum, statusEnum, lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
 
@@ -116,8 +116,8 @@ export default function PipelineData({ ppl_idx, open, pipeline, validators, isEv
         id={id}
         open={open}
         flowCalculationDirection={flowCalculationDirection}
-        substance={substance}
-        status={status}
+        currentSubstance={currentSubstance}
+        currentStatus={currentStatus}
         type={type}
         material={material}
       />
@@ -145,7 +145,7 @@ export default function PipelineData({ ppl_idx, open, pipeline, validators, isEv
 
 
   return (
-    <div style={{ gridColumn: '1 / 11', gridRow: ppl_idx + 1 }}>
+    <div style={{ gridColumn: '1 / 13', gridRow: ppl_idx + 1 }}>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <div className='pipeline-data'>
           <div className='tabs'>

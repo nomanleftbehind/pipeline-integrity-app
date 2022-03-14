@@ -95,7 +95,7 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
     { label: 'Updated By' },
     { label: 'Updated At' },
     { label: 'ID' },
-  ]
+  ];
 
   return (
     <div className='pig-run'>
