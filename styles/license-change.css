@@ -1,7 +1,16 @@
+:root {
+  --main-date-column-width: 150px;
+}
+
 .license-change {
   display: grid;
-  grid-template-columns: 30px 120px 135px 130px 240px auto;
-  gap: 5px;
+  grid-template-columns: 30px var(--main-date-column-width) 135px 130px 240px auto;
+  row-gap: 2px;
+  column-gap: 4px;
   grid-auto-rows: minmax(20px, auto);
   /* font-size: xx-small; */
+}
+
+.license-change-row {
+  padding: 2px;
 }

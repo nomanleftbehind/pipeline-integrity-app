@@ -1,10 +1,11 @@
 import { useState, Fragment } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import RecordEntry, { IEditRecord, IRecordEntryProps } from '../fields/RecordEntry';
+import RecordEntry, { IEditRecord } from '../fields/RecordEntry';
 import { ModalFieldError } from '../Modal';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import { IRecordEntryMap } from './LicenseChanges';
 
 import {
   usePigRunsByPipelineIdQuery,
@@ -14,9 +15,6 @@ import {
   useDeletePigRunMutation,
   PigRunsByPipelineIdDocument,
 } from '../../graphql/generated/graphql';
-
-
-type IRecordEntryMap = Omit<IRecordEntryProps, 'id' | 'createdById' | 'authorized'>;
 
 
 export interface IPigRunsProps {
@@ -85,21 +83,23 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
   }
 
   const pigRunHeader = [
-    { title: 'Pig Type' },
-    { title: 'Date In' },
-    { title: 'Date Out' },
-    { title: 'Operator' },
-    { title: 'Isolation Valve Function Test' },
-    { title: 'Pig Sender/ Receiver Insp.' },
-    { title: 'Comment' },
-    { title: 'Created By' },
-    { title: 'Updated By' },
-    { title: 'ID' },
+    { label: 'Pig Type' },
+    { label: 'Date In' },
+    { label: 'Date Out' },
+    { label: 'Operator' },
+    { label: 'Isolation Valve Function Test' },
+    { label: 'Pig Sender/ Receiver Insp.' },
+    { label: 'Comment' },
+    { label: 'Created By' },
+    { label: 'Created At' },
+    { label: 'Updated By' },
+    { label: 'Updated At' },
+    { label: 'ID' },
   ]
 
   return (
     <div className='pig-run'>
-      {(role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR') && <div style={{ padding: '4px', gridColumn: 1, gridRow: 1 }}>
+      {(role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR') && <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
         <IconButton
           style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
           aria-label='add row' size='small' onClick={addRecord}>
@@ -118,16 +118,16 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
         fieldError={errorDeletePigRun}
         hideFieldError={hideFieldErrorModal}
       />}
-      {pigRunHeader.map(({ title }, gridColumn) => {
+      {pigRunHeader.map(({ label }, gridColumn) => {
         gridColumn += 2;
-        return <div key={gridColumn} className='pig-run-header' style={{ gridColumn }}>{title}</div>
+        return <div key={gridColumn} className='pipeline-data-view-header sticky top' style={{ gridColumn }}>{label}</div>
       })}
       {loading && <div style={{ padding: '4px', gridColumn: 2, gridRow: 2 }}>Loading...</div>}
       {error && <div style={{ padding: '4px', gridColumn: 2, gridRow: 2 }}>{error.message}</div>}
       {data?.pigRunsByPipelineId?.map((pigRun, gridRow) => {
         gridRow += 2;
         if (pigRun) {
-          const { id, pigType, dateIn, dateOut, operator, isolationValveFunctionTest, pigSenderReceiverInspection, comment, createdBy, updatedBy } = pigRun;
+          const { id, pigType, dateIn, dateOut, operator, isolationValveFunctionTest, pigSenderReceiverInspection, comment, createdBy, createdAt, updatedBy, updatedAt } = pigRun;
           const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'OPERATOR' && createdBy.id === userId);
           const pigRunColumns: IRecordEntryMap[] = [
             { columnName: 'pigType', columnType: 'string', nullable: true, record: pigType, validator: pigTypeEnum, editRecord },
@@ -138,12 +138,14 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
             { columnName: 'pigSenderReceiverInspection', columnType: 'string', nullable: true, record: pigSenderReceiverInspection, validator: pigInspectionEnum, editRecord },
             { columnName: 'comment', columnType: 'string', nullable: true, record: comment, editRecord },
             { columnName: 'createdBy', columnType: 'string', nullable: false, record: createdBy.email },
+            { columnName: 'createdAt', columnType: 'date', nullable: false, record: createdAt },
             { columnName: 'updatedBy', columnType: 'string', nullable: false, record: updatedBy.email },
+            { columnName: 'updatedAt', columnType: 'date', nullable: false, record: updatedAt },
             { columnName: 'id', columnType: 'string', nullable: false, record: id },
           ];
           return (
             <Fragment key={id}>
-              {authorized && <div style={{ padding: '4px', gridColumn: 1, gridRow }}>
+              {authorized && <div className='pig-run-row sticky left' style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
                   aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>

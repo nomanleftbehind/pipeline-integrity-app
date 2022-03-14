@@ -1,6 +1,6 @@
 .pipeline-data {
   display: grid;
-  grid-template-columns: 197px minmax(20px, auto);
+  grid-template-columns: 197px 1fr/*minmax(20px, auto)*/;
   row-gap: 2px;
   column-gap: 4px;
   grid-auto-rows: minmax(40px, auto);

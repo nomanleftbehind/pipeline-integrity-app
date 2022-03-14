@@ -9,11 +9,13 @@ import {
   LicenseChangesByPipelineIdDocument,
 } from '../../graphql/generated/graphql';
 
-import RecordEntry, { IEditRecord } from '../fields/RecordEntry';
+import RecordEntry, { IEditRecord, IRecordEntryProps } from '../fields/RecordEntry';
 import { ModalFieldError } from '../Modal';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+
+export type IRecordEntryMap = Omit<IRecordEntryProps, 'id' | 'createdById' | 'authorized'>;
 
 interface ILicenseChangesProps {
   pipelineId: string;
@@ -80,9 +82,21 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
     setFieldErrorModal(false);
   }
 
+  const licenseChangeHeader = [
+    { label: 'Date' },
+    { label: 'Status' },
+    { label: 'Substance' },
+    { label: 'Link To Documentation' },
+    { label: 'Created By' },
+    { label: 'Created At' },
+    { label: 'Updated By' },
+    { label: 'Updated At' },
+    { label: 'ID' },
+  ]
+
   return (
     <div className='license-change'>
-      {(role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') && <div style={{ padding: '4px', gridColumn: 1, gridRow: 1 }}>
+      {(role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') && <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
         <IconButton
           style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
           aria-label='add row' size='small' onClick={addRecord}>
@@ -101,50 +115,43 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
         fieldError={errorDeleteLicenseChange}
         hideFieldError={hideFieldErrorModal}
       />}
-      <div style={{ padding: '4px', gridColumn: 2, gridRow: 1 }}>Date</div>
-      <div style={{ padding: '4px', gridColumn: 3, gridRow: 1 }}>Status</div>
-      <div style={{ padding: '4px', gridColumn: 4, gridRow: 1 }}>Substance</div>
-      <div style={{ padding: '4px', gridColumn: 5, gridRow: 1 }}>Link To Documentation</div>
-      <div style={{ padding: '4px', gridColumn: 6, gridRow: 1 }}>Created By</div>
-      <div style={{ padding: '4px', gridColumn: 7, gridRow: 1 }}>Updated By</div>
-      <div style={{ padding: '4px', gridColumn: 8, gridRow: 1 }}>ID</div>
-
-      {data?.licenseChangesByPipelineId?.map((licenseChange, i) => {
-        i += 2;
-
+      {licenseChangeHeader.map(({ label }, gridColumn) => {
+        gridColumn += 2;
+        return <div key={gridColumn} className='pipeline-data-view-header sticky top' style={{ gridColumn }}>{label}</div>
+      })}
+      {data?.licenseChangesByPipelineId?.map((licenseChange, gridRow) => {
+        gridRow += 2;
         if (licenseChange) {
-          const { id, date, status, substance, linkToDocumentation, createdBy, updatedBy } = licenseChange;
+          const { id, date, status, substance, linkToDocumentation, createdBy, createdAt, updatedBy, updatedAt } = licenseChange;
           const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'OFFICE' && createdBy.id === userId);
+          const pigRunColumns: IRecordEntryMap[] = [
+            { columnName: 'date', columnType: 'date', nullable: false, record: date, editRecord },
+            { columnName: 'status', columnType: 'string', nullable: false, record: status, validator: statusEnum, editRecord },
+            { columnName: 'substance', columnType: 'string', nullable: false, record: substance, validator: substanceEnum, editRecord },
+            { columnName: 'linkToDocumentation', columnType: 'link', nullable: true, record: linkToDocumentation, editRecord },
+            { columnName: 'createdBy', columnType: 'string', nullable: false, record: createdBy.email },
+            { columnName: 'createdAt', columnType: 'date', nullable: false, record: createdAt },
+            { columnName: 'updatedBy', columnType: 'string', nullable: false, record: updatedBy.email },
+            { columnName: 'updatedAt', columnType: 'date', nullable: false, record: updatedAt },
+            { columnName: 'id', columnType: 'string', nullable: false, record: id },
+          ];
           return (
             <Fragment key={id}>
-              {authorized && <div style={{ padding: '4px', gridColumn: 1, gridRow: i }}>
+              {authorized && <div className='license-change-row sticky left' style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
                   aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </div>}
-              <div style={{ padding: '4px', gridColumn: 2, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='date' columnType='date' nullable={false} record={date} authorized={authorized} editRecord={editRecord} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 3, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='status' columnType='string' nullable={false} record={status} validator={statusEnum} authorized={authorized} editRecord={editRecord} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 4, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='substance' columnType='string' nullable={false} record={substance} validator={substanceEnum} authorized={authorized} editRecord={editRecord} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 5, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='linkToDocumentation' columnType='link' nullable={true} record={linkToDocumentation} authorized={authorized} editRecord={editRecord} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 6, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='createdBy' columnType='string' nullable={false} record={createdBy.email} authorized={authorized} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 7, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='updatedBy' columnType='string' nullable={false} record={updatedBy.email} authorized={authorized} />
-              </div>
-              <div style={{ padding: '4px', gridColumn: 8, gridRow: i }}>
-                <RecordEntry id={id} createdById={createdBy.id} columnName='id' columnType='string' nullable={false} record={id} authorized={authorized} />
-              </div>
+              {pigRunColumns.map(({ columnName, columnType, nullable, record, validator, editRecord }, gridColumn) => {
+                gridColumn += 2;
+                return (
+                  <div key={gridColumn} className='license-change-row' style={{ gridColumn, gridRow }}>
+                    <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+                  </div>
+                );
+              })}
             </Fragment>
           )
         }

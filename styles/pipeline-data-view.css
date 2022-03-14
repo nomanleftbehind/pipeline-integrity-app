@@ -3,5 +3,24 @@
   grid-row: 1;
   border: #00b9f7 1px solid;
   border-radius: 6px;
+  /* padding: 4px; */
+  overflow: scroll;
+  max-height: 300px;
+}
+
+
+.pipeline-data-view-header {
+  grid-row: 1;
+  font-weight: bold;
+  text-align: center;
   padding: 4px;
+  font-size: small;
+}
+
+.pipeline-data-view-header.top.left {
+  z-index: 998;
+}
+
+.pipeline-data-view-row {
+  padding: 2px;
 }

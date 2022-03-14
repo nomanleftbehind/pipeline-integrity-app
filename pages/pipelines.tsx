@@ -50,6 +50,15 @@ function PipelineDatabase() {
   const fontWeight = 'bold';
   const textAlign = 'center';
 
+  const pipelineHeader = [
+    { label: 'License' },
+    { label: 'Segment' },
+    { label: 'From' },
+    { label: 'From Feature' },
+    { label: 'To' },
+    { label: 'To Feature' },
+  ];
+
   return (
     <div className="pipeline-database-wrapper">
       <div className="pipeline-database-side-bar">
@@ -60,15 +69,12 @@ function PipelineDatabase() {
         </div>
       </div>
       <div className='pipelines-window'>
-
-        <div style={{ padding: '4px', gridColumn: '1 / 4', gridRow: 1 }}></div>
-        <div style={{ padding: '4px', gridColumn: 4, gridRow: 1, fontWeight, textAlign }}>License</div>
-        <div style={{ padding: '4px', gridColumn: 5, gridRow: 1, fontWeight, textAlign }}>Segment</div>
-        <div style={{ padding: '4px', gridColumn: 6, gridRow: 1, fontWeight, textAlign }}>From</div>
-        <div style={{ padding: '4px', gridColumn: 7, gridRow: 1, fontWeight, textAlign }}>From Feature</div>
-        <div style={{ padding: '4px', gridColumn: 8, gridRow: 1, fontWeight, textAlign }}>To</div>
-        <div style={{ padding: '4px', gridColumn: 9, gridRow: 1, fontWeight, textAlign }}>To Feature</div>
-
+        <div className='pipeline-data-view-header sticky top' style={{ gridColumn: '1 / 4' }}></div>
+        {pipelineHeader.map(({ label }, gridColumn) => {
+          gridColumn += 4;
+          return <div key={gridColumn} className='pipeline-data-view-header sticky top' style={{ gridColumn }}>{label}</div>
+        })}
+        <div className='pipeline-data-view-header sticky top' style={{ gridColumn: 10 }}></div>
         {loading && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>Loading...</div>}
         {error && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>{error.message}</div>}
         {data && data.pipelinesById && data.pipelinesById.map((pipeline, i) => {
