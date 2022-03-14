@@ -1,16 +1,18 @@
 .pipelines-window {
   display: grid;
-  grid-template-columns: 30px 30px 30px 220px 100px 220px 240px 220px 240px 1fr
-    /*auto*/
-    /*minmax(0, auto-fit)*/
+  grid-template-columns: 30px 30px 30px 220px 100px 220px 240px 220px 240px calc(100vw - 1690px);
+  /*auto*/
+  /*minmax(0, auto-fit)*/
   ;
   row-gap: 2px;
   column-gap: 4px;
   grid-auto-rows: min-content;
   border: #00b9f7 2px solid;
   border-radius: 6px;
-  height: 1fr;
-  overflow: scroll;
+  /* height: 1fr; */
+  overflow: auto;
+  /* overflow-y: auto; */
+  /* overflow-x: hidden; */
 }
 
 .pipelines-window > .pipeline-data-view-header {
@@ -35,6 +37,14 @@
   top: 0;
   margin: 0 -2px 0 -2px;
 }
+
+.pipelines-window > .pipeline-data-view-header:first-child {
+  margin: 0 -2px 0 0;
+}
+.pipelines-window > .pipeline-data-view-header:nth-child(8) {
+  margin: 0 0 0 -2px;
+}
+
 
 .left {
   z-index: 997;

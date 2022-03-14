@@ -47,9 +47,6 @@ function PipelineDatabase() {
     return validator ? validator[property] : property;
   }
 
-  const fontWeight = 'bold';
-  const textAlign = 'center';
-
   const pipelineHeader = [
     { label: 'License' },
     { label: 'Segment' },

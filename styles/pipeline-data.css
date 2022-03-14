@@ -4,5 +4,5 @@
   row-gap: 2px;
   column-gap: 4px;
   grid-auto-rows: minmax(40px, auto);
-  padding: 4px;
+  /* padding: 4px; */
 }
