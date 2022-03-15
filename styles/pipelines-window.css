@@ -42,6 +42,10 @@
   margin: 0 -2px 0 -2px;
 }
 
+.left {
+  left: 0;
+}
+
 .pipelines-window>.pipeline-data-view-header:first-child {
   margin: 0 -2px 0 0;
 }
@@ -53,10 +57,9 @@
 
 .left:not(.top) {
   z-index: 997;
-  left: 0;
   margin: -1px 0 -1px 0;
 }
 
-.top + .left {
+.top+.left {
   margin-top: -2px;
 }
