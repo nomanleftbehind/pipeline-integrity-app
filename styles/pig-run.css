@@ -1,11 +1,12 @@
 .pig-run {
   display: grid;
   grid-template-columns: 30px 130px repeat(2, var(--main-date-column-width)) auto repeat(2, 80px) 150px auto;
-  gap: 5px;
+  row-gap: 2px;
+  column-gap: 4px;
   grid-auto-rows: minmax(40px, auto);
 }
 
-.pig-run > .pipeline-data-view-header {
+.pig-run>.pipeline-data-view-header {
   font-size: x-small;
 }
 
