@@ -9,6 +9,7 @@ import '../styles/pipeline-data.css';
 import '../styles/tab-panels.css';
 import '../styles/pipeline-data-view.css';
 import '../styles/license-change.css';
+import '../styles/mechanical-properties.css';
 import '../styles/pig-run.css';
 import '../styles/pressure-test.css';
 import '../styles/button-container.css';

@@ -2,6 +2,7 @@ import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, n
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
 import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
+import { Prisma } from '@prisma/client';
 
 
 
@@ -466,7 +467,14 @@ export function databaseEnumToServerEnum<T>(object: T, value: T[keyof T] | null 
 }
 
 
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+export const PipelinePayload = objectType({
+  name: 'PipelinePayload',
+  definition(t) {
+    t.field('pipeline', { type: 'Pipeline' })
+    t.field('error', { type: 'FieldError' })
+  },
+});
+
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 type IPipelinePartialBy = PartialBy<IPipeline, 'id' | 'createdAt' | 'updatedAt'>
 
@@ -474,7 +482,7 @@ export const PipelineMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editPipeline', {
-      type: Pipeline,
+      type: 'PipelinePayload',
       args: {
         id: nonNull(stringArg()),
         satelliteId: stringArg(),
@@ -499,8 +507,90 @@ export const PipelineMutation = extendType({
         piggingFrequency: intArg(),
       },
       resolve: async (_, args, ctx: Context) => {
-        try {
-          return ctx.prisma.pipeline.update({
+
+        const user = ctx.user;
+
+        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER')) {
+
+          const { id: userId } = user;
+
+          if (args.license) {
+            const currentPipeline = await ctx.prisma.pipeline.findUnique({
+              where: { id: args.id },
+              select: {
+                segment: true,
+              }
+            });
+            if (currentPipeline) {
+              const { segment } = currentPipeline;
+              const pipelineWithSameSegment = await ctx.prisma.pipeline.findUnique({
+                where: { license_segment: { license: args.license, segment } },
+                select: {
+                  id: true,
+                  satellite: {
+                    select: {
+                      name: true,
+                      facility: {
+                        select: {
+                          name: true,
+                        }
+                      }
+                    }
+                  }
+                }
+              });
+              if (pipelineWithSameSegment && pipelineWithSameSegment.id !== args.id) {
+                const facility = pipelineWithSameSegment.satellite?.facility?.name;
+                const satellite = pipelineWithSameSegment.satellite?.name;
+                return {
+                  error: {
+                    field: 'license',
+                    message: `Pipeline ${args.license}-${segment} already exists at facility ${facility}, satellite ${satellite}.`,
+                  }
+                }
+              }
+            }
+          }
+
+          if (args.segment) {
+            const currentPipeline = await ctx.prisma.pipeline.findUnique({
+              where: { id: args.id },
+              select: {
+                license: true,
+              }
+            });
+            if (currentPipeline) {
+              const { license } = currentPipeline;
+              const pipelineWithSameLicense = await ctx.prisma.pipeline.findUnique({
+                where: { license_segment: { license, segment: args.segment } },
+                select: {
+                  id: true,
+                  satellite: {
+                    select: {
+                      name: true,
+                      facility: {
+                        select: {
+                          name: true,
+                        }
+                      }
+                    }
+                  }
+                }
+              });
+              if (pipelineWithSameLicense && pipelineWithSameLicense.id !== args.id) {
+                const facility = pipelineWithSameLicense.satellite?.facility?.name;
+                const satellite = pipelineWithSameLicense.satellite?.name;
+                return {
+                  error: {
+                    field: 'segment',
+                    message: `Pipeline ${license}-${args.segment} already exists at facility ${facility}, satellite ${satellite}.`,
+                  }
+                }
+              }
+            }
+          }
+
+          const pipeline = await ctx.prisma.pipeline.update({
             where: { id: args.id },
             data: {
               satelliteId: args.satelliteId || undefined,
@@ -522,49 +612,98 @@ export const PipelineMutation = extendType({
               internalProtection: databaseEnumToServerEnum(InternalProtectionEnumMembers, args.internalProtection),
               piggable: args.piggable,
               piggingFrequency: args.piggingFrequency,
-              updatedById: String(ctx.user?.id),
+              updatedById: userId,
             },
-          })
-        } catch (e) {
-          throw new Error(
-            `Pipeline with ID ${args.id} does not exist in the database.`,
-          )
+          });
+          return {
+            pipeline
+          }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
+      }
+    })
+    t.field('deletePipeline', {
+      type: 'PipelinePayload',
+      args: {
+        id: nonNull(stringArg()),
+      },
+      resolve: async (_, { id }, ctx: Context) => {
+        const user = ctx.user;
+        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER')) {
+          const pipeline = await ctx.prisma.pipeline.delete({
+            where: { id },
+          });
+          return { pipeline }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
         }
       },
     })
-    t.field('deletePipeline', {
-      type: 'Pipeline',
-      args: {
-        id: nonNull(stringArg()),
-      },
-      resolve: (_parent, args, ctx: Context) => {
-        return ctx.prisma.pipeline.delete({
-          where: { id: args.id },
-        })
-      },
-    })
     t.field('duplicatePipeline', {
-      type: 'Pipeline',
+      type: 'PipelinePayload',
       args: {
         id: nonNull(stringArg()),
       },
-      resolve: async (_parent, { id }, ctx: Context) => {
-        const userId = String(ctx.user?.id);
-        const p = await ctx.prisma.pipeline.findUnique({
-          where: { id }
-        }) as IPipelinePartialBy
-        if (p) {
-          p.license += '_copy';
-          p.segment += '_copy';
-          delete p.id;
-          delete p.createdAt;
-          delete p.updatedAt;
-          p.createdById = userId;
-          p.updatedById = userId;
-          return ctx.prisma.pipeline.create({
-            data: p
-          })
-        } else return null;
+      resolve: async (_, { id }, ctx: Context) => {
+
+        const user = ctx.user;
+
+        if (user && ['ADMIN', 'ENGINEER'].includes(user.role)) {
+          const userId = user.id;
+          const newPipeline = await ctx.prisma.pipeline.findUnique({
+            where: { id }
+          }) as IPipelinePartialBy;
+
+          if (newPipeline) {
+            newPipeline.license += '_copy';
+            newPipeline.segment += '_copy';
+            delete newPipeline.id;
+            delete newPipeline.createdAt;
+            delete newPipeline.updatedAt;
+            newPipeline.createdById = userId;
+            newPipeline.updatedById = userId;
+
+            try {
+              const pipeline = await ctx.prisma.pipeline.create({
+                data: newPipeline
+              });
+              return { pipeline }
+            } catch (e) {
+              if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2002') {
+                  return {
+                    error: {
+                      field: 'License and Segment',
+                      message: 'There is a unique constraint violation, a new pipeline cannot be created with this license and segment',
+                    }
+                  }
+                }
+              }
+              throw e;
+            }
+          };
+          return {
+            error: {
+              field: 'ID',
+              message: `Couldn't find pipeline with ID ${id}.`,
+            }
+          }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
       }
     })
     t.field('connectPipeline', {

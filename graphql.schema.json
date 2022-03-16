@@ -3372,7 +3372,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Pipeline",
+              "name": "PipelinePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3594,7 +3594,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Pipeline",
+              "name": "PipelinePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -4243,7 +4243,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Pipeline",
+              "name": "PipelinePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -8008,6 +8008,41 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "PipelinePayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "error",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "FieldError",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pipeline",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Pipeline",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

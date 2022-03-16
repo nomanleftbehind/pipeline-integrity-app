@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { prisma } from '../lib/prisma';
 import { getUser } from '../lib/user';
+import { UserNoPassword } from '../lib/auth';
 
 import RenderPipeline from '../components/rows/RenderPipeline';
 import SideNavBar from '../components/SideNavBar';
 
 import { IGetServerSideProps } from './register';
-import { usePipelinesByIdQueryLazyQuery, useGetValidatorsQuery } from '../graphql/generated/graphql';
+import { usePipelinesByIdQueryLazyQuery, useValidatorsPipelineQuery } from '../graphql/generated/graphql';
 
 export interface IHeader {
   license: string;
@@ -17,14 +18,22 @@ export interface IHeader {
   toFeature: string;
 }
 
-function PipelineDatabase() {
+export interface IServerSideProps {
+  user: UserNoPassword;
+}
+
+function PipelineDatabase({ user }: IServerSideProps) {
+
+  const { role } = user;
+
+  const authorized = role && ['ADMIN', 'ENGINEER'].includes(role);
 
   const header: IHeader = { license: "", segment: "", from: "", fromFeature: "", to: "", toFeature: "" };
   const [filterText, setFilterText] = useState<IHeader>(header);
   const [filterTextCaseInsensitive, setFilterTextCaseInsensitive] = useState<IHeader>(header);
 
   const [pipelinesById, { data, loading, error }] = usePipelinesByIdQueryLazyQuery();
-  const { data: validatorsData } = useGetValidatorsQuery();
+  const { data: validatorsData } = useValidatorsPipelineQuery();
 
   function handleSidebarClick(id: string, table: string) {
     pipelinesById({ variables: { id, table } })
@@ -75,14 +84,15 @@ function PipelineDatabase() {
         <div className='pipeline-data-view-header sticky top' style={{ gridColumn: 12 }}></div>
         {loading && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>Loading...</div>}
         {error && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>{error.message}</div>}
-        {data && data.pipelinesById && data.pipelinesById.map((pipeline, i) => {
-          i *= 2;
-          i += 2;
+        {data && data.pipelinesById && data.pipelinesById.map((pipeline, gridRow) => {
+          gridRow *= 2;
+          gridRow += 2;
           return pipeline && <RenderPipeline
             key={pipeline.id}
-            ppl_idx={i}
+            gridRow={gridRow}
             pipeline={pipeline}
             validators={validators}
+            authorized={authorized}
           />
         }
         )}
@@ -105,8 +115,12 @@ export async function getServerSideProps({ req }: IGetServerSideProps) {
     }
   }
 
+  const userNoPassword = { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role };
+
   return {
-    props: {}
+    props: {
+      user: userNoPassword
+    }
   }
 }
 

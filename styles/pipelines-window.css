@@ -1,6 +1,6 @@
 .pipelines-window {
   display: grid;
-  grid-template-columns: repeat(3, 30px) 130px 100px 180px 230px 180px 230px repeat(2, 140px) calc(100vw - 1785px);
+  grid-template-columns: repeat(3, minmax(0, 30px)) 130px 100px 180px 230px 180px 230px repeat(2, 140px) calc(100vw - 1785px);
 
   row-gap: 2px;
   column-gap: 4px;

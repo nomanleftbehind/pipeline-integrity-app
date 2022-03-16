@@ -530,6 +530,50 @@ query getValidators {
   }
 }
 
+query ValidatorsPipeline {
+  validators {
+    licenseMatchPattern
+    segmentMatchPattern
+    fromToMatchPattern
+    fromToFeatureEnum {
+      BlindEnd
+      Battery
+      Pipeline
+      Satellite
+      StorageTank
+      InjectionPlant
+      Well
+      CompressorStation
+      MeterStation
+      PumpStation
+      GasProcessingPlant
+      UndergroundCapOrTieIn
+      Header
+    }
+    statusEnum {
+      Operating
+      Discontinued
+      Abandoned
+      Removed
+      ToBeConstructed
+      Active
+      Cancelled
+      New
+      NotConstructed
+    }
+    substanceEnum {
+      NaturalGas
+      FreshWater
+      SaltWater
+      CrudeOil
+      OilWellEffluent
+      LVPProducts
+      FuelGas
+      SourNaturalGas
+    }
+  }
+}
+
 query ValidatorsLicenseChange {
   validators {
     statusEnum {

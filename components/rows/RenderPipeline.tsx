@@ -1,26 +1,25 @@
-import { useState, Fragment } from 'react';
-import EntryField from '../fields/EntryField';
+import { useState } from 'react';
 import RecordEntry, { IEditRecord } from '../fields/RecordEntry';
-import { ModalDeletePipeline } from '../Modal';
+import { ModalFieldError, ModalDeletePipeline } from '../Modal';
 import PipelineData from './PipelineData';
 import IconButton from '@mui/material/IconButton';
-import TableCell from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import { useAuth } from '../../context/AuthContext';
-import { useEditPipelineMutation, useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation, PipelinesByIdQueryQuery, GetValidatorsQuery } from '../../graphql/generated/graphql';
+import { useEditPipelineMutation, useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation, PipelinesByIdQueryQuery, GetValidatorsQuery, ValidatorsPipelineQuery } from '../../graphql/generated/graphql';
 import { IRecordEntryMap } from './LicenseChanges';
 
 export type IPipeline = PipelinesByIdQueryQuery['pipelinesById'] extends (infer U)[] | null | undefined ? NonNullable<U> : never;
 export type IValidators = GetValidatorsQuery['validators'];
 
+type IValidatorsPipeline = ValidatorsPipelineQuery['validators']
+
 interface IRenderPipelineProps {
-  ppl_idx: number;
+  gridRow: number;
   pipeline: IPipeline;
-  validators: IValidators;
+  validators: IValidatorsPipeline;
+  authorized: boolean;
 }
 
 const isEven = (value: number): 'even' | 'odd' => {
@@ -29,18 +28,44 @@ const isEven = (value: number): 'even' | 'odd' => {
   else return 'odd';
 }
 
-export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRenderPipelineProps) {
-
-  const { user } = useAuth() || {};
-  const { role } = user || {};
-  const authorized = role === 'ADMIN' || role === 'ENGINEER';
+export default function RenderPipeline({ gridRow, pipeline, validators, authorized }: IRenderPipelineProps) {
 
   const [open, setOpen] = useState(false);
   const [showDeletePipelineModal, setShowDeletePipelineModal] = useState(false);
 
-  const [editPipeline] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
-  const [deletePipeline, { data: dataDeletePipeline }] = useDeletePipelineMutation({ variables: { id: pipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
-  const [duplicatePipeline, { data: dataDuplicatePipeline }] = useDuplicatePipelineMutation({ variables: { id: pipeline.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
+  const [editPipeline] = useEditPipelineMutation({
+    refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'],
+    onCompleted: ({ editPipeline }) => {
+      const { error } = editPipeline || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
+  const [deletePipeline] = useDeletePipelineMutation({
+    variables: { id: pipeline.id },
+    refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'],
+    onCompleted: ({ deletePipeline }) => {
+      const { error } = deletePipeline || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
+  const [duplicatePipeline] = useDuplicatePipelineMutation({
+    variables: { id: pipeline.id },
+    refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'],
+    onCompleted: ({ duplicatePipeline }) => {
+      const { error } = duplicatePipeline || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
+
+
+  const initialFieldError = { field: '', message: '' };
+  const [fieldError, setFieldError] = useState(initialFieldError);
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {
@@ -76,6 +101,10 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
     setShowDeletePipelineModal(false);
   }
 
+  const hideFieldErrorModal = () => {
+    setFieldError(initialFieldError);
+  }
+
   const { id, license, segment, from, fromFeature, to, toFeature, currentStatus, currentSubstance, createdBy } = pipeline;
   const { licenseMatchPattern, segmentMatchPattern, fromToMatchPattern, fromToFeatureEnum, statusEnum, substanceEnum } = validators || {};
 
@@ -99,37 +128,40 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
 
   return (
     <>
-      <div style={{ padding: '4px', gridColumn: 1, gridRow: ppl_idx }}>
+      <div className='pipeline-row' style={{ gridColumn: 1, gridRow: gridRow }}>
         <IconButton className='button-container' aria-label='expand row' size='small' onClick={() => setOpen(!open)}>
           {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
         </IconButton>
       </div>
-      <div style={{ padding: '4px', gridColumn: 2, gridRow: ppl_idx }}>
-        {role && ['ADMIN', 'ENGINEER'].includes(role) && <IconButton className='button-container' aria-label='delete row' size='small' onClick={showModalDeletePipeline}>
+      <div className='pipeline-row' style={{ gridColumn: 2, gridRow: gridRow }}>
+        {authorized && <IconButton className='button-container' aria-label='delete row' size='small' onClick={showModalDeletePipeline}>
           <DeleteOutlineOutlinedIcon />
         </IconButton>}
       </div>
-      <div style={{ padding: '4px', gridColumn: 3, gridRow: ppl_idx }}>
-        {role && ['ADMIN', 'ENGINEER'].includes(role) && <IconButton className='button-container' aria-label='add row' size='small' onClick={() => duplicatePipeline()}>
+      <div className='pipeline-row' style={{ gridColumn: 3, gridRow: gridRow }}>
+        {authorized && <IconButton className='button-container' aria-label='add row' size='small' onClick={() => duplicatePipeline()}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>}
       </div>
+      {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
+        fieldError={fieldError}
+        hideFieldError={hideFieldErrorModal}
+      />}
       {modalDeletePipeline}
       {pipelineColumns.map(({ columnName, columnType, nullable, record, validator, editRecord }, gridColumn) => {
         gridColumn += 4;
         return (
-          <div key={gridColumn} className='pipeline-row' style={{ gridColumn, gridRow: ppl_idx }}>
+          <div key={gridColumn} className='pipeline-row' style={{ gridColumn, gridRow: gridRow }}>
             <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
           </div>
         );
       })}
       <PipelineData
-        ppl_idx={ppl_idx}
+        gridRow={gridRow}
         key={`${id} data`}
         open={open}
         pipeline={pipeline}
-        validators={validators}
-        isEven={isEven(ppl_idx)}
+        isEven={isEven(gridRow)}
       />
     </>
   );

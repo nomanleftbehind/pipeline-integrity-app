@@ -6,25 +6,17 @@ import MechanicalProperties from './MechanicalProperties';
 import PressureTests from './PressureTests';
 import PigRuns from './PigRuns';
 import Risk from './Risk';
-import { IPipeline, IValidators } from './RenderPipeline';
-import TableCell from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
-import Box from '@mui/material/Box';
+import { IPipeline } from './RenderPipeline';
 import Collapse from '@mui/material/Collapse';
-import Tabs from '@mui/material/Tabs';
-// import Tab from '@mui/material/Tab';
 import { IPipelineProperty } from '../fields/PipelineProperties';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
-// import { TabPanel, a11yProps } from '../../pages/pipeline/[id]/index';
 
 export type ITable = 'pressure tests' | 'pig runs' | 'risk' | 'license change';
 
 export interface IPipelineDataProps {
-  ppl_idx: number;
+  gridRow: number;
   open: boolean;
   pipeline: IPipeline;
-  validators: IValidators;
   isEven: "even" | "odd";
 }
 
@@ -40,17 +32,10 @@ interface ITabPanelProps extends ITabPanelMap {
   handleViewClick: (view: IView) => void;
 }
 
-const border = 'rgb(40 155 151) 2px solid';
-const borderRadius = '6px';
-const color = 'white';
-
-export default function PipelineData({ ppl_idx, open, pipeline, validators, isEven }: IPipelineDataProps) {
-  const [value, setValue] = useState(0);
+export default function PipelineData({ gridRow, open, pipeline, isEven }: IPipelineDataProps) {
   const [view, setView] = useState<IView>('license change');
 
   const { id, createdAt, updatedAt, createdBy, updatedBy, license, segment, currentSubstance, flowCalculationDirection, from, fromFeature, to, toFeature, injectionPoints, upstream, currentStatus, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
-
-  const { licenseMatchPattern, segmentMatchPattern, substanceEnum, fromToMatchPattern, fromToFeatureEnum, statusEnum, lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
 
   const systemFields: IPipelineProperty[] = [
     { columnName: 'createdBy', record: createdBy.email, columnType: 'string' },
@@ -59,10 +44,6 @@ export default function PipelineData({ ppl_idx, open, pipeline, validators, isEv
     { columnName: 'updatedAt', record: updatedAt, columnType: 'date' },
     { columnName: 'id', record: id, columnType: 'string' },
   ];
-
-  const handleChange = (_e: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
 
   const handleViewClick = (view: IView) => {
     setView(view);
@@ -145,7 +126,7 @@ export default function PipelineData({ ppl_idx, open, pipeline, validators, isEv
 
 
   return (
-    <div style={{ gridColumn: '1 / 13', gridRow: ppl_idx + 1 }}>
+    <div style={{ gridColumn: '1 / 13', gridRow: gridRow + 1 }}>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <div className='pipeline-data'>
           <div className='tabs'>

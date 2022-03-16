@@ -1,12 +1,15 @@
 
 import RecordEntry, { IEditRecord } from '../fields/RecordEntry';
 import { useAuth } from '../../context/AuthContext';
+import { IRecordEntryMap } from './LicenseChanges';
 import { IPipeline } from './RenderPipeline';
 import {
   useEditPipelineMutation,
   useValidatorsMechanicalPropertiesQuery,
   PipelinesByIdQueryDocument,
 } from '../../graphql/generated/graphql';
+
+type IMechanicalPropertyRecordEntryMap = IRecordEntryMap & { label: string };
 
 type IMechanicalPropertiesProps = Pick<IPipeline, 'id' | 'length' | 'type' | 'grade' | 'yieldStrength' | 'outsideDiameter' | 'wallThickness' | 'material' | 'mop' | 'internalProtection' | 'createdBy'>
 
@@ -42,52 +45,35 @@ export default function MechanicalProperties({ id, length, type, grade, yieldStr
 
   const { lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = dataValidators?.validators || {};
 
+  const mechanicalProperties: IMechanicalPropertyRecordEntryMap[] = [
+    { columnName: 'length', record: length, label: 'Length (km)', columnType: 'number', nullable: false, validator: lengthMatchPattern, editRecord },
+    { columnName: 'type', record: type, label: 'Type', columnType: 'string', nullable: true, validator: typeEnum, editRecord },
+    { columnName: 'grade', record: grade, label: 'Grade', columnType: 'string', nullable: true, validator: gradeEnum, editRecord },
+    { columnName: 'yieldStrength', record: yieldStrength, label: 'Yield Strength (Mpa)', columnType: 'number', nullable: true, validator: yieldStrengthMatchPattern, editRecord },
+    { columnName: 'outsideDiameter', record: outsideDiameter, label: 'Outside Diameter (mm)', columnType: 'number', nullable: true, validator: outsideDiameterMatchPattern, editRecord },
+    { columnName: 'wallThickness', record: wallThickness, label: 'Wall Thickness (mm)', columnType: 'number', nullable: true, validator: wallThicknessMatchPattern, editRecord },
+    { columnName: 'material', record: material, label: 'Material', columnType: 'string', nullable: true, validator: materialEnum, editRecord },
+    { columnName: 'mop', record: mop, label: 'MOP (kPa)', columnType: 'number', nullable: true, validator: mopMatchPattern, editRecord },
+    { columnName: 'internalProtection', record: internalProtection, label: 'Internal Protection', columnType: 'string', nullable: true, validator: internalProtectionEnum, editRecord },
+  ];
+
+  let gridRow = 0;
+
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: '240px 240px 240px',
-        columnGap: '10px',
-        rowGap: '20px',
-        gridTemplateRows: 'minmax(50px, auto)',
-      }}
-    >
-      <div style={{ gridColumn: 1, gridRow: 1 }}>
-        <div>Length (km)</div>
-        <RecordEntry id={id} createdById={createdBy.id} columnName='length' columnType='number' nullable={false} record={length} validator={lengthMatchPattern} authorized={authorized} editRecord={editRecord} />
-      </div>
-      <div style={{ gridColumn: 2, gridRow: 1 }}>
-        <div>Type</div>
-        <RecordEntry id={id} createdById={createdBy.id} columnName='type' columnType='string' nullable={true} record={type} validator={typeEnum} authorized={authorized} editRecord={editRecord} />
-      </div>
-      <div style={{ gridColumn: 3, gridRow: 1 }}>
-        <div>Grade</div>
-        <RecordEntry id={id} createdById={createdBy.id} columnName='grade' columnType='string' nullable={true} record={grade} validator={gradeEnum} authorized={authorized} editRecord={editRecord} />
-      </div>
-      <div style={{ gridColumn: 1, gridRow: 2 }}>
-        <div>Yield Strength (Mpa)</div>
-        <RecordEntry id={id} createdById={createdBy.id} columnName='yieldStrength' columnType='number' nullable={true} record={yieldStrength} validator={yieldStrengthMatchPattern} authorized={authorized} editRecord={editRecord} />
-      </div>
-      <div style={{ gridColumn: 2, gridRow: 2 }}>
-        <div>Outside Diameter (mm)</div>
-        <RecordEntry id={id} createdById={createdBy.id} columnName='outsideDiameter' columnType='number' nullable={true} record={outsideDiameter} validator={outsideDiameterMatchPattern} authorized={authorized} editRecord={editRecord} />
-      </div>
-      <div style={{ gridColumn: 3, gridRow: 2 }}>
-        <div>Wall Thickness (mm)</div>
-        <RecordEntry id={id} createdById={createdBy.id} columnName='wallThickness' columnType='number' nullable={true} record={wallThickness} validator={wallThicknessMatchPattern} authorized={authorized} editRecord={editRecord} />
-      </div>
-      <div style={{ gridColumn: 1, gridRow: 3 }}>
-        <div>Material</div>
-        <RecordEntry id={id} createdById={createdBy.id} columnName='material' columnType='string' nullable={true} record={material} validator={materialEnum} authorized={authorized} editRecord={editRecord} />
-      </div>
-      <div style={{ gridColumn: 2, gridRow: 3 }}>
-        <div>MOP (kPa)</div>
-        <RecordEntry id={id} createdById={createdBy.id} columnName='mop' columnType='number' nullable={true} record={mop} validator={mopMatchPattern} authorized={authorized} editRecord={editRecord} />
-      </div>
-      <div style={{ gridColumn: 3, gridRow: 3 }}>
-        <div>Internal Protection</div>
-        <RecordEntry id={id} createdById={createdBy.id} columnName='internalProtection' columnType='string' nullable={true} record={internalProtection} validator={internalProtectionEnum} authorized={authorized} editRecord={editRecord} />
-      </div>
+    <div className='mechanical-properties'>
+      {mechanicalProperties.map(({ columnName, label, record, validator, columnType, nullable, editRecord }, i) => {
+        let gridColumn = i;
+        gridColumn = gridColumn % 3 + 1;
+        if (gridColumn === 1) {
+          gridRow += 1;
+        }
+        return (
+          <div key={i} style={{ gridColumn, gridRow }}>
+            <div>{label}</div>
+            <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+          </div>
+        );
+      })}
     </div>
   )
 }

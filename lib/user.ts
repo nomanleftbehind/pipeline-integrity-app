@@ -6,7 +6,8 @@ export const getUser = async (req: NextApiRequest, prisma: PrismaClient) => {
 
   const session = await getLoginSession(req);
   if (session) {
-    return prisma.user.findUnique({ where: { id: session.id } });
+    const user = await prisma.user.findUnique({ where: { id: session.id } });
+    return user;
   }
   return null;
 };
