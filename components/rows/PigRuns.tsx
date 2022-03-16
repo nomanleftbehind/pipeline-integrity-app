@@ -24,26 +24,44 @@ export interface IPigRunsProps {
 export default function PigRuns({ pipelineId }: IPigRunsProps) {
   const { data, loading, error } = usePigRunsByPipelineIdQuery({ variables: { pipelineId } });
   const { data: dataValidators } = useValidatorsPigRunQuery();
-  const [editPigRun, { data: dataEditPigRunMutation }] = useEditPigRunMutation({ refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
-  const [addPigRun, { data: dataAddPigRunMutation }] = useAddPigRunMutation({ variables: { pipelineId }, refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
-  const [deletePigRun, { data: dataDeletePigRunMutation }] = useDeletePigRunMutation({ refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
+  const [editPigRun] = useEditPigRunMutation({
+    refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'],
+    onCompleted: ({ editPigRun }) => {
+      const { error } = editPigRun || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
+  const [addPigRun] = useAddPigRunMutation({
+    variables: { pipelineId },
+    refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'],
+    onCompleted: ({ addPigRun }) => {
+      const { error } = addPigRun || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
+  const [deletePigRun] = useDeletePigRunMutation({
+    refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'],
+    onCompleted: ({ deletePigRun }) => {
+      const { error } = deletePigRun || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
 
-  const [fieldErrorModal, setFieldErrorModal] = useState(false);
+  const initialFieldError = { field: '', message: '' };
+  const [fieldError, setFieldError] = useState(initialFieldError);
 
   const { pigTypeEnum, pigInspectionEnum } = dataValidators?.validators || {};
-  const { error: errorEditPigRun } = dataEditPigRunMutation?.editPigRun || {};
-  const { error: errorAddPigRun } = dataAddPigRunMutation?.addPigRun || {};
-  const { error: errorDeletePigRun } = dataDeletePigRunMutation?.deletePigRun || {};
 
   const { user } = useAuth() || {};
   const { role, id: userId } = user || {};
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
-
-    if (errorEditPigRun) {
-      setFieldErrorModal(true);
-    }
-
     const switchNewRecord = () => {
       switch (columnType) {
         case 'number':
@@ -65,21 +83,15 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
   }
 
   const addRecord = () => {
-    if (errorAddPigRun) {
-      setFieldErrorModal(true);
-    }
     addPigRun();
   }
 
   const deleteRecord = (id: string) => {
-    if (errorDeletePigRun) {
-      setFieldErrorModal(true);
-    }
     deletePigRun({ variables: { id } });
   }
 
   const hideFieldErrorModal = () => {
-    setFieldErrorModal(false);
+    setFieldError(initialFieldError);
   }
 
   const pigRunHeader = [
@@ -106,16 +118,8 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>}
-      {fieldErrorModal && errorAddPigRun && <ModalFieldError
-        fieldError={errorAddPigRun}
-        hideFieldError={hideFieldErrorModal}
-      />}
-      {fieldErrorModal && errorEditPigRun && <ModalFieldError
-        fieldError={errorEditPigRun}
-        hideFieldError={hideFieldErrorModal}
-      />}
-      {fieldErrorModal && errorDeletePigRun && <ModalFieldError
-        fieldError={errorDeletePigRun}
+      {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
+        fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
       />}
       {pigRunHeader.map(({ label }, gridColumn) => {

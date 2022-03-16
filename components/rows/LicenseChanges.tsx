@@ -35,7 +35,8 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
     }
   });
   const [addLicenseChange] = useAddLicenseChangeMutation({
-    variables: { pipelineId }, refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery'],
+    variables: { pipelineId },
+    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery'],
     onCompleted: ({ addLicenseChange }) => {
       const { error } = addLicenseChange || {};
       if (error) {

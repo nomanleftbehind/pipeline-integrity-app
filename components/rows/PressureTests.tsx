@@ -28,26 +28,44 @@ export default function PressureTests({ pipelineId, length, mop, outsideDiameter
 
   const { data, loading, error } = usePressureTestsByPipelineIdQuery({ variables: { pipelineId, length, mop, outsideDiameter, yieldStrength, wallThickness } });
   const { data: dataValidators } = useValidatorsPressureTestQuery();
-  const [editPressureTest, { data: dataEditPressureTestMutation }] = useEditPressureTestMutation({ refetchQueries: [PressureTestsByPipelineIdDocument, 'PressureTestsByPipelineId'] });
-  const [addPressureTest, { data: dataAddPressureTestMutation }] = useAddPressureTestMutation({ variables: { pipelineId }, refetchQueries: [PressureTestsByPipelineIdDocument, 'PressureTestsByPipelineId'] });
-  const [deletePressureTest, { data: dataDeletePressureTestMutation }] = useDeletePressureTestMutation({ refetchQueries: [PressureTestsByPipelineIdDocument, 'PressureTestsByPipelineId'] });
+  const [editPressureTest] = useEditPressureTestMutation({
+    refetchQueries: [PressureTestsByPipelineIdDocument, 'PressureTestsByPipelineId'],
+    onCompleted: ({ editPressureTest }) => {
+      const { error } = editPressureTest || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
+  const [addPressureTest] = useAddPressureTestMutation({
+    variables: { pipelineId },
+    refetchQueries: [PressureTestsByPipelineIdDocument, 'PressureTestsByPipelineId'],
+    onCompleted: ({ addPressureTest }) => {
+      const { error } = addPressureTest || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
+  const [deletePressureTest] = useDeletePressureTestMutation({
+    refetchQueries: [PressureTestsByPipelineIdDocument, 'PressureTestsByPipelineId'],
+    onCompleted: ({ deletePressureTest }) => {
+      const { error } = deletePressureTest || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
 
-  const [fieldErrorModal, setFieldErrorModal] = useState(false);
+  const initialFieldError = { field: '', message: '' };
+  const [fieldError, setFieldError] = useState(initialFieldError);
 
   const { limitingSpecEnum } = dataValidators?.validators || {};
-  const { error: errorEditPressureTest } = dataEditPressureTestMutation?.editPressureTest || {};
-  const { error: errorAddPressureTest } = dataAddPressureTestMutation?.addPressureTest || {};
-  const { error: errorDeletePressureTest } = dataDeletePressureTestMutation?.deletePressureTest || {};
 
   const { user } = useAuth() || {};
   const { role, id: userId } = user || {};
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
-
-    if (errorEditPressureTest) {
-      setFieldErrorModal(true);
-    }
-
     const switchNewRecord = () => {
       switch (columnType) {
         case 'number':
@@ -69,24 +87,16 @@ export default function PressureTests({ pipelineId, length, mop, outsideDiameter
   }
 
   const addRecord = () => {
-    if (errorAddPressureTest) {
-      setFieldErrorModal(true);
-    }
     addPressureTest();
   }
 
   const deleteRecord = (id: string) => {
-    if (errorDeletePressureTest) {
-      setFieldErrorModal(true);
-    }
     deletePressureTest({ variables: { id } });
   }
 
   const hideFieldErrorModal = () => {
-    setFieldErrorModal(false);
+    setFieldError(initialFieldError);
   }
-
-  const boxShadow = '0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)';
 
   const pressureTestHeader = [
     { label: 'Pressure Test Date' },
@@ -119,16 +129,8 @@ export default function PressureTests({ pipelineId, length, mop, outsideDiameter
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>}
-      {fieldErrorModal && errorAddPressureTest && <ModalFieldError
-        fieldError={errorAddPressureTest}
-        hideFieldError={hideFieldErrorModal}
-      />}
-      {fieldErrorModal && errorEditPressureTest && <ModalFieldError
-        fieldError={errorEditPressureTest}
-        hideFieldError={hideFieldErrorModal}
-      />}
-      {fieldErrorModal && errorDeletePressureTest && <ModalFieldError
-        fieldError={errorDeletePressureTest}
+      {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
+        fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
       />}
       {pressureTestHeader.map(({ label }, gridColumn) => {
