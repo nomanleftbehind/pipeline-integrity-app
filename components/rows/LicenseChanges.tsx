@@ -1,4 +1,4 @@
-import { useState, Fragment, useEffect } from 'react';
+import { useState, Fragment } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import {
   useLicenseChangesByPipelineIdQuery,
@@ -25,36 +25,43 @@ interface ILicenseChangesProps {
 export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
   const { data, loading, error } = useLicenseChangesByPipelineIdQuery({ variables: { pipelineId } });
   const { data: dataValidators } = useValidatorsLicenseChangeQuery();
-  const [editLicenseChange, { data: dataEditLicenseChangeMutation }] = useEditLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
-  const [addLicenseChange, { data: dataAddLicenseChangeMutation }] = useAddLicenseChangeMutation({ variables: { pipelineId }, refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
-  const [deleteLicenseChange, { data: dataDeleteLicenseChangeMutation }] = useDeleteLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
+  const [editLicenseChange] = useEditLicenseChangeMutation({
+    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery'],
+    onCompleted: ({ editLicenseChange }) => {
+      const { error } = editLicenseChange || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
+  const [addLicenseChange] = useAddLicenseChangeMutation({
+    variables: { pipelineId }, refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery'],
+    onCompleted: ({ addLicenseChange }) => {
+      const { error } = addLicenseChange || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
+  const [deleteLicenseChange] = useDeleteLicenseChangeMutation({
+    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery'],
+    onCompleted: ({ deleteLicenseChange }) => {
+      const { error } = deleteLicenseChange || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
 
-  const [fieldErrorModal, setFieldErrorModal] = useState(false);
+  const initialFieldError = { field: '', message: '' };
+  const [fieldError, setFieldError] = useState(initialFieldError);
 
   const { statusEnum, substanceEnum } = dataValidators?.validators || {};
-  const { error: errorEditLicenseChange } = dataEditLicenseChangeMutation?.editLicenseChange || {};
-  const { error: errorAddLicenseChange } = dataAddLicenseChangeMutation?.addLicenseChange || {};
-  const { error: errorDeleteLicenseChange } = dataDeleteLicenseChangeMutation?.deleteLicenseChange || {};
 
   const { user } = useAuth() || {};
   const { role, id: userId } = user || {};
 
-  useEffect(() => {
-    // if (errorEditLicenseChange || errorAddLicenseChange || errorDeleteLicenseChange) {
-    //   setFieldErrorModal(true);
-    // }
-    // console.log(fieldErrorModal, errorEditLicenseChange);
-
-  }, [fieldErrorModal, errorEditLicenseChange])
-
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
-
-    if (errorEditLicenseChange) {
-
-      setFieldErrorModal(true);
-    }
-    console.log(errorEditLicenseChange);
-
     const switchNewRecord = () => {
       switch (columnType) {
         case 'number':
@@ -76,21 +83,15 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
   }
 
   const addRecord = () => {
-    if (errorAddLicenseChange) {
-      setFieldErrorModal(true);
-    }
     addLicenseChange();
   }
 
   const deleteRecord = (id: string) => {
-    if (errorDeleteLicenseChange) {
-      setFieldErrorModal(true);
-    }
     deleteLicenseChange({ variables: { id } });
   }
 
   const hideFieldErrorModal = () => {
-    setFieldErrorModal(false);
+    setFieldError(initialFieldError);
   }
 
   const licenseChangeHeader = [
@@ -114,16 +115,8 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>}
-      {fieldErrorModal && errorAddLicenseChange && <ModalFieldError
-        fieldError={errorAddLicenseChange}
-        hideFieldError={hideFieldErrorModal}
-      />}
-      {fieldErrorModal && errorEditLicenseChange && <ModalFieldError
-        fieldError={errorEditLicenseChange}
-        hideFieldError={hideFieldErrorModal}
-      />}
-      {fieldErrorModal && errorDeleteLicenseChange && <ModalFieldError
-        fieldError={errorDeleteLicenseChange}
+      {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
+        fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
       />}
       {licenseChangeHeader.map(({ label }, gridColumn) => {

@@ -1,11 +1,10 @@
 .pipelines-window {
   display: grid;
   grid-template-columns: repeat(3, 30px) 130px 100px 180px 230px 180px 230px repeat(2, 140px) calc(100vw - 1785px);
-  /*auto*/
-  /*minmax(0, auto-fit)*/
-  ;
+
   row-gap: 2px;
   column-gap: 4px;
+  grid-template-rows: 40px min-content;
   grid-auto-rows: min-content;
   border: #00b9f7 2px solid;
   border-radius: 6px;
