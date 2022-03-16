@@ -125,6 +125,7 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
       {loading && <div style={{ padding: '4px', gridColumn: 2, gridRow: 2 }}>Loading...</div>}
       {error && <div style={{ padding: '4px', gridColumn: 2, gridRow: 2 }}>{error.message}</div>}
       {data?.pigRunsByPipelineId?.map((pigRun, gridRow) => {
+        const isLastRow = data.pigRunsByPipelineId?.length === gridRow + 1;
         gridRow += 2;
         if (pigRun) {
           const { id, pigType, dateIn, dateOut, operator, isolationValveFunctionTest, pigSenderReceiverInspection, comment, createdBy, createdAt, updatedBy, updatedAt } = pigRun;
@@ -145,7 +146,7 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
           ];
           return (
             <Fragment key={id}>
-              {authorized && <div className='pig-run-row sticky left' style={{ gridColumn: 1, gridRow }}>
+              {authorized && <div className={`pig-run-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
                   aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>

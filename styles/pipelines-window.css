@@ -63,3 +63,7 @@
 .top+.left {
   margin-top: -2px;
 }
+
+.left.last {
+  margin-bottom: 0;
+}

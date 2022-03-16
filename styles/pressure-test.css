@@ -1,0 +1,15 @@
+.pressure-test {
+  display: grid;
+  grid-template-columns: 30px repeat(5, var(--date-width)) var(--comment-width) 130px repeat(12, max-content);
+  row-gap: 2px;
+  column-gap: 4px;
+  grid-auto-rows: minmax(40px, auto);
+}
+
+.pressure-test>.pipeline-data-view-header {
+  font-size: small;
+}
+
+.pressure-test-row {
+  padding: 2px;
+}

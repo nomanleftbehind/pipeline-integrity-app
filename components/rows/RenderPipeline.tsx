@@ -35,7 +35,6 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
   const { role } = user || {};
   const authorized = role === 'ADMIN' || role === 'ENGINEER';
 
-  const [index, setIndex] = useState(ppl_idx);
   const [open, setOpen] = useState(false);
   const [showDeletePipelineModal, setShowDeletePipelineModal] = useState(false);
 
@@ -101,17 +100,17 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
   return (
     <>
       <div style={{ padding: '4px', gridColumn: 1, gridRow: ppl_idx }}>
-        <IconButton aria-label='expand row' size='small' onClick={() => setOpen(!open)}>
+        <IconButton className='button-container' aria-label='expand row' size='small' onClick={() => setOpen(!open)}>
           {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
         </IconButton>
       </div>
       <div style={{ padding: '4px', gridColumn: 2, gridRow: ppl_idx }}>
-        {role && ['ADMIN', 'ENGINEER'].includes(role) && <IconButton aria-label='delete row' size='small' onClick={showModalDeletePipeline}>
+        {role && ['ADMIN', 'ENGINEER'].includes(role) && <IconButton className='button-container' aria-label='delete row' size='small' onClick={showModalDeletePipeline}>
           <DeleteOutlineOutlinedIcon />
         </IconButton>}
       </div>
       <div style={{ padding: '4px', gridColumn: 3, gridRow: ppl_idx }}>
-        {role && ['ADMIN', 'ENGINEER'].includes(role) && <IconButton aria-label='add row' size='small' onClick={() => duplicatePipeline()}>
+        {role && ['ADMIN', 'ENGINEER'].includes(role) && <IconButton className='button-container' aria-label='add row' size='small' onClick={() => duplicatePipeline()}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>}
       </div>
@@ -135,39 +134,3 @@ export default function RenderPipeline({ ppl_idx, pipeline, validators }: IRende
     </>
   );
 }
-
-/*
-<Fragment>
-<TableRow sx={{ '& > td': { borderBottom: 'unset' } }}>
-  <TableCell>
-    <IconButton aria-label='expand row' size='small' onClick={() => setOpen(!open)}>
-      {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-    </IconButton>
-  </TableCell>
-  {role && ['ADMIN', 'ENGINEER'].includes(role) && <TableCell>
-    <IconButton aria-label='delete row' size='small' onClick={showModalDeletePipeline}>
-      <DeleteOutlineOutlinedIcon />
-    </IconButton>
-    <IconButton aria-label='add row' size='small' onClick={() => duplicatePipeline()}>
-      <AddCircleOutlineOutlinedIcon />
-    </IconButton>
-    {modalDeletePipeline}
-  </TableCell>}
-  <TableCell>
-    <RecordEntry id={id} createdById={createdById} columnName='license' columnType='string' nullable={false} record={license} validator={licenseMatchPattern} authorized={authorized} editRecord={editRecord} />
-  </TableCell>
-  <EntryField id={id} createdById={createdById} record={license} columnName='license' columnType='string' validator={validators?.licenseMatchPattern} />
-  <EntryField id={id} createdById={createdById} record={segment} columnName='segment' columnType='string' validator={validators?.segmentMatchPattern} />
-  <EntryField id={id} createdById={createdById} record={from} columnName='from' columnType='string' validator={validators?.fromToMatchPattern} />
-  <EntryField id={id} createdById={createdById} record={fromFeature} columnName='fromFeature' columnType='string' validator={validators?.fromToFeatureEnum} />
-  <EntryField id={id} createdById={createdById} record={to} columnName='to' columnType='string' validator={validators?.fromToMatchPattern} />
-  <EntryField id={id} createdById={createdById} record={toFeature} columnName='toFeature' columnType='string' validator={validators?.fromToFeatureEnum} />
-</TableRow>
-<PipelineData
-  key={`${id} injection points`}
-  open={open}
-  pipeline={pipeline}
-  validators={validators}
-  isEven={isEven(ppl_idx)}
-/>
-</Fragment>*/

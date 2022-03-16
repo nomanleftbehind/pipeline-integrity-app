@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import {
   useLicenseChangesByPipelineIdQuery,
@@ -23,7 +23,7 @@ interface ILicenseChangesProps {
 }
 
 export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
-  const { data } = useLicenseChangesByPipelineIdQuery({ variables: { pipelineId } });
+  const { data, loading, error } = useLicenseChangesByPipelineIdQuery({ variables: { pipelineId } });
   const { data: dataValidators } = useValidatorsLicenseChangeQuery();
   const [editLicenseChange, { data: dataEditLicenseChangeMutation }] = useEditLicenseChangeMutation({ refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
   const [addLicenseChange, { data: dataAddLicenseChangeMutation }] = useAddLicenseChangeMutation({ variables: { pipelineId }, refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
@@ -39,11 +39,21 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
   const { user } = useAuth() || {};
   const { role, id: userId } = user || {};
 
+  useEffect(() => {
+    // if (errorEditLicenseChange || errorAddLicenseChange || errorDeleteLicenseChange) {
+    //   setFieldErrorModal(true);
+    // }
+    // console.log(fieldErrorModal, errorEditLicenseChange);
+
+  }, [fieldErrorModal, errorEditLicenseChange])
+
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
 
     if (errorEditLicenseChange) {
+
       setFieldErrorModal(true);
     }
+    console.log(errorEditLicenseChange);
 
     const switchNewRecord = () => {
       switch (columnType) {
@@ -93,13 +103,13 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
     { label: 'Updated By' },
     { label: 'Updated At' },
     { label: 'ID' },
-  ]
+  ];
 
   return (
     <div className='license-change'>
       {(role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') && <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
         <IconButton
-          style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
+          className='button-container'
           aria-label='add row' size='small' onClick={addRecord}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
@@ -120,7 +130,10 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
         gridColumn += 2;
         return <div key={gridColumn} className='pipeline-data-view-header sticky top' style={{ gridColumn }}>{label}</div>
       })}
+      {loading && <div style={{ padding: '4px', gridColumn: 2, gridRow: 2 }}>Loading...</div>}
+      {error && <div style={{ padding: '4px', gridColumn: 2, gridRow: 2 }}>{error.message}</div>}
       {data?.licenseChangesByPipelineId?.map((licenseChange, gridRow) => {
+        const isLastRow = data.licenseChangesByPipelineId?.length === gridRow + 1;
         gridRow += 2;
         if (licenseChange) {
           const { id, date, status, substance, linkToDocumentation, createdBy, createdAt, updatedBy, updatedAt } = licenseChange;
@@ -138,7 +151,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
           ];
           return (
             <Fragment key={id}>
-              {authorized && <div className='license-change-row sticky left' style={{ gridColumn: 1, gridRow }}>
+              {authorized && <div className={`license-change-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
                   aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
