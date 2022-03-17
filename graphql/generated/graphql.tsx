@@ -324,7 +324,7 @@ export type Mutation = {
   addLicenseChange?: Maybe<LicenseChangePayload>;
   addPigRun?: Maybe<PigRunPayload>;
   addPressureTest?: Maybe<PressureTestPayload>;
-  addRisk?: Maybe<Risk>;
+  addRisk?: Maybe<RiskPayload>;
   connectPipeline?: Maybe<Pipeline>;
   connectSource?: Maybe<Pipeline>;
   createFacility?: Maybe<Facility>;
@@ -332,7 +332,7 @@ export type Mutation = {
   deletePigRun?: Maybe<PigRunPayload>;
   deletePipeline?: Maybe<PipelinePayload>;
   deletePressureTest?: Maybe<PressureTestPayload>;
-  deleteRisk?: Maybe<Risk>;
+  deleteRisk?: Maybe<RiskPayload>;
   deleteSatellite?: Maybe<Satellite>;
   disconnectPipeline?: Maybe<Pipeline>;
   disconnectSource?: Maybe<Pipeline>;
@@ -343,7 +343,7 @@ export type Mutation = {
   editPigRun?: Maybe<PigRunPayload>;
   editPipeline?: Maybe<PipelinePayload>;
   editPressureTest?: Maybe<PressureTestPayload>;
-  editRisk?: Maybe<Risk>;
+  editRisk?: Maybe<RiskPayload>;
   editSatellite?: Maybe<Satellite>;
   login?: Maybe<AuthPayload>;
   logout?: Maybe<Scalars['Boolean']>;
@@ -1056,6 +1056,11 @@ export type RiskProbabilityInteriorArgs = {
   type?: Maybe<TypeEnum>;
 };
 
+export type RiskPayload = {
+  error?: Maybe<FieldError>;
+  risk?: Maybe<Risk>;
+};
+
 export type Satellite = {
   createdAt: Scalars['DateTime'];
   createdBy: User;
@@ -1477,21 +1482,21 @@ export type EditRiskMutationVariables = Exact<{
 }>;
 
 
-export type EditRiskMutation = { editRisk?: { id: string } | null | undefined };
+export type EditRiskMutation = { editRisk?: { risk?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type AddRiskMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type AddRiskMutation = { addRisk?: { id: string } | null | undefined };
+export type AddRiskMutation = { addRisk?: { risk?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type DeleteRiskMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type DeleteRiskMutation = { deleteRisk?: { id: string } | null | undefined };
+export type DeleteRiskMutation = { deleteRisk?: { risk?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2465,7 +2470,13 @@ export const EditRiskDocument = gql`
     safeguardInternalProtection: $safeguardInternalProtection
     safeguardExternalCoating: $safeguardExternalCoating
   ) {
-    id
+    risk {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
     `;
@@ -2515,7 +2526,13 @@ export type EditRiskMutationOptions = Apollo.BaseMutationOptions<EditRiskMutatio
 export const AddRiskDocument = gql`
     mutation AddRisk($id: String!) {
   addRisk(id: $id) {
-    id
+    risk {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
     `;
@@ -2548,7 +2565,13 @@ export type AddRiskMutationOptions = Apollo.BaseMutationOptions<AddRiskMutation,
 export const DeleteRiskDocument = gql`
     mutation DeleteRisk($id: String!) {
   deleteRisk(id: $id) {
-    id
+    risk {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
     `;

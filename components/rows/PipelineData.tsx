@@ -93,9 +93,8 @@ export default function PipelineData({ gridRow, open, pipeline, isEven }: IPipel
       return <PigRuns pipelineId={id} />
     }
     if (view === 'risk') {
-      <Risk
+      return <Risk
         id={id}
-        open={open}
         flowCalculationDirection={flowCalculationDirection}
         currentSubstance={currentSubstance}
         currentStatus={currentStatus}
@@ -104,7 +103,7 @@ export default function PipelineData({ gridRow, open, pipeline, isEven }: IPipel
       />
     }
     if (view === 'system fields') {
-      <PipelineProperties
+      return <PipelineProperties
         open={open}
         id={id}
         createdById={createdBy.id}

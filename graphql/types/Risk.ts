@@ -261,15 +261,23 @@ export const RiskQuery = extendType({
       }
     })
   }
-})
+});
 
+
+export const RiskPayload = objectType({
+  name: 'RiskPayload',
+  definition(t) {
+    t.field('risk', { type: 'Risk' })
+    t.field('error', { type: 'FieldError' })
+  },
+});
 
 
 export const RiskMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editRisk', {
-      type: 'Risk',
+      type: 'RiskPayload',
       args: {
         id: nonNull(stringArg()),
         aerialReview: booleanArg(),
@@ -292,57 +300,90 @@ export const RiskMutation = extendType({
       },
       resolve: async (_, args, ctx: Context) => {
 
-        return ctx.prisma.risk.update({
-          where: { id: args.id },
-          data: {
-            aerialReview: args.aerialReview,
-            environmentProximityTo: databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, args.environmentProximityTo),
-            geotechnicalSlopeAngleS1: args.geotechnicalSlopeAngleS1,
-            geotechnicalFacingS1: databaseEnumToServerEnum(GeotechnicalFacingEnumMembers, args.geotechnicalFacingS1),
-            geotechnicalHeightS1: args.geotechnicalHeightS1,
-            geotechnicalSlopeAngleS2: args.geotechnicalSlopeAngleS2,
-            geotechnicalFacingS2: databaseEnumToServerEnum(GeotechnicalFacingEnumMembers, args.geotechnicalFacingS2),
-            geotechnicalHeightS2: args.geotechnicalHeightS2,
-            dateSlopeChecked: args.dateSlopeChecked,
-            repairTimeDays: args.repairTimeDays,
-            releaseTimeDays: args.releaseTimeDays,
-            oilReleaseCost: args.oilReleaseCost,
-            gasReleaseCost: args.gasReleaseCost,
-            riskPeople: args.riskPeople,
-            probabilityGeo: args.probabilityGeo,
-            safeguardInternalProtection: args.safeguardInternalProtection,
-            safeguardExternalCoating: args.safeguardExternalCoating,
-            updatedById: String(ctx.user?.id),
-          },
-        })
+        const user = ctx.user;
 
+        if (user && ['ADMIN', 'ENGINEER'].includes(user.role)) {
+
+          const { id: userId } = user;
+
+          const risk = await ctx.prisma.risk.update({
+            where: { id: args.id },
+            data: {
+              aerialReview: args.aerialReview,
+              environmentProximityTo: databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, args.environmentProximityTo),
+              geotechnicalSlopeAngleS1: args.geotechnicalSlopeAngleS1,
+              geotechnicalFacingS1: databaseEnumToServerEnum(GeotechnicalFacingEnumMembers, args.geotechnicalFacingS1),
+              geotechnicalHeightS1: args.geotechnicalHeightS1,
+              geotechnicalSlopeAngleS2: args.geotechnicalSlopeAngleS2,
+              geotechnicalFacingS2: databaseEnumToServerEnum(GeotechnicalFacingEnumMembers, args.geotechnicalFacingS2),
+              geotechnicalHeightS2: args.geotechnicalHeightS2,
+              dateSlopeChecked: args.dateSlopeChecked,
+              repairTimeDays: args.repairTimeDays,
+              releaseTimeDays: args.releaseTimeDays,
+              oilReleaseCost: args.oilReleaseCost,
+              gasReleaseCost: args.gasReleaseCost,
+              riskPeople: args.riskPeople,
+              probabilityGeo: args.probabilityGeo,
+              safeguardInternalProtection: args.safeguardInternalProtection,
+              safeguardExternalCoating: args.safeguardExternalCoating,
+              updatedById: userId,
+            },
+          });
+          return { risk }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
       },
     })
     t.field('addRisk', {
-      type: 'Risk',
+      type: 'RiskPayload',
       args: {
         id: nonNull(stringArg()),
       },
-      resolve: (_parent, { id }, ctx: Context) => {
-        const userId = String(ctx.user?.id);
-        return ctx.prisma.risk.create({
-          data: {
-            id,
-            createdById: userId,
-            updatedById: userId,
+      resolve: async (_, { id }, ctx: Context) => {
+        const user = ctx.user;
+        if (user && ['ADMIN', 'ENGINEER'].includes(user.role)) {
+          const userId = user.id;
+          const risk = await ctx.prisma.risk.create({
+            data: {
+              id,
+              createdById: userId,
+              updatedById: userId,
+            }
+          });
+          return { risk }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
           }
-        })
+        }
       }
     })
     t.field('deleteRisk', {
-      type: 'Risk',
+      type: 'RiskPayload',
       args: {
         id: nonNull(stringArg()),
       },
-      resolve: (_parent, { id }, ctx: Context) => {
-        return ctx.prisma.risk.delete({
-          where: { id }
-        })
+      resolve: async (_, { id }, ctx: Context) => {
+        const user = ctx.user;
+        if (user && ['ADMIN', 'ENGINEER'].includes(user.role)) {
+          const risk = await ctx.prisma.risk.delete({
+            where: { id }
+          });
+          return { risk }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
       }
     })
   }

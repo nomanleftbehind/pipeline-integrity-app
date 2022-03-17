@@ -1,0 +1,14 @@
+.risk {
+  padding: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, min-content);
+  column-gap: 6px;
+  row-gap: 20px;
+  grid-template-rows: minmax(50px, auto);
+  white-space: nowrap;
+}
+
+
+.property-header {
+  font-size: small;
+}

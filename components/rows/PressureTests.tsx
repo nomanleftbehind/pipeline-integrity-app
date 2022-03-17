@@ -15,7 +15,6 @@ import {
 } from '../../graphql/generated/graphql';
 
 import { IPipeline } from './RenderPipeline';
-import { IRecordEntryProps } from '../fields/RecordEntry';
 import { IRecordEntryMap } from './LicenseChanges';
 
 type IPressureTestArgs = Pick<IPipeline, 'length' | 'mop' | 'outsideDiameter' | 'yieldStrength' | 'wallThickness'>;

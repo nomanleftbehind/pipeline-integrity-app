@@ -210,18 +210,36 @@ mutation DeletePigRun($id: String!) {
 
 mutation EditRisk($id: String!, $aerialReview: Boolean, $environmentProximityTo: EnvironmentProximityToEnum, $geotechnicalSlopeAngleS1: Int, $geotechnicalFacingS1: GeotechnicalFacingEnum, $geotechnicalHeightS1: Int, $geotechnicalSlopeAngleS2: Int, $geotechnicalFacingS2: GeotechnicalFacingEnum, $geotechnicalHeightS2: Int, $dateSlopeChecked: DateTime, $repairTimeDays: Int, $releaseTimeDays: Int, $oilReleaseCost: Float, $gasReleaseCost: Float, $riskPeople: Int, $probabilityGeo: Float, $safeguardInternalProtection: Boolean, $safeguardExternalCoating: Boolean) {
   editRisk(id: $id, aerialReview: $aerialReview, environmentProximityTo: $environmentProximityTo, geotechnicalSlopeAngleS1: $geotechnicalSlopeAngleS1, geotechnicalFacingS1: $geotechnicalFacingS1, geotechnicalHeightS1: $geotechnicalHeightS1, geotechnicalSlopeAngleS2: $geotechnicalSlopeAngleS2, geotechnicalFacingS2: $geotechnicalFacingS2, geotechnicalHeightS2: $geotechnicalHeightS2, dateSlopeChecked: $dateSlopeChecked, repairTimeDays: $repairTimeDays, releaseTimeDays: $releaseTimeDays, oilReleaseCost: $oilReleaseCost, gasReleaseCost: $gasReleaseCost, riskPeople: $riskPeople, probabilityGeo: $probabilityGeo, safeguardInternalProtection: $safeguardInternalProtection, safeguardExternalCoating: $safeguardExternalCoating) {
-    id
+    risk {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
 
 mutation AddRisk($id: String!) {
   addRisk(id: $id) {
-    id
+    risk {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
 
 mutation DeleteRisk($id: String!) {
   deleteRisk(id: $id) {
-    id
+    risk {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }

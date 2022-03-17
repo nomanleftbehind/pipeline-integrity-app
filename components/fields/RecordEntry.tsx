@@ -3,21 +3,25 @@ import { ApolloError } from '@apollo/client';
 import IconButton from '@mui/material/IconButton';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { IValidator, IRecord } from '../fields/PipelineProperties';
 import { TextInput, DOMSelectInput } from '../../pages/register';
 import { Formik, Form, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
+import { GetValidatorsQuery } from '../../graphql/generated/graphql';
 
 
 // We are taking `validators` type which is a union of many objects, a string and undefined.
 // We are removing string and undefined and combining all objects into one object that contains all properties.
 // This is because we we will use keys of this type to index validators.
+type InferValue<T> = T[keyof T];
 type RemoveStringFromUnion<T> = T extends infer U ? string extends U ? never : U : never;
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
 type IntersectionToObject<I> = UnionToIntersection<I> extends infer O ? { [K in keyof O]: O[K] } : never;
 
-type IValidatorEnumsToOneObject = IntersectionToObject<UnionToIntersection<RemoveStringFromUnion<NonNullable<IValidator>>>>;
+type IValidators = NonNullable<GetValidatorsQuery['validators']>;
+type IValidator = InferValue<IValidators>;
+type IValidatorEnumsToOneObject = IntersectionToObject<UnionToIntersection<RemoveStringFromUnion<IValidator>>>;
 
+export type IRecord = string | number | boolean | null | undefined;
 export type IColumnType = 'string' | 'number' | 'date' | 'boolean' | 'link';
 
 interface IValues {

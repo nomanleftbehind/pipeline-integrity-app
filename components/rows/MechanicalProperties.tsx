@@ -9,7 +9,7 @@ import {
   PipelinesByIdQueryDocument,
 } from '../../graphql/generated/graphql';
 
-type IMechanicalPropertyRecordEntryMap = IRecordEntryMap & { label: string };
+export type IMechanicalPropertyRecordEntryMap = IRecordEntryMap & { label: string };
 
 type IMechanicalPropertiesProps = Pick<IPipeline, 'id' | 'length' | 'type' | 'grade' | 'yieldStrength' | 'outsideDiameter' | 'wallThickness' | 'material' | 'mop' | 'internalProtection' | 'createdBy'>
 
