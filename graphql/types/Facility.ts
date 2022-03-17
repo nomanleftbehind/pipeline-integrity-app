@@ -1,5 +1,4 @@
 import { nonNull, objectType, inputObjectType, stringArg, extendType, arg } from 'nexus';
-import { SatelliteCreateInput } from './Satellite';
 import { Context } from '../context';
 
 export const Facility = objectType({

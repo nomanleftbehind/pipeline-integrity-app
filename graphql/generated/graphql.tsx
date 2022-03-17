@@ -778,6 +778,7 @@ export type Pipeline = {
   currentStatus?: Maybe<StatusEnum>;
   currentSubstance?: Maybe<SubstanceEnum>;
   downstream?: Maybe<Array<Maybe<Pipeline>>>;
+  firstLicenseDate?: Maybe<Scalars['DateTime']>;
   flowCalculationDirection: FlowCalculationDirectionEnum;
   from: Scalars['String'];
   fromFeature?: Maybe<FromToFeatureEnum>;
@@ -788,7 +789,6 @@ export type Pipeline = {
   length: Scalars['Float'];
   license: Scalars['String'];
   licenseChanges?: Maybe<Array<Maybe<LicenseChange>>>;
-  licenseDate?: Maybe<Scalars['DateTime']>;
   material?: Maybe<MaterialEnum>;
   mop?: Maybe<Scalars['Int']>;
   outsideDiameter?: Maybe<Scalars['Float']>;
@@ -1013,6 +1013,7 @@ export type Risk = {
   id: Scalars['String'];
   oilReleaseCost?: Maybe<Scalars['Float']>;
   pipeline: Pipeline;
+  probabilityExterior?: Maybe<Scalars['Int']>;
   probabilityGeo?: Maybe<Scalars['Float']>;
   probabilityInterior?: Maybe<Scalars['Int']>;
   releaseTimeDays?: Maybe<Scalars['Int']>;
@@ -1046,6 +1047,13 @@ export type RiskEnviroRiskArgs = {
   status?: Maybe<StatusEnum>;
   substance?: Maybe<SubstanceEnum>;
   water?: Maybe<Scalars['Float']>;
+};
+
+
+export type RiskProbabilityExteriorArgs = {
+  firstLicenseDate?: Maybe<Scalars['DateTime']>;
+  material?: Maybe<MaterialEnum>;
+  status?: Maybe<StatusEnum>;
 };
 
 
@@ -1514,14 +1522,14 @@ export type PipelinesByIdQueryQueryVariables = Exact<{
 }>;
 
 
-export type PipelinesByIdQueryQuery = { pipelinesById?: Array<{ id: string, license: string, segment: string, currentSubstance?: SubstanceEnum | null | undefined, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, currentStatus?: StatusEnum | null | undefined, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, satellite?: { id: string, facility?: { id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ id: string, source: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined, upstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type PipelinesByIdQueryQuery = { pipelinesById?: Array<{ id: string, license: string, segment: string, currentSubstance?: SubstanceEnum | null | undefined, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, currentStatus?: StatusEnum | null | undefined, firstLicenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, satellite?: { id: string, facility?: { id: string } | null | undefined } | null | undefined, injectionPoints?: Array<{ id: string, source: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined, upstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ id: string, license: string, segment: string } | null | undefined> | null | undefined, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type PipelineByIdQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type PipelineByIdQuery = { pipelineById?: { id: string, license: string, segment: string, currentSubstance?: SubstanceEnum | null | undefined, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, currentStatus?: StatusEnum | null | undefined, licenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string }, upstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, satellite?: { name: string } | null | undefined, injectionPoints?: Array<{ source: string } | null | undefined> | null | undefined } | null | undefined };
+export type PipelineByIdQuery = { pipelineById?: { id: string, license: string, segment: string, currentSubstance?: SubstanceEnum | null | undefined, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, currentStatus?: StatusEnum | null | undefined, firstLicenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string }, upstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, downstream?: Array<{ license: string, segment: string } | null | undefined> | null | undefined, satellite?: { name: string } | null | undefined, injectionPoints?: Array<{ source: string } | null | undefined> | null | undefined } | null | undefined };
 
 export type PipelineOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1608,10 +1616,11 @@ export type RiskByIdQueryVariables = Exact<{
   status?: Maybe<StatusEnum>;
   type?: Maybe<TypeEnum>;
   material?: Maybe<MaterialEnum>;
+  firstLicenseDate?: Maybe<Scalars['DateTime']>;
 }>;
 
 
-export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, enviroRisk?: number | null | undefined, assetRisk?: number | null | undefined, probabilityInterior?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
+export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, enviroRisk?: number | null | undefined, assetRisk?: number | null | undefined, probabilityInterior?: number | null | undefined, probabilityExterior?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
 
 export type PipelineFlowQueryVariables = Exact<{
   idList: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
@@ -2684,7 +2693,7 @@ export const PipelinesByIdQueryDocument = gql`
     to
     toFeature
     currentStatus
-    licenseDate
+    firstLicenseDate
     length
     type
     grade
@@ -2780,7 +2789,7 @@ export const PipelineByIdDocument = gql`
     to
     toFeature
     currentStatus
-    licenseDate
+    firstLicenseDate
     length
     type
     grade
@@ -3912,7 +3921,7 @@ export type PressureTestsByPipelineIdQueryHookResult = ReturnType<typeof usePres
 export type PressureTestsByPipelineIdLazyQueryHookResult = ReturnType<typeof usePressureTestsByPipelineIdLazyQuery>;
 export type PressureTestsByPipelineIdQueryResult = Apollo.QueryResult<PressureTestsByPipelineIdQuery, PressureTestsByPipelineIdQueryVariables>;
 export const RiskByIdDocument = gql`
-    query RiskById($id: String!, $substance: SubstanceEnum, $oil: Float, $water: Float, $gas: Float, $status: StatusEnum, $type: TypeEnum, $material: MaterialEnum) {
+    query RiskById($id: String!, $substance: SubstanceEnum, $oil: Float, $water: Float, $gas: Float, $status: StatusEnum, $type: TypeEnum, $material: MaterialEnum, $firstLicenseDate: DateTime) {
   riskById(id: $id) {
     id
     aerialReview
@@ -3939,6 +3948,11 @@ export const RiskByIdDocument = gql`
       substance: $substance
       status: $status
       type: $type
+      material: $material
+    )
+    probabilityExterior(
+      status: $status
+      firstLicenseDate: $firstLicenseDate
       material: $material
     )
     oilReleaseCost
@@ -3981,6 +3995,7 @@ export const RiskByIdDocument = gql`
  *      status: // value for 'status'
  *      type: // value for 'type'
  *      material: // value for 'material'
+ *      firstLicenseDate: // value for 'firstLicenseDate'
  *   },
  * });
  */

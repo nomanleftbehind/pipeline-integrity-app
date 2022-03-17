@@ -4,6 +4,94 @@ import { SubstanceEnumMembers, StatusEnumMembers } from './LicenseChange';
 import { totalFluidsCalc } from './InjectionPoint';
 import { Context } from '../context';
 
+import { Risk as IRisk } from '@prisma/client';
+import { NexusGenArgTypes } from '../../node_modules/@types/nexus-typegen/index';
+
+interface IEnviroRiskCalcArgs {
+  environmentProximityTo: IRisk['environmentProximityTo'];
+  substance: NexusGenArgTypes['Risk']['enviroRisk']['substance'];
+  status: NexusGenArgTypes['Risk']['enviroRisk']['status'];
+  oil: NexusGenArgTypes['Risk']['enviroRisk']['oil'];
+  water: NexusGenArgTypes['Risk']['enviroRisk']['water'];
+  gas: NexusGenArgTypes['Risk']['enviroRisk']['gas'];
+}
+
+
+const enviroRiskCalc = ({ environmentProximityTo, substance, status, oil, water, gas }: IEnviroRiskCalcArgs) => {
+  substance = databaseEnumToServerEnum(SubstanceEnumMembers, substance);
+  status = databaseEnumToServerEnum(StatusEnumMembers, status);
+  environmentProximityTo = databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, environmentProximityTo) || null;
+
+  if (oil == null || water == null || gas == null) {
+    return null;
+  } else {
+    const totalFluids = totalFluidsCalc(oil, water, gas);
+    if (status === 'Discontinued' || status === 'Abandoned' || substance === 'FreshWater') {
+      return 1;
+    } else if (substance === 'NaturalGas' || substance === 'FuelGas' || substance === 'SourNaturalGas') {
+
+      if (environmentProximityTo === null) {
+        // no water body and no crossing.  (eg. middle of field)
+        return totalFluids >= 1 ? 2 : 1;
+      } else if (['WC1', 'WB3'].includes(environmentProximityTo)) {
+        // WC1 = Ephemeral, WB3 = non-permanent seasonal/temporary wetlands; Fens; Bogs;
+        return totalFluids >= 1 ? 3 : 2;
+      } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WC3' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB5' || environmentProximityTo === 'WB4') {
+        return totalFluids >= 1 ? 4 : 3;
+      } else {
+        return null;
+      }
+    } else if (substance === 'OilWellEffluent' || substance === 'CrudeOil' || substance === 'SaltWater' /*|| substance === 'Sour Crude'*/) {
+      if (environmentProximityTo === null || environmentProximityTo === 'WB1') {
+        return 2;
+      } else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB3') {
+        return 3;
+      } else if (environmentProximityTo === 'WC3' || environmentProximityTo === 'WB4') {
+        return 4;
+      } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WB5') {
+        return 5;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+}
+
+interface IAssetRiskCalcArgs {
+  repairTimeDays: IRisk['repairTimeDays'];
+  oilReleaseCost: IRisk['oilReleaseCost'];
+  gasReleaseCost: IRisk['gasReleaseCost'];
+  oil: NexusGenArgTypes['Risk']['assetRisk']['oil'];
+  water: NexusGenArgTypes['Risk']['assetRisk']['water'];
+  gas: NexusGenArgTypes['Risk']['assetRisk']['gas'];
+}
+
+const assetRiskCalc = ({ repairTimeDays, oilReleaseCost, gasReleaseCost, oil, water, gas }: IAssetRiskCalcArgs) => {
+  if (oil == null || water == null || gas == null) {
+    return null;
+  } else {
+    const totalFluids = totalFluidsCalc(oil, water, gas);
+    if (totalFluids === 0) {
+      return 1;
+    } else if (gasReleaseCost != null && oilReleaseCost != null && repairTimeDays != null) {
+      const i = (gas * gasReleaseCost + oil * oilReleaseCost) * repairTimeDays
+      if (i >= 1_000_000) {
+        return 4;
+      } else if (i < 1_000_000 && i >= 500_000) {
+        return 3;
+      } else if (i < 500_000 && i > 0) {
+        return 2;
+      } else {
+        return 1
+      }
+    } else {
+      return null;
+    }
+  }
+}
+
 
 export const Risk = objectType({
   name: 'Risk',
@@ -58,47 +146,7 @@ export const Risk = objectType({
         water: floatArg(),
         gas: floatArg(),
       },
-      resolve: async ({ environmentProximityTo }, { substance, status, oil, water, gas }) => {
-        substance = databaseEnumToServerEnum(SubstanceEnumMembers, substance);
-        status = databaseEnumToServerEnum(StatusEnumMembers, status);
-        environmentProximityTo = databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, environmentProximityTo) || null;
-
-        if (oil == null || water == null || gas == null) {
-          return null;
-        } else {
-          const totalFluids = totalFluidsCalc(oil, water, gas);
-          if (status === 'Discontinued' || status === 'Abandoned' || substance === 'FreshWater') {
-            return 1;
-          } else if (substance === 'NaturalGas' || substance === 'FuelGas' || substance === 'SourNaturalGas') {
-
-            if (environmentProximityTo === null) {
-              // no water body and no crossing.  (eg. middle of field)
-              return totalFluids >= 1 ? 2 : 1;
-            } else if (['WC1', 'WB3'].includes(environmentProximityTo)) {
-              // WC1 = Ephemeral, WB3 = non-permanent seasonal/temporary wetlands; Fens; Bogs;
-              return totalFluids >= 1 ? 3 : 2;
-            } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WC3' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB5' || environmentProximityTo === 'WB4') {
-              return totalFluids >= 1 ? 4 : 3;
-            } else {
-              return null;
-            }
-          } else if (substance === 'OilWellEffluent' || substance === 'CrudeOil' || substance === 'SaltWater' /*|| substance === 'Sour Crude'*/) {
-            if (environmentProximityTo === null || environmentProximityTo === 'WB1') {
-              return 2;
-            } else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB3') {
-              return 3;
-            } else if (environmentProximityTo === 'WC3' || environmentProximityTo === 'WB4') {
-              return 4;
-            } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WB5') {
-              return 5;
-            } else {
-              return null;
-            }
-          } else {
-            return null;
-          }
-        }
-      }
+      resolve: async ({ environmentProximityTo }, { substance, status, oil, water, gas }) => enviroRiskCalc({ environmentProximityTo, substance, status, oil, water, gas })
     })
     t.int('assetRisk', {
       args: {
@@ -106,29 +154,7 @@ export const Risk = objectType({
         water: floatArg(),
         gas: floatArg(),
       },
-      resolve: async ({ repairTimeDays, oilReleaseCost, gasReleaseCost }, { oil, water, gas }) => {
-        if (oil == null || water == null || gas == null) {
-          return null;
-        } else {
-          const totalFluids = totalFluidsCalc(oil, water, gas);
-          if (totalFluids === 0) {
-            return 1;
-          } else if (gasReleaseCost != null && oilReleaseCost != null && repairTimeDays != null) {
-            const i = (gas * gasReleaseCost + oil * oilReleaseCost) * repairTimeDays
-            if (i >= 1_000_000) {
-              return 4;
-            } else if (i < 1_000_000 && i >= 500_000) {
-              return 3;
-            } else if (i < 500_000 && i > 0) {
-              return 2;
-            } else {
-              return 1
-            }
-          } else {
-            return null;
-          }
-        }
-      }
+      resolve: async ({ repairTimeDays, oilReleaseCost, gasReleaseCost }, { oil, water, gas }) => assetRiskCalc({ repairTimeDays, oilReleaseCost, gasReleaseCost, oil, water, gas })
     })
     t.int('probabilityInterior', {
       args: {
@@ -174,6 +200,50 @@ export const Risk = objectType({
         } else {
           return null;
         }
+      }
+    })
+    t.int('probabilityExterior', {
+      args: {
+        status: arg({ type: 'StatusEnum' }),
+        firstLicenseDate: arg({ type: 'DateTime' }),
+        material: arg({ type: 'MaterialEnum' }),
+      },
+      resolve: async (_, { status, firstLicenseDate, material }) => {
+        if (status === 'Discontinued' || status === 'Abandoned') {
+          return 1;
+        }
+        if (material === 'Steel') {
+          let vintage;
+          if (firstLicenseDate instanceof Date) {
+            vintage = firstLicenseDate.getFullYear();
+          }
+          if (typeof firstLicenseDate === 'string') {
+            vintage = new Date(firstLicenseDate).getFullYear();
+          }
+          if (typeof vintage === 'number' && vintage > 2000) {
+            return 3;
+          }
+          return 4;
+        }
+        if (material === 'Fiberglass' || material === 'Composite' || material === 'Polyethylene' || material === 'AsbestosCement' || material === 'PolyvinylChloride' || material === 'Aluminum') {
+          return 1;
+        }
+        return null;
+      }
+    })
+    t.int('geoRiskPotential', {
+      args: {
+        substance: arg({ type: 'SubstanceEnum' }),
+        status: arg({ type: 'StatusEnum' }),
+        oil: floatArg(),
+        water: floatArg(),
+        gas: floatArg(),
+      },
+      resolve: async ({ riskPeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, { substance, status, oil, water, gas }) => {
+        const enviroRisk = enviroRiskCalc({ environmentProximityTo, substance, status, oil, water, gas });
+        const assetRisk = assetRiskCalc({ repairTimeDays, oilReleaseCost, gasReleaseCost, oil, water, gas });
+        const result = Math.max(riskPeople || 1, enviroRisk || 1, assetRisk || 1) * (probabilityGeo || 1);
+        return result;
       }
     })
     t.float('oilReleaseCost')

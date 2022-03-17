@@ -564,6 +564,7 @@ type Pipeline {
   currentStatus: StatusEnum
   currentSubstance: SubstanceEnum
   downstream: [Pipeline]
+  firstLicenseDate: DateTime
   flowCalculationDirection: FlowCalculationDirectionEnum!
   from: String!
   fromFeature: FromToFeatureEnum
@@ -574,7 +575,6 @@ type Pipeline {
   length: Float!
   license: String!
   licenseChanges: [LicenseChange]
-  licenseDate: DateTime
   material: MaterialEnum
   mop: Int
   outsideDiameter: Float
@@ -706,6 +706,7 @@ type Risk {
   enviroRisk(gas: Float, oil: Float, status: StatusEnum, substance: SubstanceEnum, water: Float): Int
   environmentProximityTo: EnvironmentProximityToEnum
   gasReleaseCost: Float
+  geoRiskPotential(gas: Float, oil: Float, status: StatusEnum, substance: SubstanceEnum, water: Float): Int
   geotechnicalFacingS1: GeotechnicalFacingEnum
   geotechnicalFacingS2: GeotechnicalFacingEnum
   geotechnicalHeightS1: Int
@@ -715,6 +716,7 @@ type Risk {
   id: String!
   oilReleaseCost: Float
   pipeline: Pipeline!
+  probabilityExterior(firstLicenseDate: DateTime, material: MaterialEnum, status: StatusEnum): Int
   probabilityGeo: Float
   probabilityInterior(material: MaterialEnum, status: StatusEnum, substance: SubstanceEnum, type: TypeEnum): Int
   releaseTimeDays: Int

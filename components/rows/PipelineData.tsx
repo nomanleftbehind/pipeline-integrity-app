@@ -35,7 +35,7 @@ interface ITabPanelProps extends ITabPanelMap {
 export default function PipelineData({ gridRow, open, pipeline, isEven }: IPipelineDataProps) {
   const [view, setView] = useState<IView>('license change');
 
-  const { id, createdAt, updatedAt, createdBy, updatedBy, license, segment, currentSubstance, flowCalculationDirection, from, fromFeature, to, toFeature, injectionPoints, upstream, currentStatus, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection } = pipeline;
+  const { id, createdAt, updatedAt, createdBy, updatedBy, license, segment, currentSubstance, flowCalculationDirection, from, fromFeature, to, toFeature, injectionPoints, upstream, currentStatus, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, firstLicenseDate } = pipeline;
 
   const systemFields: IPipelineProperty[] = [
     { columnName: 'createdBy', record: createdBy.email, columnType: 'string' },
@@ -100,6 +100,7 @@ export default function PipelineData({ gridRow, open, pipeline, isEven }: IPipel
         currentStatus={currentStatus}
         type={type}
         material={material}
+        firstLicenseDate={firstLicenseDate}
       />
     }
     if (view === 'system fields') {

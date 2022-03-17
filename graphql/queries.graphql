@@ -24,7 +24,7 @@ query pipelinesByIdQuery($table: String, $id: String) {
     to
     toFeature
     currentStatus
-    licenseDate
+    firstLicenseDate
     length
     type
     grade
@@ -90,7 +90,7 @@ query PipelineById($id: String!) {
     to
     toFeature
     currentStatus
-    licenseDate
+    firstLicenseDate
     length
     type
     grade
@@ -797,7 +797,7 @@ query PressureTestsByPipelineId($pipelineId: String!, $length: Float!, $mop: Int
   }
 }
 
-query RiskById($id: String!, $substance: SubstanceEnum, $oil: Float, $water: Float, $gas: Float, $status: StatusEnum, $type: TypeEnum, $material: MaterialEnum) {
+query RiskById($id: String!, $substance: SubstanceEnum, $oil: Float, $water: Float, $gas: Float, $status: StatusEnum, $type: TypeEnum, $material: MaterialEnum, $firstLicenseDate: DateTime) {
   riskById(id: $id) {
     id
     aerialReview
@@ -815,6 +815,7 @@ query RiskById($id: String!, $substance: SubstanceEnum, $oil: Float, $water: Flo
     enviroRisk(substance: $substance, status: $status, oil: $oil, water: $water, gas: $gas)
     assetRisk(oil: $oil, water: $water, gas: $gas)
     probabilityInterior(substance: $substance, status: $status, type: $type, material: $material)
+    probabilityExterior(status: $status, firstLicenseDate: $firstLicenseDate, material: $material)
     oilReleaseCost
     gasReleaseCost
     riskPeople

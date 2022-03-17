@@ -75,7 +75,17 @@ export const Pipeline = objectType({
         return result;
       }
     })
-    t.field('licenseDate', { type: 'DateTime' })
+    t.field('firstLicenseDate', {
+      type: 'DateTime',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const { date } = await ctx.prisma.licenseChange.findFirst({
+          where: { pipelineId: id },
+          orderBy: { date: 'asc' },
+          select: { date: true },
+        }) || {};
+        return date || null;
+      }
+    })
     t.nonNull.float('length')
     t.field('type', {
       type: 'TypeEnum',

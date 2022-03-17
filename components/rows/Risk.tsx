@@ -23,10 +23,11 @@ export interface IRiskProps {
   currentStatus: IPipeline['currentStatus'];
   type: IPipeline['type'];
   material: IPipeline['material'];
+  firstLicenseDate: IPipeline['firstLicenseDate'];
 }
 
 
-export default function Risk({ id, flowCalculationDirection, currentSubstance, currentStatus, type, material }: IRiskProps) {
+export default function Risk({ id, flowCalculationDirection, currentSubstance, currentStatus, type, material, firstLicenseDate }: IRiskProps) {
 
   const { user } = useAuth() || {};
   const { role } = user || {};
@@ -36,10 +37,10 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
     variables: { idList: [id], flowCalculationDirection },
     onCompleted: ({ pipelineFlow }) => {
       const { oil, water, gas } = pipelineFlow?.[0] || {};
-      riskById({ variables: { id, substance: currentSubstance, status: currentStatus, type, material, oil, water, gas } })
+      riskById({ variables: { id, substance: currentSubstance, status: currentStatus, type, material, firstLicenseDate, oil, water, gas } })
     },
     onError: ({ name, message }) => {
-      riskById({ variables: { id, substance: currentSubstance, status: currentStatus, type, material } });
+      riskById({ variables: { id, substance: currentSubstance, status: currentStatus, type, material, firstLicenseDate } });
       setFieldError({
         field: name,
         message
@@ -127,29 +128,30 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
 
   if (data?.riskById) {
     const { id, aerialReview, environmentProximityTo, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS1, geotechnicalFacingS2, geotechnicalHeightS2, geotechnicalSlopeAngleS2,
-      dateSlopeChecked, oilReleaseCost, gasReleaseCost, probabilityGeo, probabilityInterior, repairTimeDays, releaseTimeDays, costPerM3Released, riskPeople, enviroRisk, assetRisk, safeguardExternalCoating, safeguardInternalProtection, createdBy, createdAt, updatedBy, updatedAt } = data.riskById;
+      dateSlopeChecked, oilReleaseCost, gasReleaseCost, probabilityGeo, probabilityInterior, probabilityExterior, repairTimeDays, releaseTimeDays, costPerM3Released, riskPeople, enviroRisk, assetRisk, safeguardExternalCoating, safeguardInternalProtection, createdBy, createdAt, updatedBy, updatedAt } = data.riskById;
     const { environmentProximityToEnum, geotechnicalFacingEnum } = dataValidatorsRisk?.validators || {};
 
     const riskProperties: IRiskPropertyRecordEntryMap[] = [
       { columnName: 'aerialReview', record: aerialReview, columnType: 'boolean', label: 'Aerial Review', nullable: true, editRecord },
       { columnName: 'environmentProximityTo', record: environmentProximityTo, columnType: 'string', validator: environmentProximityToEnum, label: 'Environment Proximity To', nullable: true, editRecord },
+      { columnName: 'geotechnicalSlopeAngleS1', record: geotechnicalSlopeAngleS1, columnType: 'number', label: 'Geotechnical Slope Angle S1', nullable: true, editRecord },
       { columnName: 'geotechnicalFacingS1', record: geotechnicalFacingS1, columnType: 'string', validator: geotechnicalFacingEnum, label: 'Geotechnical Facing S1', nullable: true, editRecord },
       { columnName: 'geotechnicalHeightS1', record: geotechnicalHeightS1, columnType: 'number', label: 'Geotechnical Height S1', nullable: true, editRecord },
-      { columnName: 'geotechnicalSlopeAngleS1', record: geotechnicalSlopeAngleS1, columnType: 'number', label: 'Geotechnical Slope Angle S1', nullable: true, editRecord },
+      { columnName: 'geotechnicalSlopeAngleS2', record: geotechnicalSlopeAngleS2, columnType: 'number', label: 'Geotechnical Slope Angle S2', nullable: true, editRecord },
       { columnName: 'geotechnicalFacingS2', record: geotechnicalFacingS2, columnType: 'string', validator: geotechnicalFacingEnum, label: 'Geotechnical Facing S2', nullable: true, editRecord },
       { columnName: 'geotechnicalHeightS2', record: geotechnicalHeightS2, columnType: 'number', label: 'Geotechnical Height S2', nullable: true, editRecord },
-      { columnName: 'geotechnicalSlopeAngleS2', record: geotechnicalSlopeAngleS2, columnType: 'number', label: 'Geotechnical Slope Angle S2', nullable: true, editRecord },
       { columnName: 'dateSlopeChecked', record: dateSlopeChecked, columnType: 'date', label: 'Date Slope Checked', nullable: true, editRecord },
-      { columnName: 'oilReleaseCost', record: oilReleaseCost, columnType: 'number', label: 'Oil Release Cost', nullable: true, editRecord },
-      { columnName: 'gasReleaseCost', record: gasReleaseCost, columnType: 'number', label: 'Gas Release Cost', nullable: true, editRecord },
-      { columnName: 'probabilityGeo', record: probabilityGeo, columnType: 'number', label: 'Probability Geo', nullable: true, editRecord },
-      { columnName: 'probabilityInterior', record: probabilityInterior, columnType: 'number', label: 'Probability Interior', nullable: true },
       { columnName: 'repairTimeDays', record: repairTimeDays, columnType: 'number', label: 'Repair Time Days', nullable: true, editRecord },
       { columnName: 'releaseTimeDays', record: releaseTimeDays, columnType: 'number', label: 'Release Time Days', nullable: true, editRecord },
       { columnName: 'costPerM3Released', record: costPerM3Released, columnType: 'number', label: 'Cost Per m³ Released', nullable: true },
+      { columnName: 'oilReleaseCost', record: oilReleaseCost, columnType: 'number', label: 'Oil Release Cost', nullable: true, editRecord },
+      { columnName: 'gasReleaseCost', record: gasReleaseCost, columnType: 'number', label: 'Gas Release Cost', nullable: true, editRecord },
       { columnName: 'riskPeople', record: riskPeople, columnType: 'number', label: 'Risk People', nullable: true, editRecord },
       { columnName: 'enviroRisk', record: enviroRisk, columnType: 'number', label: 'Enviro Risk', nullable: true },
       { columnName: 'assetRisk', record: assetRisk, columnType: 'number', label: 'Asset Risk', nullable: true },
+      { columnName: 'probabilityGeo', record: probabilityGeo, columnType: 'number', label: 'Probability Geo', nullable: true, editRecord },
+      { columnName: 'probabilityInterior', record: probabilityInterior, columnType: 'number', label: 'Probability Interior', nullable: true },
+      { columnName: 'probabilityExterior', record: probabilityExterior, columnType: 'number', label: 'Probability Exterior', nullable: true },
       { columnName: 'safeguardExternalCoating', record: safeguardExternalCoating, columnType: 'boolean', label: 'Safeguard External Coating', nullable: true, editRecord },
       { columnName: 'safeguardInternalProtection', record: safeguardInternalProtection, columnType: 'boolean', label: 'Safeguard Internal Protection', nullable: true, editRecord },
       { columnName: 'createdBy', record: createdBy.email, columnType: 'string', label: 'Created By', nullable: false },
