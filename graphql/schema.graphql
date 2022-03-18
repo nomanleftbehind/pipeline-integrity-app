@@ -699,14 +699,15 @@ type Query {
 type Risk {
   aerialReview: Boolean
   assetRisk(gas: Float, oil: Float, water: Float): Int
-  costPerM3Released(gas: Float, oil: Float, substance: SubstanceEnum, water: Float): Float
+  costPerM3Released(currentSubstance: SubstanceEnum, gas: Float, oil: Float, water: Float): Float
   createdAt: DateTime!
   createdBy: User!
   dateSlopeChecked: DateTime
-  enviroRisk(gas: Float, oil: Float, status: StatusEnum, substance: SubstanceEnum, water: Float): Int
+  enviroRisk(currentStatus: StatusEnum, currentSubstance: SubstanceEnum, gas: Float, oil: Float, water: Float): Int
   environmentProximityTo: EnvironmentProximityToEnum
+  externalRiskPotential(currentStatus: StatusEnum, currentSubstance: SubstanceEnum, firstLicenseDate: DateTime, gas: Float, material: MaterialEnum, oil: Float, water: Float): Int
   gasReleaseCost: Float
-  geoRiskPotential(gas: Float, oil: Float, status: StatusEnum, substance: SubstanceEnum, water: Float): Int
+  geoRiskPotential(currentStatus: StatusEnum, currentSubstance: SubstanceEnum, gas: Float, oil: Float, water: Float): Int
   geotechnicalFacingS1: GeotechnicalFacingEnum
   geotechnicalFacingS2: GeotechnicalFacingEnum
   geotechnicalHeightS1: Int
@@ -714,11 +715,12 @@ type Risk {
   geotechnicalSlopeAngleS1: Int
   geotechnicalSlopeAngleS2: Int
   id: String!
+  internalRiskPotential(currentStatus: StatusEnum, currentSubstance: SubstanceEnum, gas: Float, material: MaterialEnum, oil: Float, type: TypeEnum, water: Float): Int
   oilReleaseCost: Float
   pipeline: Pipeline!
-  probabilityExterior(firstLicenseDate: DateTime, material: MaterialEnum, status: StatusEnum): Int
+  probabilityExterior(currentStatus: StatusEnum, firstLicenseDate: DateTime, material: MaterialEnum): Int
   probabilityGeo: Float
-  probabilityInterior(material: MaterialEnum, status: StatusEnum, substance: SubstanceEnum, type: TypeEnum): Int
+  probabilityInterior(currentStatus: StatusEnum, currentSubstance: SubstanceEnum, material: MaterialEnum, type: TypeEnum): Int
   releaseTimeDays: Int
   repairTimeDays: Int
   riskPeople: Int

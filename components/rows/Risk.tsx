@@ -37,10 +37,10 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
     variables: { idList: [id], flowCalculationDirection },
     onCompleted: ({ pipelineFlow }) => {
       const { oil, water, gas } = pipelineFlow?.[0] || {};
-      riskById({ variables: { id, substance: currentSubstance, status: currentStatus, type, material, firstLicenseDate, oil, water, gas } })
+      riskById({ variables: { id, currentSubstance, currentStatus, type, material, firstLicenseDate, oil, water, gas } })
     },
     onError: ({ name, message }) => {
-      riskById({ variables: { id, substance: currentSubstance, status: currentStatus, type, material, firstLicenseDate } });
+      riskById({ variables: { id, currentSubstance, currentStatus, type, material, firstLicenseDate } });
       setFieldError({
         field: name,
         message
@@ -127,8 +127,9 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
 
 
   if (data?.riskById) {
-    const { id, aerialReview, environmentProximityTo, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS1, geotechnicalFacingS2, geotechnicalHeightS2, geotechnicalSlopeAngleS2,
-      dateSlopeChecked, oilReleaseCost, gasReleaseCost, probabilityGeo, probabilityInterior, probabilityExterior, repairTimeDays, releaseTimeDays, costPerM3Released, riskPeople, enviroRisk, assetRisk, safeguardExternalCoating, safeguardInternalProtection, createdBy, createdAt, updatedBy, updatedAt } = data.riskById;
+    const { id, aerialReview, environmentProximityTo, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS1, geotechnicalFacingS2, geotechnicalHeightS2, geotechnicalSlopeAngleS2, dateSlopeChecked,
+      riskPeople, enviroRisk, assetRisk, probabilityGeo, probabilityInterior, probabilityExterior, geoRiskPotential, internalRiskPotential, externalRiskPotential,
+      oilReleaseCost, gasReleaseCost, repairTimeDays, releaseTimeDays, costPerM3Released, safeguardExternalCoating, safeguardInternalProtection, createdBy, createdAt, updatedBy, updatedAt } = data.riskById;
     const { environmentProximityToEnum, geotechnicalFacingEnum } = dataValidatorsRisk?.validators || {};
 
     const riskProperties: IRiskPropertyRecordEntryMap[] = [
@@ -152,6 +153,9 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
       { columnName: 'probabilityGeo', record: probabilityGeo, columnType: 'number', label: 'Probability Geo', nullable: true, editRecord },
       { columnName: 'probabilityInterior', record: probabilityInterior, columnType: 'number', label: 'Probability Interior', nullable: true },
       { columnName: 'probabilityExterior', record: probabilityExterior, columnType: 'number', label: 'Probability Exterior', nullable: true },
+      { columnName: 'geoRiskPotential', record: geoRiskPotential, columnType: 'number', label: 'Geo Risk Potential', nullable: true },
+      { columnName: 'internalRiskPotential', record: internalRiskPotential, columnType: 'number', label: 'Internal Risk Potential', nullable: true },
+      { columnName: 'externalRiskPotential', record: externalRiskPotential, columnType: 'number', label: 'External Risk Potential', nullable: true },
       { columnName: 'safeguardExternalCoating', record: safeguardExternalCoating, columnType: 'boolean', label: 'Safeguard External Coating', nullable: true, editRecord },
       { columnName: 'safeguardInternalProtection', record: safeguardInternalProtection, columnType: 'boolean', label: 'Safeguard Internal Protection', nullable: true, editRecord },
       { columnName: 'createdBy', record: createdBy.email, columnType: 'string', label: 'Created By', nullable: false },
@@ -163,12 +167,12 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
     let gridRow = 0;
 
     return (
-      <>
+      <div className='risk'>
         {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
           fieldError={fieldError}
           hideFieldError={hideFieldErrorModal}
         />}
-        <div className='risk'>
+        <div className='risk-fields'>
           {riskProperties.map(({ columnName, label, record, validator, columnType, nullable, editRecord }, i) => {
             let gridColumn = i;
             gridColumn = gridColumn % 3 + 1;
@@ -183,8 +187,65 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
             );
           })}
         </div>
-      </>
+        <div>
+          <RiskMatrix
+            label='Geo Risk Potential'
+          />
+        </div>
+      </div>
     );
   }
   return null;
+}
+
+
+interface IRiskMatrixProps {
+  label: string;
+}
+
+const RiskMatrix = ({ label }: IRiskMatrixProps) => {
+
+  let gridRow = 3;
+  return (
+    <div className='risk-matrix'>
+      <div style={{ gridColumn: '1 / 8', gridRow: 1, backgroundColor: 'white', fontSize: 'small', fontWeight: 'bold' }}>{label}</div>
+      <div style={{ gridColumn: '3 / 8', gridRow: 2, border: 'black 1px solid' }}>Consequence</div>
+      <div className='risk consequence-1' style={{ gridColumn: 3, gridRow: 3, border: 'black 1px solid' }}>1 Negligible</div>
+      <div className='risk consequence-2' style={{ gridColumn: 4, gridRow: 3, border: 'black 1px solid' }}>2 Minor</div>
+      <div className='risk consequence-3' style={{ gridColumn: 5, gridRow: 3, border: 'black 1px solid' }}>3 Moderate</div>
+      <div className='risk consequence-4' style={{ gridColumn: 6, gridRow: 3, border: 'black 1px solid' }}>4 Major</div>
+      <div className='risk consequence-5' style={{ gridColumn: 7, gridRow: 3, border: 'black 1px solid' }}>5 Catastrophic</div>
+      <div className='risk likelihood-5' style={{ gridColumn: 2, gridRow: 4, border: 'black 1px solid' }}>5 Frequent</div>
+      <div className='risk likelihood-4' style={{ gridColumn: 2, gridRow: 5, border: 'black 1px solid' }}>4 Likely</div>
+      <div className='risk likelihood-3' style={{ gridColumn: 2, gridRow: 6, border: 'black 1px solid' }}>3 Possible</div>
+      <div className='risk likelihood-2' style={{ gridColumn: 2, gridRow: 7, border: 'black 1px solid' }}>2 Unlikely</div>
+      <div className='risk likelihood-1' style={{ gridColumn: 2, gridRow: 8, border: 'black 1px solid' }}>1 Rare</div>
+      <div style={{ gridColumn: 1, gridRow: '4 / 9', border: 'black 1px solid', writingMode: 'vertical-rl', textOrientation: 'mixed' }}>Likelihood</div>
+      {Array.from(Array(25).keys()).map((gridColumn, i) => {
+        gridColumn = gridColumn % 5 + 3;
+        if (gridColumn === 3) {
+          gridRow += 1;
+        }
+        const likelihood = 9 - gridRow;
+        const consequence = gridColumn - 2;
+        const riskPotential = likelihood * consequence;
+
+        let backgroundColor;
+        if (riskPotential < 4) {
+          backgroundColor = 'green';
+        }
+        if (riskPotential >= 4 && riskPotential < 8) {
+          backgroundColor = 'yellow';
+        }
+        if (riskPotential > 7 && riskPotential < 12) {
+          backgroundColor = 'orange';
+        }
+        if (riskPotential > 11) {
+          backgroundColor = 'red';
+        }
+        const className = `risk likelihood-${likelihood} consequence-${consequence}`
+        return <div key={i} className={className} style={{ gridColumn, gridRow, backgroundColor, border: 'black 1px solid' }}></div>
+      })}
+    </div>
+  );
 }
