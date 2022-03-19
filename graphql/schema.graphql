@@ -698,16 +698,15 @@ type Query {
 
 type Risk {
   aerialReview: Boolean
-  assetRisk(gas: Float, oil: Float, water: Float): Int
-  costPerM3Released(currentSubstance: SubstanceEnum, gas: Float, oil: Float, water: Float): Float
+  conequenceMax: Int
+  consequenceAsset: Int
+  consequenceEnviro: Int
+  costPerM3Released: Float
   createdAt: DateTime!
   createdBy: User!
   dateSlopeChecked: DateTime
-  enviroRisk(currentStatus: StatusEnum, currentSubstance: SubstanceEnum, gas: Float, oil: Float, water: Float): Int
   environmentProximityTo: EnvironmentProximityToEnum
-  externalRiskPotential(currentStatus: StatusEnum, currentSubstance: SubstanceEnum, firstLicenseDate: DateTime, gas: Float, material: MaterialEnum, oil: Float, water: Float): Int
   gasReleaseCost: Float
-  geoRiskPotential(currentStatus: StatusEnum, currentSubstance: SubstanceEnum, gas: Float, oil: Float, water: Float): Int
   geotechnicalFacingS1: GeotechnicalFacingEnum
   geotechnicalFacingS2: GeotechnicalFacingEnum
   geotechnicalHeightS1: Int
@@ -715,15 +714,17 @@ type Risk {
   geotechnicalSlopeAngleS1: Int
   geotechnicalSlopeAngleS2: Int
   id: String!
-  internalRiskPotential(currentStatus: StatusEnum, currentSubstance: SubstanceEnum, gas: Float, material: MaterialEnum, oil: Float, type: TypeEnum, water: Float): Int
   oilReleaseCost: Float
   pipeline: Pipeline!
-  probabilityExterior(currentStatus: StatusEnum, firstLicenseDate: DateTime, material: MaterialEnum): Int
+  probabilityExterior: Int
   probabilityGeo: Float
-  probabilityInterior(currentStatus: StatusEnum, currentSubstance: SubstanceEnum, material: MaterialEnum, type: TypeEnum): Int
+  probabilityInterior: Int
   releaseTimeDays: Int
   repairTimeDays: Int
   riskPeople: Int
+  riskPotentialExternal: Int
+  riskPotentialGeo: Int
+  riskPotentialInternal: Int
   safeguardExternalCoating: Boolean
   safeguardInternalProtection: Boolean
   updatedAt: DateTime!

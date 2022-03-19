@@ -996,16 +996,15 @@ export type QueryRiskByIdArgs = {
 
 export type Risk = {
   aerialReview?: Maybe<Scalars['Boolean']>;
-  assetRisk?: Maybe<Scalars['Int']>;
+  conequenceMax?: Maybe<Scalars['Int']>;
+  consequenceAsset?: Maybe<Scalars['Int']>;
+  consequenceEnviro?: Maybe<Scalars['Int']>;
   costPerM3Released?: Maybe<Scalars['Float']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
   dateSlopeChecked?: Maybe<Scalars['DateTime']>;
-  enviroRisk?: Maybe<Scalars['Int']>;
   environmentProximityTo?: Maybe<EnvironmentProximityToEnum>;
-  externalRiskPotential?: Maybe<Scalars['Int']>;
   gasReleaseCost?: Maybe<Scalars['Float']>;
-  geoRiskPotential?: Maybe<Scalars['Int']>;
   geotechnicalFacingS1?: Maybe<GeotechnicalFacingEnum>;
   geotechnicalFacingS2?: Maybe<GeotechnicalFacingEnum>;
   geotechnicalHeightS1?: Maybe<Scalars['Int']>;
@@ -1013,7 +1012,6 @@ export type Risk = {
   geotechnicalSlopeAngleS1?: Maybe<Scalars['Int']>;
   geotechnicalSlopeAngleS2?: Maybe<Scalars['Int']>;
   id: Scalars['String'];
-  internalRiskPotential?: Maybe<Scalars['Int']>;
   oilReleaseCost?: Maybe<Scalars['Float']>;
   pipeline: Pipeline;
   probabilityExterior?: Maybe<Scalars['Int']>;
@@ -1022,80 +1020,13 @@ export type Risk = {
   releaseTimeDays?: Maybe<Scalars['Int']>;
   repairTimeDays?: Maybe<Scalars['Int']>;
   riskPeople?: Maybe<Scalars['Int']>;
+  riskPotentialExternal?: Maybe<Scalars['Int']>;
+  riskPotentialGeo?: Maybe<Scalars['Int']>;
+  riskPotentialInternal?: Maybe<Scalars['Int']>;
   safeguardExternalCoating?: Maybe<Scalars['Boolean']>;
   safeguardInternalProtection?: Maybe<Scalars['Boolean']>;
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
-};
-
-
-export type RiskAssetRiskArgs = {
-  gas?: Maybe<Scalars['Float']>;
-  oil?: Maybe<Scalars['Float']>;
-  water?: Maybe<Scalars['Float']>;
-};
-
-
-export type RiskCostPerM3ReleasedArgs = {
-  currentSubstance?: Maybe<SubstanceEnum>;
-  gas?: Maybe<Scalars['Float']>;
-  oil?: Maybe<Scalars['Float']>;
-  water?: Maybe<Scalars['Float']>;
-};
-
-
-export type RiskEnviroRiskArgs = {
-  currentStatus?: Maybe<StatusEnum>;
-  currentSubstance?: Maybe<SubstanceEnum>;
-  gas?: Maybe<Scalars['Float']>;
-  oil?: Maybe<Scalars['Float']>;
-  water?: Maybe<Scalars['Float']>;
-};
-
-
-export type RiskExternalRiskPotentialArgs = {
-  currentStatus?: Maybe<StatusEnum>;
-  currentSubstance?: Maybe<SubstanceEnum>;
-  firstLicenseDate?: Maybe<Scalars['DateTime']>;
-  gas?: Maybe<Scalars['Float']>;
-  material?: Maybe<MaterialEnum>;
-  oil?: Maybe<Scalars['Float']>;
-  water?: Maybe<Scalars['Float']>;
-};
-
-
-export type RiskGeoRiskPotentialArgs = {
-  currentStatus?: Maybe<StatusEnum>;
-  currentSubstance?: Maybe<SubstanceEnum>;
-  gas?: Maybe<Scalars['Float']>;
-  oil?: Maybe<Scalars['Float']>;
-  water?: Maybe<Scalars['Float']>;
-};
-
-
-export type RiskInternalRiskPotentialArgs = {
-  currentStatus?: Maybe<StatusEnum>;
-  currentSubstance?: Maybe<SubstanceEnum>;
-  gas?: Maybe<Scalars['Float']>;
-  material?: Maybe<MaterialEnum>;
-  oil?: Maybe<Scalars['Float']>;
-  type?: Maybe<TypeEnum>;
-  water?: Maybe<Scalars['Float']>;
-};
-
-
-export type RiskProbabilityExteriorArgs = {
-  currentStatus?: Maybe<StatusEnum>;
-  firstLicenseDate?: Maybe<Scalars['DateTime']>;
-  material?: Maybe<MaterialEnum>;
-};
-
-
-export type RiskProbabilityInteriorArgs = {
-  currentStatus?: Maybe<StatusEnum>;
-  currentSubstance?: Maybe<SubstanceEnum>;
-  material?: Maybe<MaterialEnum>;
-  type?: Maybe<TypeEnum>;
 };
 
 export type RiskPayload = {
@@ -1615,7 +1546,7 @@ export type ValidatorsPressureTestQuery = { validators?: { limitingSpecEnum: { A
 export type ValidatorsRiskQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorsRiskQuery = { validators?: { environmentProximityToEnum: { WB1: string, WB3: string, WB4: string, WB5: string, WC1: string, WC2: string, WC3: string, WC4: string }, geotechnicalFacingEnum: { N: string, NE: string, E: string, SE: string, S: string, SW: string, W: string, NW: string } } | null | undefined };
+export type ValidatorsRiskQuery = { validators?: { environmentProximityToEnum: { WB1: string, WB3: string, WB4: string, WB5: string, WC1: string, WC2: string, WC3: string, WC4: string }, geotechnicalFacingEnum: { N: string, NE: string, E: string, SE: string, S: string, SW: string, W: string, NW: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string } } | null | undefined };
 
 export type ValidatorUserRoleQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1643,18 +1574,10 @@ export type PressureTestsByPipelineIdQuery = { pressureTestsByPipelineId?: Array
 
 export type RiskByIdQueryVariables = Exact<{
   id: Scalars['String'];
-  currentSubstance?: Maybe<SubstanceEnum>;
-  oil?: Maybe<Scalars['Float']>;
-  water?: Maybe<Scalars['Float']>;
-  gas?: Maybe<Scalars['Float']>;
-  currentStatus?: Maybe<StatusEnum>;
-  type?: Maybe<TypeEnum>;
-  material?: Maybe<MaterialEnum>;
-  firstLicenseDate?: Maybe<Scalars['DateTime']>;
 }>;
 
 
-export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, enviroRisk?: number | null | undefined, assetRisk?: number | null | undefined, probabilityInterior?: number | null | undefined, probabilityExterior?: number | null | undefined, geoRiskPotential?: number | null | undefined, internalRiskPotential?: number | null | undefined, externalRiskPotential?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
+export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, consequenceEnviro?: number | null | undefined, consequenceAsset?: number | null | undefined, probabilityInterior?: number | null | undefined, probabilityExterior?: number | null | undefined, conequenceMax?: number | null | undefined, riskPotentialGeo?: number | null | undefined, riskPotentialInternal?: number | null | undefined, riskPotentialExternal?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
 
 export type PipelineFlowQueryVariables = Exact<{
   idList: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
@@ -3745,6 +3668,45 @@ export const ValidatorsRiskDocument = gql`
       W
       NW
     }
+    typeEnum {
+      Type515
+      Type2306
+      Type3406
+      Type3408
+      Type6063
+      Type6351
+      Type5A
+      Type5L
+      Type5LX
+      TypeA106
+      TypeA120
+      TypeA53
+      TypeAMERON
+      TypeB515
+      TypeB51S
+      TypeB5IS
+      TypeCENTRON
+      TypeCIBA
+      TypeFSLP
+      TypeREDTHR
+      TypeSMITH
+      TypeSTAR
+      TypeTBS
+      TypeWSLP
+      TypeZ2451
+      TypeZ2453
+    }
+    materialEnum {
+      Steel
+      PolyvinylChloride
+      Composite
+      Fiberglass
+      Aluminum
+      Polyethylene
+      CelluloseAcetateButyrate
+      Unknown
+      AsbestosCement
+    }
   }
 }
     `;
@@ -3955,7 +3917,7 @@ export type PressureTestsByPipelineIdQueryHookResult = ReturnType<typeof usePres
 export type PressureTestsByPipelineIdLazyQueryHookResult = ReturnType<typeof usePressureTestsByPipelineIdLazyQuery>;
 export type PressureTestsByPipelineIdQueryResult = Apollo.QueryResult<PressureTestsByPipelineIdQuery, PressureTestsByPipelineIdQueryVariables>;
 export const RiskByIdDocument = gql`
-    query RiskById($id: String!, $currentSubstance: SubstanceEnum, $oil: Float, $water: Float, $gas: Float, $currentStatus: StatusEnum, $type: TypeEnum, $material: MaterialEnum, $firstLicenseDate: DateTime) {
+    query RiskById($id: String!) {
   riskById(id: $id) {
     id
     aerialReview
@@ -3969,56 +3931,15 @@ export const RiskByIdDocument = gql`
     dateSlopeChecked
     repairTimeDays
     releaseTimeDays
-    costPerM3Released(
-      currentSubstance: $currentSubstance
-      oil: $oil
-      water: $water
-      gas: $gas
-    )
-    enviroRisk(
-      currentSubstance: $currentSubstance
-      currentStatus: $currentStatus
-      oil: $oil
-      water: $water
-      gas: $gas
-    )
-    assetRisk(oil: $oil, water: $water, gas: $gas)
-    probabilityInterior(
-      currentSubstance: $currentSubstance
-      currentStatus: $currentStatus
-      type: $type
-      material: $material
-    )
-    probabilityExterior(
-      currentStatus: $currentStatus
-      firstLicenseDate: $firstLicenseDate
-      material: $material
-    )
-    geoRiskPotential(
-      currentSubstance: $currentSubstance
-      currentStatus: $currentStatus
-      oil: $oil
-      water: $water
-      gas: $gas
-    )
-    internalRiskPotential(
-      currentSubstance: $currentSubstance
-      currentStatus: $currentStatus
-      type: $type
-      material: $material
-      oil: $oil
-      water: $water
-      gas: $gas
-    )
-    externalRiskPotential(
-      currentSubstance: $currentSubstance
-      currentStatus: $currentStatus
-      firstLicenseDate: $firstLicenseDate
-      material: $material
-      oil: $oil
-      water: $water
-      gas: $gas
-    )
+    costPerM3Released
+    consequenceEnviro
+    consequenceAsset
+    probabilityInterior
+    probabilityExterior
+    conequenceMax
+    riskPotentialGeo
+    riskPotentialInternal
+    riskPotentialExternal
     oilReleaseCost
     gasReleaseCost
     riskPeople
@@ -4052,14 +3973,6 @@ export const RiskByIdDocument = gql`
  * const { data, loading, error } = useRiskByIdQuery({
  *   variables: {
  *      id: // value for 'id'
- *      currentSubstance: // value for 'currentSubstance'
- *      oil: // value for 'oil'
- *      water: // value for 'water'
- *      gas: // value for 'gas'
- *      currentStatus: // value for 'currentStatus'
- *      type: // value for 'type'
- *      material: // value for 'material'
- *      firstLicenseDate: // value for 'firstLicenseDate'
  *   },
  * });
  */

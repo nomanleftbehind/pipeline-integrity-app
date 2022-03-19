@@ -16,12 +16,50 @@
 
 .risk-matrix {
   display: grid;
-  grid-template-columns: 20px repeat(6, 50px);
+  grid-template-columns: 20px repeat(6, 53px);
   grid-template-rows: repeat(2, 20px) repeat(6, 40px);
-  /* border: black solid 1px; */
   background-color: rgb(228, 228, 228);
   text-align: center;
-  font-size: x-small;
+  font-size: xx-small;
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+}
+
+
+.risk-matrix-wrapper {
+  display: grid;
+  grid-template-columns: 100px auto;
+  grid-auto-rows: min-content;
+  column-gap: 30px;
+  row-gap: 5px;
+  border: 2px solid black;
+  padding: 5px;
+}
+
+.risk-matrix>.probability.consequence {
+  border: 5px cyan solid;
+}
+
+.risk-matrix>.probability {
+  margin-top: -1px;
+  border-top: 3px cyan solid;
+  border-bottom: 3px cyan solid;
+  font-weight: bold;
+}
+
+.risk-matrix>.consequence {
+  margin-left: -1px;
+  border-left: 3px cyan solid;
+  border-right: 3px cyan solid;
+  font-weight: bold;
+}
+
+.risk-matrix>div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
 }
 
 

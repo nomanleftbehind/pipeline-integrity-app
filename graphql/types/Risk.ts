@@ -2,14 +2,15 @@ import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, bo
 import { databaseEnumToServerEnum } from './Pipeline';
 import { Context } from '../context';
 import {
-  assetRiskCalc,
   costPerM3ReleasedCalc,
-  enviroRiskCalc,
-  geoRiskPotentialCalc,
+  consequenceAssetCalc,
+  consequenceEnviroCalc,
   probabilityExteriorCalc,
   probabilityInteriorCalc,
-  internalRiskPotentialCalc,
-  externalRiskPotentialCalc,
+  conequenceMaxCalc,
+  riskPotentialGeoCalc,
+  riskPotentialInternalCalc,
+  riskPotentialExternalCalc,
 } from './RiskCalcs';
 
 
@@ -42,82 +43,31 @@ export const Risk = objectType({
     t.int('repairTimeDays')
     t.int('releaseTimeDays')
     t.float('costPerM3Released', {
-      args: {
-        currentSubstance: arg({ type: 'SubstanceEnum' }),
-        oil: floatArg(),
-        water: floatArg(),
-        gas: floatArg(),
-      },
-      resolve: async (_, { currentSubstance, oil, water, gas }) => costPerM3ReleasedCalc({ currentSubstance, oil, water, gas })
+      resolve: async ({ id }, _args, ctx: Context) => await costPerM3ReleasedCalc({ id, ctx })
     })
-    t.int('enviroRisk', {
-      args: {
-        currentSubstance: arg({ type: 'SubstanceEnum' }),
-        currentStatus: arg({ type: 'StatusEnum' }),
-        oil: floatArg(),
-        water: floatArg(),
-        gas: floatArg(),
-      },
-      resolve: async ({ environmentProximityTo }, { currentSubstance, currentStatus, oil, water, gas }) => enviroRiskCalc({ environmentProximityTo, currentSubstance, currentStatus, oil, water, gas })
+    t.int('consequenceEnviro', {
+      resolve: async ({ id, environmentProximityTo }, _args, ctx: Context) => await consequenceEnviroCalc({ id, environmentProximityTo, ctx })
     })
-    t.int('assetRisk', {
-      args: {
-        oil: floatArg(),
-        water: floatArg(),
-        gas: floatArg(),
-      },
-      resolve: async ({ repairTimeDays, oilReleaseCost, gasReleaseCost }, { oil, water, gas }) => assetRiskCalc({ repairTimeDays, oilReleaseCost, gasReleaseCost, oil, water, gas })
+    t.int('consequenceAsset', {
+      resolve: async ({ id, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await consequenceAssetCalc({ id, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
     })
     t.int('probabilityInterior', {
-      args: {
-        currentSubstance: arg({ type: 'SubstanceEnum' }),
-        currentStatus: arg({ type: 'StatusEnum' }),
-        type: arg({ type: 'TypeEnum' }),
-        material: arg({ type: 'MaterialEnum' }),
-      },
-      resolve: async (_, { currentSubstance, currentStatus, type, material }) => probabilityInteriorCalc({ currentSubstance, currentStatus, type, material })
+      resolve: async ({ id }, _args, ctx: Context) => await probabilityInteriorCalc({ id, ctx })
     })
     t.int('probabilityExterior', {
-      args: {
-        currentStatus: arg({ type: 'StatusEnum' }),
-        firstLicenseDate: arg({ type: 'DateTime' }),
-        material: arg({ type: 'MaterialEnum' }),
-      },
-      resolve: async (_, { currentStatus, firstLicenseDate, material }) => probabilityExteriorCalc({ currentStatus, firstLicenseDate, material })
+      resolve: async ({ id }, _args, ctx: Context) => await probabilityExteriorCalc({ id, ctx })
     })
-    t.int('geoRiskPotential', {
-      args: {
-        currentSubstance: arg({ type: 'SubstanceEnum' }),
-        currentStatus: arg({ type: 'StatusEnum' }),
-        oil: floatArg(),
-        water: floatArg(),
-        gas: floatArg(),
-      },
-      resolve: async ({ riskPeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, { currentSubstance, currentStatus, oil, water, gas }) => geoRiskPotentialCalc({ riskPeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, currentSubstance, currentStatus, oil, water, gas })
+    t.int('conequenceMax', {
+      resolve: async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await conequenceMaxCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
     })
-    t.int('internalRiskPotential', {
-      args: {
-        currentSubstance: arg({ type: 'SubstanceEnum' }),
-        currentStatus: arg({ type: 'StatusEnum' }),
-        type: arg({ type: 'TypeEnum' }),
-        material: arg({ type: 'MaterialEnum' }),
-        oil: floatArg(),
-        water: floatArg(),
-        gas: floatArg(),
-      },
-      resolve: async ({ riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, { currentSubstance, currentStatus, type, material, oil, water, gas }) => internalRiskPotentialCalc({ riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, currentSubstance, currentStatus, type, material, oil, water, gas })
+    t.int('riskPotentialGeo', {
+      resolve: async ({ id, riskPeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await riskPotentialGeoCalc({ id, riskPeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
     })
-    t.int('externalRiskPotential', {
-      args: {
-        currentSubstance: arg({ type: 'SubstanceEnum' }),
-        currentStatus: arg({ type: 'StatusEnum' }),
-        firstLicenseDate: arg({ type: 'DateTime' }),
-        material: arg({ type: 'MaterialEnum' }),
-        oil: floatArg(),
-        water: floatArg(),
-        gas: floatArg(),
-      },
-      resolve: async ({ riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, { currentSubstance, currentStatus, firstLicenseDate, material, oil, water, gas }) => externalRiskPotentialCalc({ riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, currentSubstance, currentStatus, firstLicenseDate, material, oil, water, gas })
+    t.int('riskPotentialInternal', {
+      resolve: async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await riskPotentialInternalCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
+    })
+    t.int('riskPotentialExternal', {
+      resolve: async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await riskPotentialExternalCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
     })
     t.float('oilReleaseCost')
     t.float('gasReleaseCost')

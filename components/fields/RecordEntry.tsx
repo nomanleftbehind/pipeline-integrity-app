@@ -35,6 +35,8 @@ export interface IEditRecord {
   newRecord: IRecord;
 }
 
+export type IEditRecordFunction = ({ id, columnName, columnType, newRecord }: IEditRecord) => void;
+
 export interface IRecordEntryProps {
   id: string;
   createdById: string;
@@ -44,7 +46,7 @@ export interface IRecordEntryProps {
   record: IRecord;
   validator?: IValidator;
   authorized: boolean;
-  editRecord?: ({ id, columnName, columnType, newRecord }: IEditRecord) => void;
+  editRecord?: IEditRecordFunction;
 }
 
 export default function RecordEntry({ id, createdById, columnName, columnType, nullable, record, validator, authorized, editRecord }: IRecordEntryProps) {

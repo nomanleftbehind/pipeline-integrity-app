@@ -6,6 +6,7 @@ import MechanicalProperties from './MechanicalProperties';
 import PressureTests from './PressureTests';
 import PigRuns from './PigRuns';
 import Risk from './Risk';
+import { IEditRecordFunction } from '../fields/RecordEntry';
 import { IPipeline } from './RenderPipeline';
 import Collapse from '@mui/material/Collapse';
 import { IPipelineProperty } from '../fields/PipelineProperties';
@@ -17,6 +18,7 @@ export interface IPipelineDataProps {
   gridRow: number;
   open: boolean;
   pipeline: IPipeline;
+  editPipeline: IEditRecordFunction;
   isEven: "even" | "odd";
 }
 
@@ -32,7 +34,7 @@ interface ITabPanelProps extends ITabPanelMap {
   handleViewClick: (view: IView) => void;
 }
 
-export default function PipelineData({ gridRow, open, pipeline, isEven }: IPipelineDataProps) {
+export default function PipelineData({ gridRow, open, pipeline, editPipeline, isEven }: IPipelineDataProps) {
   const [view, setView] = useState<IView>('license change');
 
   const { id, createdAt, updatedAt, createdBy, updatedBy, license, segment, currentSubstance, flowCalculationDirection, from, fromFeature, to, toFeature, injectionPoints, upstream, currentStatus, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, firstLicenseDate } = pipeline;
@@ -98,6 +100,7 @@ export default function PipelineData({ gridRow, open, pipeline, isEven }: IPipel
         flowCalculationDirection={flowCalculationDirection}
         currentSubstance={currentSubstance}
         currentStatus={currentStatus}
+        editPipeline={editPipeline}
         type={type}
         material={material}
         firstLicenseDate={firstLicenseDate}

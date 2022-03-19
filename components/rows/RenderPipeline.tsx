@@ -7,7 +7,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import { useEditPipelineMutation, useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation, PipelinesByIdQueryQuery, GetValidatorsQuery, ValidatorsPipelineQuery } from '../../graphql/generated/graphql';
+import { useEditPipelineMutation, useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation, PipelinesByIdQueryQuery, GetValidatorsQuery, ValidatorsPipelineQuery, RiskByIdDocument } from '../../graphql/generated/graphql';
 import { IRecordEntryMap } from './LicenseChanges';
 
 export type IPipeline = PipelinesByIdQueryQuery['pipelinesById'] extends (infer U)[] | null | undefined ? NonNullable<U> : never;
@@ -34,7 +34,7 @@ export default function RenderPipeline({ gridRow, pipeline, validators, authoriz
   const [showDeletePipelineModal, setShowDeletePipelineModal] = useState(false);
 
   const [editPipeline] = useEditPipelineMutation({
-    refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'],
+    refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery', RiskByIdDocument, 'RiskById'],
     onCompleted: ({ editPipeline }) => {
       const { error } = editPipeline || {};
       if (error) {
@@ -161,6 +161,7 @@ export default function RenderPipeline({ gridRow, pipeline, validators, authoriz
         key={`${id} data`}
         open={open}
         pipeline={pipeline}
+        editPipeline={editRecord}
         isEven={isEven(gridRow)}
       />
     </>

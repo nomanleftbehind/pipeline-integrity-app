@@ -730,6 +730,45 @@ query ValidatorsRisk {
       W
       NW
     }
+    typeEnum {
+      Type515
+      Type2306
+      Type3406
+      Type3408
+      Type6063
+      Type6351
+      Type5A
+      Type5L
+      Type5LX
+      TypeA106
+      TypeA120
+      TypeA53
+      TypeAMERON
+      TypeB515
+      TypeB51S
+      TypeB5IS
+      TypeCENTRON
+      TypeCIBA
+      TypeFSLP
+      TypeREDTHR
+      TypeSMITH
+      TypeSTAR
+      TypeTBS
+      TypeWSLP
+      TypeZ2451
+      TypeZ2453
+    }
+    materialEnum {
+      Steel
+      PolyvinylChloride
+      Composite
+      Fiberglass
+      Aluminum
+      Polyethylene
+      CelluloseAcetateButyrate
+      Unknown
+      AsbestosCement
+    }
   }
 }
 
@@ -797,7 +836,7 @@ query PressureTestsByPipelineId($pipelineId: String!, $length: Float!, $mop: Int
   }
 }
 
-query RiskById($id: String!, $currentSubstance: SubstanceEnum, $oil: Float, $water: Float, $gas: Float, $currentStatus: StatusEnum, $type: TypeEnum, $material: MaterialEnum, $firstLicenseDate: DateTime) {
+query RiskById($id: String!) {
   riskById(id: $id) {
     id
     aerialReview
@@ -811,14 +850,15 @@ query RiskById($id: String!, $currentSubstance: SubstanceEnum, $oil: Float, $wat
     dateSlopeChecked
     repairTimeDays
     releaseTimeDays
-    costPerM3Released(currentSubstance: $currentSubstance, oil: $oil, water: $water, gas: $gas)
-    enviroRisk(currentSubstance: $currentSubstance, currentStatus: $currentStatus, oil: $oil, water: $water, gas: $gas)
-    assetRisk(oil: $oil, water: $water, gas: $gas)
-    probabilityInterior(currentSubstance: $currentSubstance, currentStatus: $currentStatus, type: $type, material: $material)
-    probabilityExterior(currentStatus: $currentStatus, firstLicenseDate: $firstLicenseDate, material: $material)
-    geoRiskPotential(currentSubstance: $currentSubstance, currentStatus: $currentStatus, oil: $oil, water: $water, gas: $gas)
-    internalRiskPotential(currentSubstance: $currentSubstance, currentStatus: $currentStatus, type: $type, material: $material, oil: $oil, water: $water, gas: $gas)
-    externalRiskPotential(currentSubstance: $currentSubstance, currentStatus: $currentStatus, firstLicenseDate: $firstLicenseDate, material: $material, oil: $oil, water: $water, gas: $gas)
+    costPerM3Released
+    consequenceEnviro
+    consequenceAsset
+    probabilityInterior
+    probabilityExterior
+    conequenceMax
+    riskPotentialGeo
+    riskPotentialInternal
+    riskPotentialExternal
     oilReleaseCost
     gasReleaseCost
     riskPeople
