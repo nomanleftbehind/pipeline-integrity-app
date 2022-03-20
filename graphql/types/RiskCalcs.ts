@@ -289,8 +289,6 @@ interface IRiskPotentialInternalCalcArgs {
 export const riskPotentialInternalCalc = async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IRiskPotentialInternalCalcArgs) => {
   const maxConsequence = await conequenceMaxCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
   const probabilityInterior = await probabilityInteriorCalc({ id, ctx });
-  console.log('probabilityInterior', probabilityInterior);
-  
   if (typeof maxConsequence === 'number' && typeof probabilityInterior === 'number') {
     return maxConsequence * probabilityInterior;
   }
@@ -312,6 +310,69 @@ export const riskPotentialExternalCalc = async ({ id, riskPeople, environmentPro
   const probabilityExterior = await probabilityExteriorCalc({ id, ctx });
   if (typeof maxConsequence === 'number' && typeof probabilityExterior === 'number') {
     return maxConsequence * probabilityExterior;
+  }
+  return null;
+}
+
+interface ISafeguardPiggingCalcArgs {
+  id: IRisk['id'];
+  ctx: Context;
+}
+
+export const safeguardPiggingCalc = async ({ id, ctx }: ISafeguardPiggingCalcArgs) => {
+  const { piggable } = await ctx.prisma.pipeline.findUnique({
+    where: { id },
+    select: { piggable: true }
+  }) || {};
+  if (piggable != null) {
+    if (piggable) {
+      return 1;
+    }
+    return 0;
+  }
+  return null;
+}
+
+export const safeguardChemicalInhibitionCalc = async () => {
+  return 0;
+}
+
+
+interface IProbabilityInteriorWithSafeguardsArgs {
+  id: IRisk['id'];
+  safeguardInternalProtection: IRisk['safeguardInternalProtection'];
+  ctx: Context;
+}
+
+export const probabilityInteriorWithSafeguardsCalc = async ({ id, safeguardInternalProtection, ctx }: IProbabilityInteriorWithSafeguardsArgs) => {
+  const probabilityInterior = await probabilityInteriorCalc({ id, ctx });
+  const safeguardPigging = await safeguardPiggingCalc({ id, ctx });
+  const safeguardInternalProtectionFuture = safeguardInternalProtection === true ? 1 : safeguardInternalProtection === false ? 0 : null;
+  const safeguardChemicalInhibition = await safeguardChemicalInhibitionCalc();
+  if (typeof probabilityInterior === 'number') {
+    const result = probabilityInterior - (safeguardInternalProtectionFuture || 0) - (safeguardPigging || 0) - safeguardChemicalInhibition;
+    return result < 0 ? 0 : result;
+  }
+  return null;
+}
+
+
+interface IRiskPotentialInternalWithSafeguardsCalcArgs {
+  id: IRisk['id'];
+  riskPeople: IRisk['riskPeople'];
+  environmentProximityTo: IRisk['environmentProximityTo'];
+  repairTimeDays: IRisk['repairTimeDays'];
+  oilReleaseCost: IRisk['oilReleaseCost'];
+  gasReleaseCost: IRisk['gasReleaseCost'];
+  safeguardInternalProtection: IRisk['safeguardInternalProtection'];
+  ctx: Context;
+}
+
+export const riskPotentialInternalWithSafeguardsCalc = async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, safeguardInternalProtection, ctx }: IRiskPotentialInternalWithSafeguardsCalcArgs) => {
+  const maxConsequence = await conequenceMaxCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
+  const probabilityInteriorWithSafeguards = await probabilityInteriorWithSafeguardsCalc({ id, safeguardInternalProtection, ctx });
+  if (typeof maxConsequence === 'number' && typeof probabilityInteriorWithSafeguards === 'number') {
+    return maxConsequence * probabilityInteriorWithSafeguards;
   }
   return null;
 }

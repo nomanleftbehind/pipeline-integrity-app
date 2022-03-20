@@ -1,7 +1,7 @@
 .risk {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .risk-fields {
@@ -10,7 +10,7 @@
   grid-template-columns: repeat(3, min-content);
   column-gap: 6px;
   row-gap: 20px;
-  grid-template-rows: minmax(50px, auto);
+  grid-auto-rows: min-content;
   white-space: nowrap;
 }
 
@@ -27,11 +27,13 @@
 
 
 .risk-matrix-wrapper {
-  display: grid;
-  grid-template-columns: 100px auto;
+  display: flex;
+  /* justify-content: space-between; */
+  flex-direction: column;
+  /* grid-template-columns: 100px auto;
   grid-auto-rows: min-content;
   column-gap: 30px;
-  row-gap: 5px;
+  row-gap: 5px;*/
   border: 2px solid black;
   padding: 5px;
 }

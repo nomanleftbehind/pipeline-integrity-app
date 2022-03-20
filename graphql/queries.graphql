@@ -864,6 +864,10 @@ query RiskById($id: String!) {
     riskPeople
     probabilityGeo
     safeguardInternalProtection
+    safeguardPigging
+    safeguardChemicalInhibition
+    probabilityInteriorWithSafeguards
+    riskPotentialInternalWithSafeguards
     safeguardExternalCoating
     createdBy {
       id

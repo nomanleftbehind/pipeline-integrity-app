@@ -11,6 +11,10 @@ import {
   riskPotentialGeoCalc,
   riskPotentialInternalCalc,
   riskPotentialExternalCalc,
+  safeguardPiggingCalc,
+  safeguardChemicalInhibitionCalc,
+  probabilityInteriorWithSafeguardsCalc,
+  riskPotentialInternalWithSafeguardsCalc
 } from './RiskCalcs';
 
 
@@ -74,6 +78,18 @@ export const Risk = objectType({
     t.int('riskPeople')
     t.float('probabilityGeo')
     t.boolean('safeguardInternalProtection')
+    t.int('safeguardPigging', {
+      resolve: async ({ id }, _args, ctx: Context) => await safeguardPiggingCalc({ id, ctx })
+    })
+    t.int('safeguardChemicalInhibition', {
+      resolve: async () => await safeguardChemicalInhibitionCalc()
+    })
+    t.int('probabilityInteriorWithSafeguards', {
+      resolve: async ({ id, safeguardInternalProtection }, _args, ctx: Context) => await probabilityInteriorWithSafeguardsCalc({ id, safeguardInternalProtection, ctx })
+    })
+    t.int('riskPotentialInternalWithSafeguards', {
+      resolve: async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, safeguardInternalProtection }, _args, ctx: Context) => await riskPotentialInternalWithSafeguardsCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, safeguardInternalProtection, ctx })
+    })
     t.boolean('safeguardExternalCoating')
     t.nonNull.field('createdBy', {
       type: 'User',

@@ -1017,14 +1017,18 @@ export type Risk = {
   probabilityExterior?: Maybe<Scalars['Int']>;
   probabilityGeo?: Maybe<Scalars['Float']>;
   probabilityInterior?: Maybe<Scalars['Int']>;
+  probabilityInteriorWithSafeguards?: Maybe<Scalars['Int']>;
   releaseTimeDays?: Maybe<Scalars['Int']>;
   repairTimeDays?: Maybe<Scalars['Int']>;
   riskPeople?: Maybe<Scalars['Int']>;
   riskPotentialExternal?: Maybe<Scalars['Int']>;
   riskPotentialGeo?: Maybe<Scalars['Int']>;
   riskPotentialInternal?: Maybe<Scalars['Int']>;
+  riskPotentialInternalWithSafeguards?: Maybe<Scalars['Int']>;
+  safeguardChemicalInhibition?: Maybe<Scalars['Int']>;
   safeguardExternalCoating?: Maybe<Scalars['Boolean']>;
   safeguardInternalProtection?: Maybe<Scalars['Boolean']>;
+  safeguardPigging?: Maybe<Scalars['Int']>;
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
 };
@@ -1577,7 +1581,7 @@ export type RiskByIdQueryVariables = Exact<{
 }>;
 
 
-export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, consequenceEnviro?: number | null | undefined, consequenceAsset?: number | null | undefined, probabilityInterior?: number | null | undefined, probabilityExterior?: number | null | undefined, conequenceMax?: number | null | undefined, riskPotentialGeo?: number | null | undefined, riskPotentialInternal?: number | null | undefined, riskPotentialExternal?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
+export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, consequenceEnviro?: number | null | undefined, consequenceAsset?: number | null | undefined, probabilityInterior?: number | null | undefined, probabilityExterior?: number | null | undefined, conequenceMax?: number | null | undefined, riskPotentialGeo?: number | null | undefined, riskPotentialInternal?: number | null | undefined, riskPotentialExternal?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, riskPeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: boolean | null | undefined, safeguardPigging?: number | null | undefined, safeguardChemicalInhibition?: number | null | undefined, probabilityInteriorWithSafeguards?: number | null | undefined, riskPotentialInternalWithSafeguards?: number | null | undefined, safeguardExternalCoating?: boolean | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
 
 export type PipelineFlowQueryVariables = Exact<{
   idList: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
@@ -3945,6 +3949,10 @@ export const RiskByIdDocument = gql`
     riskPeople
     probabilityGeo
     safeguardInternalProtection
+    safeguardPigging
+    safeguardChemicalInhibition
+    probabilityInteriorWithSafeguards
+    riskPotentialInternalWithSafeguards
     safeguardExternalCoating
     createdBy {
       id

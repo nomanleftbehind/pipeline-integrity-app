@@ -719,14 +719,18 @@ type Risk {
   probabilityExterior: Int
   probabilityGeo: Float
   probabilityInterior: Int
+  probabilityInteriorWithSafeguards: Int
   releaseTimeDays: Int
   repairTimeDays: Int
   riskPeople: Int
   riskPotentialExternal: Int
   riskPotentialGeo: Int
   riskPotentialInternal: Int
+  riskPotentialInternalWithSafeguards: Int
+  safeguardChemicalInhibition: Int
   safeguardExternalCoating: Boolean
   safeguardInternalProtection: Boolean
+  safeguardPigging: Int
   updatedAt: DateTime!
   updatedBy: User!
 }
