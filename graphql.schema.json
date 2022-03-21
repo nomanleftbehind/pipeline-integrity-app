@@ -4379,6 +4379,18 @@
                 "deprecationReason": null
               },
               {
+                "name": "consequencePeople",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "dateSlopeChecked",
                 "description": null,
                 "type": {
@@ -4551,7 +4563,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "riskPeople",
+                "name": "safeguardExternalCoating",
                 "description": null,
                 "type": {
                   "kind": "SCALAR",
@@ -4563,23 +4575,11 @@
                 "deprecationReason": null
               },
               {
-                "name": "safeguardExternalCoating",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
                 "name": "safeguardInternalProtection",
                 "description": null,
                 "type": {
                   "kind": "SCALAR",
-                  "name": "Boolean",
+                  "name": "Int",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -5051,6 +5051,12 @@
             "deprecationReason": null
           },
           {
+            "name": "Black3inBall",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "Blue3inscraper",
             "description": null,
             "isDeprecated": false,
@@ -5093,6 +5099,12 @@
             "deprecationReason": null
           },
           {
+            "name": "PigType1inStubby",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "PigType2green2disc",
             "description": null,
             "isDeprecated": false,
@@ -5129,6 +5141,12 @@
             "deprecationReason": null
           },
           {
+            "name": "PigType2inStubby",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "PigType2ingscr",
             "description": null,
             "isDeprecated": false,
@@ -5142,6 +5160,12 @@
           },
           {
             "name": "PigType3",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PigType3BluRibbed",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -5166,6 +5190,12 @@
           },
           {
             "name": "PigType3_scrapper",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PigType3in",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -5237,7 +5267,7 @@
             "deprecationReason": null
           },
           {
-            "name": "PigType3inbluescraper",
+            "name": "PigType3inWhite",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -5256,6 +5286,12 @@
           },
           {
             "name": "PigType3inpurpledisc",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PigType3inpurplescraper",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -5310,6 +5346,12 @@
           },
           {
             "name": "PigType4green2disc",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PigType4in",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -5381,6 +5423,12 @@
             "deprecationReason": null
           },
           {
+            "name": "PigType6inargus",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "PigType6ingreenscraper",
             "description": null,
             "isDeprecated": false,
@@ -5411,13 +5459,13 @@
             "deprecationReason": null
           },
           {
-            "name": "REVERSEFLOWDUETOTAQA",
+            "name": "Red3inscraper",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "Red3inscraper",
+            "name": "Red3scraper",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -5436,12 +5484,6 @@
           },
           {
             "name": "SIMAY2018",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "SI_GOINGTOTAQA",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -5567,6 +5609,12 @@
             "deprecationReason": null
           },
           {
+            "name": "Stubby",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "Torpedo",
             "description": null,
             "isDeprecated": false,
@@ -5580,6 +5628,12 @@
           },
           {
             "name": "disc",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "redball",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -5609,6 +5663,22 @@
             "deprecationReason": null
           },
           {
+            "name": "Black3inBall",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "Blue3inscraper",
             "description": null,
             "args": [],
@@ -5721,6 +5791,22 @@
             "deprecationReason": null
           },
           {
+            "name": "PigType1inStubby",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "PigType2green2disc",
             "description": null,
             "args": [],
@@ -5817,6 +5903,22 @@
             "deprecationReason": null
           },
           {
+            "name": "PigType2inStubby",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "PigType2ingscr",
             "description": null,
             "args": [],
@@ -5850,6 +5952,22 @@
           },
           {
             "name": "PigType3",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PigType3BluRibbed",
             "description": null,
             "args": [],
             "type": {
@@ -5914,6 +6032,22 @@
           },
           {
             "name": "PigType3_scrapper",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PigType3in",
             "description": null,
             "args": [],
             "type": {
@@ -6105,7 +6239,7 @@
             "deprecationReason": null
           },
           {
-            "name": "PigType3inbluescraper",
+            "name": "PigType3inWhite",
             "description": null,
             "args": [],
             "type": {
@@ -6154,6 +6288,22 @@
           },
           {
             "name": "PigType3inpurpledisc",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PigType3inpurplescraper",
             "description": null,
             "args": [],
             "type": {
@@ -6298,6 +6448,22 @@
           },
           {
             "name": "PigType4green2disc",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PigType4in",
             "description": null,
             "args": [],
             "type": {
@@ -6489,6 +6655,22 @@
             "deprecationReason": null
           },
           {
+            "name": "PigType6inargus",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "PigType6ingreenscraper",
             "description": null,
             "args": [],
@@ -6569,7 +6751,7 @@
             "deprecationReason": null
           },
           {
-            "name": "REVERSEFLOWDUETOTAQA",
+            "name": "Red3inscraper",
             "description": null,
             "args": [],
             "type": {
@@ -6585,7 +6767,7 @@
             "deprecationReason": null
           },
           {
-            "name": "Red3inscraper",
+            "name": "Red3scraper",
             "description": null,
             "args": [],
             "type": {
@@ -6634,22 +6816,6 @@
           },
           {
             "name": "SIMAY2018",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "SI_GOINGTOTAQA",
             "description": null,
             "args": [],
             "type": {
@@ -6985,6 +7151,22 @@
             "deprecationReason": null
           },
           {
+            "name": "Stubby",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "Torpedo",
             "description": null,
             "args": [],
@@ -7018,6 +7200,22 @@
           },
           {
             "name": "disc",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "redball",
             "description": null,
             "args": [],
             "type": {
@@ -8344,9 +8542,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "DateTime",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -9133,6 +9335,18 @@
             "deprecationReason": null
           },
           {
+            "name": "consequencePeople",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "costPerM3Released",
             "description": null,
             "args": [],
@@ -9401,18 +9615,6 @@
             "deprecationReason": null
           },
           {
-            "name": "riskPeople",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "riskPotentialExternal",
             "description": null,
             "args": [],
@@ -9478,7 +9680,7 @@
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "Boolean",
+              "name": "Int",
               "ofType": null
             },
             "isDeprecated": false,
@@ -9490,7 +9692,7 @@
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "Boolean",
+              "name": "Int",
               "ofType": null
             },
             "isDeprecated": false,

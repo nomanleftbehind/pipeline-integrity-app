@@ -148,7 +148,7 @@ export default function PressureTests({ pipelineId, length, mop, outsideDiameter
           const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'OPERATOR' && createdBy.id === userId);
 
           const pressureTestColumns: IRecordEntryMap[] = [
-            { columnName: 'pressureTestDate', columnType: 'date', nullable: true, record: pressureTestDate, editRecord },
+            { columnName: 'pressureTestDate', columnType: 'date', nullable: false, record: pressureTestDate, editRecord },
             { columnName: 'pressureTestReceivedDate', columnType: 'date', nullable: true, record: pressureTestReceivedDate, editRecord },
             { columnName: 'infoSentOutDate', columnType: 'date', nullable: true, record: infoSentOutDate, editRecord },
             { columnName: 'ddsDate', columnType: 'date', nullable: true, record: ddsDate, editRecord },

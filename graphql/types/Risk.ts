@@ -62,22 +62,22 @@ export const Risk = objectType({
       resolve: async ({ id }, _args, ctx: Context) => await probabilityExteriorCalc({ id, ctx })
     })
     t.int('conequenceMax', {
-      resolve: async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await conequenceMaxCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
+      resolve: async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await conequenceMaxCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
     })
     t.int('riskPotentialGeo', {
-      resolve: async ({ id, riskPeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await riskPotentialGeoCalc({ id, riskPeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
+      resolve: async ({ id, consequencePeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await riskPotentialGeoCalc({ id, consequencePeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
     })
     t.int('riskPotentialInternal', {
-      resolve: async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await riskPotentialInternalCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
+      resolve: async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await riskPotentialInternalCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
     })
     t.int('riskPotentialExternal', {
-      resolve: async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await riskPotentialExternalCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
+      resolve: async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await riskPotentialExternalCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
     })
     t.float('oilReleaseCost')
     t.float('gasReleaseCost')
-    t.int('riskPeople')
+    t.int('consequencePeople')
     t.float('probabilityGeo')
-    t.boolean('safeguardInternalProtection')
+    t.int('safeguardInternalProtection')
     t.int('safeguardPigging', {
       resolve: async ({ id }, _args, ctx: Context) => await safeguardPiggingCalc({ id, ctx })
     })
@@ -88,9 +88,9 @@ export const Risk = objectType({
       resolve: async ({ id, safeguardInternalProtection }, _args, ctx: Context) => await probabilityInteriorWithSafeguardsCalc({ id, safeguardInternalProtection, ctx })
     })
     t.int('riskPotentialInternalWithSafeguards', {
-      resolve: async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, safeguardInternalProtection }, _args, ctx: Context) => await riskPotentialInternalWithSafeguardsCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, safeguardInternalProtection, ctx })
+      resolve: async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, safeguardInternalProtection }, _args, ctx: Context) => await riskPotentialInternalWithSafeguardsCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, safeguardInternalProtection, ctx })
     })
-    t.boolean('safeguardExternalCoating')
+    t.int('safeguardExternalCoating')
     t.nonNull.field('createdBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -202,10 +202,10 @@ export const RiskMutation = extendType({
         releaseTimeDays: intArg(),
         oilReleaseCost: floatArg(),
         gasReleaseCost: floatArg(),
-        riskPeople: intArg(),
+        consequencePeople: intArg(),
         probabilityGeo: floatArg(),
-        safeguardInternalProtection: booleanArg(),
-        safeguardExternalCoating: booleanArg(),
+        safeguardInternalProtection: intArg(),
+        safeguardExternalCoating: intArg(),
       },
       resolve: async (_, args, ctx: Context) => {
 
@@ -231,7 +231,7 @@ export const RiskMutation = extendType({
               releaseTimeDays: args.releaseTimeDays,
               oilReleaseCost: args.oilReleaseCost,
               gasReleaseCost: args.gasReleaseCost,
-              riskPeople: args.riskPeople,
+              consequencePeople: args.consequencePeople,
               probabilityGeo: args.probabilityGeo,
               safeguardInternalProtection: args.safeguardInternalProtection,
               safeguardExternalCoating: args.safeguardExternalCoating,

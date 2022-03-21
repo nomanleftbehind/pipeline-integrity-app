@@ -76,6 +76,8 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
   });
 
 
+
+
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {
       switch (columnType) {
@@ -112,10 +114,10 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
     setFieldError(initialFieldError);
   }
 
-
   if (data?.riskById) {
+
     const { id, aerialReview, environmentProximityTo, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS1, geotechnicalFacingS2, geotechnicalHeightS2, geotechnicalSlopeAngleS2, dateSlopeChecked,
-      riskPeople, consequenceEnviro, consequenceAsset, conequenceMax, probabilityGeo, probabilityInterior, probabilityExterior, riskPotentialGeo, riskPotentialInternal, riskPotentialExternal,
+      consequencePeople, consequenceEnviro, consequenceAsset, conequenceMax, probabilityGeo, probabilityInterior, probabilityExterior, riskPotentialGeo, riskPotentialInternal, riskPotentialExternal,
       safeguardInternalProtection, safeguardPigging, safeguardChemicalInhibition, probabilityInteriorWithSafeguards, riskPotentialInternalWithSafeguards,
       oilReleaseCost, gasReleaseCost, repairTimeDays, releaseTimeDays, costPerM3Released, safeguardExternalCoating, createdBy, createdAt, updatedBy, updatedAt } = data.riskById;
     const { environmentProximityToEnum, geotechnicalFacingEnum, typeEnum, materialEnum } = dataValidatorsRisk?.validators || {};
@@ -142,7 +144,7 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
     ];
 
     const consequenceFields: IRiskPropertyRecordEntryMap[] = [
-      { columnName: 'riskPeople', record: riskPeople, columnType: 'number', label: 'People', nullable: true, editRecord },
+      { columnName: 'consequencePeople', record: consequencePeople, columnType: 'number', label: 'People', nullable: true, editRecord },
       { columnName: 'consequenceEnviro', record: consequenceEnviro, columnType: 'number', label: 'Environment', nullable: true },
       { columnName: 'consequenceAsset', record: consequenceAsset, columnType: 'number', label: 'Assets', nullable: true },
       { columnName: 'conequenceMax', record: conequenceMax, columnType: 'number', label: 'Used Consequence', nullable: true },
@@ -151,13 +153,13 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
     const probabilityInteriorFields: IRiskPropertyRecordEntryMap[] = [
       { columnName: 'type', record: type, columnType: 'string', label: 'Pipeline Type', nullable: true, validator: typeEnum, editRecord: editPipeline },
       { columnName: 'material', record: material, columnType: 'string', label: 'Pipeline Material', nullable: true, validator: materialEnum, editRecord: editPipeline },
-      { columnName: 'safeguardInternalProtection', record: safeguardInternalProtection, columnType: 'boolean', label: 'Internal Protection Safeguard', nullable: true, editRecord },
+      { columnName: 'safeguardInternalProtection', record: safeguardInternalProtection, columnType: 'number', label: 'Internal Protection Safeguard', nullable: true, editRecord },
       { columnName: 'safeguardPigging', record: safeguardPigging, columnType: 'number', label: 'Pigging Safeguard', nullable: true },
       { columnName: 'safeguardChemicalInhibition', record: safeguardChemicalInhibition, columnType: 'number', label: 'Chemical Inhibition Safeguard', nullable: true },
     ];
 
     const probabilityExteriorFields: IRiskPropertyRecordEntryMap[] = [
-      { columnName: 'safeguardExternalCoating', record: safeguardExternalCoating, columnType: 'boolean', label: 'External Coating Safeguard', nullable: true, editRecord },
+      { columnName: 'safeguardExternalCoating', record: safeguardExternalCoating, columnType: 'number', label: 'External Coating Safeguard', nullable: true, editRecord },
     ];
 
     let gridRow = 0;

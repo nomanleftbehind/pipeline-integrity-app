@@ -168,7 +168,7 @@ export const PressureTest = objectType({
     })
     t.field('infoSentOutDate', { type: 'DateTime' })
     t.field('ddsDate', { type: 'DateTime' })
-    t.field('pressureTestDate', { type: 'DateTime' })
+    t.nonNull.field('pressureTestDate', { type: 'DateTime' })
     t.field('pressureTestReceivedDate', { type: 'DateTime' })
     t.field('integritySheetUpdated', { type: 'DateTime' })
     t.string('comment')

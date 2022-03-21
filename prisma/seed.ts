@@ -6,7 +6,6 @@ import {
   pipelineData,
   pipelineData2,
   pipelineUpstreamData,
-  licenseChangeData,
   injectionPointData,
   pressureTestData,
   riskData,
@@ -25,6 +24,12 @@ import {
   pigRunData10,
   pigRunData11,
 } from './SeedPigRunData';
+
+import {
+  licenseChangeData1,
+  licenseChangeData2,
+  licenseChangeData3,
+} from './SeedLicenseChangeData';
 
 const prisma = new PrismaClient(/*{
   log: [
@@ -97,7 +102,22 @@ async function main() {
     console.log(`Updated pipeline with id: ${pipeline.id}`)
   }
 
-  for (const u of licenseChangeData) {
+  for (const u of licenseChangeData1) {
+    const licenseChange = await prisma.licenseChange.create({
+      data: u,
+    })
+    console.log(`Created license change with id: ${licenseChange.id}`)
+
+  }
+
+  for (const u of licenseChangeData2) {
+    const licenseChange = await prisma.licenseChange.create({
+      data: u,
+    })
+    console.log(`Created license change with id: ${licenseChange.id}`)
+  }
+
+  for (const u of licenseChangeData3) {
     const licenseChange = await prisma.licenseChange.create({
       data: u,
     })

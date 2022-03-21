@@ -11,7 +11,8 @@ interface ICostPerM3ReleasedCalcArgs {
 }
 
 export const costPerM3ReleasedCalc = async ({ id, ctx }: ICostPerM3ReleasedCalcArgs) => {
-
+  
+  
   const { substance: currentSubstance } = await ctx.prisma.licenseChange.findFirst({
     where: { pipelineId: id },
     orderBy: { date: 'desc' },
@@ -233,7 +234,7 @@ export const probabilityExteriorCalc = async ({ id, ctx }: IProbabilityExteriorC
 
 interface IConequenceMaxCalcArgs {
   id: IRisk['id'];
-  riskPeople: IRisk['riskPeople'];
+  consequencePeople: IRisk['consequencePeople'];
   environmentProximityTo: IRisk['environmentProximityTo'];
   repairTimeDays: IRisk['repairTimeDays'];
   oilReleaseCost: IRisk['oilReleaseCost'];
@@ -241,10 +242,11 @@ interface IConequenceMaxCalcArgs {
   ctx: Context;
 }
 
-export const conequenceMaxCalc = async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IConequenceMaxCalcArgs) => {
+export const conequenceMaxCalc = async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IConequenceMaxCalcArgs) => {
   const consequenceEnviro = await consequenceEnviroCalc({ id, environmentProximityTo, ctx });
   const consequenceAsset = await consequenceAssetCalc({ id, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
-  const maxConsequence = [riskPeople, consequenceEnviro, consequenceAsset].reduce((previousValue, currentValue) => {
+  
+  const maxConsequence = [consequencePeople, consequenceEnviro, consequenceAsset].reduce((previousValue, currentValue) => {
     if (typeof previousValue === 'number' && typeof currentValue === 'number') {
       return currentValue > previousValue ? currentValue : previousValue;
     }
@@ -259,7 +261,7 @@ export const conequenceMaxCalc = async ({ id, riskPeople, environmentProximityTo
 
 interface IRiskPotentialGeoCalcArgs {
   id: IRisk['id'];
-  riskPeople: IRisk['riskPeople'];
+  consequencePeople: IRisk['consequencePeople'];
   probabilityGeo: IRisk['probabilityGeo'];
   environmentProximityTo: IRisk['environmentProximityTo'];
   repairTimeDays: IRisk['repairTimeDays'];
@@ -268,8 +270,8 @@ interface IRiskPotentialGeoCalcArgs {
   ctx: Context;
 }
 
-export const riskPotentialGeoCalc = async ({ id, riskPeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IRiskPotentialGeoCalcArgs) => {
-  const maxConsequence = await conequenceMaxCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
+export const riskPotentialGeoCalc = async ({ id, consequencePeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IRiskPotentialGeoCalcArgs) => {
+  const maxConsequence = await conequenceMaxCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
   if (typeof maxConsequence === 'number' && typeof probabilityGeo === 'number') {
     return maxConsequence * probabilityGeo;
   }
@@ -278,7 +280,7 @@ export const riskPotentialGeoCalc = async ({ id, riskPeople, probabilityGeo, env
 
 interface IRiskPotentialInternalCalcArgs {
   id: IRisk['id'];
-  riskPeople: IRisk['riskPeople'];
+  consequencePeople: IRisk['consequencePeople'];
   environmentProximityTo: IRisk['environmentProximityTo'];
   repairTimeDays: IRisk['repairTimeDays'];
   oilReleaseCost: IRisk['oilReleaseCost'];
@@ -286,8 +288,8 @@ interface IRiskPotentialInternalCalcArgs {
   ctx: Context;
 }
 
-export const riskPotentialInternalCalc = async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IRiskPotentialInternalCalcArgs) => {
-  const maxConsequence = await conequenceMaxCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
+export const riskPotentialInternalCalc = async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IRiskPotentialInternalCalcArgs) => {
+  const maxConsequence = await conequenceMaxCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
   const probabilityInterior = await probabilityInteriorCalc({ id, ctx });
   if (typeof maxConsequence === 'number' && typeof probabilityInterior === 'number') {
     return maxConsequence * probabilityInterior;
@@ -297,7 +299,7 @@ export const riskPotentialInternalCalc = async ({ id, riskPeople, environmentPro
 
 interface IRiskPotentialExternalCalcArgs {
   id: IRisk['id'];
-  riskPeople: IRisk['riskPeople'];
+  consequencePeople: IRisk['consequencePeople'];
   environmentProximityTo: IRisk['environmentProximityTo'];
   repairTimeDays: IRisk['repairTimeDays'];
   oilReleaseCost: IRisk['oilReleaseCost'];
@@ -305,8 +307,8 @@ interface IRiskPotentialExternalCalcArgs {
   ctx: Context;
 }
 
-export const riskPotentialExternalCalc = async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IRiskPotentialExternalCalcArgs) => {
-  const maxConsequence = await conequenceMaxCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
+export const riskPotentialExternalCalc = async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IRiskPotentialExternalCalcArgs) => {
+  const maxConsequence = await conequenceMaxCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
   const probabilityExterior = await probabilityExteriorCalc({ id, ctx });
   if (typeof maxConsequence === 'number' && typeof probabilityExterior === 'number') {
     return maxConsequence * probabilityExterior;
@@ -347,10 +349,9 @@ interface IProbabilityInteriorWithSafeguardsArgs {
 export const probabilityInteriorWithSafeguardsCalc = async ({ id, safeguardInternalProtection, ctx }: IProbabilityInteriorWithSafeguardsArgs) => {
   const probabilityInterior = await probabilityInteriorCalc({ id, ctx });
   const safeguardPigging = await safeguardPiggingCalc({ id, ctx });
-  const safeguardInternalProtectionFuture = safeguardInternalProtection === true ? 1 : safeguardInternalProtection === false ? 0 : null;
   const safeguardChemicalInhibition = await safeguardChemicalInhibitionCalc();
   if (typeof probabilityInterior === 'number') {
-    const result = probabilityInterior - (safeguardInternalProtectionFuture || 0) - (safeguardPigging || 0) - safeguardChemicalInhibition;
+    const result = probabilityInterior - (safeguardInternalProtection || 0) - (safeguardPigging || 0) - safeguardChemicalInhibition;
     return result < 0 ? 0 : result;
   }
   return null;
@@ -359,7 +360,7 @@ export const probabilityInteriorWithSafeguardsCalc = async ({ id, safeguardInter
 
 interface IRiskPotentialInternalWithSafeguardsCalcArgs {
   id: IRisk['id'];
-  riskPeople: IRisk['riskPeople'];
+  consequencePeople: IRisk['consequencePeople'];
   environmentProximityTo: IRisk['environmentProximityTo'];
   repairTimeDays: IRisk['repairTimeDays'];
   oilReleaseCost: IRisk['oilReleaseCost'];
@@ -368,8 +369,8 @@ interface IRiskPotentialInternalWithSafeguardsCalcArgs {
   ctx: Context;
 }
 
-export const riskPotentialInternalWithSafeguardsCalc = async ({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, safeguardInternalProtection, ctx }: IRiskPotentialInternalWithSafeguardsCalcArgs) => {
-  const maxConsequence = await conequenceMaxCalc({ id, riskPeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
+export const riskPotentialInternalWithSafeguardsCalc = async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, safeguardInternalProtection, ctx }: IRiskPotentialInternalWithSafeguardsCalcArgs) => {
+  const maxConsequence = await conequenceMaxCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
   const probabilityInteriorWithSafeguards = await probabilityInteriorWithSafeguardsCalc({ id, safeguardInternalProtection, ctx });
   if (typeof maxConsequence === 'number' && typeof probabilityInteriorWithSafeguards === 'number') {
     return maxConsequence * probabilityInteriorWithSafeguards;

@@ -178,6 +178,7 @@ query ValidatorsPigRun {
     pigTypeEnum {
       Scrapper
       PigType4inArgus
+      PigType6inargus
       PigType6inArgus
       ScraperP400
       PigType3inPurpleScraper
@@ -186,7 +187,9 @@ query ValidatorsPigRun {
       PigType3inscrapper
       PigType3inscraper
       Foam
+      Shutin
       RedStubby
+      PigType3inredstubby
       PigType3inGSCR
       PigType2inGSCR
       NoSender
@@ -209,7 +212,8 @@ query ValidatorsPigRun {
       ScraperP208
       PigType3inArgus
       Ball
-      REVERSEFLOWDUETOTAQA
+      Black3inBall
+      PigType3inWhite
       PigType3
       SIMAY2018
       ScraperP206
@@ -227,7 +231,6 @@ query ValidatorsPigRun {
       PigType2inPurpleDisc
       disc
       PigType2purple2disc
-      Shutin
       PigType3inpurple2disc
       PigType2green2disc
       bullet
@@ -240,15 +243,23 @@ query ValidatorsPigRun {
       ScrapperP307
       PigType4inpurplescraper
       Torpedo
+      PigType4in
+      PigType3inStubby
+      Stubby
+      PigType3in
+      redball
+      PigType2inStubby
+      PigType1inStubby
       PigType3BrownRibbed
       PigType3GreenRibbed
+      PigType3BlueRibbed
       PigType3inBlueRibbed
       PigType3inGreenRibbed
-      PigType3BlueRibbed
       BlueRibbed
+      PigType3BluRibbed
       M_D_Foamy
       PigType6inGreenRibbed
-      SI_GOINGTOTAQA
+      Red3scraper
       Red4inscraper
       Blue3inscraper
       PigType4inBlueDisc
@@ -260,9 +271,8 @@ query ValidatorsPigRun {
       PigType4inFoam
       PigType3inredscrape
       GSCR
-      PigType3inStubby
       PigType4_GreenRibbed
-      PigType3inbluescraper
+      PigType3inpurplescraper
       PigType6ingreenscraper
       Purple3inDisc
     }
@@ -410,6 +420,7 @@ query getValidators {
     pigTypeEnum {
       Scrapper
       PigType4inArgus
+      PigType6inargus
       PigType6inArgus
       ScraperP400
       PigType3inPurpleScraper
@@ -418,7 +429,9 @@ query getValidators {
       PigType3inscrapper
       PigType3inscraper
       Foam
+      Shutin
       RedStubby
+      PigType3inredstubby
       PigType3inGSCR
       PigType2inGSCR
       NoSender
@@ -441,7 +454,8 @@ query getValidators {
       ScraperP208
       PigType3inArgus
       Ball
-      REVERSEFLOWDUETOTAQA
+      Black3inBall
+      PigType3inWhite
       PigType3
       SIMAY2018
       ScraperP206
@@ -459,7 +473,6 @@ query getValidators {
       PigType2inPurpleDisc
       disc
       PigType2purple2disc
-      Shutin
       PigType3inpurple2disc
       PigType2green2disc
       bullet
@@ -472,15 +485,23 @@ query getValidators {
       ScrapperP307
       PigType4inpurplescraper
       Torpedo
+      PigType4in
+      PigType3inStubby
+      Stubby
+      PigType3in
+      redball
+      PigType2inStubby
+      PigType1inStubby
       PigType3BrownRibbed
       PigType3GreenRibbed
+      PigType3BlueRibbed
       PigType3inBlueRibbed
       PigType3inGreenRibbed
-      PigType3BlueRibbed
       BlueRibbed
+      PigType3BluRibbed
       M_D_Foamy
       PigType6inGreenRibbed
-      SI_GOINGTOTAQA
+      Red3scraper
       Red4inscraper
       Blue3inscraper
       PigType4inBlueDisc
@@ -492,9 +513,8 @@ query getValidators {
       PigType4inFoam
       PigType3inredscrape
       GSCR
-      PigType3inStubby
       PigType4_GreenRibbed
-      PigType3inbluescraper
+      PigType3inpurplescraper
       PigType6ingreenscraper
       Purple3inDisc
     }
@@ -861,7 +881,7 @@ query RiskById($id: String!) {
     riskPotentialExternal
     oilReleaseCost
     gasReleaseCost
-    riskPeople
+    consequencePeople
     probabilityGeo
     safeguardInternalProtection
     safeguardPigging
