@@ -5,6 +5,7 @@ import LicenseChanges from './LicenseChanges';
 import MechanicalProperties from './MechanicalProperties';
 import PressureTests from './PressureTests';
 import PigRuns from './PigRuns';
+import PipelineBatches from './PipelineBatches';
 import Risk from './Risk';
 import { IEditRecordFunction } from '../fields/RecordEntry';
 import { IPipeline } from './RenderPipeline';
@@ -22,7 +23,7 @@ export interface IPipelineDataProps {
   isEven: "even" | "odd";
 }
 
-type IView = 'license change' | 'injection point' | 'mechanical properties' | 'pressure test' | 'pig run' | 'risk' | 'system fields';
+type IView = 'license change' | 'injection point' | 'mechanical properties' | 'pressure test' | 'pig run' | 'pipeline batch' | 'risk' | 'system fields';
 
 interface ITabPanelMap {
   title: string;
@@ -94,6 +95,9 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, is
     if (view === 'pig run') {
       return <PigRuns pipelineId={id} />
     }
+    if (view === 'pipeline batch') {
+      return <PipelineBatches pipelineId={id} />
+    }
     if (view === 'risk') {
       return <Risk
         id={id}
@@ -123,6 +127,7 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, is
     { title: 'Mechanical Properties', view: 'mechanical properties' },
     { title: 'Pressure Tests', view: 'pressure test' },
     { title: 'Pig Runs', view: 'pig run' },
+    { title: 'Pipeline Batches', view: 'pipeline batch' },
     { title: 'Risk', view: 'risk' },
     { title: 'System Fields', view: 'system fields' },
   ]

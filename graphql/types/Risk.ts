@@ -100,6 +100,7 @@ export const Risk = objectType({
         return result!;
       },
     })
+    t.string('comment')
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedBy', {
       type: 'User',
@@ -206,6 +207,7 @@ export const RiskMutation = extendType({
         probabilityGeo: floatArg(),
         safeguardInternalProtection: intArg(),
         safeguardExternalCoating: intArg(),
+        comment: stringArg(),
       },
       resolve: async (_, args, ctx: Context) => {
 
@@ -235,6 +237,7 @@ export const RiskMutation = extendType({
               probabilityGeo: args.probabilityGeo,
               safeguardInternalProtection: args.safeguardInternalProtection,
               safeguardExternalCoating: args.safeguardExternalCoating,
+              comment: args.comment,
               updatedById: userId,
             },
           });

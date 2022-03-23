@@ -21,6 +21,28 @@ export type AuthPayload = {
   user?: Maybe<User>;
 };
 
+export enum BatchFrequencyEnum {
+  Annually = 'Annually',
+  Quarterly = 'Quarterly',
+  Specialized = 'Specialized'
+}
+
+export type BatchFrequencyEnumObject = {
+  Annually: Scalars['String'];
+  Quarterly: Scalars['String'];
+  Specialized: Scalars['String'];
+};
+
+export enum BatchProductEnum {
+  C1210 = 'C1210',
+  C3104 = 'C3104'
+}
+
+export type BatchProductEnumObject = {
+  C1210: Scalars['String'];
+  C3104: Scalars['String'];
+};
+
 export enum EnvironmentProximityToEnum {
   Wb1 = 'WB1',
   Wb3 = 'WB3',
@@ -267,6 +289,7 @@ export type InternalProtectionEnumObject = {
 };
 
 export type LicenseChange = {
+  comment?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
   date: Scalars['DateTime'];
@@ -323,6 +346,7 @@ export type MaterialEnumObject = {
 export type Mutation = {
   addLicenseChange?: Maybe<LicenseChangePayload>;
   addPigRun?: Maybe<PigRunPayload>;
+  addPipelineBatch?: Maybe<PipelineBatchPayload>;
   addPressureTest?: Maybe<PressureTestPayload>;
   addRisk?: Maybe<RiskPayload>;
   connectPipeline?: Maybe<Pipeline>;
@@ -331,6 +355,7 @@ export type Mutation = {
   deleteLicenseChange?: Maybe<LicenseChangePayload>;
   deletePigRun?: Maybe<PigRunPayload>;
   deletePipeline?: Maybe<PipelinePayload>;
+  deletePipelineBatch?: Maybe<PipelineBatchPayload>;
   deletePressureTest?: Maybe<PressureTestPayload>;
   deleteRisk?: Maybe<RiskPayload>;
   deleteSatellite?: Maybe<Satellite>;
@@ -342,6 +367,7 @@ export type Mutation = {
   editLicenseChange?: Maybe<LicenseChangePayload>;
   editPigRun?: Maybe<PigRunPayload>;
   editPipeline?: Maybe<PipelinePayload>;
+  editPipelineBatch?: Maybe<PipelineBatchPayload>;
   editPressureTest?: Maybe<PressureTestPayload>;
   editRisk?: Maybe<RiskPayload>;
   editSatellite?: Maybe<Satellite>;
@@ -357,6 +383,11 @@ export type MutationAddLicenseChangeArgs = {
 
 
 export type MutationAddPigRunArgs = {
+  pipelineId: Scalars['String'];
+};
+
+
+export type MutationAddPipelineBatchArgs = {
   pipelineId: Scalars['String'];
 };
 
@@ -400,6 +431,11 @@ export type MutationDeletePigRunArgs = {
 
 
 export type MutationDeletePipelineArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeletePipelineBatchArgs = {
   id: Scalars['String'];
 };
 
@@ -459,6 +495,7 @@ export type MutationEditInjectionPointArgs = {
 
 
 export type MutationEditLicenseChangeArgs = {
+  comment?: Maybe<Scalars['String']>;
   date?: Maybe<Scalars['DateTime']>;
   id: Scalars['String'];
   linkToDocumentation?: Maybe<Scalars['String']>;
@@ -480,6 +517,7 @@ export type MutationEditPigRunArgs = {
 
 
 export type MutationEditPipelineArgs = {
+  batchFrequency?: Maybe<BatchFrequencyEnum>;
   flowCalculationDirection?: Maybe<FlowCalculationDirectionEnum>;
   from?: Maybe<Scalars['String']>;
   fromFeature?: Maybe<FromToFeatureEnum>;
@@ -504,6 +542,17 @@ export type MutationEditPipelineArgs = {
 };
 
 
+export type MutationEditPipelineBatchArgs = {
+  chemicalVolume?: Maybe<Scalars['Float']>;
+  comment?: Maybe<Scalars['String']>;
+  cost?: Maybe<Scalars['Float']>;
+  date?: Maybe<Scalars['DateTime']>;
+  diluentVolume?: Maybe<Scalars['Float']>;
+  id: Scalars['String'];
+  product?: Maybe<BatchProductEnum>;
+};
+
+
 export type MutationEditPressureTestArgs = {
   comment?: Maybe<Scalars['String']>;
   ddsDate?: Maybe<Scalars['DateTime']>;
@@ -518,6 +567,7 @@ export type MutationEditPressureTestArgs = {
 
 export type MutationEditRiskArgs = {
   aerialReview?: Maybe<Scalars['Boolean']>;
+  comment?: Maybe<Scalars['String']>;
   consequencePeople?: Maybe<Scalars['Int']>;
   dateSlopeChecked?: Maybe<Scalars['DateTime']>;
   environmentProximityTo?: Maybe<EnvironmentProximityToEnum>;
@@ -791,6 +841,7 @@ export type PigTypeEnumObject = {
 };
 
 export type Pipeline = {
+  batchFrequency?: Maybe<BatchFrequencyEnum>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
   currentStatus?: Maybe<StatusEnum>;
@@ -825,6 +876,26 @@ export type Pipeline = {
   upstream?: Maybe<Array<Maybe<Pipeline>>>;
   wallThickness?: Maybe<Scalars['Float']>;
   yieldStrength?: Maybe<Scalars['Int']>;
+};
+
+export type PipelineBatch = {
+  chemicalVolume?: Maybe<Scalars['Float']>;
+  comment?: Maybe<Scalars['String']>;
+  cost?: Maybe<Scalars['Float']>;
+  createdAt: Scalars['DateTime'];
+  createdBy: User;
+  date: Scalars['DateTime'];
+  diluentVolume?: Maybe<Scalars['Float']>;
+  id: Scalars['String'];
+  pipeline: Pipeline;
+  product: BatchProductEnum;
+  updatedAt: Scalars['DateTime'];
+  updatedBy: User;
+};
+
+export type PipelineBatchPayload = {
+  error?: Maybe<FieldError>;
+  pipelineBatch?: Maybe<PipelineBatch>;
 };
 
 export type PipelineCreateInput = {
@@ -957,6 +1028,7 @@ export type Query = {
   licenseChangesByPipelineId?: Maybe<Array<Maybe<LicenseChange>>>;
   me?: Maybe<User>;
   pigRunsByPipelineId?: Maybe<Array<Maybe<PigRun>>>;
+  pipelineBatchesByPipelineId?: Maybe<Array<Maybe<PipelineBatch>>>;
   pipelineById?: Maybe<Pipeline>;
   pipelineFlow?: Maybe<Array<Maybe<PipelineFlow>>>;
   pipelineOptions?: Maybe<Array<Maybe<PipelineOptions>>>;
@@ -977,6 +1049,11 @@ export type QueryLicenseChangesByPipelineIdArgs = {
 
 
 export type QueryPigRunsByPipelineIdArgs = {
+  pipelineId: Scalars['String'];
+};
+
+
+export type QueryPipelineBatchesByPipelineIdArgs = {
   pipelineId: Scalars['String'];
 };
 
@@ -1014,6 +1091,7 @@ export type QueryRiskByIdArgs = {
 
 export type Risk = {
   aerialReview?: Maybe<Scalars['Boolean']>;
+  comment?: Maybe<Scalars['String']>;
   conequenceMax?: Maybe<Scalars['Int']>;
   consequenceAsset?: Maybe<Scalars['Int']>;
   consequenceEnviro?: Maybe<Scalars['Int']>;
@@ -1255,6 +1333,8 @@ export type UserUniqueInput = {
 
 export type Validator = {
   anyTextMatchPattern: Scalars['String'];
+  batchFrequencyEnum: BatchFrequencyEnumObject;
+  batchProductEnum: BatchProductEnumObject;
   environmentProximityToEnum: EnvironmentProximityToEnumObject;
   flowCalculationDirectionEnum: FlowCalculationDirectionEnumObject;
   fromToFeatureEnum: FromToFeatureEnumObject;
@@ -1455,6 +1535,33 @@ export type DeletePigRunMutationVariables = Exact<{
 
 export type DeletePigRunMutation = { deletePigRun?: { pigRun?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
+export type EditPipelineBatchMutationVariables = Exact<{
+  id: Scalars['String'];
+  date?: Maybe<Scalars['DateTime']>;
+  product?: Maybe<BatchProductEnum>;
+  cost?: Maybe<Scalars['Float']>;
+  chemicalVolume?: Maybe<Scalars['Float']>;
+  diluentVolume?: Maybe<Scalars['Float']>;
+  comment?: Maybe<Scalars['String']>;
+}>;
+
+
+export type EditPipelineBatchMutation = { editPipelineBatch?: { pipelineBatch?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type AddPipelineBatchMutationVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type AddPipelineBatchMutation = { addPipelineBatch?: { pipelineBatch?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type DeletePipelineBatchMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeletePipelineBatchMutation = { deletePipelineBatch?: { pipelineBatch?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
 export type EditRiskMutationVariables = Exact<{
   id: Scalars['String'];
   aerialReview?: Maybe<Scalars['Boolean']>;
@@ -1540,10 +1647,22 @@ export type ValidatorsPigRunQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ValidatorsPigRunQuery = { validators?: { pigTypeEnum: { Scrapper: string, PigType4inArgus: string, PigType6inargus: string, PigType6inArgus: string, ScraperP400: string, PigType3inPurpleScraper: string, ScraperP304: string, PigType3inscapper: string, PigType3inscrapper: string, PigType3inscraper: string, Foam: string, Shutin: string, RedStubby: string, PigType3inredstubby: string, PigType3inGSCR: string, PigType2inGSCR: string, NoSender: string, PigType2ingscr: string, PigType2inGSCR_GFP: string, PigType4inGSCR: string, PigType2inPSCR_FLM: string, PigType3inPSCR: string, Highline: string, PigType2inPSCR: string, PigType3_scrapper: string, ScraperP401: string, ScraperP300: string, ScraperP301: string, ScraperP309: string, ScraperP314: string, ScaperP314: string, ScaperPP309: string, ScraperP204: string, ScraperP208: string, PigType3inArgus: string, Ball: string, Black3inBall: string, PigType3inWhite: string, PigType3: string, SIMAY2018: string, ScraperP206: string, ScraperP200: string, PigType3inRscr: string, PigType3inPurpleStubby: string, PigType3inSCRAPER: string, Red3inscraper: string, PigType3inGreenDisc: string, PigType4inGreenDisc: string, PigType4green2disc: string, PigType4gree2disc: string, PigType3ingreendisc: string, PigType3inpurpledisc: string, PigType2inPurpleDisc: string, disc: string, PigType2purple2disc: string, PigType3inpurple2disc: string, PigType2green2disc: string, bullet: string, PigType8inFoam: string, PigType3inscr: string, ScraperP305: string, ScraperP312: string, ScraperP303: string, ScraperP311: string, ScrapperP307: string, PigType4inpurplescraper: string, Torpedo: string, PigType4in: string, PigType3inStubby: string, Stubby: string, PigType3in: string, redball: string, PigType2inStubby: string, PigType1inStubby: string, PigType3BrownRibbed: string, PigType3GreenRibbed: string, PigType3BlueRibbed: string, PigType3inBlueRibbed: string, PigType3inGreenRibbed: string, BlueRibbed: string, PigType3BluRibbed: string, M_D_Foamy: string, PigType6inGreenRibbed: string, Red3scraper: string, Red4inscraper: string, Blue3inscraper: string, PigType4inBlueDisc: string, PigType8inBlackDisc: string, PigType4inGreendisc: string, PigType6inGreenDisc: string, PigType6inscrapper: string, PigType4inscrapper: string, PigType4inFoam: string, PigType3inredscrape: string, GSCR: string, PigType4_GreenRibbed: string, PigType3inpurplescraper: string, PigType6ingreenscraper: string, Purple3inDisc: string }, pigInspectionEnum: { Failed: string, Good: string } } | null | undefined };
 
+export type PipelineBatchesByPipelineIdQueryVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type PipelineBatchesByPipelineIdQuery = { pipelineBatchesByPipelineId?: Array<{ id: string, date: string, product: BatchProductEnum, cost?: number | null | undefined, chemicalVolume?: number | null | undefined, diluentVolume?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+
+export type ValidatorsPipelineBatchQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ValidatorsPipelineBatchQuery = { validators?: { batchProductEnum: { C1210: string, C3104: string } } | null | undefined };
+
 export type GetValidatorsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string }, pigTypeEnum: { Scrapper: string, PigType4inArgus: string, PigType6inargus: string, PigType6inArgus: string, ScraperP400: string, PigType3inPurpleScraper: string, ScraperP304: string, PigType3inscapper: string, PigType3inscrapper: string, PigType3inscraper: string, Foam: string, Shutin: string, RedStubby: string, PigType3inredstubby: string, PigType3inGSCR: string, PigType2inGSCR: string, NoSender: string, PigType2ingscr: string, PigType2inGSCR_GFP: string, PigType4inGSCR: string, PigType2inPSCR_FLM: string, PigType3inPSCR: string, Highline: string, PigType2inPSCR: string, PigType3_scrapper: string, ScraperP401: string, ScraperP300: string, ScraperP301: string, ScraperP309: string, ScraperP314: string, ScaperP314: string, ScaperPP309: string, ScraperP204: string, ScraperP208: string, PigType3inArgus: string, Ball: string, Black3inBall: string, PigType3inWhite: string, PigType3: string, SIMAY2018: string, ScraperP206: string, ScraperP200: string, PigType3inRscr: string, PigType3inPurpleStubby: string, PigType3inSCRAPER: string, Red3inscraper: string, PigType3inGreenDisc: string, PigType4inGreenDisc: string, PigType4green2disc: string, PigType4gree2disc: string, PigType3ingreendisc: string, PigType3inpurpledisc: string, PigType2inPurpleDisc: string, disc: string, PigType2purple2disc: string, PigType3inpurple2disc: string, PigType2green2disc: string, bullet: string, PigType8inFoam: string, PigType3inscr: string, ScraperP305: string, ScraperP312: string, ScraperP303: string, ScraperP311: string, ScrapperP307: string, PigType4inpurplescraper: string, Torpedo: string, PigType4in: string, PigType3inStubby: string, Stubby: string, PigType3in: string, redball: string, PigType2inStubby: string, PigType1inStubby: string, PigType3BrownRibbed: string, PigType3GreenRibbed: string, PigType3BlueRibbed: string, PigType3inBlueRibbed: string, PigType3inGreenRibbed: string, BlueRibbed: string, PigType3BluRibbed: string, M_D_Foamy: string, PigType6inGreenRibbed: string, Red3scraper: string, Red4inscraper: string, Blue3inscraper: string, PigType4inBlueDisc: string, PigType8inBlackDisc: string, PigType4inGreendisc: string, PigType6inGreenDisc: string, PigType6inscrapper: string, PigType4inscrapper: string, PigType4inFoam: string, PigType3inredscrape: string, GSCR: string, PigType4_GreenRibbed: string, PigType3inpurplescraper: string, PigType6ingreenscraper: string, Purple3inDisc: string }, pigInspectionEnum: { Failed: string, Good: string }, limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string }, environmentProximityToEnum: { WB1: string, WB3: string, WB4: string, WB5: string, WC1: string, WC2: string, WC3: string, WC4: string }, geotechnicalFacingEnum: { N: string, NE: string, E: string, SE: string, S: string, SW: string, W: string, NW: string } } | null | undefined };
+export type GetValidatorsQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string }, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade2902: string, Grade25: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, batchFrequencyEnum: { Quarterly: string, Annually: string, Specialized: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string }, pigTypeEnum: { Scrapper: string, PigType4inArgus: string, PigType6inargus: string, PigType6inArgus: string, ScraperP400: string, PigType3inPurpleScraper: string, ScraperP304: string, PigType3inscapper: string, PigType3inscrapper: string, PigType3inscraper: string, Foam: string, Shutin: string, RedStubby: string, PigType3inredstubby: string, PigType3inGSCR: string, PigType2inGSCR: string, NoSender: string, PigType2ingscr: string, PigType2inGSCR_GFP: string, PigType4inGSCR: string, PigType2inPSCR_FLM: string, PigType3inPSCR: string, Highline: string, PigType2inPSCR: string, PigType3_scrapper: string, ScraperP401: string, ScraperP300: string, ScraperP301: string, ScraperP309: string, ScraperP314: string, ScaperP314: string, ScaperPP309: string, ScraperP204: string, ScraperP208: string, PigType3inArgus: string, Ball: string, Black3inBall: string, PigType3inWhite: string, PigType3: string, SIMAY2018: string, ScraperP206: string, ScraperP200: string, PigType3inRscr: string, PigType3inPurpleStubby: string, PigType3inSCRAPER: string, Red3inscraper: string, PigType3inGreenDisc: string, PigType4inGreenDisc: string, PigType4green2disc: string, PigType4gree2disc: string, PigType3ingreendisc: string, PigType3inpurpledisc: string, PigType2inPurpleDisc: string, disc: string, PigType2purple2disc: string, PigType3inpurple2disc: string, PigType2green2disc: string, bullet: string, PigType8inFoam: string, PigType3inscr: string, ScraperP305: string, ScraperP312: string, ScraperP303: string, ScraperP311: string, ScrapperP307: string, PigType4inpurplescraper: string, Torpedo: string, PigType4in: string, PigType3inStubby: string, Stubby: string, PigType3in: string, redball: string, PigType2inStubby: string, PigType1inStubby: string, PigType3BrownRibbed: string, PigType3GreenRibbed: string, PigType3BlueRibbed: string, PigType3inBlueRibbed: string, PigType3inGreenRibbed: string, BlueRibbed: string, PigType3BluRibbed: string, M_D_Foamy: string, PigType6inGreenRibbed: string, Red3scraper: string, Red4inscraper: string, Blue3inscraper: string, PigType4inBlueDisc: string, PigType8inBlackDisc: string, PigType4inGreendisc: string, PigType6inGreenDisc: string, PigType6inscrapper: string, PigType4inscrapper: string, PigType4inFoam: string, PigType3inredscrape: string, GSCR: string, PigType4_GreenRibbed: string, PigType3inpurplescraper: string, PigType6ingreenscraper: string, Purple3inDisc: string }, flowCalculationDirectionEnum: { Upstream: string, Downstream: string }, pigInspectionEnum: { Failed: string, Good: string }, limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string }, environmentProximityToEnum: { WB1: string, WB3: string, WB4: string, WB5: string, WC1: string, WC2: string, WC3: string, WC4: string }, geotechnicalFacingEnum: { N: string, NE: string, E: string, SE: string, S: string, SW: string, W: string, NW: string }, batchProductEnum: { C1210: string, C3104: string } } | null | undefined };
 
 export type ValidatorsPipelineQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1580,7 +1699,7 @@ export type LicenseChangesByPipelineIdQueryVariables = Exact<{
 }>;
 
 
-export type LicenseChangesByPipelineIdQuery = { licenseChangesByPipelineId?: Array<{ id: string, status: StatusEnum, substance: SubstanceEnum, date: string, linkToDocumentation?: string | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type LicenseChangesByPipelineIdQuery = { licenseChangesByPipelineId?: Array<{ id: string, status: StatusEnum, substance: SubstanceEnum, date: string, comment?: string | null | undefined, linkToDocumentation?: string | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type PressureTestsByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -1599,7 +1718,7 @@ export type RiskByIdQueryVariables = Exact<{
 }>;
 
 
-export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, consequenceEnviro?: number | null | undefined, consequenceAsset?: number | null | undefined, probabilityInterior?: number | null | undefined, probabilityExterior?: number | null | undefined, conequenceMax?: number | null | undefined, riskPotentialGeo?: number | null | undefined, riskPotentialInternal?: number | null | undefined, riskPotentialExternal?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, consequencePeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: number | null | undefined, safeguardPigging?: number | null | undefined, safeguardChemicalInhibition?: number | null | undefined, probabilityInteriorWithSafeguards?: number | null | undefined, riskPotentialInternalWithSafeguards?: number | null | undefined, safeguardExternalCoating?: number | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
+export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, consequenceEnviro?: number | null | undefined, consequenceAsset?: number | null | undefined, probabilityInterior?: number | null | undefined, probabilityExterior?: number | null | undefined, conequenceMax?: number | null | undefined, riskPotentialGeo?: number | null | undefined, riskPotentialInternal?: number | null | undefined, riskPotentialExternal?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, consequencePeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: number | null | undefined, safeguardPigging?: number | null | undefined, safeguardChemicalInhibition?: number | null | undefined, probabilityInteriorWithSafeguards?: number | null | undefined, riskPotentialInternalWithSafeguards?: number | null | undefined, safeguardExternalCoating?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
 
 export type PipelineFlowQueryVariables = Exact<{
   idList: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
@@ -2436,6 +2555,137 @@ export function useDeletePigRunMutation(baseOptions?: Apollo.MutationHookOptions
 export type DeletePigRunMutationHookResult = ReturnType<typeof useDeletePigRunMutation>;
 export type DeletePigRunMutationResult = Apollo.MutationResult<DeletePigRunMutation>;
 export type DeletePigRunMutationOptions = Apollo.BaseMutationOptions<DeletePigRunMutation, DeletePigRunMutationVariables>;
+export const EditPipelineBatchDocument = gql`
+    mutation EditPipelineBatch($id: String!, $date: DateTime, $product: BatchProductEnum, $cost: Float, $chemicalVolume: Float, $diluentVolume: Float, $comment: String) {
+  editPipelineBatch(
+    id: $id
+    date: $date
+    product: $product
+    cost: $cost
+    chemicalVolume: $chemicalVolume
+    diluentVolume: $diluentVolume
+    comment: $comment
+  ) {
+    pipelineBatch {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type EditPipelineBatchMutationFn = Apollo.MutationFunction<EditPipelineBatchMutation, EditPipelineBatchMutationVariables>;
+
+/**
+ * __useEditPipelineBatchMutation__
+ *
+ * To run a mutation, you first call `useEditPipelineBatchMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditPipelineBatchMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editPipelineBatchMutation, { data, loading, error }] = useEditPipelineBatchMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      date: // value for 'date'
+ *      product: // value for 'product'
+ *      cost: // value for 'cost'
+ *      chemicalVolume: // value for 'chemicalVolume'
+ *      diluentVolume: // value for 'diluentVolume'
+ *      comment: // value for 'comment'
+ *   },
+ * });
+ */
+export function useEditPipelineBatchMutation(baseOptions?: Apollo.MutationHookOptions<EditPipelineBatchMutation, EditPipelineBatchMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditPipelineBatchMutation, EditPipelineBatchMutationVariables>(EditPipelineBatchDocument, options);
+      }
+export type EditPipelineBatchMutationHookResult = ReturnType<typeof useEditPipelineBatchMutation>;
+export type EditPipelineBatchMutationResult = Apollo.MutationResult<EditPipelineBatchMutation>;
+export type EditPipelineBatchMutationOptions = Apollo.BaseMutationOptions<EditPipelineBatchMutation, EditPipelineBatchMutationVariables>;
+export const AddPipelineBatchDocument = gql`
+    mutation AddPipelineBatch($pipelineId: String!) {
+  addPipelineBatch(pipelineId: $pipelineId) {
+    pipelineBatch {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type AddPipelineBatchMutationFn = Apollo.MutationFunction<AddPipelineBatchMutation, AddPipelineBatchMutationVariables>;
+
+/**
+ * __useAddPipelineBatchMutation__
+ *
+ * To run a mutation, you first call `useAddPipelineBatchMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddPipelineBatchMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addPipelineBatchMutation, { data, loading, error }] = useAddPipelineBatchMutation({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useAddPipelineBatchMutation(baseOptions?: Apollo.MutationHookOptions<AddPipelineBatchMutation, AddPipelineBatchMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddPipelineBatchMutation, AddPipelineBatchMutationVariables>(AddPipelineBatchDocument, options);
+      }
+export type AddPipelineBatchMutationHookResult = ReturnType<typeof useAddPipelineBatchMutation>;
+export type AddPipelineBatchMutationResult = Apollo.MutationResult<AddPipelineBatchMutation>;
+export type AddPipelineBatchMutationOptions = Apollo.BaseMutationOptions<AddPipelineBatchMutation, AddPipelineBatchMutationVariables>;
+export const DeletePipelineBatchDocument = gql`
+    mutation DeletePipelineBatch($id: String!) {
+  deletePipelineBatch(id: $id) {
+    pipelineBatch {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type DeletePipelineBatchMutationFn = Apollo.MutationFunction<DeletePipelineBatchMutation, DeletePipelineBatchMutationVariables>;
+
+/**
+ * __useDeletePipelineBatchMutation__
+ *
+ * To run a mutation, you first call `useDeletePipelineBatchMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePipelineBatchMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePipelineBatchMutation, { data, loading, error }] = useDeletePipelineBatchMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeletePipelineBatchMutation(baseOptions?: Apollo.MutationHookOptions<DeletePipelineBatchMutation, DeletePipelineBatchMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeletePipelineBatchMutation, DeletePipelineBatchMutationVariables>(DeletePipelineBatchDocument, options);
+      }
+export type DeletePipelineBatchMutationHookResult = ReturnType<typeof useDeletePipelineBatchMutation>;
+export type DeletePipelineBatchMutationResult = Apollo.MutationResult<DeletePipelineBatchMutation>;
+export type DeletePipelineBatchMutationOptions = Apollo.BaseMutationOptions<DeletePipelineBatchMutation, DeletePipelineBatchMutationVariables>;
 export const EditRiskDocument = gql`
     mutation EditRisk($id: String!, $aerialReview: Boolean, $environmentProximityTo: EnvironmentProximityToEnum, $geotechnicalSlopeAngleS1: Int, $geotechnicalFacingS1: GeotechnicalFacingEnum, $geotechnicalHeightS1: Int, $geotechnicalSlopeAngleS2: Int, $geotechnicalFacingS2: GeotechnicalFacingEnum, $geotechnicalHeightS2: Int, $dateSlopeChecked: DateTime, $repairTimeDays: Int, $releaseTimeDays: Int, $oilReleaseCost: Float, $gasReleaseCost: Float, $consequencePeople: Int, $probabilityGeo: Float, $safeguardInternalProtection: Int, $safeguardExternalCoating: Int) {
   editRisk(
@@ -3102,6 +3352,94 @@ export function useValidatorsPigRunLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type ValidatorsPigRunQueryHookResult = ReturnType<typeof useValidatorsPigRunQuery>;
 export type ValidatorsPigRunLazyQueryHookResult = ReturnType<typeof useValidatorsPigRunLazyQuery>;
 export type ValidatorsPigRunQueryResult = Apollo.QueryResult<ValidatorsPigRunQuery, ValidatorsPigRunQueryVariables>;
+export const PipelineBatchesByPipelineIdDocument = gql`
+    query PipelineBatchesByPipelineId($pipelineId: String!) {
+  pipelineBatchesByPipelineId(pipelineId: $pipelineId) {
+    id
+    date
+    product
+    cost
+    chemicalVolume
+    diluentVolume
+    comment
+    createdBy {
+      id
+      email
+    }
+    createdAt
+    updatedBy {
+      id
+      email
+    }
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __usePipelineBatchesByPipelineIdQuery__
+ *
+ * To run a query within a React component, call `usePipelineBatchesByPipelineIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePipelineBatchesByPipelineIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePipelineBatchesByPipelineIdQuery({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function usePipelineBatchesByPipelineIdQuery(baseOptions: Apollo.QueryHookOptions<PipelineBatchesByPipelineIdQuery, PipelineBatchesByPipelineIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PipelineBatchesByPipelineIdQuery, PipelineBatchesByPipelineIdQueryVariables>(PipelineBatchesByPipelineIdDocument, options);
+      }
+export function usePipelineBatchesByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PipelineBatchesByPipelineIdQuery, PipelineBatchesByPipelineIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PipelineBatchesByPipelineIdQuery, PipelineBatchesByPipelineIdQueryVariables>(PipelineBatchesByPipelineIdDocument, options);
+        }
+export type PipelineBatchesByPipelineIdQueryHookResult = ReturnType<typeof usePipelineBatchesByPipelineIdQuery>;
+export type PipelineBatchesByPipelineIdLazyQueryHookResult = ReturnType<typeof usePipelineBatchesByPipelineIdLazyQuery>;
+export type PipelineBatchesByPipelineIdQueryResult = Apollo.QueryResult<PipelineBatchesByPipelineIdQuery, PipelineBatchesByPipelineIdQueryVariables>;
+export const ValidatorsPipelineBatchDocument = gql`
+    query ValidatorsPipelineBatch {
+  validators {
+    batchProductEnum {
+      C1210
+      C3104
+    }
+  }
+}
+    `;
+
+/**
+ * __useValidatorsPipelineBatchQuery__
+ *
+ * To run a query within a React component, call `useValidatorsPipelineBatchQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorsPipelineBatchQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatorsPipelineBatchQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useValidatorsPipelineBatchQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorsPipelineBatchQuery, ValidatorsPipelineBatchQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorsPipelineBatchQuery, ValidatorsPipelineBatchQueryVariables>(ValidatorsPipelineBatchDocument, options);
+      }
+export function useValidatorsPipelineBatchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorsPipelineBatchQuery, ValidatorsPipelineBatchQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorsPipelineBatchQuery, ValidatorsPipelineBatchQueryVariables>(ValidatorsPipelineBatchDocument, options);
+        }
+export type ValidatorsPipelineBatchQueryHookResult = ReturnType<typeof useValidatorsPipelineBatchQuery>;
+export type ValidatorsPipelineBatchLazyQueryHookResult = ReturnType<typeof useValidatorsPipelineBatchLazyQuery>;
+export type ValidatorsPipelineBatchQueryResult = Apollo.QueryResult<ValidatorsPipelineBatchQuery, ValidatorsPipelineBatchQueryVariables>;
 export const GetValidatorsDocument = gql`
     query getValidators {
   validators {
@@ -3228,6 +3566,11 @@ export const GetValidatorsDocument = gql`
       Unknown
       AsbestosCement
     }
+    batchFrequencyEnum {
+      Quarterly
+      Annually
+      Specialized
+    }
     mopMatchPattern
     internalProtectionEnum {
       Uncoated
@@ -3338,6 +3681,10 @@ export const GetValidatorsDocument = gql`
       PigType6ingreenscraper
       Purple3inDisc
     }
+    flowCalculationDirectionEnum {
+      Upstream
+      Downstream
+    }
     pigInspectionEnum {
       Failed
       Good
@@ -3366,6 +3713,10 @@ export const GetValidatorsDocument = gql`
       SW
       W
       NW
+    }
+    batchProductEnum {
+      C1210
+      C3104
     }
   }
 }
@@ -3828,6 +4179,7 @@ export const LicenseChangesByPipelineIdDocument = gql`
     status
     substance
     date
+    comment
     linkToDocumentation
     createdBy {
       id
@@ -3992,6 +4344,7 @@ export const RiskByIdDocument = gql`
     probabilityInteriorWithSafeguards
     riskPotentialInternalWithSafeguards
     safeguardExternalCoating
+    comment
     createdBy {
       id
       email

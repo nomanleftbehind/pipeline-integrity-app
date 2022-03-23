@@ -121,6 +121,13 @@ export const Pipeline = objectType({
     })
     t.boolean('piggable')
     t.int('piggingFrequency')
+    t.field('batchFrequency', {
+      type: 'BatchFrequencyEnum',
+      resolve: ({ batchFrequency }) => {
+        const result = batchFrequency && serverEnumToDatabaseEnum(BatchFrequencyEnumMembers, batchFrequency);
+        return result;
+      }
+    })
     t.nonNull.field('createdBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -351,6 +358,21 @@ export const InternalProtectionEnum = enumType({
   members: InternalProtectionEnumMembers
 });
 
+export const BatchFrequencyEnumMembers = {
+  Quarterly: 'Quarterly',
+  Annually: 'Annually',
+  Specialized: 'Specialized',
+}
+
+export const BatchFrequencyEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'BatchFrequencyEnum',
+  },
+  name: 'BatchFrequencyEnum',
+  members: BatchFrequencyEnumMembers
+});
+
 export const FlowCalculationDirectionEnumMembers = {
   Upstream: 'Upstream',
   Downstream: 'Downstream',
@@ -515,6 +537,7 @@ export const PipelineMutation = extendType({
         internalProtection: arg({ type: 'InternalProtectionEnum' }),
         piggable: booleanArg(),
         piggingFrequency: intArg(),
+        batchFrequency: arg({ type: 'BatchFrequencyEnum' }),
       },
       resolve: async (_, args, ctx: Context) => {
 
@@ -622,6 +645,7 @@ export const PipelineMutation = extendType({
               internalProtection: databaseEnumToServerEnum(InternalProtectionEnumMembers, args.internalProtection),
               piggable: args.piggable,
               piggingFrequency: args.piggingFrequency,
+              batchFrequency: databaseEnumToServerEnum(BatchFrequencyEnumMembers, args.batchFrequency),
               updatedById: userId,
             },
           });

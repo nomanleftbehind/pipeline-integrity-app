@@ -35,6 +35,7 @@ export const LicenseChange = objectType({
       }
     })
     t.nonNull.field('date', { type: 'DateTime' })
+    t.string('comment')
     t.string('linkToDocumentation')
     t.nonNull.field('createdBy', {
       type: 'User',
@@ -142,6 +143,7 @@ export const LicenseChangeMutation = extendType({
         status: arg({ type: 'StatusEnum' }),
         substance: arg({ type: 'SubstanceEnum' }),
         date: arg({ type: 'DateTime' }),
+        comment: stringArg(),
         linkToDocumentation: stringArg(),
       },
       resolve: async (_parent, args, ctx: Context) => {
@@ -198,6 +200,7 @@ export const LicenseChangeMutation = extendType({
               substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
               date: args.date || undefined,
               linkToDocumentation: args.linkToDocumentation,
+              comment: args.comment,
               updatedById: userId,
             },
           });

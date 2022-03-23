@@ -6,10 +6,12 @@ import {
 	GradeEnumMembers,
 	MaterialEnumMembers,
 	InternalProtectionEnumMembers,
-	FlowCalculationDirectionEnumMembers
+	FlowCalculationDirectionEnumMembers,
+	BatchFrequencyEnumMembers,
 } from './Pipeline';
 import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
 import { PigTypeEnumMembers, PigInspectionEnumMembers } from './PigRun';
+import { BatchProductEnumMembers } from './PipelineBatch';
 import { LimitingSpecEnumMembers } from './PressureTest';
 import { EnvironmentProximityToEnumMembers, GeotechnicalFacingEnumMembers } from './Risk';
 
@@ -96,6 +98,15 @@ export const InternalProtectionEnumObject = objectType({
 	}
 });
 
+export const BatchFrequencyEnumObject = objectType({
+	name: 'BatchFrequencyEnumObject',
+	definition(t) {
+		for (const iterator of Object.keys(BatchFrequencyEnumMembers)) {
+			t.nonNull.string(iterator)
+		}
+	}
+});
+
 export const FlowCalculationDirectionEnumObject = objectType({
 	name: 'FlowCalculationDirectionEnumObject',
 	definition(t) {
@@ -150,6 +161,15 @@ export const GeotechnicalFacingEnumObject = objectType({
 	}
 });
 
+export const BatchProductEnumObject = objectType({
+	name: 'BatchProductEnumObject',
+	definition(t) {
+		for (const iterator of Object.keys(BatchProductEnumMembers)) {
+			t.nonNull.string(iterator)
+		}
+	}
+});
+
 export const Validator = objectType({
 	name: 'Validator',
 	definition(t) {
@@ -170,12 +190,14 @@ export const Validator = objectType({
 		t.nonNull.field('materialEnum', { type: 'MaterialEnumObject' })
 		t.nonNull.string('mopMatchPattern')
 		t.nonNull.field('internalProtectionEnum', { type: 'InternalProtectionEnumObject' })
+		t.nonNull.field('batchFrequencyEnum', { type: 'BatchFrequencyEnumObject' })
 		t.nonNull.field('flowCalculationDirectionEnum', { type: 'FlowCalculationDirectionEnumObject' })
 		t.nonNull.field('pigTypeEnum', { type: 'PigTypeEnumObject' })
 		t.nonNull.field('pigInspectionEnum', { type: 'PigInspectionEnumObject' })
 		t.nonNull.field('limitingSpecEnum', { type: 'LimitingSpecEnumObject' })
 		t.nonNull.field('environmentProximityToEnum', { type: 'EnvironmentProximityToEnumObject' })
 		t.nonNull.field('geotechnicalFacingEnum', { type: 'GeotechnicalFacingEnumObject' })
+		t.nonNull.field('batchProductEnum', { type: 'BatchProductEnumObject' })
 	}
 })
 
@@ -203,12 +225,14 @@ export const ValidatorQuery = extendType({
 					materialEnum: MaterialEnumMembers,
 					mopMatchPattern,
 					internalProtectionEnum: InternalProtectionEnumMembers,
+					batchFrequencyEnum: BatchFrequencyEnumMembers,
 					flowCalculationDirectionEnum: FlowCalculationDirectionEnumMembers,
 					pigTypeEnum: PigTypeEnumMembers,
 					pigInspectionEnum: PigInspectionEnumMembers,
 					limitingSpecEnum: LimitingSpecEnumMembers,
 					environmentProximityToEnum: EnvironmentProximityToEnumMembers,
 					geotechnicalFacingEnum: GeotechnicalFacingEnumMembers,
+					batchProductEnum: BatchProductEnumMembers,
 				};
 			}
 		})

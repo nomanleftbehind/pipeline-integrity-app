@@ -283,6 +283,37 @@ query ValidatorsPigRun {
   }
 }
 
+query PipelineBatchesByPipelineId($pipelineId: String!) {
+  pipelineBatchesByPipelineId(pipelineId: $pipelineId) {
+    id
+    date
+    product
+    cost
+    chemicalVolume
+    diluentVolume
+    comment
+    createdBy {
+      id
+      email
+    }
+    createdAt
+    updatedBy {
+      id
+      email
+    }
+    updatedAt
+  }
+}
+
+query ValidatorsPipelineBatch {
+  validators {
+    batchProductEnum {
+      C1210
+      C3104
+    }
+  }
+}
+
 query getValidators {
   validators {
     licenseMatchPattern
@@ -408,6 +439,11 @@ query getValidators {
       Unknown
       AsbestosCement
     }
+    batchFrequencyEnum {
+      Quarterly
+      Annually
+      Specialized
+    }
     mopMatchPattern
     internalProtectionEnum {
       Uncoated
@@ -518,6 +554,10 @@ query getValidators {
       PigType6ingreenscraper
       Purple3inDisc
     }
+    flowCalculationDirectionEnum {
+      Upstream
+      Downstream
+    }
     pigInspectionEnum {
       Failed
       Good
@@ -546,6 +586,10 @@ query getValidators {
       SW
       W
       NW
+    }
+    batchProductEnum {
+      C1210
+      C3104
     }
   }
 }
@@ -812,6 +856,7 @@ query LicenseChangesByPipelineId($pipelineId: String!) {
     status
     substance
     date
+    comment
     linkToDocumentation
     createdBy {
       id
@@ -889,6 +934,7 @@ query RiskById($id: String!) {
     probabilityInteriorWithSafeguards
     riskPotentialInternalWithSafeguards
     safeguardExternalCoating
+    comment
     createdBy {
       id
       email

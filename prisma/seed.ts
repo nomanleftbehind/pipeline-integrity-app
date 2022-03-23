@@ -26,6 +26,12 @@ import {
 } from './SeedPigRunData';
 
 import {
+  pipelineBatchData1,
+  pipelineBatchData2,
+  pipelineBatchData3,
+} from './SeedPipelineBatchData';
+
+import {
   licenseChangeData1,
   licenseChangeData2,
   licenseChangeData3,
@@ -206,6 +212,27 @@ async function main() {
       data: u,
     })
     console.log(`Created pig run with id: ${pigRun.id}`)
+  }
+
+  for (const u of pipelineBatchData1) {
+    const pipelineBatch = await prisma.pipelineBatch.create({
+      data: u,
+    })
+    console.log(`Created pipeline batch with id: ${pipelineBatch.id}`)
+  }
+
+  for (const u of pipelineBatchData2) {
+    const pipelineBatch = await prisma.pipelineBatch.create({
+      data: u,
+    })
+    console.log(`Created pipeline batch with id: ${pipelineBatch.id}`)
+  }
+
+  for (const u of pipelineBatchData3) {
+    const pipelineBatch = await prisma.pipelineBatch.create({
+      data: u,
+    })
+    console.log(`Created pipeline batch with id: ${pipelineBatch.id}`)
   }
 
   for (const u of pressureTestData) {

@@ -273,7 +273,7 @@ export const PressureTestMutation = extendType({
               limitingSpec: databaseEnumToServerEnum(LimitingSpecEnumMembers, args.limitingSpec),
               infoSentOutDate: args.infoSentOutDate,
               ddsDate: args.ddsDate,
-              pressureTestDate: args.pressureTestDate,
+              pressureTestDate: args.pressureTestDate || undefined,
               pressureTestReceivedDate: args.pressureTestReceivedDate,
               integritySheetUpdated: args.integritySheetUpdated,
               comment: args.comment,

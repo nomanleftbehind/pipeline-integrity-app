@@ -208,6 +208,42 @@ mutation DeletePigRun($id: String!) {
   }
 }
 
+mutation EditPipelineBatch($id: String!, $date: DateTime, $product: BatchProductEnum, $cost: Float, $chemicalVolume: Float, $diluentVolume: Float, $comment: String) {
+  editPipelineBatch(id: $id, date: $date, product: $product, cost: $cost, chemicalVolume: $chemicalVolume, diluentVolume: $diluentVolume, comment: $comment) {
+    pipelineBatch {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
+mutation AddPipelineBatch($pipelineId: String!) {
+  addPipelineBatch(pipelineId: $pipelineId) {
+    pipelineBatch {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
+mutation DeletePipelineBatch($id: String!) {
+  deletePipelineBatch(id: $id) {
+    pipelineBatch {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
 mutation EditRisk($id: String!, $aerialReview: Boolean, $environmentProximityTo: EnvironmentProximityToEnum, $geotechnicalSlopeAngleS1: Int, $geotechnicalFacingS1: GeotechnicalFacingEnum, $geotechnicalHeightS1: Int, $geotechnicalSlopeAngleS2: Int, $geotechnicalFacingS2: GeotechnicalFacingEnum, $geotechnicalHeightS2: Int, $dateSlopeChecked: DateTime, $repairTimeDays: Int, $releaseTimeDays: Int, $oilReleaseCost: Float, $gasReleaseCost: Float, $consequencePeople: Int, $probabilityGeo: Float, $safeguardInternalProtection: Int, $safeguardExternalCoating: Int) {
   editRisk(id: $id, aerialReview: $aerialReview, environmentProximityTo: $environmentProximityTo, geotechnicalSlopeAngleS1: $geotechnicalSlopeAngleS1, geotechnicalFacingS1: $geotechnicalFacingS1, geotechnicalHeightS1: $geotechnicalHeightS1, geotechnicalSlopeAngleS2: $geotechnicalSlopeAngleS2, geotechnicalFacingS2: $geotechnicalFacingS2, geotechnicalHeightS2: $geotechnicalHeightS2, dateSlopeChecked: $dateSlopeChecked, repairTimeDays: $repairTimeDays, releaseTimeDays: $releaseTimeDays, oilReleaseCost: $oilReleaseCost, gasReleaseCost: $gasReleaseCost, consequencePeople: $consequencePeople, probabilityGeo: $probabilityGeo, safeguardInternalProtection: $safeguardInternalProtection, safeguardExternalCoating: $safeguardExternalCoating) {
     risk {

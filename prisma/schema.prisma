@@ -29,6 +29,8 @@ model User {
   pigRunsUpdatedBy         PigRun[]         @relation("pigRunUpdatedBy")
   pressureTestsCreatedBy   PressureTest[]   @relation("pressureTestCreatedBy")
   pressureTestsUpdatedBy   PressureTest[]   @relation("pressureTestUpdatedBy")
+  pipelineBatchCreatedBy   PipelineBatch[]  @relation("pipelineBatchCreatedBy")
+  pipelineBatchUpdatedBy   PipelineBatch[]  @relation("pipelineBatchUpdatedBy")
   risksCreatedBy           Risk[]           @relation("riskCreatedBy")
   risksUpdatedBy           Risk[]           @relation("riskUpdatedBy")
 }
@@ -98,10 +100,12 @@ model Pipeline {
   internalProtection       InternalProtectionEnum?
   piggable                 Boolean?
   piggingFrequency         Int?
+  batchFrequency           BatchFrequencyEnum?
   flowCalculationDirection FlowCalculationDirectionEnum
   upstream                 Pipeline[]                   @relation("PipelineFollows", references: [id])
   downstream               Pipeline[]                   @relation("PipelineFollows", references: [id])
   pressureTests            PressureTest[]
+  pipelineBatches          PipelineBatch[]
   createdBy                User                         @relation("pipelineCreatedBy", fields: [createdById], references: [id])
   createdById              String
   createdAt                DateTime                     @default(now())
@@ -119,6 +123,7 @@ model LicenseChange {
   status              StatusEnum    @default(Operating)
   substance           SubstanceEnum @default(OilWellEffluent)
   date                DateTime
+  comment             String?
   linkToDocumentation String?
   createdBy           User          @relation("licenseChangeCreatedBy", fields: [createdById], references: [id])
   createdById         String
@@ -189,6 +194,7 @@ model Risk {
   probabilityGeo              Float?
   safeguardInternalProtection Int?
   safeguardExternalCoating    Int?
+  comment                     String?
   createdBy                   User                        @relation("riskCreatedBy", fields: [createdById], references: [id])
   createdById                 String
   createdAt                   DateTime                    @default(now())
@@ -219,6 +225,25 @@ model InjectionPoint {
 
 }
 
+model PipelineBatch {
+  id             String           @id @default(uuid())
+  pipeline       Pipeline         @relation(fields: [pipelineId], references: [id])
+  pipelineId     String
+  date           DateTime
+  product        BatchProductEnum
+  cost           Float?
+  chemicalVolume Float?
+  diluentVolume  Float?
+  comment        String?
+  createdBy      User             @relation("pipelineBatchCreatedBy", fields: [createdById], references: [id])
+  createdById    String
+  createdAt      DateTime         @default(now())
+  updatedBy      User             @relation("pipelineBatchUpdatedBy", fields: [updatedById], references: [id])
+  updatedById    String
+  updatedAt      DateTime         @updatedAt
+
+}
+
 enum SubstanceEnum {
   NaturalGas       @map("Natural Gas")
   FreshWater       @map("Fresh Water")
@@ -230,6 +255,21 @@ enum SubstanceEnum {
   SourNaturalGas   @map("Sour Natural Gas")
 
   @@map("substance")
+}
+
+enum BatchProductEnum {
+  C3104
+  C1210
+
+  @@map("batch_product")
+}
+
+enum BatchFrequencyEnum {
+  Quarterly
+  Annually
+  Specialized
+
+  @@map("batch_frequency")
 }
 
 enum FromToFeatureEnum {

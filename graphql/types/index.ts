@@ -6,6 +6,7 @@ export * from './LicenseChange';
 export * from './InjectionPointOptions';
 export * from './Validator';
 export * from './PigRun';
+export * from './PipelineBatch';
 export * from './PressureTest';
 export * from './Risk';
 export * from './InjectionPoint';

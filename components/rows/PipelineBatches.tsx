@@ -1,14 +1,12 @@
 import { useState, Fragment } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import {
-  useLicenseChangesByPipelineIdQuery,
-  useValidatorsLicenseChangeQuery,
-  useEditLicenseChangeMutation,
-  useAddLicenseChangeMutation,
-  useDeleteLicenseChangeMutation,
-  LicenseChangesByPipelineIdDocument,
-  PipelinesByIdQueryDocument,
-  RiskByIdDocument,
+  usePipelineBatchesByPipelineIdQuery,
+  useValidatorsPipelineBatchQuery,
+  useEditPipelineBatchMutation,
+  useAddPipelineBatchMutation,
+  useDeletePipelineBatchMutation,
+  PipelineBatchesByPipelineIdDocument,
 } from '../../graphql/generated/graphql';
 
 import RecordEntry, { IEditRecord, IRecordEntryProps } from '../fields/RecordEntry';
@@ -19,36 +17,36 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 
 export type IRecordEntryMap = Omit<IRecordEntryProps, 'id' | 'createdById' | 'authorized'>;
 
-interface ILicenseChangesProps {
+interface IPipelineBatchesProps {
   pipelineId: string;
 }
 
-export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
-  const { data, loading, error } = useLicenseChangesByPipelineIdQuery({ variables: { pipelineId } });
-  const { data: dataValidators } = useValidatorsLicenseChangeQuery();
-  const [editLicenseChange] = useEditLicenseChangeMutation({
-    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery', RiskByIdDocument, 'RiskById'],
-    onCompleted: ({ editLicenseChange }) => {
-      const { error } = editLicenseChange || {};
+export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
+  const { data, loading, error } = usePipelineBatchesByPipelineIdQuery({ variables: { pipelineId } });
+  const { data: dataValidators } = useValidatorsPipelineBatchQuery();
+  const [editPipelineBatch] = useEditPipelineBatchMutation({
+    refetchQueries: [PipelineBatchesByPipelineIdDocument, 'PipelineBatchesByPipelineId'],
+    onCompleted: ({ editPipelineBatch }) => {
+      const { error } = editPipelineBatch || {};
       if (error) {
         setFieldError(error);
       }
     }
   });
-  const [addLicenseChange] = useAddLicenseChangeMutation({
+  const [addPipelineBatch] = useAddPipelineBatchMutation({
     variables: { pipelineId },
-    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery', RiskByIdDocument, 'RiskById'],
-    onCompleted: ({ addLicenseChange }) => {
-      const { error } = addLicenseChange || {};
+    refetchQueries: [PipelineBatchesByPipelineIdDocument, 'PipelineBatchesByPipelineId'],
+    onCompleted: ({ addPipelineBatch }) => {
+      const { error } = addPipelineBatch || {};
       if (error) {
         setFieldError(error);
       }
     }
   });
-  const [deleteLicenseChange] = useDeleteLicenseChangeMutation({
-    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery', RiskByIdDocument, 'RiskById'],
-    onCompleted: ({ deleteLicenseChange }) => {
-      const { error } = deleteLicenseChange || {};
+  const [deletePipelineBatch] = useDeletePipelineBatchMutation({
+    refetchQueries: [PipelineBatchesByPipelineIdDocument, 'PipelineBatchesByPipelineId'],
+    onCompleted: ({ deletePipelineBatch }) => {
+      const { error } = deletePipelineBatch || {};
       if (error) {
         setFieldError(error);
       }
@@ -58,7 +56,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
 
-  const { statusEnum, substanceEnum } = dataValidators?.validators || {};
+  const { batchProductEnum } = dataValidators?.validators || {};
 
   const { user } = useAuth() || {};
   const { role, id: userId } = user || {};
@@ -81,26 +79,28 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
       }
     }
     newRecord = switchNewRecord();
-    editLicenseChange({ variables: { id, [columnName]: newRecord } });
+    editPipelineBatch({ variables: { id, [columnName]: newRecord } });
   }
 
   const addRecord = () => {
-    addLicenseChange();
+    addPipelineBatch();
   }
 
   const deleteRecord = (id: string) => {
-    deleteLicenseChange({ variables: { id } });
+    deletePipelineBatch({ variables: { id } });
   }
 
   const hideFieldErrorModal = () => {
     setFieldError(initialFieldError);
   }
 
-  const licenseChangeHeader = [
+  const pipelineBatchHeader = [
     { label: 'Date' },
-    { label: 'Status' },
-    { label: 'Substance' },
-    { label: 'Link To Documentation' },
+    { label: 'Product' },
+    { label: 'Cost ($/L' },
+    { label: 'Chemical Volume (L)' },
+    { label: 'Diluent Volume (L)' },
+    { label: 'Comment' },
     { label: 'Created By' },
     { label: 'Created At' },
     { label: 'Updated By' },
@@ -110,7 +110,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
 
   return (
     <div className='license-change'>
-      {(role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') && <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
+      {(role === 'ADMIN' || role === 'ENGINEER' || role === 'CHEMICAL') && <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
         <IconButton
           className='button-container'
           aria-label='add row' size='small' onClick={addRecord}>
@@ -121,23 +121,25 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
       />}
-      {licenseChangeHeader.map(({ label }, gridColumn) => {
+      {pipelineBatchHeader.map(({ label }, gridColumn) => {
         gridColumn += 2;
         return <div key={gridColumn} className='pipeline-data-view-header sticky top' style={{ gridColumn }}>{label}</div>
       })}
       {loading && <div style={{ padding: '4px', gridColumn: 2, gridRow: 2 }}>Loading...</div>}
       {error && <div style={{ padding: '4px', gridColumn: 2, gridRow: 2 }}>{error.message}</div>}
-      {data?.licenseChangesByPipelineId?.map((licenseChange, gridRow) => {
-        const isLastRow = data.licenseChangesByPipelineId?.length === gridRow + 1;
+      {data?.pipelineBatchesByPipelineId?.map((pipelineBatch, gridRow) => {
+        const isLastRow = data.pipelineBatchesByPipelineId?.length === gridRow + 1;
         gridRow += 2;
-        if (licenseChange) {
-          const { id, date, status, substance, linkToDocumentation, createdBy, createdAt, updatedBy, updatedAt } = licenseChange;
-          const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'OFFICE' && createdBy.id === userId);
-          const licenseChangeColumns: IRecordEntryMap[] = [
+        if (pipelineBatch) {
+          const { id, date, product, cost, chemicalVolume, diluentVolume, comment, createdBy, createdAt, updatedBy, updatedAt } = pipelineBatch;
+          const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'CHEMICAL');
+          const pipelineBatchColumns: IRecordEntryMap[] = [
             { columnName: 'date', columnType: 'date', nullable: false, record: date, editRecord },
-            { columnName: 'status', columnType: 'string', nullable: false, record: status, validator: statusEnum, editRecord },
-            { columnName: 'substance', columnType: 'string', nullable: false, record: substance, validator: substanceEnum, editRecord },
-            { columnName: 'linkToDocumentation', columnType: 'link', nullable: true, record: linkToDocumentation, editRecord },
+            { columnName: 'product', columnType: 'string', nullable: false, record: product, validator: batchProductEnum, editRecord },
+            { columnName: 'cost', columnType: 'number', nullable: true, record: cost, editRecord },
+            { columnName: 'chemicalVolume', columnType: 'number', nullable: true, record: chemicalVolume, editRecord },
+            { columnName: 'diluentVolume', columnType: 'number', nullable: true, record: diluentVolume, editRecord },
+            { columnName: 'comment', columnType: 'string', nullable: true, record: comment, editRecord },
             { columnName: 'createdBy', columnType: 'string', nullable: false, record: createdBy.email },
             { columnName: 'createdAt', columnType: 'date', nullable: false, record: createdAt },
             { columnName: 'updatedBy', columnType: 'string', nullable: false, record: updatedBy.email },
@@ -146,14 +148,14 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
           ];
           return (
             <Fragment key={id}>
-              {authorized && <div className={`license-change-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
+              {authorized && <div className={`pipeline-batch-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
                   aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </div>}
-              {licenseChangeColumns.map(({ columnName, columnType, nullable, record, validator, editRecord }, gridColumn) => {
+              {pipelineBatchColumns.map(({ columnName, columnType, nullable, record, validator, editRecord }, gridColumn) => {
                 gridColumn += 2;
                 return (
                   <div key={gridColumn} className='license-change-row' style={{ gridColumn, gridRow }}>
