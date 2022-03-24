@@ -101,6 +101,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
     { label: 'Status' },
     { label: 'Substance' },
     { label: 'Link To Documentation' },
+    { label: 'Comment' },
     { label: 'Created By' },
     { label: 'Created At' },
     { label: 'Updated By' },
@@ -131,13 +132,14 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
         const isLastRow = data.licenseChangesByPipelineId?.length === gridRow + 1;
         gridRow += 2;
         if (licenseChange) {
-          const { id, date, status, substance, linkToDocumentation, createdBy, createdAt, updatedBy, updatedAt } = licenseChange;
+          const { id, date, status, substance, linkToDocumentation, comment, createdBy, createdAt, updatedBy, updatedAt } = licenseChange;
           const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'OFFICE' && createdBy.id === userId);
           const licenseChangeColumns: IRecordEntryMap[] = [
             { columnName: 'date', columnType: 'date', nullable: false, record: date, editRecord },
             { columnName: 'status', columnType: 'string', nullable: false, record: status, validator: statusEnum, editRecord },
             { columnName: 'substance', columnType: 'string', nullable: false, record: substance, validator: substanceEnum, editRecord },
             { columnName: 'linkToDocumentation', columnType: 'link', nullable: true, record: linkToDocumentation, editRecord },
+            { columnName: 'comment', columnType: 'string', nullable: true, record: comment, editRecord },
             { columnName: 'createdBy', columnType: 'string', nullable: false, record: createdBy.email },
             { columnName: 'createdAt', columnType: 'date', nullable: false, record: createdAt },
             { columnName: 'updatedBy', columnType: 'string', nullable: false, record: updatedBy.email },

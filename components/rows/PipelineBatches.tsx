@@ -97,7 +97,7 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
   const pipelineBatchHeader = [
     { label: 'Date' },
     { label: 'Product' },
-    { label: 'Cost ($/L' },
+    { label: 'Cost ($/L)' },
     { label: 'Chemical Volume (L)' },
     { label: 'Diluent Volume (L)' },
     { label: 'Comment' },
@@ -109,7 +109,7 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
   ];
 
   return (
-    <div className='license-change'>
+    <div className='pipeline-batch'>
       {(role === 'ADMIN' || role === 'ENGINEER' || role === 'CHEMICAL') && <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
         <IconButton
           className='button-container'
@@ -158,7 +158,7 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
               {pipelineBatchColumns.map(({ columnName, columnType, nullable, record, validator, editRecord }, gridColumn) => {
                 gridColumn += 2;
                 return (
-                  <div key={gridColumn} className='license-change-row' style={{ gridColumn, gridRow }}>
+                  <div key={gridColumn} className='pipeline-batch-row' style={{ gridColumn, gridRow }}>
                     <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
                   </div>
                 );

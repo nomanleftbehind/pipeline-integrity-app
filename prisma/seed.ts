@@ -28,7 +28,6 @@ import {
 import {
   pipelineBatchData1,
   pipelineBatchData2,
-  pipelineBatchData3,
 } from './SeedPipelineBatchData';
 
 import {
@@ -222,13 +221,6 @@ async function main() {
   }
 
   for (const u of pipelineBatchData2) {
-    const pipelineBatch = await prisma.pipelineBatch.create({
-      data: u,
-    })
-    console.log(`Created pipeline batch with id: ${pipelineBatch.id}`)
-  }
-
-  for (const u of pipelineBatchData3) {
     const pipelineBatch = await prisma.pipelineBatch.create({
       data: u,
     })

@@ -1,0 +1,26 @@
+.register {
+  display: flex;
+  flex-direction: column;
+}
+
+.register>div {
+  display: flex;
+  flex-direction: column;
+  height: 50px;
+}
+
+.register input {
+  height: 30px;
+  border: 1px solid #bdbdbd;
+  border-radius: 4px;
+}
+
+.register select {
+  height: 30px;
+  border: 1px solid #bdbdbd;
+  border-radius: 4px;
+}
+
+.register .error {
+  font-size: small;
+}

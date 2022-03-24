@@ -116,45 +116,45 @@ function Register({ userCount, user }: IServerSideProps) {
         {({ errors, touched, isSubmitting }) => {
 
           return (
-            <Form>
+            <Form className='register'>
               {isSignup && <TextInput
-                label='First Name'
+                placeholder='First Name'
                 name='firstName'
                 type='text'
                 autoComplete='off'
               />}
 
               {isSignup && <TextInput
-                label='Last Name'
+                placeholder='Last Name'
                 name='lastName'
                 type='text'
                 autoComplete='off'
               />}
 
               <TextInput
-                label='Email Address'
+                placeholder='Email Address'
                 name='email'
                 type='email'
                 autoComplete='off'
               />
 
               <TextInput
-                label='Password'
+                placeholder='Password'
                 name='password'
                 type='password'
                 autoComplete='off'
               />
 
-              {isSignup && userCount > 0 && <SelectInput label='Role' name='role'>
+              {isSignup && userCount > 0 && <DOMSelectInput label='Role' name='role'>
                 {dataUserRole?.validators && Object
                   .entries(dataUserRole.validators.userRoleEnum)
-                  .map(([roleServer, roleDatabase]) => <MenuItem
+                  .map(([roleServer, roleDatabase]) => <option
                     key={roleServer}
                     value={roleServer}
                   >
                     {roleDatabase}
-                  </MenuItem>)}
-              </SelectInput>}
+                  </option>)}
+              </DOMSelectInput>}
 
               <Button fullWidth color='primary' variant='contained' type='submit'>
                 Submit
@@ -175,13 +175,13 @@ export const TextInput = ({ label, ...props }: IInput) => {
   const [field, meta] = useField(props);
 
   return (
-    <>
+    <div>
       {label && <label htmlFor={props.id || props.name}>{label}</label>}
       <input {...field} {...props as any /* Fix type error */} />
       {meta.touched && meta.error ? (
         <div className='error' style={{ color: 'red' }}>{meta.error}</div>
       ) : null}
-    </>
+    </div>
   );
 };
 

@@ -5,7 +5,7 @@
 
 .license-change {
   display: grid;
-  grid-template-columns: 30px var(--date-width) 135px 130px 240px auto;
+  grid-template-columns: 30px var(--date-width) 135px 130px 240px 220px auto;
   row-gap: 2px;
   column-gap: 4px;
   grid-auto-rows: minmax(20px, auto);
