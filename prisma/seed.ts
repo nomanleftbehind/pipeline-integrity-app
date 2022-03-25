@@ -11,6 +11,8 @@ import {
   riskData,
 } from './SeedData';
 
+import { batchProductData } from './SeedBatchProductData';
+
 import {
   pigRunData1,
   pigRunData2,
@@ -29,6 +31,15 @@ import {
   pipelineBatchData1,
   pipelineBatchData2,
 } from './SeedPipelineBatchData';
+
+import {
+  wellBatchData1,
+  wellBatchData2,
+  wellBatchData3,
+  wellBatchData4,
+  wellBatchData5,
+  wellBatchData6,
+} from './SeedWellBatchData';
 
 import {
   licenseChangeData1,
@@ -72,6 +83,13 @@ async function main() {
       data: u,
     })
     console.log(`Created user with id: ${user.id}`)
+  }
+
+  for (const u of batchProductData) {
+    const batchProduct = await prisma.batchProduct.create({
+      data: u,
+    })
+    console.log(`Created user with id: ${batchProduct.id}`)
   }
 
   for (const u of facilityData) {
@@ -225,6 +243,48 @@ async function main() {
       data: u,
     })
     console.log(`Created pipeline batch with id: ${pipelineBatch.id}`)
+  }
+
+  for (const u of wellBatchData1) {
+    const wellBatch = await prisma.wellBatch.create({
+      data: u,
+    })
+    console.log(`Created pipeline batch with id: ${wellBatch.id}`)
+  }
+
+  for (const u of wellBatchData2) {
+    const wellBatch = await prisma.wellBatch.create({
+      data: u,
+    })
+    console.log(`Created pipeline batch with id: ${wellBatch.id}`)
+  }
+
+  for (const u of wellBatchData3) {
+    const wellBatch = await prisma.wellBatch.create({
+      data: u,
+    })
+    console.log(`Created pipeline batch with id: ${wellBatch.id}`)
+  }
+
+  for (const u of wellBatchData4) {
+    const wellBatch = await prisma.wellBatch.create({
+      data: u,
+    })
+    console.log(`Created pipeline batch with id: ${wellBatch.id}`)
+  }
+
+  for (const u of wellBatchData5) {
+    const wellBatch = await prisma.wellBatch.create({
+      data: u,
+    })
+    console.log(`Created pipeline batch with id: ${wellBatch.id}`)
+  }
+
+  for (const u of wellBatchData6) {
+    const wellBatch = await prisma.wellBatch.create({
+      data: u,
+    })
+    console.log(`Created pipeline batch with id: ${wellBatch.id}`)
   }
 
   for (const u of pressureTestData) {

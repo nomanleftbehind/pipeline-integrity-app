@@ -29,8 +29,12 @@ model User {
   pigRunsUpdatedBy         PigRun[]         @relation("pigRunUpdatedBy")
   pressureTestsCreatedBy   PressureTest[]   @relation("pressureTestCreatedBy")
   pressureTestsUpdatedBy   PressureTest[]   @relation("pressureTestUpdatedBy")
-  pipelineBatchCreatedBy   PipelineBatch[]  @relation("pipelineBatchCreatedBy")
-  pipelineBatchUpdatedBy   PipelineBatch[]  @relation("pipelineBatchUpdatedBy")
+  pipelineBatchesCreatedBy PipelineBatch[]  @relation("pipelineBatchCreatedBy")
+  pipelineBatchesUpdatedBy PipelineBatch[]  @relation("pipelineBatchUpdatedBy")
+  wellBatchesCreatedBy     WellBatch[]      @relation("wellBatchCreatedBy")
+  wellBatchesUpdatedBy     WellBatch[]      @relation("wellBatchUpdatedBy")
+  batchProductCreatedBy    BatchProduct[]   @relation("batchProductCreatedBy")
+  batchProductUpdatedBy    BatchProduct[]   @relation("batchProductUpdatedBy")
   risksCreatedBy           Risk[]           @relation("riskCreatedBy")
   risksUpdatedBy           Risk[]           @relation("riskUpdatedBy")
 }
@@ -204,8 +208,8 @@ model Risk {
 }
 
 model InjectionPoint {
-  id              String    @id @default(uuid())
-  source          String    @unique
+  id              String      @id @default(uuid())
+  source          String      @unique
   oil             Float
   water           Float
   gas             Float
@@ -213,34 +217,73 @@ model InjectionPoint {
   lastProduction  DateTime?
   firstInjection  DateTime?
   lastInjection   DateTime?
-  pvNodeId        String?   @unique
-  pipeline        Pipeline? @relation(fields: [pipelineId], references: [id])
+  pvNodeId        String?     @unique
+  pipeline        Pipeline?   @relation(fields: [pipelineId], references: [id])
   pipelineId      String?
-  createdBy       User      @relation("injectionPointCreatedBy", fields: [createdById], references: [id])
+  wellBatches     WellBatch[]
+  createdBy       User        @relation("injectionPointCreatedBy", fields: [createdById], references: [id])
   createdById     String
-  createdAt       DateTime  @default(now())
-  updatedBy       User      @relation("injectionPointUpdatedBy", fields: [updatedById], references: [id])
+  createdAt       DateTime    @default(now())
+  updatedBy       User        @relation("injectionPointUpdatedBy", fields: [updatedById], references: [id])
   updatedById     String
-  updatedAt       DateTime  @updatedAt
+  updatedAt       DateTime    @updatedAt
 
 }
 
 model PipelineBatch {
-  id             String           @id @default(uuid())
-  pipeline       Pipeline         @relation(fields: [pipelineId], references: [id])
+  id             String       @id @default(uuid())
+  pipeline       Pipeline     @relation(fields: [pipelineId], references: [id])
   pipelineId     String
   date           DateTime
-  product        BatchProductEnum
+  product        BatchProduct @relation(fields: [productId], references: [id])
+  productId      String
   cost           Float?
   chemicalVolume Float?
   diluentVolume  Float?
   comment        String?
-  createdBy      User             @relation("pipelineBatchCreatedBy", fields: [createdById], references: [id])
+  createdBy      User         @relation("pipelineBatchCreatedBy", fields: [createdById], references: [id])
   createdById    String
-  createdAt      DateTime         @default(now())
-  updatedBy      User             @relation("pipelineBatchUpdatedBy", fields: [updatedById], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedBy      User         @relation("pipelineBatchUpdatedBy", fields: [updatedById], references: [id])
   updatedById    String
-  updatedAt      DateTime         @updatedAt
+  updatedAt      DateTime     @updatedAt
+
+}
+
+model WellBatch {
+  id             String         @id @default(uuid())
+  well           InjectionPoint @relation(fields: [wellId], references: [id])
+  wellId         String
+  date           DateTime
+  product        BatchProduct   @relation(fields: [productId], references: [id])
+  productId      String
+  cost           Float?
+  chemicalVolume Float?
+  diluentVolume  Float?
+  comment        String?
+  createdBy      User           @relation("wellBatchCreatedBy", fields: [createdById], references: [id])
+  createdById    String
+  createdAt      DateTime       @default(now())
+  updatedBy      User           @relation("wellBatchUpdatedBy", fields: [updatedById], references: [id])
+  updatedById    String
+  updatedAt      DateTime       @updatedAt
+
+}
+
+model BatchProduct {
+  id              String          @id @default(uuid())
+  pipelineBatches PipelineBatch[]
+  wellBatches     WellBatch[]
+  product         String          @unique
+  cost            Float?
+  productType     String?
+  solubility      SolubilityEnum
+  createdBy       User            @relation("batchProductCreatedBy", fields: [createdById], references: [id])
+  createdById     String
+  createdAt       DateTime        @default(now())
+  updatedBy       User            @relation("batchProductUpdatedBy", fields: [updatedById], references: [id])
+  updatedById     String
+  updatedAt       DateTime        @updatedAt
 
 }
 
@@ -257,12 +300,35 @@ enum SubstanceEnum {
   @@map("substance")
 }
 
-enum BatchProductEnum {
-  C3104
-  C1210
+enum SolubilityEnum {
+  Oil
+  Water
 
-  @@map("batch_product")
+  @@map("solubility")
 }
+
+// enum BatchProductEnum {
+//   PR777    @map("PR-777")
+//   C3104    @map("C-3104")
+//   R777     @map("R-777 ")
+//   P7252    @map("P-7252")
+//   SC6232   @map("SC-6232")
+//   P7272    @map("P-7272")
+//   PS7217   @map("PS-7217")
+//   P7215    @map("P-7215")
+//   P7263    @map("P-7263")
+//   P7225    @map("P-7225")
+//   PSI3     @map("PSI-3")
+//   BC1303   @map("BC-1303")
+//   CCB350   @map("CCB-350")
+//   B2140    @map("B-2140")
+//   SC6132   @map("SC-6132")
+//   PSC7292  @map("PSC-729")
+//   C210     @map("C-210 ")
+//   C1210    @map("C-1210")
+
+//   @@map("batch_product")
+// }
 
 enum BatchFrequencyEnum {
   Quarterly

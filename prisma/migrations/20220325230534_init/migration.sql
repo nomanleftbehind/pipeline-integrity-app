@@ -5,7 +5,7 @@ CREATE TYPE "user_role" AS ENUM ('Admin', 'Engineer', 'Office', 'Operator', 'Che
 CREATE TYPE "substance" AS ENUM ('Natural Gas', 'Fresh Water', 'Salt Water', 'Crude Oil', 'Oil Well Effluent', 'LVP Products', 'Fuel Gas', 'Sour Natural Gas');
 
 -- CreateEnum
-CREATE TYPE "batch_product" AS ENUM ('C3104', 'C1210');
+CREATE TYPE "solubility" AS ENUM ('Oil', 'Water');
 
 -- CreateEnum
 CREATE TYPE "batch_frequency" AS ENUM ('Quarterly', 'Annually', 'Specialized');
@@ -224,7 +224,7 @@ CREATE TABLE "PipelineBatch" (
     "id" TEXT NOT NULL,
     "pipelineId" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
-    "product" "batch_product" NOT NULL,
+    "productId" TEXT NOT NULL,
     "cost" DOUBLE PRECISION,
     "chemicalVolume" DOUBLE PRECISION,
     "diluentVolume" DOUBLE PRECISION,
@@ -235,6 +235,39 @@ CREATE TABLE "PipelineBatch" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "PipelineBatch_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "WellBatch" (
+    "id" TEXT NOT NULL,
+    "wellId" TEXT NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
+    "productId" TEXT NOT NULL,
+    "cost" DOUBLE PRECISION,
+    "chemicalVolume" DOUBLE PRECISION,
+    "diluentVolume" DOUBLE PRECISION,
+    "comment" TEXT,
+    "createdById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedById" TEXT NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "WellBatch_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "BatchProduct" (
+    "id" TEXT NOT NULL,
+    "product" TEXT NOT NULL,
+    "cost" DOUBLE PRECISION,
+    "productType" TEXT,
+    "solubility" "solubility" NOT NULL,
+    "createdById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedById" TEXT NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "BatchProduct_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -263,6 +296,9 @@ CREATE UNIQUE INDEX "InjectionPoint_source_key" ON "InjectionPoint"("source");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "InjectionPoint_pvNodeId_key" ON "InjectionPoint"("pvNodeId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "BatchProduct_product_key" ON "BatchProduct"("product");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_PipelineFollows_AB_unique" ON "_PipelineFollows"("A", "B");
@@ -350,6 +386,27 @@ ALTER TABLE "PipelineBatch" ADD CONSTRAINT "PipelineBatch_updatedById_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "PipelineBatch" ADD CONSTRAINT "PipelineBatch_pipelineId_fkey" FOREIGN KEY ("pipelineId") REFERENCES "Pipeline"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PipelineBatch" ADD CONSTRAINT "PipelineBatch_productId_fkey" FOREIGN KEY ("productId") REFERENCES "BatchProduct"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "WellBatch" ADD CONSTRAINT "WellBatch_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "WellBatch" ADD CONSTRAINT "WellBatch_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "WellBatch" ADD CONSTRAINT "WellBatch_wellId_fkey" FOREIGN KEY ("wellId") REFERENCES "InjectionPoint"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "WellBatch" ADD CONSTRAINT "WellBatch_productId_fkey" FOREIGN KEY ("productId") REFERENCES "BatchProduct"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BatchProduct" ADD CONSTRAINT "BatchProduct_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BatchProduct" ADD CONSTRAINT "BatchProduct_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_PipelineFollows" ADD FOREIGN KEY ("A") REFERENCES "Pipeline"("id") ON DELETE CASCADE ON UPDATE CASCADE;
