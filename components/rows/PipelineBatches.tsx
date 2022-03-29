@@ -2,7 +2,7 @@ import { useState, Fragment } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import {
   usePipelineBatchesByPipelineIdQuery,
-  useValidatorsPipelineBatchQuery,
+  useValidatorsBatchProductQuery,
   useEditPipelineBatchMutation,
   useAddPipelineBatchMutation,
   useDeletePipelineBatchMutation,
@@ -23,7 +23,7 @@ interface IPipelineBatchesProps {
 
 export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
   const { data, loading, error } = usePipelineBatchesByPipelineIdQuery({ variables: { pipelineId } });
-  const { data: dataValidators } = useValidatorsPipelineBatchQuery();
+  const { data: dataValidators } = useValidatorsBatchProductQuery();
   const [editPipelineBatch] = useEditPipelineBatchMutation({
     refetchQueries: [PipelineBatchesByPipelineIdDocument, 'PipelineBatchesByPipelineId'],
     onCompleted: ({ editPipelineBatch }) => {
@@ -56,7 +56,7 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
 
-  const { batchProductEnum } = dataValidators?.validators || {};
+  const { solubilityEnum } = dataValidators?.validators || {};
 
   const { user } = useAuth() || {};
   const { role, id: userId } = user || {};
@@ -97,6 +97,7 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
   const pipelineBatchHeader = [
     { label: 'Date' },
     { label: 'Product' },
+    { label: 'Solubility' },
     { label: 'Cost ($/L)' },
     { label: 'Chemical Volume (L)' },
     { label: 'Diluent Volume (L)' },
@@ -135,7 +136,8 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
           const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'CHEMICAL');
           const pipelineBatchColumns: IRecordEntryMap[] = [
             { columnName: 'date', columnType: 'date', nullable: false, record: date, editRecord },
-            { columnName: 'product', columnType: 'string', nullable: false, record: product, validator: batchProductEnum, editRecord },
+            { columnName: 'product', columnType: 'string', nullable: false, record: product.product, editRecord },
+            { columnName: 'solubility', columnType: 'string', nullable: false, record: product.solubility, validator: solubilityEnum },
             { columnName: 'cost', columnType: 'number', nullable: true, record: cost, editRecord },
             { columnName: 'chemicalVolume', columnType: 'number', nullable: true, record: chemicalVolume, editRecord },
             { columnName: 'diluentVolume', columnType: 'number', nullable: true, record: diluentVolume, editRecord },
@@ -150,7 +152,7 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
             <Fragment key={id}>
               {authorized && <div className={`pipeline-batch-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
-                  style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
+                  className='button-container'
                   aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>

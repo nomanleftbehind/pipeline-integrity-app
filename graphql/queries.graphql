@@ -287,7 +287,12 @@ query PipelineBatchesByPipelineId($pipelineId: String!) {
   pipelineBatchesByPipelineId(pipelineId: $pipelineId) {
     id
     date
-    product
+    product {
+      id
+      product
+      cost
+      solubility
+    }
     cost
     chemicalVolume
     diluentVolume
@@ -305,11 +310,38 @@ query PipelineBatchesByPipelineId($pipelineId: String!) {
   }
 }
 
-query ValidatorsPipelineBatch {
+query WellBatchesByWellId($wellId: String!) {
+  wellBatchesByWellId(wellId: $wellId) {
+    id
+    date
+    product {
+      id
+      product
+      cost
+      solubility
+    }
+    cost
+    chemicalVolume
+    diluentVolume
+    comment
+    createdBy {
+      id
+      email
+    }
+    createdAt
+    updatedBy {
+      id
+      email
+    }
+    updatedAt
+  }
+}
+
+query ValidatorsBatchProduct {
   validators {
-    batchProductEnum {
-      C1210
-      C3104
+    solubilityEnum {
+      Oil
+      Water
     }
   }
 }
@@ -587,9 +619,9 @@ query getValidators {
       W
       NW
     }
-    batchProductEnum {
-      C1210
-      C3104
+    solubilityEnum {
+      Oil
+      Water
     }
   }
 }

@@ -3,7 +3,7 @@ import { ApolloError } from '@apollo/client';
 import IconButton from '@mui/material/IconButton';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { TextInput, DOMSelectInput } from '../../pages/register';
+import { TextInputRecordEntry, DOMSelectInput } from '../../pages/register';
 import { Formik, Form, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { GetValidatorsQuery } from '../../graphql/generated/graphql';
@@ -174,7 +174,7 @@ export default function RecordEntry({ id, createdById, columnName, columnType, n
                       {validatorDatabase}
                     </option>)}
                 </DOMSelectInput> :
-                <TextInput
+                <TextInputRecordEntry
                   className={`record-entry-input${valid ? ' valid' : ' invalid'}`}
                   name={columnName}
                   onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

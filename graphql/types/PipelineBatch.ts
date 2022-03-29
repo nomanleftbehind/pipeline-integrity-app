@@ -22,11 +22,13 @@ export const PipelineBatch = objectType({
     })
     t.nonNull.field('date', { type: 'DateTime' })
     t.nonNull.field('product', {
-      type: 'BatchProductEnum',
-      resolve: async ({ product }) => {
-        const result = serverEnumToDatabaseEnum(BatchProductEnumMembers, product);
-        return result;
-      }
+      type: 'BatchProduct',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipelineBatch.findUnique({
+          where: { id },
+        }).product();
+        return result!
+      },
     })
     t.float('cost')
     t.float('chemicalVolume')
@@ -103,11 +105,34 @@ export const PipelineBatchMutation = extendType({
         const user = ctx.user;
         if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'CHEMICAL')) {
           const { id: userId } = user;
+
+          if (args.product) {
+            const { id: productId } = await ctx.prisma.batchProduct.findUnique({
+              where: { product: args.product },
+              select: { id: true },
+            }) || {};
+            if (productId) {
+              const pipelineBatch = await ctx.prisma.pipelineBatch.update({
+                where: { id: args.id },
+                data: {
+                  productId,
+                  updatedById: userId,
+                },
+              });
+              return { pipelineBatch }
+            }
+            return {
+              error: {
+                field: 'Product',
+                message: `Product ${args.product} doesn't exist.`,
+              }
+            }
+          }
+
           const pipelineBatch = await ctx.prisma.pipelineBatch.update({
             where: { id: args.id },
             data: {
               date: args.date || undefined,
-              product: databaseEnumToServerEnum(BatchProductEnumMembers, args.product) || undefined,
               cost: args.cost,
               chemicalVolume: args.chemicalVolume,
               diluentVolume: args.diluentVolume,
@@ -136,13 +161,14 @@ export const PipelineBatchMutation = extendType({
           const userId = user.id;
           const today = new Date();
           today.setUTCHours(0, 0, 0, 0);
+
           const pipelineBatch = await ctx.prisma.pipelineBatch.create({
             data: {
-              pipelineId: pipelineId,
+              pipeline: { connect: { id: pipelineId } },
               date: today,
-              product: 'C1210',
-              createdById: userId,
-              updatedById: userId,
+              product: { connect: { product: 'C1210' } },
+              createdBy: { connect: { id: userId } },
+              updatedBy: { connect: { id: userId } },
             }
           });
           return { pipelineBatch };
@@ -203,20 +229,5 @@ export const PipelineBatchMutation = extendType({
       }
     })
   }
-});
-
-
-export const BatchProductEnumMembers = {
-  C1210: 'C1210',
-  C3104: 'C3104',
-}
-
-export const BatchProductEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'BatchProductEnum',
-  },
-  name: 'BatchProductEnum',
-  members: BatchProductEnumMembers
 });
 

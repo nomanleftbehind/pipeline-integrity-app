@@ -11,7 +11,6 @@ import Box from '@mui/material/Box';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
 import * as Yup from 'yup';
 import { useAuth } from '../context/AuthContext';
 import { useLoginMutation, useSignupMutation, UserCreateInput, UserRoleEnum, useValidatorUserRoleQuery } from '../graphql/generated/graphql';
@@ -182,6 +181,19 @@ export const TextInput = ({ label, ...props }: IInput) => {
         <div className='error' style={{ color: 'red' }}>{meta.error}</div>
       ) : null}
     </div>
+  );
+};
+
+export const TextInputRecordEntry = ({ label, ...props }: IInput) => {
+  const [field, meta] = useField(props);
+  return (
+    <>
+      {label && <label htmlFor={props.id || props.name}>{label}</label>}
+      <input {...field} {...props as any /* Fix type error */} />
+      {meta.touched && meta.error ? (
+        <div className='error' style={{ color: 'red' }}>{meta.error}</div>
+      ) : null}
+    </>
   );
 };
 

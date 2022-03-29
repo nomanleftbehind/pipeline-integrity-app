@@ -1,6 +1,6 @@
 .pipeline-batch {
   display: grid;
-  grid-template-columns: 30px var(--date-width) 110px 100px repeat(2, 110px) 220px auto;
+  grid-template-columns: 30px var(--date-width) 110px 80px 100px repeat(2, 110px) 220px auto;
   row-gap: 2px;
   column-gap: 4px;
   grid-auto-rows: minmax(40px, auto);
