@@ -6,7 +6,6 @@ import {
   pipelineData,
   pipelineData2,
   pipelineUpstreamData,
-  injectionPointData,
   pressureTestData,
   riskData,
 } from './SeedData';
@@ -40,6 +39,8 @@ import {
   wellBatchData5,
   wellBatchData6,
 } from './SeedWellBatchData';
+
+import { wellData1, wellData2 } from './SeedWellData';
 
 import {
   licenseChangeData1,
@@ -147,11 +148,18 @@ async function main() {
     console.log(`Created license change with id: ${licenseChange.id}`)
   }
 
-  for (const u of injectionPointData) {
-    const injectionPoint = await prisma.injectionPoint.create({
+  for (const u of wellData1) {
+    const well = await prisma.well.create({
       data: u,
     })
-    console.log(`Created injection point with id: ${injectionPoint.id}`)
+    console.log(`Created injection point with id: ${well.id}`)
+  }
+
+  for (const u of wellData2) {
+    const well = await prisma.well.create({
+      data: u,
+    })
+    console.log(`Created injection point with id: ${well.id}`)
   }
 
   for (const u of pigRunData1) {
