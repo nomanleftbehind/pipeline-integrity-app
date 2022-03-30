@@ -23,7 +23,7 @@ import {
   useDisconnectPipelineMutation,
   useConnectSourceMutation,
   useDisconnectSourceMutation,
-  PipelinesByIdQueryDocument,
+  PipelinesByIdDocument,
 } from '../../../graphql/generated/graphql';
 
 type IInjectionPoints = Pick<IPipeline, 'injectionPoints' | 'upstream'>;
@@ -191,12 +191,12 @@ export default function InjectionPoints({ open, id, flowCalculationDirection, in
         // as otherwise if you click OK, while not having selected a different injection point,
         // it would first override injection point with itself and then delete it.
         if (oldInjectionPointId) disconnectPipeline({ variables: { id, disconnectPipelineId: oldInjectionPointId, flowCalculationDirection } });
-        connectPipeline({ variables: { id, connectPipelineId: newInjectionPointId, flowCalculationDirection }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
+        connectPipeline({ variables: { id, connectPipelineId: newInjectionPointId, flowCalculationDirection }, refetchQueries: [PipelinesByIdDocument, 'pipelinesById'] });
         setShowConnectedPipelinesForm(false);
         break;
       case 'source':
         if (oldInjectionPointId) disconnectSource({ variables: { id, sourceId: oldInjectionPointId } });
-        connectSource({ variables: { id, sourceId: newInjectionPointId }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
+        connectSource({ variables: { id, sourceId: newInjectionPointId }, refetchQueries: [PipelinesByIdDocument, 'pipelinesById'] });
         setShowSourcesForm(false);
         break;
       default:
@@ -276,7 +276,7 @@ export default function InjectionPoints({ open, id, flowCalculationDirection, in
                   injectionPointId={upstreamPipeline.id}
                   source={`${upstreamPipeline.license}-${upstreamPipeline.segment}`}
                   handleSubmit={handleSubmit}
-                  disconnectInjectionPoint={() => disconnectPipeline({ variables: { id: id, disconnectPipelineId: upstreamPipeline.id, flowCalculationDirection }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
+                  disconnectInjectionPoint={() => disconnectPipeline({ variables: { id: id, disconnectPipelineId: upstreamPipeline.id, flowCalculationDirection }, refetchQueries: [PipelinesByIdDocument, 'pipelinesById'] })}
                   injectionPointFlow={{
                     injectionPointOil: upstreamPipeline.oil,
                     injectionPointWater: upstreamPipeline.water,
@@ -331,7 +331,7 @@ export default function InjectionPoints({ open, id, flowCalculationDirection, in
                   injectionPointId={source.id}
                   source={source.source}
                   handleSubmit={handleSubmit}
-                  disconnectInjectionPoint={() => disconnectSource({ variables: { id: id, sourceId: source.id }, refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] })}
+                  disconnectInjectionPoint={() => disconnectSource({ variables: { id: id, sourceId: source.id }, refetchQueries: [PipelinesByIdDocument, 'pipelinesById'] })}
                   injectionPointFlow={{
                     injectionPointOil: source.oil,
                     injectionPointWater: source.water,

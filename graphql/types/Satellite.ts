@@ -66,7 +66,7 @@ export const SatelliteCreateInput = inputObjectType({
   definition(t) {
     t.nonNull.string('name')
     t.list.field('pipelines', { type: 'PipelineCreateInput' })
-    t.list.field('injectionPoints', { type: 'InjectionPointCreateInput' })
+    t.list.field('injectionPoints', { type: 'WellCreateInput' })
   },
 })
 

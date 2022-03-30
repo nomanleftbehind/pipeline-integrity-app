@@ -13,7 +13,7 @@ import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
 import { PigTypeEnumMembers, PigInspectionEnumMembers } from './PigRun';
 import { LimitingSpecEnumMembers } from './PressureTest';
 import { EnvironmentProximityToEnumMembers, GeotechnicalFacingEnumMembers } from './Risk';
-import { BatchProductEnumMembers, SolubilityEnumMembers } from './BatchProduct';
+import { SolubilityEnumMembers } from './BatchProduct';
 
 export const anyTextMatchPattern = "^[\\s\\S]*$";
 export const licenseMatchPattern = "^(AB|SK|BC)(\\d{5}|\\d{6})$";
@@ -161,15 +161,6 @@ export const GeotechnicalFacingEnumObject = objectType({
 	}
 });
 
-export const BatchProductEnumObject = objectType({
-	name: 'BatchProductEnumObject',
-	definition(t) {
-		for (const iterator of Object.keys(BatchProductEnumMembers)) {
-			t.nonNull.string(iterator)
-		}
-	}
-});
-
 export const SolubilityEnumObject = objectType({
 	name: 'SolubilityEnumObject',
 	definition(t) {
@@ -206,7 +197,6 @@ export const Validator = objectType({
 		t.nonNull.field('limitingSpecEnum', { type: 'LimitingSpecEnumObject' })
 		t.nonNull.field('environmentProximityToEnum', { type: 'EnvironmentProximityToEnumObject' })
 		t.nonNull.field('geotechnicalFacingEnum', { type: 'GeotechnicalFacingEnumObject' })
-		t.nonNull.field('batchProductEnum', { type: 'BatchProductEnumObject' })
 		t.nonNull.field('solubilityEnum', { type: 'SolubilityEnumObject' })
 	}
 })
@@ -242,7 +232,6 @@ export const ValidatorQuery = extendType({
 					limitingSpecEnum: LimitingSpecEnumMembers,
 					environmentProximityToEnum: EnvironmentProximityToEnumMembers,
 					geotechnicalFacingEnum: GeotechnicalFacingEnumMembers,
-					batchProductEnum: BatchProductEnumMembers,
 					solubilityEnum: SolubilityEnumMembers,
 				};
 			}

@@ -19,6 +19,7 @@ export interface IPipelineDataProps {
   gridRow: number;
   open: boolean;
   pipeline: IPipeline;
+  authorized: boolean;
   editPipeline: IEditRecordFunction;
   isEven: "even" | "odd";
 }
@@ -35,18 +36,18 @@ interface ITabPanelProps extends ITabPanelMap {
   handleViewClick: (view: IView) => void;
 }
 
-export default function PipelineData({ gridRow, open, pipeline, editPipeline, isEven }: IPipelineDataProps) {
-  const [view, setView] = useState<IView>('license change');
+export default function PipelineData({ gridRow, open, pipeline, editPipeline, authorized, isEven }: IPipelineDataProps) {
+  const [view, setView] = useState<IView>('mechanical properties');
 
-  const { id, createdAt, updatedAt, createdBy, updatedBy, license, segment, currentSubstance, flowCalculationDirection, from, fromFeature, to, toFeature, injectionPoints, upstream, currentStatus, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, firstLicenseDate } = pipeline;
+  const { id, currentSubstance, flowCalculationDirection, currentStatus, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, firstLicenseDate } = pipeline;
 
-  const systemFields: IPipelineProperty[] = [
-    { columnName: 'createdBy', record: createdBy.email, columnType: 'string' },
-    { columnName: 'createdAt', record: createdAt, columnType: 'date' },
-    { columnName: 'updatedBy', record: updatedBy.email, columnType: 'string' },
-    { columnName: 'updatedAt', record: updatedAt, columnType: 'date' },
-    { columnName: 'id', record: id, columnType: 'string' },
-  ];
+  // const systemFields: IPipelineProperty[] = [
+  //   { columnName: 'createdBy', record: createdBy.email, columnType: 'string' },
+  //   { columnName: 'createdAt', record: createdAt, columnType: 'date' },
+  //   { columnName: 'updatedBy', record: updatedBy.email, columnType: 'string' },
+  //   { columnName: 'updatedAt', record: updatedAt, columnType: 'date' },
+  //   { columnName: 'id', record: id, columnType: 'string' },
+  // ];
 
   const handleViewClick = (view: IView) => {
     setView(view);
@@ -70,7 +71,6 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, is
     if (view === 'mechanical properties') {
       return <MechanicalProperties
         id={id}
-        createdBy={createdBy}
         length={length}
         type={type}
         grade={grade}
@@ -80,6 +80,8 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, is
         material={material}
         mop={mop}
         internalProtection={internalProtection}
+        authorized={authorized}
+        editPipeline={editPipeline}
       />
     }
     if (view === 'pressure test') {
@@ -110,15 +112,15 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, is
         firstLicenseDate={firstLicenseDate}
       />
     }
-    if (view === 'system fields') {
-      return <PipelineProperties
-        open={open}
-        id={id}
-        createdById={createdBy.id}
-        propertiesName="System Fields"
-        pipelineProperties={systemFields}
-      />
-    }
+    // if (view === 'system fields') {
+    //   return <PipelineProperties
+    //     open={open}
+    //     id={id}
+    //     createdById={createdBy.id}
+    //     propertiesName="System Fields"
+    //     pipelineProperties={systemFields}
+    //   />
+    // }
   }
 
   const tabs: ITabPanelMap[] = [

@@ -12,18 +12,18 @@ query UserCount {
   userCount
 }
 
-query pipelinesByIdQuery($table: String, $id: String) {
-  pipelinesById(table: $table, id: $id) {
+query PipelinesById($id: String, $table: String) {
+  pipelinesById(id: $id, table: $table) {
     id
     license
     segment
-    currentSubstance
     flowCalculationDirection
     from
     fromFeature
     to
     toFeature
     currentStatus
+    currentSubstance
     firstLicenseDate
     length
     type
@@ -36,35 +36,7 @@ query pipelinesByIdQuery($table: String, $id: String) {
     internalProtection
     piggable
     piggingFrequency
-    satellite {
-      id
-      facility {
-        id
-      }
-    }
-    injectionPoints {
-      id
-      source
-      oil
-      water
-      gas
-      gasAssociatedLiquids
-      totalFluids
-      firstProduction
-      lastProduction
-      firstInjection
-      lastInjection
-    }
-    upstream {
-      id
-      license
-      segment
-    }
-    downstream {
-      id
-      license
-      segment
-    }
+    batchFrequency
     createdBy {
       id
       email
@@ -75,57 +47,7 @@ query pipelinesByIdQuery($table: String, $id: String) {
       email
     }
     updatedAt
-  }
-}
-
-query PipelineById($id: String!) {
-  pipelineById(id: $id) {
-    id
-    license
-    segment
-    currentSubstance
-    flowCalculationDirection
-    from
-    fromFeature
-    to
-    toFeature
-    currentStatus
-    firstLicenseDate
-    length
-    type
-    grade
-    yieldStrength
-    outsideDiameter
-    wallThickness
-    material
-    mop
-    internalProtection
-    piggable
-    piggingFrequency
-    createdBy {
-      id
-      email
-    }
-    createdAt
-    updatedBy {
-      id
-      email
-    }
-    updatedAt
-    upstream {
-      license
-      segment
-    }
-    downstream {
-      license
-      segment
-    }
-    satellite {
-      name
-    }
-    injectionPoints {
-      source
-    }
+    authorized
   }
 }
 
@@ -930,6 +852,34 @@ query PressureTestsByPipelineId($pipelineId: String!, $length: Float!, $mop: Int
       email
     }
     updatedAt
+  }
+}
+
+query WellsByPipelineId($pipelineId: String!) {
+  wellsByPipelineId(pipelineId: $pipelineId) {
+    id
+    uwi
+    oil
+    water
+    gas
+    gasAssociatedLiquids
+    totalFluids
+    firstProduction
+    lastProduction
+    firstInjection
+    lastInjection
+    fdcRecId
+    createdBy {
+      id
+      email
+    }
+    createdAt
+    updatedBy {
+      id
+      email
+    }
+    updatedAt
+    authorized
   }
 }
 

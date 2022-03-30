@@ -95,7 +95,7 @@ export const PipelineBatchMutation = extendType({
       args: {
         id: nonNull(stringArg()),
         date: arg({ type: 'DateTime' }),
-        product: arg({ type: 'BatchProductEnum' }),
+        product: stringArg(),
         cost: floatArg(),
         chemicalVolume: floatArg(),
         diluentVolume: floatArg(),

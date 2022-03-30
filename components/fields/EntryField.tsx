@@ -7,7 +7,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import {
   useEditPipelineMutation,
-  PipelinesByIdQueryDocument,
+  PipelinesByIdDocument,
   useEditPigRunMutation,
   PigRunsByPipelineIdDocument,
   useEditPressureTestMutation,
@@ -55,7 +55,7 @@ export default function EntryField({ id, createdById, table, columnName, columnT
   const [valid, setValid] = useState(true);
   const [state, setState] = useState(record?.toString() || '');
 
-  const [editPipeline, { data: dataPipeline }] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
+  const [editPipeline, { data: dataPipeline }] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdDocument, 'pipelinesById'] });
   const [editPigRun, { data: dataPigRun }] = useEditPigRunMutation({ refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'] });
   const [editPressureTest, { data: dataPressureTest }] = useEditPressureTestMutation({ refetchQueries: [PressureTestsByPipelineIdDocument, 'PressureTestsByPipelineId'] });
   const [editRisk, { data: dataRisk }] = useEditRiskMutation({ refetchQueries: [RiskByIdDocument, 'RiskById'] });

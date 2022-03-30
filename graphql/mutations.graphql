@@ -60,30 +60,48 @@ mutation DuplicatePipeline($id: String!) {
 
 mutation ConnectPipeline($id: String!, $connectPipelineId: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
   connectPipeline(id: $id, connectPipelineId: $connectPipelineId, flowCalculationDirection: $flowCalculationDirection) {
-    id
+    pipeline {
+      id
+    }
+    error {
+      field
+      message
+    }
   }
 }
 
 mutation DisconnectPipeline($id: String!, $disconnectPipelineId: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
   disconnectPipeline(id: $id, disconnectPipelineId: $disconnectPipelineId, flowCalculationDirection: $flowCalculationDirection) {
-    id
-  }
-}
-
-mutation ConnectSource($id: String!, $sourceId: String!) {
-  connectSource(id: $id, sourceId: $sourceId) {
-    id
-    injectionPoints {
+    pipeline {
       id
+    }
+    error {
+      field
+      message
     }
   }
 }
 
-mutation DisconnectSource($id: String!, $sourceId: String!) {
-  disconnectSource(id: $id, sourceId: $sourceId) {
-    id
-    injectionPoints {
+mutation ConnectWell($id: String!, $wellId: String!) {
+  connectWell(id: $id, wellId: $wellId) {
+    pipeline {
       id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
+mutation DisconnectWell($id: String!, $wellId: String!) {
+  disconnectWell(id: $id, wellId: $wellId) {
+    pipeline {
+      id
+    }
+    error {
+      field
+      message
     }
   }
 }

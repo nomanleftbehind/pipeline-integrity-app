@@ -1,47 +1,18 @@
 
-import RecordEntry, { IEditRecord } from '../fields/RecordEntry';
-import { useAuth } from '../../context/AuthContext';
+import RecordEntry, { IEditRecordFunction } from '../fields/RecordEntry';
 import { IRecordEntryMap } from './LicenseChanges';
 import { IPipeline } from './RenderPipeline';
 import {
-  useEditPipelineMutation,
   useValidatorsMechanicalPropertiesQuery,
-  PipelinesByIdQueryDocument,
 } from '../../graphql/generated/graphql';
 
 export type IMechanicalPropertyRecordEntryMap = IRecordEntryMap & { label: string };
 
-type IMechanicalPropertiesProps = Pick<IPipeline, 'id' | 'length' | 'type' | 'grade' | 'yieldStrength' | 'outsideDiameter' | 'wallThickness' | 'material' | 'mop' | 'internalProtection' | 'createdBy'>
+type IMechanicalPropertiesProps = Pick<IPipeline, 'id' | 'length' | 'type' | 'grade' | 'yieldStrength' | 'outsideDiameter' | 'wallThickness' | 'material' | 'mop' | 'internalProtection' | 'authorized'> & { editPipeline: IEditRecordFunction };
 
+export default function MechanicalProperties({ id, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, authorized, editPipeline: editRecord }: IMechanicalPropertiesProps) {
 
-export default function MechanicalProperties({ id, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, createdBy }: IMechanicalPropertiesProps) {
   const { data: dataValidators } = useValidatorsMechanicalPropertiesQuery();
-  const [editPipeline] = useEditPipelineMutation({ refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'] });
-
-  const { user } = useAuth() || {};
-  const { role } = user || {};
-  const authorized = role === 'ADMIN' || role === 'ENGINEER';
-
-  const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
-    const switchNewRecord = () => {
-      switch (columnType) {
-        case 'number':
-          if (newRecord === null) {
-            return null;
-          }
-          return Number(newRecord);
-        case 'date':
-          if (newRecord && typeof newRecord !== 'boolean') {
-            const date = new Date(newRecord);
-            return date.toISOString();
-          }
-        default:
-          return newRecord;
-      }
-    }
-    newRecord = switchNewRecord();
-    editPipeline({ variables: { id, [columnName]: newRecord } });
-  }
 
   const { lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = dataValidators?.validators || {};
 
@@ -70,7 +41,7 @@ export default function MechanicalProperties({ id, length, type, grade, yieldStr
         return (
           <div key={i} style={{ gridColumn, gridRow }}>
             <div>{label}</div>
-            <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+            <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
           </div>
         );
       })}

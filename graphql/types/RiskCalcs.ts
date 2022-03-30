@@ -1,5 +1,5 @@
 import { EnvironmentProximityToEnumMembers } from './Risk';
-import { totalFluidsCalc } from './InjectionPoint';
+import { totalFluidsCalc } from './Well';
 import { totalPipelineFlowRawQuery } from './InjectionPointOptions';
 import { databaseEnumToServerEnum } from './Pipeline';
 import { Context } from '../context';

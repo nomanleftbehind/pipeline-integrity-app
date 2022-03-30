@@ -1,5 +1,6 @@
 import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
+import { User as IUser } from '@prisma/client';
 
 
 export const gasAssociatedLiquidsCalc = (gas: number) => {
@@ -10,15 +11,15 @@ export const totalFluidsCalc = (oil: number, water: number, gas: number) => {
   return oil + water + gasAssociatedLiquidsCalc(gas);
 }
 
-export const InjectionPoint = objectType({
-  name: 'InjectionPoint',
+export const Well = objectType({
+  name: 'Well',
   sourceType: {
     module: '@prisma/client',
-    export: 'InjectionPoint',
+    export: 'Well',
   },
   definition(t) {
     t.nonNull.string('id')
-    t.nonNull.string('source')
+    t.nonNull.string('uwi')
     t.nonNull.float('oil')
     t.nonNull.float('water')
     t.nonNull.float('gas')
@@ -32,11 +33,20 @@ export const InjectionPoint = objectType({
     t.field('lastProduction', { type: 'DateTime' })
     t.field('firstInjection', { type: 'DateTime' })
     t.field('lastInjection', { type: 'DateTime' })
-    t.string('pvNodeId')
+    t.string('fdcRecId')
+    t.list.field('wellBatches', {
+      type: 'WellBatch',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.well.findUnique({
+          where: { id }
+        }).wellBatches();
+        return result;
+      }
+    })
     t.nonNull.field('createdBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
-        const result = await ctx.prisma.injectionPoint.findUnique({
+        const result = await ctx.prisma.well.findUnique({
           where: { id },
         }).createdBy();
         return result!
@@ -46,7 +56,7 @@ export const InjectionPoint = objectType({
     t.nonNull.field('updatedBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
-        const result = await ctx.prisma.injectionPoint.findUnique({
+        const result = await ctx.prisma.well.findUnique({
           where: { id },
         }).updatedBy();
         return result!
@@ -56,28 +66,39 @@ export const InjectionPoint = objectType({
     t.field('pipeline', {
       type: 'Pipeline',
       resolve: ({ id }, _args, ctx: Context) => {
-        return ctx.prisma.injectionPoint.findUnique({
+        return ctx.prisma.well.findUnique({
           where: { id },
         }).pipeline();
       },
     })
+    t.nonNull.boolean('authorized', {
+      resolve: async (_, _args, ctx: Context) => {
+        const user = ctx.user;
+        return !!user && resolveWellAuthorized(user);
+      }
+    })
   },
-})
+});
+
+const resolveWellAuthorized = (user: IUser) => {
+  const { role } = user;
+  return role === 'ADMIN' || role === 'ENGINEER';
+}
 
 
-export const InjectionPointQuery = extendType({
+export const WellQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.list.field('allInjectionPoints', {
-      type: InjectionPoint,
-      resolve: async (_parent, _args, ctx: Context) => {
-        const result = await ctx.prisma.injectionPoint.findMany({
-          orderBy: [
-            { pipeline: { satellite: { facility: { name: 'asc' } } } },
-            { pipeline: { satellite: { name: 'asc' } } },
-            { source: 'asc' }
-          ]
-        })
+    t.list.field('wellsByPipelineId', {
+      type: 'Well',
+      args: {
+        pipelineId: nonNull(stringArg()),
+      },
+      resolve: async (_, { pipelineId }, ctx: Context) => {
+        const result = await ctx.prisma.well.findMany({
+          where: { pipelineId },
+          orderBy: { uwi: 'asc' },
+        });
         return result;
       },
     })
@@ -85,10 +106,10 @@ export const InjectionPointQuery = extendType({
 })
 
 
-export const InjectionPointCreateInput = inputObjectType({
-  name: 'InjectionPointCreateInput',
+export const WellCreateInput = inputObjectType({
+  name: 'WellCreateInput',
   definition(t) {
-    t.nonNull.string('source')
+    t.nonNull.string('uwi')
     t.nonNull.float('oil')
     t.nonNull.float('water')
     t.nonNull.float('gas')
@@ -96,20 +117,28 @@ export const InjectionPointCreateInput = inputObjectType({
     t.field('lastProduction', { type: 'DateTime' })
     t.field('firstInjection', { type: 'DateTime' })
     t.field('lastInjection', { type: 'DateTime' })
-    t.string('pvNodeId')
+    t.string('fdcRecId')
   },
-})
+});
+
+export const WellMutationPayload = objectType({
+  name: 'WellMutationPayload',
+  definition(t) {
+    t.field('well', { type: 'Well' })
+    t.field('error', { type: 'FieldError' })
+  },
+});
 
 
-export const InjectionPointMutation = extendType({
+export const WellMutation = extendType({
   type: 'Mutation',
   definition(t) {
-    t.field('editInjectionPoint', {
-      type: 'InjectionPoint',
+    t.field('editWell', {
+      type: 'WellMutationPayload',
       args: {
         id: nonNull(stringArg()),
         pipelineId: stringArg(),
-        source: stringArg(),
+        uwi: stringArg(),
         oil: floatArg(),
         water: floatArg(),
         gas: floatArg(),
@@ -117,15 +146,17 @@ export const InjectionPointMutation = extendType({
         lastProduction: arg({ type: 'DateTime' }),
         firstInjection: arg({ type: 'DateTime' }),
         lastInjection: arg({ type: 'DateTime' }),
-        pvNodeId: stringArg()
+        fdcRecId: stringArg(),
       },
       resolve: async (_, args, ctx: Context) => {
-        try {
-          return ctx.prisma.injectionPoint.update({
+        const user = ctx.user;
+        const authorized = !!user && resolveWellAuthorized(user);
+        if (authorized) {
+          const well = await ctx.prisma.well.update({
             where: { id: args.id },
             data: {
               pipelineId: args.pipelineId || undefined,
-              source: args.source || undefined,
+              uwi: args.uwi || undefined,
               oil: args.oil || undefined,
               water: args.water || undefined,
               gas: args.gas || undefined,
@@ -133,14 +164,17 @@ export const InjectionPointMutation = extendType({
               lastProduction: args.lastProduction || undefined,
               firstInjection: args.firstInjection || undefined,
               lastInjection: args.lastInjection || undefined,
-              pvNodeId: args.pvNodeId || undefined,
-              updatedById: String(ctx.user?.id),
+              fdcRecId: args.fdcRecId || undefined,
+              updatedById: user.id,
             },
-          })
-        } catch (e) {
-          throw new Error(
-            `Injection point with ID ${args.id} does not exist in the database.`,
-          )
+          });
+          return { well }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
         }
       },
     })

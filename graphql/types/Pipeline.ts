@@ -2,7 +2,7 @@ import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, n
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
 import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
-import { Prisma } from '@prisma/client';
+import { Prisma, User as IUser } from '@prisma/client';
 
 
 
@@ -23,12 +23,22 @@ export const Pipeline = objectType({
         return result!
       },
     })
-    t.list.field('injectionPoints', {
-      type: 'InjectionPoint',
-      resolve: ({ id }, _args, ctx: Context) => {
-        return ctx.prisma.pipeline.findUnique({
-          where: { id: id || undefined },
-        }).injectionPoints();
+    t.list.field('wells', {
+      type: 'Well',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+        }).wells();
+        return result;
+      },
+    })
+    t.list.field('salesPoints', {
+      type: 'SalesPoint',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+        }).salesPoints();
+        return result;
       },
     })
     t.nonNull.string('license')
@@ -200,6 +210,12 @@ export const Pipeline = objectType({
         })
       },
     })
+    t.nonNull.boolean('authorized', {
+      resolve: async (_, _args, ctx: Context) => {
+        const user = ctx.user;
+        return !!user && resolvePipelineAuthorized(user);
+      }
+    })
   },
 });
 
@@ -359,9 +375,13 @@ export const InternalProtectionEnum = enumType({
 });
 
 export const BatchFrequencyEnumMembers = {
+  Continuous: 'Continuous',
   Quarterly: 'Quarterly',
+  Bimonthly: 'Bimonthly',
+  Monthly: 'Monthly',
   Annually: 'Annually',
-  Specialized: 'Specialized',
+  Weekly: 'Weekly',
+  Specialized: 'Specialized'
 }
 
 export const BatchFrequencyEnum = enumType({
@@ -387,20 +407,16 @@ export const FlowCalculationDirectionEnum = enumType({
   members: FlowCalculationDirectionEnumMembers
 });
 
+
+const resolvePipelineAuthorized = (user: IUser) => {
+  const { role } = user;
+  return role === 'ADMIN' || role === 'ENGINEER';
+}
+
+
 export const PipelineQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.field('pipelineById', {
-      type: 'Pipeline',
-      args: {
-        id: nonNull(stringArg())
-      },
-      resolve: (_parent, args, ctx: Context) => {
-        return ctx.prisma.pipeline.findUnique({
-          where: { id: args.id }
-        })
-      }
-    })
     t.list.field('pipelinesById', {
       type: 'Pipeline',
       args: {
@@ -409,15 +425,16 @@ export const PipelineQuery = extendType({
       },
       resolve: async (_parent, { id, table }, ctx: Context) => {
         if (table === 'satellite') {
-          return ctx.prisma.pipeline.findMany({
+          const result = await ctx.prisma.pipeline.findMany({
             where: { satelliteId: id },
             orderBy: [
               { license: 'asc' },
               { segment: 'asc' },
             ]
-          })
+          });
+          return result;
         } else if (table === 'facility' && id === 'no-facility') {
-          return ctx.prisma.pipeline.findMany({
+          const result = await ctx.prisma.pipeline.findMany({
             where: {
               satellite: { facilityId: null }
             },
@@ -425,9 +442,10 @@ export const PipelineQuery = extendType({
               { license: 'asc' },
               { segment: 'asc' },
             ]
-          })
+          });
+          return result;
         } else if (table === 'facility' && id) {
-          return ctx.prisma.pipeline.findMany({
+          const result = await ctx.prisma.pipeline.findMany({
             where: {
               satellite: { facilityId: id }
             },
@@ -435,14 +453,16 @@ export const PipelineQuery = extendType({
               { license: 'asc' },
               { segment: 'asc' },
             ]
-          })
+          });
+          return result;
         } else {
-          return ctx.prisma.pipeline.findMany({
+          const result = await ctx.prisma.pipeline.findMany({
             orderBy: [
               { license: 'asc' },
               { segment: 'asc' },
             ]
-          })
+          });
+          return result;
         }
       }
     })
@@ -462,7 +482,7 @@ export const PipelineUniqueInput = inputObjectType({
 export const PipelineCreateInput = inputObjectType({
   name: 'PipelineCreateInput',
   definition(t) {
-    t.list.field('injectionPoints', { type: 'InjectionPointCreateInput' })
+    t.list.field('wells', { type: 'WellCreateInput' })
     t.nonNull.string('license')
     t.nonNull.string('segment')
     t.nonNull.string('from')
@@ -499,8 +519,8 @@ export function databaseEnumToServerEnum<T>(object: T, value: T[keyof T] | null 
 }
 
 
-export const PipelinePayload = objectType({
-  name: 'PipelinePayload',
+export const PipelineMutationPayload = objectType({
+  name: 'PipelineMutationPayload',
   definition(t) {
     t.field('pipeline', { type: 'Pipeline' })
     t.field('error', { type: 'FieldError' })
@@ -514,7 +534,7 @@ export const PipelineMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editPipeline', {
-      type: 'PipelinePayload',
+      type: 'PipelineMutationPayload',
       args: {
         id: nonNull(stringArg()),
         satelliteId: stringArg(),
@@ -540,13 +560,9 @@ export const PipelineMutation = extendType({
         batchFrequency: arg({ type: 'BatchFrequencyEnum' }),
       },
       resolve: async (_, args, ctx: Context) => {
-
         const user = ctx.user;
-
-        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER')) {
-
-          const { id: userId } = user;
-
+        const authorized = !!user && resolvePipelineAuthorized(user);
+        if (authorized) {
           if (args.license) {
             const currentPipeline = await ctx.prisma.pipeline.findUnique({
               where: { id: args.id },
@@ -584,7 +600,6 @@ export const PipelineMutation = extendType({
               }
             }
           }
-
           if (args.segment) {
             const currentPipeline = await ctx.prisma.pipeline.findUnique({
               where: { id: args.id },
@@ -622,7 +637,6 @@ export const PipelineMutation = extendType({
               }
             }
           }
-
           const pipeline = await ctx.prisma.pipeline.update({
             where: { id: args.id },
             data: {
@@ -646,12 +660,10 @@ export const PipelineMutation = extendType({
               piggable: args.piggable,
               piggingFrequency: args.piggingFrequency,
               batchFrequency: databaseEnumToServerEnum(BatchFrequencyEnumMembers, args.batchFrequency),
-              updatedById: userId,
+              updatedById: user.id,
             },
           });
-          return {
-            pipeline
-          }
+          return { pipeline }
         }
         return {
           error: {
@@ -662,13 +674,14 @@ export const PipelineMutation = extendType({
       }
     })
     t.field('deletePipeline', {
-      type: 'PipelinePayload',
+      type: 'PipelineMutationPayload',
       args: {
         id: nonNull(stringArg()),
       },
       resolve: async (_, { id }, ctx: Context) => {
         const user = ctx.user;
-        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER')) {
+        const authorized = !!user && resolvePipelineAuthorized(user);
+        if (authorized) {
           const pipeline = await ctx.prisma.pipeline.delete({
             where: { id },
           });
@@ -683,15 +696,15 @@ export const PipelineMutation = extendType({
       },
     })
     t.field('duplicatePipeline', {
-      type: 'PipelinePayload',
+      type: 'PipelineMutationPayload',
       args: {
         id: nonNull(stringArg()),
       },
       resolve: async (_, { id }, ctx: Context) => {
 
         const user = ctx.user;
-
-        if (user && ['ADMIN', 'ENGINEER'].includes(user.role)) {
+        const authorized = !!user && resolvePipelineAuthorized(user);
+        if (authorized) {
           const userId = user.id;
           const newPipeline = await ctx.prisma.pipeline.findUnique({
             where: { id }
@@ -741,106 +754,146 @@ export const PipelineMutation = extendType({
       }
     })
     t.field('connectPipeline', {
-      type: 'Pipeline',
+      type: 'PipelineMutationPayload',
       args: {
         id: nonNull(stringArg()),
         connectPipelineId: nonNull(stringArg()),
         flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
       },
       resolve: async (_parent, { id, connectPipelineId, flowCalculationDirection }, ctx: Context) => {
-
-        const result = await ctx.prisma.pipeline.update({
-          where: { id },
-          data: {
-            upstream: flowCalculationDirection === 'Upstream' ? {
-              connect: { id: connectPipelineId }
-            } : undefined,
-            downstream: flowCalculationDirection === 'Downstream' ? {
-              connect: { id: connectPipelineId }
-            } : undefined,
-            updatedBy: {
-              update: {
-                id: String(ctx.user?.id),
+        const user = ctx.user;
+        const authorized = !!user && resolvePipelineAuthorized(user);
+        if (authorized) {
+          const pipeline = await ctx.prisma.pipeline.update({
+            where: { id },
+            data: {
+              upstream: flowCalculationDirection === 'Upstream' ? {
+                connect: { id: connectPipelineId }
+              } : undefined,
+              downstream: flowCalculationDirection === 'Downstream' ? {
+                connect: { id: connectPipelineId }
+              } : undefined,
+              updatedBy: {
+                update: {
+                  id: user.id,
+                }
               }
             }
+          });
+          return { pipeline }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
           }
-        });
-        return result;
+        }
       }
     })
     t.field('disconnectPipeline', {
-      type: 'Pipeline',
+      type: 'PipelineMutationPayload',
       args: {
         id: nonNull(stringArg()),
         disconnectPipelineId: nonNull(stringArg()),
         flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
       },
-      resolve: async (_parent, { id, disconnectPipelineId, flowCalculationDirection }, ctx: Context) => {
-
-        const result = await ctx.prisma.pipeline.update({
-          where: { id },
-          data: {
-            upstream: flowCalculationDirection === 'Upstream' ? {
-              disconnect: { id: disconnectPipelineId }
-            } : undefined,
-            downstream: flowCalculationDirection === 'Downstream' ? {
-              disconnect: { id: disconnectPipelineId }
-            } : undefined,
-            updatedBy: {
-              update: {
-                id: String(ctx.user?.id),
+      resolve: async (_, { id, disconnectPipelineId, flowCalculationDirection }, ctx: Context) => {
+        const user = ctx.user;
+        const authorized = !!user && resolvePipelineAuthorized(user);
+        if (authorized) {
+          const pipeline = await ctx.prisma.pipeline.update({
+            where: { id },
+            data: {
+              upstream: flowCalculationDirection === 'Upstream' ? {
+                disconnect: { id: disconnectPipelineId }
+              } : undefined,
+              downstream: flowCalculationDirection === 'Downstream' ? {
+                disconnect: { id: disconnectPipelineId }
+              } : undefined,
+              updatedBy: {
+                update: {
+                  id: user.id,
+                }
               }
             }
+          });
+          return { pipeline }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
           }
-        });
-        return result;
+        }
       }
     })
-    t.field('connectSource', {
-      type: 'Pipeline',
+    t.field('connectWell', {
+      type: 'PipelineMutationPayload',
       args: {
         id: nonNull(stringArg()),
-        sourceId: nonNull(stringArg()),
+        wellId: nonNull(stringArg()),
       },
-      resolve: async (_parent, { id, sourceId }, ctx: Context) => {
-        return ctx.prisma.pipeline.update({
-          where: { id },
-          data: {
-            injectionPoints: {
-              connect: {
-                id: sourceId
-              }
-            },
-            updatedBy: {
-              update: {
-                id: String(ctx.user?.id),
+      resolve: async (_parent, { id, wellId }, ctx: Context) => {
+        const user = ctx.user;
+        const authorized = !!user && resolvePipelineAuthorized(user);
+        if (authorized) {
+          const pipeline = await ctx.prisma.pipeline.update({
+            where: { id },
+            data: {
+              wells: {
+                connect: {
+                  id: wellId
+                }
+              },
+              updatedBy: {
+                update: {
+                  id: user.id,
+                }
               }
             }
+          });
+          return { pipeline }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
           }
-        })
+        }
       }
     })
-    t.field('disconnectSource', {
-      type: 'Pipeline',
+    t.field('disconnectWell', {
+      type: 'PipelineMutationPayload',
       args: {
         id: nonNull(stringArg()),
-        sourceId: nonNull(stringArg()),
+        wellId: nonNull(stringArg()),
       },
-      resolve: async (_parent, { id, sourceId }, ctx: Context) => {
-        return ctx.prisma.pipeline.update({
-          where: { id },
-          data: {
-            injectionPoints: {
-              disconnect: { id: sourceId }
-            },
-            updatedBy: {
-              update: {
-                id: String(ctx.user?.id),
+      resolve: async (_parent, { id, wellId }, ctx: Context) => {
+        const user = ctx.user;
+        const authorized = !!user && resolvePipelineAuthorized(user);
+        if (authorized) {
+          const pipeline = await ctx.prisma.pipeline.update({
+            where: { id },
+            data: {
+              wells: {
+                disconnect: { id: wellId }
+              },
+              updatedBy: {
+                update: {
+                  id: user.id,
+                }
               }
             }
+          });
+          return { pipeline }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
           }
-        })
+        }
       }
     })
   }
-})
+});

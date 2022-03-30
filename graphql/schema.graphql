@@ -9,14 +9,22 @@ type AuthPayload {
 
 enum BatchFrequencyEnum {
   Annually
+  Bimonthly
+  Continuous
+  Monthly
   Quarterly
   Specialized
+  Weekly
 }
 
 type BatchFrequencyEnumObject {
   Annually: String!
+  Bimonthly: String!
+  Continuous: String!
+  Monthly: String!
   Quarterly: String!
   Specialized: String!
+  Weekly: String!
 }
 
 type BatchProduct {
@@ -25,54 +33,12 @@ type BatchProduct {
   createdBy: User!
   id: String!
   pipelineBatches: [PipelineBatch]
-  product: BatchProductEnum!
+  product: String!
   productType: String
   solubility: SolubilityEnum!
   updatedAt: DateTime!
   updatedBy: User!
   wellBatches: [WellBatch]
-}
-
-enum BatchProductEnum {
-  B2140
-  BC1303
-  C210
-  C1210
-  C3104
-  CCB350
-  P7215
-  P7225
-  P7252
-  P7263
-  P7272
-  PR777
-  PS7217
-  PSC7292
-  PSI3
-  R777
-  SC6132
-  SC6232
-}
-
-type BatchProductEnumObject {
-  B2140: String!
-  BC1303: String!
-  C210: String!
-  C1210: String!
-  C3104: String!
-  CCB350: String!
-  P7215: String!
-  P7225: String!
-  P7252: String!
-  P7263: String!
-  P7272: String!
-  PR777: String!
-  PS7217: String!
-  PSC7292: String!
-  PSI3: String!
-  R777: String!
-  SC6132: String!
-  SC6232: String!
 }
 
 """
@@ -275,38 +241,6 @@ type GradeEnumObject {
   GradeX52: String!
 }
 
-type InjectionPoint {
-  createdAt: DateTime!
-  createdBy: User!
-  firstInjection: DateTime
-  firstProduction: DateTime
-  gas: Float!
-  gasAssociatedLiquids: Float!
-  id: String!
-  lastInjection: DateTime
-  lastProduction: DateTime
-  oil: Float!
-  pipeline: Pipeline
-  pvNodeId: String
-  source: String!
-  totalFluids: Float!
-  updatedAt: DateTime!
-  updatedBy: User!
-  water: Float!
-}
-
-input InjectionPointCreateInput {
-  firstInjection: DateTime
-  firstProduction: DateTime
-  gas: Float!
-  lastInjection: DateTime
-  lastProduction: DateTime
-  oil: Float!
-  pvNodeId: String
-  source: String!
-  water: Float!
-}
-
 enum InternalProtectionEnum {
   Cement
   ExpandedPolyethylene
@@ -387,29 +321,30 @@ type Mutation {
   addPressureTest(pipelineId: String!): PressureTestPayload
   addRisk(id: String!): RiskPayload
   addWellBatch(wellId: String!): WellBatchPayload
-  connectPipeline(connectPipelineId: String!, flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): Pipeline
-  connectSource(id: String!, sourceId: String!): Pipeline
+  connectPipeline(connectPipelineId: String!, flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): PipelineMutationPayload
+  connectWell(id: String!, wellId: String!): PipelineMutationPayload
   createFacility(data: FacilityCreateInput!): Facility
   deleteLicenseChange(id: String!): LicenseChangePayload
   deletePigRun(id: String!): PigRunPayload
-  deletePipeline(id: String!): PipelinePayload
+  deletePipeline(id: String!): PipelineMutationPayload
   deletePipelineBatch(id: String!): PipelineBatchPayload
   deletePressureTest(id: String!): PressureTestPayload
   deleteRisk(id: String!): RiskPayload
   deleteSatellite(id: String!): Satellite
   deleteWellBatch(id: String!): WellBatchPayload
-  disconnectPipeline(disconnectPipelineId: String!, flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): Pipeline
-  disconnectSource(id: String!, sourceId: String!): Pipeline
-  duplicatePipeline(id: String!): PipelinePayload
+  disconnectPipeline(disconnectPipelineId: String!, flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): PipelineMutationPayload
+  disconnectWell(id: String!, wellId: String!): PipelineMutationPayload
+  duplicatePipeline(id: String!): PipelineMutationPayload
   editFacility(id: String!, name: String): Facility
-  editInjectionPoint(firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineId: String, pvNodeId: String, source: String, water: Float): InjectionPoint
   editLicenseChange(comment: String, date: DateTime, id: String!, linkToDocumentation: String, status: StatusEnum, substance: SubstanceEnum): LicenseChangePayload
   editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigType: PigTypeEnum): PigRunPayload
-  editPipeline(batchFrequency: BatchFrequencyEnum, flowCalculationDirection: FlowCalculationDirectionEnum, from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float, yieldStrength: Int): PipelinePayload
-  editPipelineBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, product: BatchProductEnum): PipelineBatchPayload
+  editPipeline(batchFrequency: BatchFrequencyEnum, flowCalculationDirection: FlowCalculationDirectionEnum, from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float, yieldStrength: Int): PipelineMutationPayload
+  editPipelineBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, product: String): PipelineBatchPayload
   editPressureTest(comment: String, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pressureTestDate: DateTime, pressureTestReceivedDate: DateTime): PressureTestPayload
   editRisk(aerialReview: Boolean, comment: String, consequencePeople: Int, dateSlopeChecked: DateTime, environmentProximityTo: EnvironmentProximityToEnum, gasReleaseCost: Float, geotechnicalFacingS1: GeotechnicalFacingEnum, geotechnicalFacingS2: GeotechnicalFacingEnum, geotechnicalHeightS1: Int, geotechnicalHeightS2: Int, geotechnicalSlopeAngleS1: Int, geotechnicalSlopeAngleS2: Int, id: String!, oilReleaseCost: Float, probabilityGeo: Float, releaseTimeDays: Int, repairTimeDays: Int, safeguardExternalCoating: Int, safeguardInternalProtection: Int): RiskPayload
+  editSalesPoint(fdcRecId: String, firstFlow: DateTime, gas: Float, id: String!, lastFlow: DateTime, name: String, oil: Float, pipelineId: String, water: Float): SalesPoint
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
+  editWell(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, oil: Float, pipelineId: String, uwi: String, water: Float): WellMutationPayload
   editWellBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, productId: String): WellBatchPayload
   login(email: String!, password: String!): AuthPayload
   logout: Boolean
@@ -652,6 +587,7 @@ type PigTypeEnumObject {
 }
 
 type Pipeline {
+  authorized: Boolean!
   batchFrequency: BatchFrequencyEnum
   createdAt: DateTime!
   createdBy: User!
@@ -664,7 +600,6 @@ type Pipeline {
   fromFeature: FromToFeatureEnum
   grade: GradeEnum
   id: String!
-  injectionPoints: [InjectionPoint]
   internalProtection: InternalProtectionEnum
   length: Float!
   license: String!
@@ -677,6 +612,7 @@ type Pipeline {
   piggingFrequency: Int
   pressureTests: [PressureTest]
   risk: Risk
+  salesPoints: [SalesPoint]
   satellite: Satellite
   segment: String!
   to: String!
@@ -686,6 +622,7 @@ type Pipeline {
   updatedBy: User!
   upstream: [Pipeline]
   wallThickness: Float
+  wells: [Well]
   yieldStrength: Int
 }
 
@@ -714,7 +651,6 @@ input PipelineCreateInput {
   from: String!
   fromFeature: FromToFeatureEnum
   grade: GradeEnum
-  injectionPoints: [InjectionPointCreateInput]
   internalProtection: InternalProtectionEnum
   length: Float!
   license: String!
@@ -727,6 +663,7 @@ input PipelineCreateInput {
   type: TypeEnum
   upstream: [PipelineCreateInput]
   wallThickness: Float
+  wells: [WellCreateInput]
 }
 
 type PipelineFlow {
@@ -742,17 +679,17 @@ type PipelineFlow {
   water: Float!
 }
 
+type PipelineMutationPayload {
+  error: FieldError
+  pipeline: Pipeline
+}
+
 type PipelineOptions {
   facility: String!
   id: String!
   license: String!
   satellite: String!
   segment: String!
-}
-
-type PipelinePayload {
-  error: FieldError
-  pipeline: Pipeline
 }
 
 input PipelineUniqueInput {
@@ -791,14 +728,13 @@ type PressureTestPayload {
 
 type Query {
   allFacilities: [Facility]
-  allInjectionPoints: [InjectionPoint]
+  allSalesPoints: [SalesPoint]
   allSatellites: [Satellite]
   allUsers: [User]
   licenseChangesByPipelineId(pipelineId: String!): [LicenseChange]
   me: User
   pigRunsByPipelineId(pipelineId: String!): [PigRun]
   pipelineBatchesByPipelineId(pipelineId: String!): [PipelineBatch]
-  pipelineById(id: String!): Pipeline
   pipelineFlow(flowCalculationDirection: FlowCalculationDirectionEnum!, idList: [String]!): [PipelineFlow]
   pipelineOptions: [PipelineOptions]
   pipelinesById(id: String, table: String): [Pipeline]
@@ -810,6 +746,7 @@ type Query {
   userCount: Int
   validators: Validator
   wellBatchesByWellId(wellId: String!): [WellBatch]
+  wellsByPipelineId(pipelineId: String!): [Well]
 }
 
 type Risk {
@@ -857,6 +794,34 @@ type RiskPayload {
   risk: Risk
 }
 
+type SalesPoint {
+  createdAt: DateTime!
+  createdBy: User!
+  fdcRecId: String
+  firstFlow: DateTime
+  gas: Float!
+  gasAssociatedLiquids: Float!
+  id: String!
+  lastFlow: DateTime
+  name: String!
+  oil: Float!
+  pipeline: Pipeline
+  totalFluids: Float!
+  updatedAt: DateTime!
+  updatedBy: User!
+  water: Float!
+}
+
+input SalesPointCreateInput {
+  fdcRecId: String
+  firstFlow: DateTime
+  gas: Float!
+  lastFlow: DateTime
+  name: String!
+  oil: Float!
+  water: Float!
+}
+
 type Satellite {
   createdAt: DateTime!
   createdBy: User!
@@ -869,7 +834,7 @@ type Satellite {
 }
 
 input SatelliteCreateInput {
-  injectionPoints: [InjectionPointCreateInput]
+  injectionPoints: [WellCreateInput]
   name: String!
   pipelines: [PipelineCreateInput]
 }
@@ -1017,8 +982,6 @@ type User {
   facilitiesUpdated: [Facility]
   firstName: String!
   id: String!
-  injectionPointsCreated: [InjectionPoint]
-  injectionPointsUpdated: [InjectionPoint]
   lastName: String!
   licenseChangesCreated: [LicenseChange]
   licenseChangesUpdated: [LicenseChange]
@@ -1029,6 +992,8 @@ type User {
   role: UserRoleEnum!
   satellitesCreated: [Satellite]
   satellitesUpdated: [Satellite]
+  wellsCreated: [Well]
+  wellsUpdated: [Well]
 }
 
 input UserCreateInput {
@@ -1067,7 +1032,6 @@ input UserUniqueInput {
 type Validator {
   anyTextMatchPattern: String!
   batchFrequencyEnum: BatchFrequencyEnumObject!
-  batchProductEnum: BatchProductEnumObject!
   environmentProximityToEnum: EnvironmentProximityToEnumObject!
   flowCalculationDirectionEnum: FlowCalculationDirectionEnumObject!
   fromToFeatureEnum: FromToFeatureEnumObject!
@@ -1093,6 +1057,28 @@ type Validator {
   yieldStrengthMatchPattern: String!
 }
 
+type Well {
+  authorized: Boolean!
+  createdAt: DateTime!
+  createdBy: User!
+  fdcRecId: String
+  firstInjection: DateTime
+  firstProduction: DateTime
+  gas: Float!
+  gasAssociatedLiquids: Float!
+  id: String!
+  lastInjection: DateTime
+  lastProduction: DateTime
+  oil: Float!
+  pipeline: Pipeline
+  totalFluids: Float!
+  updatedAt: DateTime!
+  updatedBy: User!
+  uwi: String!
+  water: Float!
+  wellBatches: [WellBatch]
+}
+
 type WellBatch {
   chemicalVolume: Float
   comment: String
@@ -1105,10 +1091,27 @@ type WellBatch {
   product: BatchProduct!
   updatedAt: DateTime!
   updatedBy: User!
-  well: InjectionPoint!
+  well: Well!
 }
 
 type WellBatchPayload {
   error: FieldError
   wellBatch: WellBatch
+}
+
+input WellCreateInput {
+  fdcRecId: String
+  firstInjection: DateTime
+  firstProduction: DateTime
+  gas: Float!
+  lastInjection: DateTime
+  lastProduction: DateTime
+  oil: Float!
+  uwi: String!
+  water: Float!
+}
+
+type WellMutationPayload {
+  error: FieldError
+  well: Well
 }

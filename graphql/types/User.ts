@@ -91,20 +91,20 @@ export const User = objectType({
         }).satellitesUpdatedBy();
       },
     })
-    t.list.field('injectionPointsCreated', {
-      type: 'InjectionPoint',
+    t.list.field('wellsCreated', {
+      type: 'Well',
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).injectionPointsCreatedBy();
+        }).wellsCreatedBy();
       },
     })
-    t.list.field('injectionPointsUpdated', {
-      type: 'InjectionPoint',
+    t.list.field('wellsUpdated', {
+      type: 'Well',
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).injectionPointsUpdatedBy();
+        }).wellsUpdatedBy();
       },
     })
     t.list.field('risksCreated', {

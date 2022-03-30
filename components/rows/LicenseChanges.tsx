@@ -7,7 +7,7 @@ import {
   useAddLicenseChangeMutation,
   useDeleteLicenseChangeMutation,
   LicenseChangesByPipelineIdDocument,
-  PipelinesByIdQueryDocument,
+  PipelinesByIdDocument,
   RiskByIdDocument,
 } from '../../graphql/generated/graphql';
 
@@ -27,7 +27,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
   const { data, loading, error } = useLicenseChangesByPipelineIdQuery({ variables: { pipelineId } });
   const { data: dataValidators } = useValidatorsLicenseChangeQuery();
   const [editLicenseChange] = useEditLicenseChangeMutation({
-    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery', RiskByIdDocument, 'RiskById'],
+    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdDocument, 'pipelinesById', RiskByIdDocument, 'RiskById'],
     onCompleted: ({ editLicenseChange }) => {
       const { error } = editLicenseChange || {};
       if (error) {
@@ -37,7 +37,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
   });
   const [addLicenseChange] = useAddLicenseChangeMutation({
     variables: { pipelineId },
-    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery', RiskByIdDocument, 'RiskById'],
+    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdDocument, 'pipelinesById', RiskByIdDocument, 'RiskById'],
     onCompleted: ({ addLicenseChange }) => {
       const { error } = addLicenseChange || {};
       if (error) {
@@ -46,7 +46,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
     }
   });
   const [deleteLicenseChange] = useDeleteLicenseChangeMutation({
-    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdQueryDocument, 'pipelinesByIdQuery', RiskByIdDocument, 'RiskById'],
+    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdDocument, 'pipelinesById', RiskByIdDocument, 'RiskById'],
     onCompleted: ({ deleteLicenseChange }) => {
       const { error } = deleteLicenseChange || {};
       if (error) {

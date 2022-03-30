@@ -85,8 +85,8 @@ model Pipeline {
   id                       String                       @id @default(uuid())
   satellite                Satellite?                   @relation(fields: [satelliteId], references: [id])
   satelliteId              String?
-  wells                    SalesPoint[]
-  salesPoints              Well[]
+  wells                    Well[]
+  salesPoints              SalesPoint[]
   pigRuns                  PigRun[]
   risk                     Risk?
   license                  String

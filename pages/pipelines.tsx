@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { prisma } from '../lib/prisma';
 import { getUser } from '../lib/user';
-import { UserNoPassword } from '../lib/auth';
 
 import RenderPipeline from '../components/rows/RenderPipeline';
 import SideNavBar from '../components/SideNavBar';
 
 import { IGetServerSideProps } from './register';
-import { usePipelinesByIdQueryLazyQuery, useValidatorsPipelineQuery } from '../graphql/generated/graphql';
+import { usePipelinesByIdLazyQuery, useValidatorsPipelineQuery } from '../graphql/generated/graphql';
 
 export interface IHeader {
   license: string;
@@ -18,21 +17,13 @@ export interface IHeader {
   toFeature: string;
 }
 
-export interface IServerSideProps {
-  user: UserNoPassword;
-}
-
-function PipelineDatabase({ user }: IServerSideProps) {
-
-  const { role } = user;
-
-  const authorized = role && ['ADMIN', 'ENGINEER'].includes(role);
+function PipelineDatabase() {
 
   const header: IHeader = { license: "", segment: "", from: "", fromFeature: "", to: "", toFeature: "" };
   const [filterText, setFilterText] = useState<IHeader>(header);
   const [filterTextCaseInsensitive, setFilterTextCaseInsensitive] = useState<IHeader>(header);
 
-  const [pipelinesById, { data, loading, error }] = usePipelinesByIdQueryLazyQuery();
+  const [pipelinesById, { data, loading, error }] = usePipelinesByIdLazyQuery();
   const { data: validatorsData } = useValidatorsPipelineQuery();
 
   function handleSidebarClick(id: string, table: string) {
@@ -92,7 +83,6 @@ function PipelineDatabase({ user }: IServerSideProps) {
             gridRow={gridRow}
             pipeline={pipeline}
             validators={validators}
-            authorized={authorized}
           />
         }
         )}
@@ -115,12 +105,8 @@ export async function getServerSideProps({ req }: IGetServerSideProps) {
     }
   }
 
-  const userNoPassword = { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role };
-
   return {
-    props: {
-      user: userNoPassword
-    }
+    props: {}
   }
 }
 

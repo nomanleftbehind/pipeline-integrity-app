@@ -39,7 +39,6 @@ export type IEditRecordFunction = ({ id, columnName, columnType, newRecord }: IE
 
 export interface IRecordEntryProps {
   id: string;
-  createdById: string;
   columnName: string;
   columnType: IColumnType;
   nullable: boolean;
@@ -49,7 +48,7 @@ export interface IRecordEntryProps {
   editRecord?: IEditRecordFunction;
 }
 
-export default function RecordEntry({ id, createdById, columnName, columnType, nullable, record, validator, authorized, editRecord }: IRecordEntryProps) {
+export default function RecordEntry({ id, columnName, columnType, nullable, record, validator, authorized, editRecord }: IRecordEntryProps) {
   const [edit, setEdit] = useState(false);
   const [selected, setSelected] = useState(false);
   const [valid, setValid] = useState(true);

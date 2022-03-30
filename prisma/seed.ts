@@ -40,7 +40,12 @@ import {
   wellBatchData6,
 } from './SeedWellBatchData';
 
-import { wellData1, wellData2 } from './SeedWellData';
+import {
+  wellData1,
+  wellData2,
+} from './SeedWellData';
+
+import { salesPointData1 } from './SeedSalesPointData';
 
 import {
   licenseChangeData1,
@@ -152,14 +157,21 @@ async function main() {
     const well = await prisma.well.create({
       data: u,
     })
-    console.log(`Created injection point with id: ${well.id}`)
+    console.log(`Created well with id: ${well.id}`)
   }
 
   for (const u of wellData2) {
     const well = await prisma.well.create({
       data: u,
     })
-    console.log(`Created injection point with id: ${well.id}`)
+    console.log(`Created well with id: ${well.id}`)
+  }
+
+  for (const u of salesPointData1) {
+    const salesPoint = await prisma.salesPoint.create({
+      data: u,
+    })
+    console.log(`Created sales point with id: ${salesPoint.id}`)
   }
 
   for (const u of pigRunData1) {

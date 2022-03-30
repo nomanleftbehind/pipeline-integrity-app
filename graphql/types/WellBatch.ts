@@ -12,7 +12,7 @@ export const WellBatch = objectType({
   definition(t) {
     t.nonNull.string('id')
     t.nonNull.field('well', {
-      type: 'InjectionPoint',
+      type: 'Well',
       resolve: async ({ id }, _args, ctx: Context) => {
         const result = await ctx.prisma.wellBatch.findUnique({
           where: { id },

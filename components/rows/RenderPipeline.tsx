@@ -7,10 +7,12 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import { useEditPipelineMutation, useDeletePipelineMutation, PipelinesByIdQueryDocument, useDuplicatePipelineMutation, PipelinesByIdQueryQuery, GetValidatorsQuery, ValidatorsPipelineQuery, RiskByIdDocument } from '../../graphql/generated/graphql';
+import { useEditPipelineMutation, useDeletePipelineMutation, PipelinesByIdDocument, useDuplicatePipelineMutation, PipelinesByIdQuery, GetValidatorsQuery, ValidatorsPipelineQuery, RiskByIdDocument } from '../../graphql/generated/graphql';
 import { IRecordEntryMap } from './LicenseChanges';
 
-export type IPipeline = PipelinesByIdQueryQuery['pipelinesById'] extends (infer U)[] | null | undefined ? NonNullable<U> : never;
+export type IInferFromArray<T> = T extends (infer U)[] ? NonNullable<U> : never;
+
+export type IPipeline = IInferFromArray<NonNullable<PipelinesByIdQuery['pipelinesById']>>;
 export type IValidators = GetValidatorsQuery['validators'];
 
 type IValidatorsPipeline = ValidatorsPipelineQuery['validators']
@@ -19,7 +21,6 @@ interface IRenderPipelineProps {
   gridRow: number;
   pipeline: IPipeline;
   validators: IValidatorsPipeline;
-  authorized: boolean;
 }
 
 const isEven = (value: number): 'even' | 'odd' => {
@@ -28,13 +29,13 @@ const isEven = (value: number): 'even' | 'odd' => {
   else return 'odd';
 }
 
-export default function RenderPipeline({ gridRow, pipeline, validators, authorized }: IRenderPipelineProps) {
+export default function RenderPipeline({ gridRow, pipeline, validators }: IRenderPipelineProps) {
 
   const [open, setOpen] = useState(false);
   const [showDeletePipelineModal, setShowDeletePipelineModal] = useState(false);
 
   const [editPipeline] = useEditPipelineMutation({
-    refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery', RiskByIdDocument, 'RiskById'],
+    refetchQueries: [PipelinesByIdDocument, 'PipelinesById', RiskByIdDocument, 'RiskById'],
     onCompleted: ({ editPipeline }) => {
       const { error } = editPipeline || {};
       if (error) {
@@ -44,7 +45,7 @@ export default function RenderPipeline({ gridRow, pipeline, validators, authoriz
   });
   const [deletePipeline] = useDeletePipelineMutation({
     variables: { id: pipeline.id },
-    refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'],
+    refetchQueries: [PipelinesByIdDocument, 'PipelinesById'],
     onCompleted: ({ deletePipeline }) => {
       const { error } = deletePipeline || {};
       if (error) {
@@ -54,7 +55,7 @@ export default function RenderPipeline({ gridRow, pipeline, validators, authoriz
   });
   const [duplicatePipeline] = useDuplicatePipelineMutation({
     variables: { id: pipeline.id },
-    refetchQueries: [PipelinesByIdQueryDocument, 'pipelinesByIdQuery'],
+    refetchQueries: [PipelinesByIdDocument, 'PipelinesById'],
     onCompleted: ({ duplicatePipeline }) => {
       const { error } = duplicatePipeline || {};
       if (error) {
@@ -105,7 +106,7 @@ export default function RenderPipeline({ gridRow, pipeline, validators, authoriz
     setFieldError(initialFieldError);
   }
 
-  const { id, license, segment, from, fromFeature, to, toFeature, currentStatus, currentSubstance, createdBy } = pipeline;
+  const { id, license, segment, from, fromFeature, to, toFeature, currentStatus, currentSubstance, authorized } = pipeline;
   const { licenseMatchPattern, segmentMatchPattern, fromToMatchPattern, fromToFeatureEnum, statusEnum, substanceEnum } = validators || {};
 
   const pipelineColumns: IRecordEntryMap[] = [
@@ -152,7 +153,7 @@ export default function RenderPipeline({ gridRow, pipeline, validators, authoriz
         gridColumn += 4;
         return (
           <div key={gridColumn} className='pipeline-row' style={{ gridColumn, gridRow: gridRow }}>
-            <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+            <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
           </div>
         );
       })}
@@ -161,6 +162,7 @@ export default function RenderPipeline({ gridRow, pipeline, validators, authoriz
         key={`${id} data`}
         open={open}
         pipeline={pipeline}
+        authorized={authorized}
         editPipeline={editRecord}
         isEven={isEven(gridRow)}
       />
