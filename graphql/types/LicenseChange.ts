@@ -1,6 +1,7 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
 import { databaseEnumToServerEnum, serverEnumToDatabaseEnum } from './Pipeline';
 import { Context } from '../context';
+import { User as IUser, LicenseChange as ILicenseChange } from '@prisma/client';
 
 
 export const LicenseChange = objectType({
@@ -57,8 +58,24 @@ export const LicenseChange = objectType({
       },
     })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
+    t.nonNull.boolean('authorized', {
+      resolve: async ({ createdById }, _args, ctx: Context) => {
+        const user = ctx.user;
+        return !!user && resolveLicenseChangeAuthorized({ user, createdById });
+      }
+    })
   },
 });
+
+interface IresolveLicenseChangeAuthorizedArgs {
+  user: IUser;
+  createdById: ILicenseChange['createdById'];
+}
+
+const resolveLicenseChangeAuthorized = ({ user, createdById }: IresolveLicenseChangeAuthorizedArgs) => {
+  const { role, id } = user;
+  return role === 'ADMIN' || role === 'ENGINEER' || (role === 'OFFICE' && createdById === id);
+}
 
 
 export const StatusEnumMembers = {
@@ -223,7 +240,7 @@ export const LicenseChangeMutation = extendType({
 
         const user = ctx.user;
 
-        if (user && ['ADMIN', 'ENGINEER', 'OFFICE'].includes(user.role)) {
+        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'OFFICE')) {
           const userId = user.id;
           const pipelineLicenseChanges = await ctx.prisma.licenseChange.findMany({
             where: {

@@ -180,7 +180,7 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
             return (
               <div key={i} style={{ gridColumn, gridRow }}>
                 <div className='property-header'>{label}</div>
-                <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+                <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
               </div>
             );
           })}
@@ -192,7 +192,7 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
               return (
                 <div key={i} style={{ width: '180px', padding: '4px' }}>
                   <div className='property-header'>{label}</div>
-                  <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+                  <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
                 </div>
               );
             })}
@@ -202,7 +202,7 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px' }}>
             <div style={{ width: '200px', padding: '4px' }}>
               <div className='property-header'>Probability Geo</div>
-              <RecordEntry id={id} createdById={createdBy.id} columnName='probabilityGeo' columnType='number' nullable={true} record={probabilityGeo} authorized={authorized} editRecord={editRecord} />
+              <RecordEntry id={id} columnName='probabilityGeo' columnType='number' nullable={true} record={probabilityGeo} authorized={authorized} editRecord={editRecord} />
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px', margin: '4px 0 4px 0' }}>
@@ -220,7 +220,7 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
               return (
                 <div key={i} style={{ width: '120px', padding: '4px' }}>
                   <div className='property-header'>{label}</div>
-                  <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+                  <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
                 </div>
               );
             })}
@@ -246,7 +246,7 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
               return (
                 <div key={i} style={{ width: '200px', padding: '4px' }}>
                   <div className='property-header'>{label}</div>
-                  <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+                  <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
                 </div>
               );
             })}

@@ -1,5 +1,6 @@
 import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
+import { User as IUser } from '@prisma/client';
 import {
   gasAssociatedLiquidsCalc,
   totalFluidsCalc,
@@ -21,7 +22,7 @@ export const SalesPoint = objectType({
       resolve: async ({ gas }) => gasAssociatedLiquidsCalc(gas)
     })
     t.nonNull.float('totalFluids', {
-      resolve: async ({ oil, water, gas }) => totalFluidsCalc(oil, water, gas)
+      resolve: async ({ oil, water, gas }) => totalFluidsCalc({ oil, water, gas })
     })
     t.field('firstFlow', { type: 'DateTime' })
     t.field('lastFlow', { type: 'DateTime' })
@@ -54,23 +55,35 @@ export const SalesPoint = objectType({
         }).pipeline();
       },
     })
+    t.nonNull.boolean('authorized', {
+      resolve: async (_, _args, ctx: Context) => {
+        const user = ctx.user;
+        return !!user && resolveSalesPointAuthorized(user);
+      }
+    })
   },
 })
+
+
+const resolveSalesPointAuthorized = (user: IUser) => {
+  const { role } = user;
+  return role === 'ADMIN' || role === 'ENGINEER';
+}
 
 
 export const SalesPointQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.list.field('allSalesPoints', {
-      type: SalesPoint,
-      resolve: async (_parent, _args, ctx: Context) => {
+    t.list.field('salespointsByPipelineId', {
+      type: 'SalesPoint',
+      args: {
+        pipelineId: nonNull(stringArg()),
+      },
+      resolve: async (_, { pipelineId }, ctx: Context) => {
         const result = await ctx.prisma.salesPoint.findMany({
-          orderBy: [
-            { pipeline: { satellite: { facility: { name: 'asc' } } } },
-            { pipeline: { satellite: { name: 'asc' } } },
-            { name: 'asc' }
-          ]
-        })
+          where: { pipelineId },
+          orderBy: { name: 'asc' },
+        });
         return result;
       },
     })
@@ -89,14 +102,23 @@ export const SalesPointCreateInput = inputObjectType({
     t.field('lastFlow', { type: 'DateTime' })
     t.string('fdcRecId')
   },
-})
+});
+
+
+export const SalesPointPayload = objectType({
+  name: 'SalesPointPayload',
+  definition(t) {
+    t.field('salesPoint', { type: 'SalesPoint' })
+    t.field('error', { type: 'FieldError' })
+  },
+});
 
 
 export const SalesPointMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editSalesPoint', {
-      type: 'SalesPoint',
+      type: 'SalesPointPayload',
       args: {
         id: nonNull(stringArg()),
         pipelineId: stringArg(),
@@ -109,8 +131,10 @@ export const SalesPointMutation = extendType({
         fdcRecId: stringArg()
       },
       resolve: async (_, args, ctx: Context) => {
-        try {
-          return ctx.prisma.salesPoint.update({
+        const user = ctx.user;
+        const authorized = !!user && resolveSalesPointAuthorized(user);
+        if (authorized) {
+          const salesPoint = await ctx.prisma.salesPoint.update({
             where: { id: args.id },
             data: {
               pipelineId: args.pipelineId || undefined,
@@ -118,18 +142,21 @@ export const SalesPointMutation = extendType({
               oil: args.oil || undefined,
               water: args.water || undefined,
               gas: args.gas || undefined,
-              firstFlow: args.firstFlow || undefined,
-              lastFlow: args.lastFlow || undefined,
-              fdcRecId: args.fdcRecId || undefined,
-              updatedById: String(ctx.user?.id),
+              firstFlow: args.firstFlow,
+              lastFlow: args.lastFlow,
+              fdcRecId: args.fdcRecId,
+              updatedById: user.id,
             },
           })
-        } catch (e) {
-          throw new Error(
-            `Sales point with ID ${args.id} does not exist in the database.`,
-          )
+          return { salesPoint }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
         }
       },
     })
   }
-})
+});

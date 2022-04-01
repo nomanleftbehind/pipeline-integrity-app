@@ -2492,6 +2492,22 @@
         "description": null,
         "fields": [
           {
+            "name": "authorized",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "comment",
             "description": null,
             "args": [],
@@ -3242,7 +3258,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PipelineMutationPayload",
+              "name": "PipelinePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3287,7 +3303,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PipelineMutationPayload",
+              "name": "PipelinePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3403,7 +3419,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PipelineMutationPayload",
+              "name": "PipelinePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3609,7 +3625,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PipelineMutationPayload",
+              "name": "PipelinePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3654,7 +3670,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PipelineMutationPayload",
+              "name": "PipelinePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3683,7 +3699,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PipelineMutationPayload",
+              "name": "PipelinePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -4207,7 +4223,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PipelineMutationPayload",
+              "name": "PipelinePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -4791,7 +4807,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "SalesPoint",
+              "name": "SalesPointPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -4993,7 +5009,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "WellMutationPayload",
+              "name": "WellPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -5263,6 +5279,22 @@
         "name": "PigRun",
         "description": null,
         "fields": [
+          {
+            "name": "authorized",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "comment",
             "description": null,
@@ -8225,6 +8257,22 @@
         "description": null,
         "fields": [
           {
+            "name": "authorized",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "chemicalVolume",
             "description": null,
             "args": [],
@@ -8845,41 +8893,6 @@
       },
       {
         "kind": "OBJECT",
-        "name": "PipelineMutationPayload",
-        "description": null,
-        "fields": [
-          {
-            "name": "error",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "FieldError",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pipeline",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Pipeline",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
         "name": "PipelineOptions",
         "description": null,
         "fields": [
@@ -8970,6 +8983,41 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "PipelinePayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "error",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "FieldError",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pipeline",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Pipeline",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "INPUT_OBJECT",
         "name": "PipelineUniqueInput",
         "description": null,
@@ -9021,6 +9069,22 @@
         "name": "PressureTest",
         "description": null,
         "fields": [
+          {
+            "name": "authorized",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "comment",
             "description": null,
@@ -9144,44 +9208,7 @@
           {
             "name": "mopTestPressure",
             "description": null,
-            "args": [
-              {
-                "name": "mop",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "outsideDiameter",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "yieldStrength",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
+            "args": [],
             "type": {
               "kind": "SCALAR",
               "name": "Float",
@@ -9209,44 +9236,7 @@
           {
             "name": "pressureTestCorrosionAllowance",
             "description": null,
-            "args": [
-              {
-                "name": "mop",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "outsideDiameter",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "yieldStrength",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
+            "args": [],
             "type": {
               "kind": "SCALAR",
               "name": "Float",
@@ -9274,44 +9264,7 @@
           {
             "name": "pressureTestPressure",
             "description": null,
-            "args": [
-              {
-                "name": "mop",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "outsideDiameter",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "yieldStrength",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
+            "args": [],
             "type": {
               "kind": "SCALAR",
               "name": "Float",
@@ -9335,44 +9288,7 @@
           {
             "name": "requiredWTForMop",
             "description": null,
-            "args": [
-              {
-                "name": "mop",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "outsideDiameter",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "yieldStrength",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
+            "args": [],
             "type": {
               "kind": "SCALAR",
               "name": "Float",
@@ -9384,44 +9300,7 @@
           {
             "name": "requiredWTForTestPressure",
             "description": null,
-            "args": [
-              {
-                "name": "mop",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "outsideDiameter",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "yieldStrength",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
+            "args": [],
             "type": {
               "kind": "SCALAR",
               "name": "Float",
@@ -9465,48 +9344,7 @@
           {
             "name": "waterForPigging",
             "description": null,
-            "args": [
-              {
-                "name": "length",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Float",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "outsideDiameter",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "wallThickness",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Float",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
+            "args": [],
             "type": {
               "kind": "SCALAR",
               "name": "Float",
@@ -9571,22 +9409,6 @@
               "ofType": {
                 "kind": "OBJECT",
                 "name": "Facility",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "allSalesPoints",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "SalesPoint",
                 "ofType": null
               }
             },
@@ -9942,6 +9764,39 @@
             "deprecationReason": null
           },
           {
+            "name": "salespointsByPipelineId",
+            "description": null,
+            "args": [
+              {
+                "name": "pipelineId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "SalesPoint",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "sideBar",
             "description": null,
             "args": [],
@@ -10082,6 +9937,22 @@
               "kind": "SCALAR",
               "name": "Boolean",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "authorized",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -10589,6 +10460,22 @@
         "description": null,
         "fields": [
           {
+            "name": "authorized",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "createdAt",
             "description": null,
             "args": [],
@@ -10926,6 +10813,41 @@
           }
         ],
         "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "SalesPointPayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "error",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "FieldError",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "salesPoint",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "SalesPoint",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -13724,6 +13646,22 @@
         "description": null,
         "fields": [
           {
+            "name": "authorized",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "chemicalVolume",
             "description": null,
             "args": [],
@@ -14077,7 +14015,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "WellMutationPayload",
+        "name": "WellPayload",
         "description": null,
         "fields": [
           {

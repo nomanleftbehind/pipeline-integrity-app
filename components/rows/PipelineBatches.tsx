@@ -1,5 +1,4 @@
 import { useState, Fragment } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import {
   usePipelineBatchesByPipelineIdQuery,
   useValidatorsBatchProductQuery,
@@ -58,9 +57,6 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
 
   const { solubilityEnum } = dataValidators?.validators || {};
 
-  const { user } = useAuth() || {};
-  const { role, id: userId } = user || {};
-
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {
       switch (columnType) {
@@ -111,13 +107,13 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
 
   return (
     <div className='pipeline-batch'>
-      {(role === 'ADMIN' || role === 'ENGINEER' || role === 'CHEMICAL') && <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
+      <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
         <IconButton
           className='button-container'
           aria-label='add row' size='small' onClick={addRecord}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
-      </div>}
+      </div>
       {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
@@ -132,8 +128,7 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
         const isLastRow = data.pipelineBatchesByPipelineId?.length === gridRow + 1;
         gridRow += 2;
         if (pipelineBatch) {
-          const { id, date, product, cost, chemicalVolume, diluentVolume, comment, createdBy, createdAt, updatedBy, updatedAt } = pipelineBatch;
-          const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'CHEMICAL');
+          const { id, date, product, cost, chemicalVolume, diluentVolume, comment, createdBy, createdAt, updatedBy, updatedAt, authorized } = pipelineBatch;
           const pipelineBatchColumns: IRecordEntryMap[] = [
             { columnName: 'date', columnType: 'date', nullable: false, record: date, editRecord },
             { columnName: 'product', columnType: 'string', nullable: false, record: product.product, editRecord },
@@ -150,18 +145,18 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
           ];
           return (
             <Fragment key={id}>
-              {authorized && <div className={`pipeline-batch-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
+              <div className={`pipeline-batch-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   className='button-container'
                   aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
-              </div>}
+              </div>
               {pipelineBatchColumns.map(({ columnName, columnType, nullable, record, validator, editRecord }, gridColumn) => {
                 gridColumn += 2;
                 return (
                   <div key={gridColumn} className='pipeline-batch-row' style={{ gridColumn, gridRow }}>
-                    <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+                    <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
                   </div>
                 );
               })}

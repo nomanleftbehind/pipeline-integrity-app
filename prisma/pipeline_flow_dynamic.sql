@@ -29,17 +29,18 @@ SELECT
 
 pip.id,
 fl.' || connected_pipeline_column || ' as "connected_pipeline_id",
-SUM(ip.oil) as "oil",
-SUM(ip.water) as "water",
-SUM(ip.gas) as "gas",
-MIN(ip."firstProduction") as "firstProduction",
-MAX(ip."lastProduction") as "lastProduction",
-MIN(ip."firstInjection") as "firstInjection",
-MAX(ip."lastInjection") as "lastInjection"
+SUM(COALESCE(w.oil,0) + COALESCE(sp.oil,0))  as "oil",
+SUM(COALESCE(w.water,0) + COALESCE(sp.water,0)) as "water",
+SUM(COALESCE(w.gas,0) + COALESCE(sp.gas,0)) as "gas",
+MIN(LEAST(w."firstProduction", sp."firstFlow")) as "firstProduction",
+MAX(GREATEST(w."lastProduction", sp."lastFlow")) as "lastProduction",
+MIN(w."firstInjection") as "firstInjection",
+MAX(w."lastInjection") as "lastInjection"
 
 FROM "ppl_db"."Pipeline" pip
 LEFT OUTER JOIN "ppl_db"."_PipelineFollows" fl ON fl.' || connected_pipeline_join_on_column || ' = pip.id
-LEFT OUTER JOIN "ppl_db"."InjectionPoint" ip ON ip."pipelineId" = pip.id
+LEFT OUTER JOIN "ppl_db"."Well" w ON w."pipelineId" = pip.id
+LEFT OUTER JOIN "ppl_db"."SalesPoint" sp ON sp."pipelineId" = pip.id
 
 GROUP BY
 pip.id,

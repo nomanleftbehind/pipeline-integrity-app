@@ -1,5 +1,6 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
+import { User as IUser, WellBatch as IWellBatch } from '@prisma/client';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 
 
@@ -54,9 +55,24 @@ export const WellBatch = objectType({
       },
     })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
+    t.nonNull.boolean('authorized', {
+      resolve: async ({ createdById }, _args, ctx: Context) => {
+        const user = ctx.user;
+        return !!user && resolveWellBatchAuthorized({ user, createdById });
+      }
+    })
   },
 });
 
+interface IresolveWellBatchAuthorizedArgs {
+  user: IUser;
+  createdById: IWellBatch['createdById'];
+}
+
+const resolveWellBatchAuthorized = ({ user, createdById }: IresolveWellBatchAuthorizedArgs) => {
+  const { role, id } = user;
+  return role === 'ADMIN' || role === 'ENGINEER' || (role === 'CHEMICAL' && createdById === id);
+}
 
 export const WellBatchQuery = extendType({
   type: 'Query',

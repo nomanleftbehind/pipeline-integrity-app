@@ -1,5 +1,6 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
 import { Context } from '../context';
+import { User as IUser, PigRun as IPigRun } from '@prisma/client';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 
 
@@ -61,8 +62,24 @@ export const PigRun = objectType({
 			},
 		})
 		t.nonNull.field('updatedAt', { type: 'DateTime' })
+		t.nonNull.boolean('authorized', {
+			resolve: async ({ createdById }, _args, ctx: Context) => {
+				const user = ctx.user;
+				return !!user && resolvePigRunAuthorized({ user, createdById });
+			}
+		})
 	},
 });
+
+interface IresolvePigRunAuthorizedArgs {
+	user: IUser;
+	createdById: IPigRun['createdById'];
+}
+
+const resolvePigRunAuthorized = ({ user, createdById }: IresolvePigRunAuthorizedArgs) => {
+	const { role, id } = user;
+	return role === 'ADMIN' || role === 'ENGINEER' || (role === 'CATHODIC' && createdById === id);
+}
 
 
 export const PigRunQuery = extendType({

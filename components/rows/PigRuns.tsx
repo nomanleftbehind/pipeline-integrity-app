@@ -1,5 +1,4 @@
 import { useState, Fragment } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import RecordEntry, { IEditRecord } from '../fields/RecordEntry';
 import { ModalFieldError } from '../Modal';
 import IconButton from '@mui/material/IconButton';
@@ -58,9 +57,6 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
 
   const { pigTypeEnum, pigInspectionEnum } = dataValidators?.validators || {};
 
-  const { user } = useAuth() || {};
-  const { role, id: userId } = user || {};
-
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {
       switch (columnType) {
@@ -111,13 +107,13 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
 
   return (
     <div className='pig-run'>
-      {(role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR') && <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
+      <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
         <IconButton
           style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
           aria-label='add row' size='small' onClick={addRecord}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
-      </div>}
+      </div>
       {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
@@ -132,8 +128,7 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
         const isLastRow = data.pigRunsByPipelineId?.length === gridRow + 1;
         gridRow += 2;
         if (pigRun) {
-          const { id, pigType, dateIn, dateOut, operator, isolationValveFunctionTest, pigSenderReceiverInspection, comment, createdBy, createdAt, updatedBy, updatedAt } = pigRun;
-          const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'OPERATOR' && createdBy.id === userId);
+          const { id, pigType, dateIn, dateOut, operator, isolationValveFunctionTest, pigSenderReceiverInspection, comment, createdBy, createdAt, updatedBy, updatedAt, authorized } = pigRun;
           const pigRunColumns: IRecordEntryMap[] = [
             { columnName: 'pigType', columnType: 'string', nullable: true, record: pigType, validator: pigTypeEnum, editRecord },
             { columnName: 'dateIn', columnType: 'date', nullable: false, record: dateIn, editRecord },
@@ -150,18 +145,18 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
           ];
           return (
             <Fragment key={id}>
-              {authorized && <div className={`pig-run-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
+              <div className={`pig-run-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
-                  style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
+                  className='button-container'
                   aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
-              </div>}
+              </div>
               {pigRunColumns.map(({ columnName, columnType, nullable, record, validator, editRecord }, gridColumn) => {
                 gridColumn += 2;
                 return (
                   <div key={gridColumn} className='pig-run-row' style={{ gridColumn, gridRow }}>
-                    <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+                    <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
                   </div>
                 );
               })}

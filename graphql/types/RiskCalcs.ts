@@ -11,8 +11,8 @@ interface ICostPerM3ReleasedCalcArgs {
 }
 
 export const costPerM3ReleasedCalc = async ({ id, ctx }: ICostPerM3ReleasedCalcArgs) => {
-  
-  
+
+
   const { substance: currentSubstance } = await ctx.prisma.licenseChange.findFirst({
     where: { pipelineId: id },
     orderBy: { date: 'desc' },
@@ -59,7 +59,7 @@ export const consequenceEnviroCalc = async ({ id, environmentProximityTo, ctx }:
     if (oil == null || water == null || gas == null) {
       return null;
     } else {
-      const totalFluids = totalFluidsCalc(oil, water, gas);
+      const totalFluids = totalFluidsCalc({ oil, water, gas });
       if (currentStatus === 'Discontinued' || currentStatus === 'Abandoned' || currentSubstance === 'FreshWater') {
         return 1;
       } else if (currentSubstance === 'NaturalGas' || currentSubstance === 'FuelGas' || currentSubstance === 'SourNaturalGas') {
@@ -110,7 +110,7 @@ export const consequenceAssetCalc = async ({ id, repairTimeDays, oilReleaseCost,
   }) || {};
   if (flowCalculationDirection) {
     const { oil, water, gas } = (await totalPipelineFlowRawQuery([id], flowCalculationDirection, ctx))[0];
-    const totalFluids = totalFluidsCalc(oil, water, gas);
+    const totalFluids = totalFluidsCalc({ oil, water, gas });
     if (totalFluids === 0) {
       return 1;
     } else if (gasReleaseCost != null && oilReleaseCost != null && repairTimeDays != null) {
@@ -245,7 +245,7 @@ interface IConequenceMaxCalcArgs {
 export const conequenceMaxCalc = async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IConequenceMaxCalcArgs) => {
   const consequenceEnviro = await consequenceEnviroCalc({ id, environmentProximityTo, ctx });
   const consequenceAsset = await consequenceAssetCalc({ id, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
-  
+
   const maxConsequence = [consequencePeople, consequenceEnviro, consequenceAsset].reduce((previousValue, currentValue) => {
     if (typeof previousValue === 'number' && typeof currentValue === 'number') {
       return currentValue > previousValue ? currentValue : previousValue;

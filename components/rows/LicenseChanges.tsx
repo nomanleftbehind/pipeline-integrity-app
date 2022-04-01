@@ -1,5 +1,4 @@
 import { useState, Fragment } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import {
   useLicenseChangesByPipelineIdQuery,
   useValidatorsLicenseChangeQuery,
@@ -60,9 +59,6 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
 
   const { statusEnum, substanceEnum } = dataValidators?.validators || {};
 
-  const { user } = useAuth() || {};
-  const { role, id: userId } = user || {};
-
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {
       switch (columnType) {
@@ -111,13 +107,13 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
 
   return (
     <div className='license-change'>
-      {(role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') && <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
+      <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
         <IconButton
           className='button-container'
           aria-label='add row' size='small' onClick={addRecord}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
-      </div>}
+      </div>
       {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
@@ -132,8 +128,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
         const isLastRow = data.licenseChangesByPipelineId?.length === gridRow + 1;
         gridRow += 2;
         if (licenseChange) {
-          const { id, date, status, substance, linkToDocumentation, comment, createdBy, createdAt, updatedBy, updatedAt } = licenseChange;
-          const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'OFFICE' && createdBy.id === userId);
+          const { id, date, status, substance, linkToDocumentation, comment, createdBy, createdAt, updatedBy, updatedAt, authorized } = licenseChange;
           const licenseChangeColumns: IRecordEntryMap[] = [
             { columnName: 'date', columnType: 'date', nullable: false, record: date, editRecord },
             { columnName: 'status', columnType: 'string', nullable: false, record: status, validator: statusEnum, editRecord },
@@ -148,18 +143,18 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
           ];
           return (
             <Fragment key={id}>
-              {authorized && <div className={`license-change-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
+              <div className={`license-change-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
-                  style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
+                  className='button-container'
                   aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
-              </div>}
+              </div>
               {licenseChangeColumns.map(({ columnName, columnType, nullable, record, validator, editRecord }, gridColumn) => {
                 gridColumn += 2;
                 return (
                   <div key={gridColumn} className='license-change-row' style={{ gridColumn, gridRow }}>
-                    <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+                    <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
                   </div>
                 );
               })}

@@ -1,6 +1,7 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
 import { databaseEnumToServerEnum } from './Pipeline';
 import { Context } from '../context';
+import { User as IUser } from '@prisma/client';
 import {
   costPerM3ReleasedCalc,
   consequenceAssetCalc,
@@ -112,8 +113,19 @@ export const Risk = objectType({
       },
     })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
+    t.nonNull.boolean('authorized', {
+      resolve: async (_, _args, ctx: Context) => {
+        const user = ctx.user;
+        return !!user && resolveRiskAuthorized(user);
+      }
+    })
   }
-})
+});
+
+const resolveRiskAuthorized = (user: IUser) => {
+  const { role } = user;
+  return role === 'ADMIN' || role === 'ENGINEER';
+}
 
 export const EnvironmentProximityToEnumMembers = {
   WB1: 'WB1',

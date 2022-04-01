@@ -519,8 +519,8 @@ export function databaseEnumToServerEnum<T>(object: T, value: T[keyof T] | null 
 }
 
 
-export const PipelineMutationPayload = objectType({
-  name: 'PipelineMutationPayload',
+export const PipelinePayload = objectType({
+  name: 'PipelinePayload',
   definition(t) {
     t.field('pipeline', { type: 'Pipeline' })
     t.field('error', { type: 'FieldError' })
@@ -534,7 +534,7 @@ export const PipelineMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editPipeline', {
-      type: 'PipelineMutationPayload',
+      type: 'PipelinePayload',
       args: {
         id: nonNull(stringArg()),
         satelliteId: stringArg(),
@@ -674,7 +674,7 @@ export const PipelineMutation = extendType({
       }
     })
     t.field('deletePipeline', {
-      type: 'PipelineMutationPayload',
+      type: 'PipelinePayload',
       args: {
         id: nonNull(stringArg()),
       },
@@ -696,7 +696,7 @@ export const PipelineMutation = extendType({
       },
     })
     t.field('duplicatePipeline', {
-      type: 'PipelineMutationPayload',
+      type: 'PipelinePayload',
       args: {
         id: nonNull(stringArg()),
       },
@@ -754,7 +754,7 @@ export const PipelineMutation = extendType({
       }
     })
     t.field('connectPipeline', {
-      type: 'PipelineMutationPayload',
+      type: 'PipelinePayload',
       args: {
         id: nonNull(stringArg()),
         connectPipelineId: nonNull(stringArg()),
@@ -791,7 +791,7 @@ export const PipelineMutation = extendType({
       }
     })
     t.field('disconnectPipeline', {
-      type: 'PipelineMutationPayload',
+      type: 'PipelinePayload',
       args: {
         id: nonNull(stringArg()),
         disconnectPipelineId: nonNull(stringArg()),
@@ -828,7 +828,7 @@ export const PipelineMutation = extendType({
       }
     })
     t.field('connectWell', {
-      type: 'PipelineMutationPayload',
+      type: 'PipelinePayload',
       args: {
         id: nonNull(stringArg()),
         wellId: nonNull(stringArg()),
@@ -863,7 +863,7 @@ export const PipelineMutation = extendType({
       }
     })
     t.field('disconnectWell', {
-      type: 'PipelineMutationPayload',
+      type: 'PipelinePayload',
       args: {
         id: nonNull(stringArg()),
         wellId: nonNull(stringArg()),

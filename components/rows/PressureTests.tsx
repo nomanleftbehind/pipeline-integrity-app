@@ -1,5 +1,4 @@
 import { useState, Fragment } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import RecordEntry, { IEditRecord } from '../fields/RecordEntry';
 import { ModalFieldError } from '../Modal';
 import IconButton from '@mui/material/IconButton';
@@ -14,18 +13,16 @@ import {
   PressureTestsByPipelineIdDocument,
 } from '../../graphql/generated/graphql';
 
-import { IPipeline } from './RenderPipeline';
 import { IRecordEntryMap } from './LicenseChanges';
 
-type IPressureTestArgs = Pick<IPipeline, 'length' | 'mop' | 'outsideDiameter' | 'yieldStrength' | 'wallThickness'>;
 
-interface IPressureTestsProps extends IPressureTestArgs {
+interface IPressureTestsProps {
   pipelineId: string;
 }
 
-export default function PressureTests({ pipelineId, length, mop, outsideDiameter, yieldStrength, wallThickness }: IPressureTestsProps) {
+export default function PressureTests({ pipelineId }: IPressureTestsProps) {
 
-  const { data, loading, error } = usePressureTestsByPipelineIdQuery({ variables: { pipelineId, length, mop, outsideDiameter, yieldStrength, wallThickness } });
+  const { data, loading, error } = usePressureTestsByPipelineIdQuery({ variables: { pipelineId } });
   const { data: dataValidators } = useValidatorsPressureTestQuery();
   const [editPressureTest] = useEditPressureTestMutation({
     refetchQueries: [PressureTestsByPipelineIdDocument, 'PressureTestsByPipelineId'],
@@ -60,9 +57,6 @@ export default function PressureTests({ pipelineId, length, mop, outsideDiameter
   const [fieldError, setFieldError] = useState(initialFieldError);
 
   const { limitingSpecEnum } = dataValidators?.validators || {};
-
-  const { user } = useAuth() || {};
-  const { role, id: userId } = user || {};
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {
@@ -121,13 +115,13 @@ export default function PressureTests({ pipelineId, length, mop, outsideDiameter
 
   return (
     <div className='pressure-test'>
-      {(role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR') && <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
+      <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
         <IconButton
-          style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
+          className='button-container'
           aria-label='add row' size='small' onClick={addRecord}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
-      </div>}
+      </div>
       {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
@@ -143,9 +137,8 @@ export default function PressureTests({ pipelineId, length, mop, outsideDiameter
         gridRow += 2;
         if (pressureTest) {
           const { comment, ddsDate, pressureTestDate, infoSentOutDate, integritySheetUpdated, limitingSpec, pressureTestReceivedDate, requiredWTForMop, mopTestPressure,
-            maxPressureOfLimitingSpec, pressureTestPressure, requiredWTForTestPressure, pressureTestCorrosionAllowance, waterForPigging, createdBy, createdAt, updatedBy, updatedAt, id
+            maxPressureOfLimitingSpec, pressureTestPressure, requiredWTForTestPressure, pressureTestCorrosionAllowance, waterForPigging, createdBy, createdAt, updatedBy, updatedAt, id, authorized
           } = pressureTest;
-          const authorized = role === 'ADMIN' || role === 'ENGINEER' || (role === 'OPERATOR' && createdBy.id === userId);
 
           const pressureTestColumns: IRecordEntryMap[] = [
             { columnName: 'pressureTestDate', columnType: 'date', nullable: false, record: pressureTestDate, editRecord },
@@ -170,18 +163,18 @@ export default function PressureTests({ pipelineId, length, mop, outsideDiameter
           ];
           return (
             <Fragment key={id}>
-              {authorized && <div className={`pressure-test-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
+              <div className={`pressure-test-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   className='button-container'
                   aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
-              </div>}
+              </div>
               {pressureTestColumns.map(({ columnName, columnType, nullable, record, validator, editRecord }, gridColumn) => {
                 gridColumn += 2;
                 return (
                   <div key={gridColumn} className='pressure-test-row' style={{ gridColumn, gridRow }}>
-                    <RecordEntry id={id} createdById={createdBy.id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+                    <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
                   </div>
                 );
               })}

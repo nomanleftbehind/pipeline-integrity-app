@@ -1,89 +1,17 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, intArg, floatArg } from 'nexus';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 import { Context } from '../context';
-import { Pipeline as IPipeline, PressureTest as IPressureTest } from '@prisma/client';
+import { User as IUser, PressureTest as IPressureTest } from '@prisma/client';
+import {
+  requiredWTForMopCalc,
+  mopTestPressureCalc,
+  maxPressureOfLimitingSpecCalc,
+  pressureTestPressureCalc,
+  requiredWTForTestPressureCalc,
+  pressureTestCorrosionAllowanceCalc,
+  waterForPiggingCalc,
+} from './PressureTestCalcs';
 
-type PickAndAddUndefined<T, K extends keyof T> = {
-  [P in K]: T[P] | undefined;
-};
-
-type IRequiredWTForMopCalcArgs = PickAndAddUndefined<IPipeline, 'mop' | 'outsideDiameter' | 'yieldStrength'>;
-type IMaxPressureOfLimitingSpecArgs = Pick<IPressureTest, 'limitingSpec'>;
-
-
-const designFactor = 0.8;
-const locationFactor = 0.9;
-const jointFactor = 1;
-const tempDeratingFactor = 1;
-const corrosionAllowance = 0.5;
-
-const requiredWTForMopCalc = ({ mop, outsideDiameter, yieldStrength }: IRequiredWTForMopCalcArgs) => {
-  if (mop != null && outsideDiameter != null && yieldStrength != null) {
-    const result = (mop * outsideDiameter) / (2 * yieldStrength * 1000 * designFactor * locationFactor * jointFactor * tempDeratingFactor);
-    return result;
-  }
-  return null;
-}
-
-const mopTestPressureCalc = ({ mop, outsideDiameter, yieldStrength }: IRequiredWTForMopCalcArgs) => {
-  const requiredWTForMop = requiredWTForMopCalc({ mop, outsideDiameter, yieldStrength });
-  if (yieldStrength != null && outsideDiameter != null && requiredWTForMop != null) {
-    const result = (2 * yieldStrength * (requiredWTForMop + corrosionAllowance) * 1000 * designFactor * locationFactor * jointFactor * tempDeratingFactor / outsideDiameter) * 1.25;
-    return result;
-  }
-  return null;
-}
-
-const maxPressureOfLimitingSpecCalc = ({ limitingSpec }: IMaxPressureOfLimitingSpecArgs) => {
-  switch (limitingSpec) {
-    case 'ANSI150':
-      return 1895 * 1.25;
-    case 'ANSI300':
-      return 4960 * 1.25;
-    case 'ANSI600':
-      return 9930 * 1.25
-    default:
-      return null;
-  }
-}
-
-type IPressureTestPressureArgs = IRequiredWTForMopCalcArgs & IMaxPressureOfLimitingSpecArgs;
-
-const pressureTestPressureCalc = ({ mop, outsideDiameter, yieldStrength, limitingSpec }: IPressureTestPressureArgs) => {
-  const mopTestPressure = mopTestPressureCalc({ mop, outsideDiameter, yieldStrength });
-  const maxPressureOfLimitingSpec = maxPressureOfLimitingSpecCalc({ limitingSpec });
-
-  if (mopTestPressure != null && maxPressureOfLimitingSpec != null) {
-    return Math.min(mopTestPressure, maxPressureOfLimitingSpec);
-  }
-  if (mopTestPressure != null && maxPressureOfLimitingSpec == null) {
-    return mopTestPressure;
-  }
-  if (mopTestPressure == null && maxPressureOfLimitingSpec != null) {
-    return maxPressureOfLimitingSpec;
-  }
-  return null;
-}
-
-const requiredWTForTestPressureCalc = ({ mop, outsideDiameter, yieldStrength, limitingSpec }: IPressureTestPressureArgs) => {
-  const pressureTestPressure = pressureTestPressureCalc({ mop, outsideDiameter, yieldStrength, limitingSpec });
-  if (yieldStrength != null && outsideDiameter != null && pressureTestPressure != null) {
-    const result = ((pressureTestPressure / 1.25) * outsideDiameter) / (2 * yieldStrength * 1000 * designFactor * locationFactor * jointFactor * tempDeratingFactor);
-    return result;
-  }
-  return null;
-}
-
-const pressureTestCorrosionAllowanceCalc = ({ mop, outsideDiameter, yieldStrength, limitingSpec }: IPressureTestPressureArgs) => {
-  const requiredWTForMop = requiredWTForMopCalc({ mop, outsideDiameter, yieldStrength });
-  const requiredWTForTestPressure = requiredWTForTestPressureCalc({ mop, outsideDiameter, yieldStrength, limitingSpec });
-
-  if (requiredWTForMop != null && requiredWTForTestPressure != null) {
-    const result = requiredWTForTestPressure - requiredWTForMop;
-    return result;
-  }
-  return null;
-}
 
 export const PressureTest = objectType({
   name: 'PressureTest',
@@ -103,20 +31,10 @@ export const PressureTest = objectType({
       },
     })
     t.float('requiredWTForMop', {
-      args: {
-        mop: intArg(),
-        outsideDiameter: floatArg(),
-        yieldStrength: intArg(),
-      },
-      resolve: async (_parent, { mop, outsideDiameter, yieldStrength }) => requiredWTForMopCalc({ mop, outsideDiameter, yieldStrength })
+      resolve: async ({ pipelineId }, _args, ctx: Context) => await requiredWTForMopCalc({ pipelineId, ctx })
     })
     t.float('mopTestPressure', {
-      args: {
-        mop: intArg(),
-        outsideDiameter: floatArg(),
-        yieldStrength: intArg(),
-      },
-      resolve: async (_parent, { mop, yieldStrength, outsideDiameter }) => mopTestPressureCalc({ mop, yieldStrength, outsideDiameter })
+      resolve: async ({ pipelineId }, _args, ctx: Context) => await mopTestPressureCalc({ pipelineId, ctx })
     })
     t.field('limitingSpec', {
       type: 'LimitingSpecEnum',
@@ -126,45 +44,19 @@ export const PressureTest = objectType({
       }
     })
     t.float('maxPressureOfLimitingSpec', {
-      resolve: async ({ limitingSpec }) => maxPressureOfLimitingSpecCalc({ limitingSpec })
+      resolve: async ({ limitingSpec }) => await maxPressureOfLimitingSpecCalc({ limitingSpec })
     })
     t.float('pressureTestPressure', {
-      args: {
-        mop: intArg(),
-        outsideDiameter: floatArg(),
-        yieldStrength: intArg(),
-      },
-      resolve: async ({ limitingSpec }, { mop, yieldStrength, outsideDiameter }) => pressureTestPressureCalc({ mop, yieldStrength, outsideDiameter, limitingSpec })
+      resolve: async ({ pipelineId, limitingSpec }, _args, ctx: Context) => await pressureTestPressureCalc({ pipelineId, ctx, limitingSpec })
     })
     t.float('requiredWTForTestPressure', {
-      args: {
-        mop: intArg(),
-        outsideDiameter: floatArg(),
-        yieldStrength: intArg(),
-      },
-      resolve: async ({ limitingSpec }, { mop, yieldStrength, outsideDiameter }) => requiredWTForTestPressureCalc({ mop, yieldStrength, outsideDiameter, limitingSpec })
+      resolve: async ({ pipelineId, limitingSpec }, _args, ctx: Context) => await requiredWTForTestPressureCalc({ pipelineId, limitingSpec, ctx })
     })
     t.float('pressureTestCorrosionAllowance', {
-      args: {
-        mop: intArg(),
-        outsideDiameter: floatArg(),
-        yieldStrength: intArg(),
-      },
-      resolve: async ({ limitingSpec }, { mop, yieldStrength, outsideDiameter }) => pressureTestCorrosionAllowanceCalc({ mop, yieldStrength, outsideDiameter, limitingSpec })
+      resolve: async ({ pipelineId, limitingSpec }, _args, ctx: Context) => await pressureTestCorrosionAllowanceCalc({ pipelineId, limitingSpec, ctx })
     })
     t.float('waterForPigging', {
-      args: {
-        length: nonNull(floatArg()),
-        outsideDiameter: floatArg(),
-        wallThickness: floatArg(),
-      },
-      resolve: async (_parent, { length, outsideDiameter, wallThickness }) => {
-        if (outsideDiameter != null && wallThickness != null) {
-          const result = Math.PI * (length * 1000) * (Math.pow(((outsideDiameter - wallThickness) / 2000), 2));
-          return result;
-        }
-        return null;
-      }
+      resolve: async ({ pipelineId }, _args, ctx: Context) => await waterForPiggingCalc({ pipelineId, ctx })
     })
     t.field('infoSentOutDate', { type: 'DateTime' })
     t.field('ddsDate', { type: 'DateTime' })
@@ -192,8 +84,24 @@ export const PressureTest = objectType({
       },
     })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
+    t.nonNull.boolean('authorized', {
+      resolve: async ({ createdById }, _args, ctx: Context) => {
+        const user = ctx.user;
+        return !!user && resolvePressureTestAuthorized({ user, createdById });
+      }
+    })
   },
-})
+});
+
+interface IresolvePressureTestAuthorizedArgs {
+  user: IUser;
+  createdById: IPressureTest['createdById'];
+}
+
+const resolvePressureTestAuthorized = ({ user, createdById }: IresolvePressureTestAuthorizedArgs) => {
+  const { role, id } = user;
+  return role === 'ADMIN' || role === 'ENGINEER' || (role === 'OPERATOR' && createdById === id);
+}
 
 
 export const PressureTestQuery = extendType({
@@ -204,7 +112,7 @@ export const PressureTestQuery = extendType({
       args: {
         pipelineId: nonNull(stringArg()),
       },
-      resolve: async (_parent, { pipelineId }, ctx: Context) => {
+      resolve: async (_, { pipelineId }, ctx: Context) => {
         const result = await ctx.prisma.pressureTest.findMany({
           where: { pipelineId },
           orderBy: { pressureTestDate: 'desc' },

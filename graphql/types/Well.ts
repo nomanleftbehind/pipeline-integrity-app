@@ -7,7 +7,13 @@ export const gasAssociatedLiquidsCalc = (gas: number) => {
   return gas * 35.49 * 0.00355238191999475 / 6.3;
 }
 
-export const totalFluidsCalc = (oil: number, water: number, gas: number) => {
+interface ItotalFluidsCalcArgs {
+  oil: number;
+  water: number;
+  gas: number;
+}
+
+export const totalFluidsCalc = ({ oil, water, gas }: ItotalFluidsCalcArgs) => {
   return oil + water + gasAssociatedLiquidsCalc(gas);
 }
 
@@ -27,7 +33,7 @@ export const Well = objectType({
       resolve: async ({ gas }) => gasAssociatedLiquidsCalc(gas)
     })
     t.nonNull.float('totalFluids', {
-      resolve: async ({ oil, water, gas }) => totalFluidsCalc(oil, water, gas)
+      resolve: async ({ oil, water, gas }) => totalFluidsCalc({ oil, water, gas })
     })
     t.field('firstProduction', { type: 'DateTime' })
     t.field('lastProduction', { type: 'DateTime' })
@@ -121,8 +127,8 @@ export const WellCreateInput = inputObjectType({
   },
 });
 
-export const WellMutationPayload = objectType({
-  name: 'WellMutationPayload',
+export const WellPayload = objectType({
+  name: 'WellPayload',
   definition(t) {
     t.field('well', { type: 'Well' })
     t.field('error', { type: 'FieldError' })
@@ -134,7 +140,7 @@ export const WellMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editWell', {
-      type: 'WellMutationPayload',
+      type: 'WellPayload',
       args: {
         id: nonNull(stringArg()),
         pipelineId: stringArg(),
@@ -160,11 +166,11 @@ export const WellMutation = extendType({
               oil: args.oil || undefined,
               water: args.water || undefined,
               gas: args.gas || undefined,
-              firstProduction: args.firstProduction || undefined,
-              lastProduction: args.lastProduction || undefined,
-              firstInjection: args.firstInjection || undefined,
-              lastInjection: args.lastInjection || undefined,
-              fdcRecId: args.fdcRecId || undefined,
+              firstProduction: args.firstProduction,
+              lastProduction: args.lastProduction,
+              firstInjection: args.firstInjection,
+              lastInjection: args.lastInjection,
+              fdcRecId: args.fdcRecId,
               updatedById: user.id,
             },
           });
@@ -179,4 +185,4 @@ export const WellMutation = extendType({
       },
     })
   }
-})
+});

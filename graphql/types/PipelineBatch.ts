@@ -1,5 +1,6 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
+import { User as IUser, PipelineBatch as IPipelineBatch } from '@prisma/client';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 
 
@@ -54,8 +55,24 @@ export const PipelineBatch = objectType({
       },
     })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
+    t.nonNull.boolean('authorized', {
+      resolve: async ({ createdById }, _args, ctx: Context) => {
+        const user = ctx.user;
+        return !!user && resolvePipelineBatchAuthorized({ user, createdById });
+      }
+    })
   },
 });
+
+interface IresolvePipelineBatchAuthorizedArgs {
+  user: IUser;
+  createdById: IPipelineBatch['createdById'];
+}
+
+const resolvePipelineBatchAuthorized = ({ user, createdById }: IresolvePipelineBatchAuthorizedArgs) => {
+  const { role, id } = user;
+  return role === 'ADMIN' || role === 'ENGINEER' || (role === 'CHEMICAL' && createdById === id);
+}
 
 
 export const PipelineBatchQuery = extendType({
@@ -155,23 +172,36 @@ export const PipelineBatchMutation = extendType({
       args: {
         pipelineId: nonNull(stringArg()),
       },
-      resolve: async (_parent, { pipelineId }, ctx: Context) => {
+      resolve: async (_, { pipelineId }, ctx: Context) => {
         const user = ctx.user;
-        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'CHEMICAL')) {
-          const userId = user.id;
-          const today = new Date();
-          today.setUTCHours(0, 0, 0, 0);
+        if (user) {
+          const { id: userId, role, firstName } = user;
+          if (role === 'ADMIN' || role === 'ENGINEER' || role === 'CHEMICAL') {
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
 
-          const pipelineBatch = await ctx.prisma.pipelineBatch.create({
-            data: {
-              pipeline: { connect: { id: pipelineId } },
-              date: today,
-              product: { connect: { product: 'C1210' } },
-              createdBy: { connect: { id: userId } },
-              updatedBy: { connect: { id: userId } },
+            const pipelineBatch = await ctx.prisma.pipelineBatch.create({
+              data: {
+                pipeline: { connect: { id: pipelineId } },
+                date: today,
+                product: {
+                  connectOrCreate: {
+                    where: { product: 'C-1210' },
+                    create: { product: 'C-1210', solubility: 'Oil', createdById: userId, updatedById: userId }
+                  }
+                },
+                createdBy: { connect: { id: userId } },
+                updatedBy: { connect: { id: userId } },
+              }
+            });
+            return { pipelineBatch }
+          }
+          return {
+            error: {
+              field: 'Pipeline batch',
+              message: `Hi ${firstName}, your user privilages do not allow you to add new pipeline batch.`,
             }
-          });
-          return { pipelineBatch };
+          }
         }
         return {
           error: {
@@ -190,36 +220,41 @@ export const PipelineBatchMutation = extendType({
 
         const user = ctx.user;
 
-        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'CHEMICAL')) {
-
+        if (user) {
           const { firstName, role } = user;
+          if (role === 'ADMIN' || role === 'ENGINEER' || role === 'CHEMICAL') {
+            if (role === 'CHEMICAL') {
+              const monthAgo = new Date();
+              monthAgo.setUTCHours(0, 0, 0, 0);
+              monthAgo.setMonth(monthAgo.getMonth() - 1);
 
-          if (role === 'CHEMICAL') {
-            const monthAgo = new Date();
-            monthAgo.setUTCHours(0, 0, 0, 0);
-            monthAgo.setMonth(monthAgo.getMonth() - 1);
-
-            const currentPipelineBatch = await ctx.prisma.pipelineBatch.findUnique({
-              where: { id },
-              select: {
-                createdAt: true,
-              }
-            });
-            if (currentPipelineBatch && currentPipelineBatch.createdAt < monthAgo) {
-              return {
-                error: {
-                  field: 'created at',
-                  message: `Hi ${firstName}. Your user privilages do not allow you to delete pipeline batch created more than a month ago.`,
+              const currentPipelineBatch = await ctx.prisma.pipelineBatch.findUnique({
+                where: { id },
+                select: {
+                  createdAt: true,
+                }
+              });
+              if (currentPipelineBatch && currentPipelineBatch.createdAt < monthAgo) {
+                return {
+                  error: {
+                    field: 'created at',
+                    message: `Hi ${firstName}. Your user privilages do not allow you to delete pipeline batch created more than a month ago.`,
+                  }
                 }
               }
             }
+            const pipelineBatch = await ctx.prisma.pipelineBatch.delete({
+              where: { id }
+            });
+            return { pipelineBatch }
           }
-          const pipelineBatch = await ctx.prisma.pipelineBatch.delete({
-            where: { id }
-          });
-          return { pipelineBatch }
+          return {
+            error: {
+              field: 'Pipeline batch',
+              message: `Hi ${firstName}, your user privilages do not allow you to delete pipeline batch.`,
+            }
+          }
         }
-
         return {
           error: {
             field: 'User',

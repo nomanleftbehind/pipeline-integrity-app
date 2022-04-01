@@ -87,11 +87,6 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, au
     if (view === 'pressure test') {
       return <PressureTests
         pipelineId={id}
-        length={length}
-        mop={mop}
-        outsideDiameter={outsideDiameter}
-        wallThickness={wallThickness}
-        yieldStrength={yieldStrength}
       />
     }
     if (view === 'pig run') {

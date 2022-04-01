@@ -269,6 +269,7 @@ export type InternalProtectionEnumObject = {
 };
 
 export type LicenseChange = {
+  authorized: Scalars['Boolean'];
   comment?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
@@ -330,30 +331,30 @@ export type Mutation = {
   addPressureTest?: Maybe<PressureTestPayload>;
   addRisk?: Maybe<RiskPayload>;
   addWellBatch?: Maybe<WellBatchPayload>;
-  connectPipeline?: Maybe<PipelineMutationPayload>;
-  connectWell?: Maybe<PipelineMutationPayload>;
+  connectPipeline?: Maybe<PipelinePayload>;
+  connectWell?: Maybe<PipelinePayload>;
   createFacility?: Maybe<Facility>;
   deleteLicenseChange?: Maybe<LicenseChangePayload>;
   deletePigRun?: Maybe<PigRunPayload>;
-  deletePipeline?: Maybe<PipelineMutationPayload>;
+  deletePipeline?: Maybe<PipelinePayload>;
   deletePipelineBatch?: Maybe<PipelineBatchPayload>;
   deletePressureTest?: Maybe<PressureTestPayload>;
   deleteRisk?: Maybe<RiskPayload>;
   deleteSatellite?: Maybe<Satellite>;
   deleteWellBatch?: Maybe<WellBatchPayload>;
-  disconnectPipeline?: Maybe<PipelineMutationPayload>;
-  disconnectWell?: Maybe<PipelineMutationPayload>;
-  duplicatePipeline?: Maybe<PipelineMutationPayload>;
+  disconnectPipeline?: Maybe<PipelinePayload>;
+  disconnectWell?: Maybe<PipelinePayload>;
+  duplicatePipeline?: Maybe<PipelinePayload>;
   editFacility?: Maybe<Facility>;
   editLicenseChange?: Maybe<LicenseChangePayload>;
   editPigRun?: Maybe<PigRunPayload>;
-  editPipeline?: Maybe<PipelineMutationPayload>;
+  editPipeline?: Maybe<PipelinePayload>;
   editPipelineBatch?: Maybe<PipelineBatchPayload>;
   editPressureTest?: Maybe<PressureTestPayload>;
   editRisk?: Maybe<RiskPayload>;
-  editSalesPoint?: Maybe<SalesPoint>;
+  editSalesPoint?: Maybe<SalesPointPayload>;
   editSatellite?: Maybe<Satellite>;
-  editWell?: Maybe<WellMutationPayload>;
+  editWell?: Maybe<WellPayload>;
   editWellBatch?: Maybe<WellBatchPayload>;
   login?: Maybe<AuthPayload>;
   logout?: Maybe<Scalars['Boolean']>;
@@ -634,6 +635,7 @@ export type PigInspectionEnumObject = {
 };
 
 export type PigRun = {
+  authorized: Scalars['Boolean'];
   comment?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
@@ -899,6 +901,7 @@ export type Pipeline = {
 };
 
 export type PipelineBatch = {
+  authorized: Scalars['Boolean'];
   chemicalVolume?: Maybe<Scalars['Float']>;
   comment?: Maybe<Scalars['String']>;
   cost?: Maybe<Scalars['Float']>;
@@ -951,17 +954,17 @@ export type PipelineFlow = {
   water: Scalars['Float'];
 };
 
-export type PipelineMutationPayload = {
-  error?: Maybe<FieldError>;
-  pipeline?: Maybe<Pipeline>;
-};
-
 export type PipelineOptions = {
   facility: Scalars['String'];
   id: Scalars['String'];
   license: Scalars['String'];
   satellite: Scalars['String'];
   segment: Scalars['String'];
+};
+
+export type PipelinePayload = {
+  error?: Maybe<FieldError>;
+  pipeline?: Maybe<Pipeline>;
 };
 
 export type PipelineUniqueInput = {
@@ -971,6 +974,7 @@ export type PipelineUniqueInput = {
 };
 
 export type PressureTest = {
+  authorized: Scalars['Boolean'];
   comment?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
@@ -993,48 +997,6 @@ export type PressureTest = {
   waterForPigging?: Maybe<Scalars['Float']>;
 };
 
-
-export type PressureTestMopTestPressureArgs = {
-  mop?: Maybe<Scalars['Int']>;
-  outsideDiameter?: Maybe<Scalars['Float']>;
-  yieldStrength?: Maybe<Scalars['Int']>;
-};
-
-
-export type PressureTestPressureTestCorrosionAllowanceArgs = {
-  mop?: Maybe<Scalars['Int']>;
-  outsideDiameter?: Maybe<Scalars['Float']>;
-  yieldStrength?: Maybe<Scalars['Int']>;
-};
-
-
-export type PressureTestPressureTestPressureArgs = {
-  mop?: Maybe<Scalars['Int']>;
-  outsideDiameter?: Maybe<Scalars['Float']>;
-  yieldStrength?: Maybe<Scalars['Int']>;
-};
-
-
-export type PressureTestRequiredWtForMopArgs = {
-  mop?: Maybe<Scalars['Int']>;
-  outsideDiameter?: Maybe<Scalars['Float']>;
-  yieldStrength?: Maybe<Scalars['Int']>;
-};
-
-
-export type PressureTestRequiredWtForTestPressureArgs = {
-  mop?: Maybe<Scalars['Int']>;
-  outsideDiameter?: Maybe<Scalars['Float']>;
-  yieldStrength?: Maybe<Scalars['Int']>;
-};
-
-
-export type PressureTestWaterForPiggingArgs = {
-  length: Scalars['Float'];
-  outsideDiameter?: Maybe<Scalars['Float']>;
-  wallThickness?: Maybe<Scalars['Float']>;
-};
-
 export type PressureTestPayload = {
   error?: Maybe<FieldError>;
   pressureTest?: Maybe<PressureTest>;
@@ -1042,7 +1004,6 @@ export type PressureTestPayload = {
 
 export type Query = {
   allFacilities?: Maybe<Array<Maybe<Facility>>>;
-  allSalesPoints?: Maybe<Array<Maybe<SalesPoint>>>;
   allSatellites?: Maybe<Array<Maybe<Satellite>>>;
   allUsers?: Maybe<Array<Maybe<User>>>;
   licenseChangesByPipelineId?: Maybe<Array<Maybe<LicenseChange>>>;
@@ -1055,6 +1016,7 @@ export type Query = {
   pipelinesByUser?: Maybe<Array<Maybe<Pipeline>>>;
   pressureTestsByPipelineId?: Maybe<Array<Maybe<PressureTest>>>;
   riskById?: Maybe<Risk>;
+  salespointsByPipelineId?: Maybe<Array<Maybe<SalesPoint>>>;
   sideBar?: Maybe<Array<Maybe<SideBar>>>;
   sourceOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   userCount?: Maybe<Scalars['Int']>;
@@ -1106,6 +1068,11 @@ export type QueryRiskByIdArgs = {
 };
 
 
+export type QuerySalespointsByPipelineIdArgs = {
+  pipelineId: Scalars['String'];
+};
+
+
 export type QueryWellBatchesByWellIdArgs = {
   wellId: Scalars['String'];
 };
@@ -1117,6 +1084,7 @@ export type QueryWellsByPipelineIdArgs = {
 
 export type Risk = {
   aerialReview?: Maybe<Scalars['Boolean']>;
+  authorized: Scalars['Boolean'];
   comment?: Maybe<Scalars['String']>;
   conequenceMax?: Maybe<Scalars['Int']>;
   consequenceAsset?: Maybe<Scalars['Int']>;
@@ -1161,6 +1129,7 @@ export type RiskPayload = {
 };
 
 export type SalesPoint = {
+  authorized: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   createdBy: User;
   fdcRecId?: Maybe<Scalars['String']>;
@@ -1186,6 +1155,11 @@ export type SalesPointCreateInput = {
   name: Scalars['String'];
   oil: Scalars['Float'];
   water: Scalars['Float'];
+};
+
+export type SalesPointPayload = {
+  error?: Maybe<FieldError>;
+  salesPoint?: Maybe<SalesPoint>;
 };
 
 export type Satellite = {
@@ -1446,6 +1420,7 @@ export type Well = {
 };
 
 export type WellBatch = {
+  authorized: Scalars['Boolean'];
   chemicalVolume?: Maybe<Scalars['Float']>;
   comment?: Maybe<Scalars['String']>;
   cost?: Maybe<Scalars['Float']>;
@@ -1477,7 +1452,7 @@ export type WellCreateInput = {
   water: Scalars['Float'];
 };
 
-export type WellMutationPayload = {
+export type WellPayload = {
   error?: Maybe<FieldError>;
   well?: Maybe<Well>;
 };
@@ -1783,7 +1758,7 @@ export type PigRunsByPipelineIdQueryVariables = Exact<{
 }>;
 
 
-export type PigRunsByPipelineIdQuery = { pigRunsByPipelineId?: Array<{ id: string, pigType?: PigTypeEnum | null | undefined, dateIn: string, dateOut?: string | null | undefined, isolationValveFunctionTest?: PigInspectionEnum | null | undefined, pigSenderReceiverInspection?: PigInspectionEnum | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, operator?: { email: string } | null | undefined, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type PigRunsByPipelineIdQuery = { pigRunsByPipelineId?: Array<{ id: string, pigType?: PigTypeEnum | null | undefined, dateIn: string, dateOut?: string | null | undefined, isolationValveFunctionTest?: PigInspectionEnum | null | undefined, pigSenderReceiverInspection?: PigInspectionEnum | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, operator?: { email: string } | null | undefined, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type ValidatorsPigRunQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1795,14 +1770,14 @@ export type PipelineBatchesByPipelineIdQueryVariables = Exact<{
 }>;
 
 
-export type PipelineBatchesByPipelineIdQuery = { pipelineBatchesByPipelineId?: Array<{ id: string, date: string, cost?: number | null | undefined, chemicalVolume?: number | null | undefined, diluentVolume?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, product: { id: string, product: string, cost?: number | null | undefined, solubility: SolubilityEnum }, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type PipelineBatchesByPipelineIdQuery = { pipelineBatchesByPipelineId?: Array<{ id: string, date: string, cost?: number | null | undefined, chemicalVolume?: number | null | undefined, diluentVolume?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, product: { id: string, product: string, cost?: number | null | undefined, solubility: SolubilityEnum }, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type WellBatchesByWellIdQueryVariables = Exact<{
   wellId: Scalars['String'];
 }>;
 
 
-export type WellBatchesByWellIdQuery = { wellBatchesByWellId?: Array<{ id: string, date: string, cost?: number | null | undefined, chemicalVolume?: number | null | undefined, diluentVolume?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, product: { id: string, product: string, cost?: number | null | undefined, solubility: SolubilityEnum }, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type WellBatchesByWellIdQuery = { wellBatchesByWellId?: Array<{ id: string, date: string, cost?: number | null | undefined, chemicalVolume?: number | null | undefined, diluentVolume?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, product: { id: string, product: string, cost?: number | null | undefined, solubility: SolubilityEnum }, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type ValidatorsBatchProductQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1849,19 +1824,14 @@ export type LicenseChangesByPipelineIdQueryVariables = Exact<{
 }>;
 
 
-export type LicenseChangesByPipelineIdQuery = { licenseChangesByPipelineId?: Array<{ id: string, status: StatusEnum, substance: SubstanceEnum, date: string, comment?: string | null | undefined, linkToDocumentation?: string | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type LicenseChangesByPipelineIdQuery = { licenseChangesByPipelineId?: Array<{ id: string, status: StatusEnum, substance: SubstanceEnum, date: string, comment?: string | null | undefined, linkToDocumentation?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type PressureTestsByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
-  length: Scalars['Float'];
-  mop?: Maybe<Scalars['Int']>;
-  outsideDiameter?: Maybe<Scalars['Float']>;
-  yieldStrength?: Maybe<Scalars['Int']>;
-  wallThickness?: Maybe<Scalars['Float']>;
 }>;
 
 
-export type PressureTestsByPipelineIdQuery = { pressureTestsByPipelineId?: Array<{ id: string, requiredWTForMop?: number | null | undefined, mopTestPressure?: number | null | undefined, limitingSpec?: LimitingSpecEnum | null | undefined, maxPressureOfLimitingSpec?: number | null | undefined, pressureTestPressure?: number | null | undefined, requiredWTForTestPressure?: number | null | undefined, pressureTestCorrosionAllowance?: number | null | undefined, waterForPigging?: number | null | undefined, infoSentOutDate?: string | null | undefined, ddsDate?: string | null | undefined, pressureTestDate: string, pressureTestReceivedDate?: string | null | undefined, integritySheetUpdated?: string | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type PressureTestsByPipelineIdQuery = { pressureTestsByPipelineId?: Array<{ id: string, requiredWTForMop?: number | null | undefined, mopTestPressure?: number | null | undefined, limitingSpec?: LimitingSpecEnum | null | undefined, maxPressureOfLimitingSpec?: number | null | undefined, pressureTestPressure?: number | null | undefined, requiredWTForTestPressure?: number | null | undefined, pressureTestCorrosionAllowance?: number | null | undefined, waterForPigging?: number | null | undefined, infoSentOutDate?: string | null | undefined, ddsDate?: string | null | undefined, pressureTestDate: string, pressureTestReceivedDate?: string | null | undefined, integritySheetUpdated?: string | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type WellsByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -1870,12 +1840,19 @@ export type WellsByPipelineIdQueryVariables = Exact<{
 
 export type WellsByPipelineIdQuery = { wellsByPipelineId?: Array<{ id: string, uwi: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined, fdcRecId?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
+export type SalespointsByPipelineIdQueryVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type SalespointsByPipelineIdQuery = { salespointsByPipelineId?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstFlow?: string | null | undefined, lastFlow?: string | null | undefined, fdcRecId?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+
 export type RiskByIdQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, consequenceEnviro?: number | null | undefined, consequenceAsset?: number | null | undefined, probabilityInterior?: number | null | undefined, probabilityExterior?: number | null | undefined, conequenceMax?: number | null | undefined, riskPotentialGeo?: number | null | undefined, riskPotentialInternal?: number | null | undefined, riskPotentialExternal?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, consequencePeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: number | null | undefined, safeguardPigging?: number | null | undefined, safeguardChemicalInhibition?: number | null | undefined, probabilityInteriorWithSafeguards?: number | null | undefined, riskPotentialInternalWithSafeguards?: number | null | undefined, safeguardExternalCoating?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
+export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, consequenceEnviro?: number | null | undefined, consequenceAsset?: number | null | undefined, probabilityInterior?: number | null | undefined, probabilityExterior?: number | null | undefined, conequenceMax?: number | null | undefined, riskPotentialGeo?: number | null | undefined, riskPotentialInternal?: number | null | undefined, riskPotentialExternal?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, consequencePeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: number | null | undefined, safeguardPigging?: number | null | undefined, safeguardChemicalInhibition?: number | null | undefined, probabilityInteriorWithSafeguards?: number | null | undefined, riskPotentialInternalWithSafeguards?: number | null | undefined, safeguardExternalCoating?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
 
 export type PipelineFlowQueryVariables = Exact<{
   idList: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
@@ -3382,6 +3359,7 @@ export const PigRunsByPipelineIdDocument = gql`
       email
     }
     updatedAt
+    authorized
   }
 }
     `;
@@ -3576,6 +3554,7 @@ export const PipelineBatchesByPipelineIdDocument = gql`
       email
     }
     updatedAt
+    authorized
   }
 }
     `;
@@ -3632,6 +3611,7 @@ export const WellBatchesByWellIdDocument = gql`
       email
     }
     updatedAt
+    authorized
   }
 }
     `;
@@ -4451,6 +4431,7 @@ export const LicenseChangesByPipelineIdDocument = gql`
       email
     }
     updatedAt
+    authorized
   }
 }
     `;
@@ -4483,41 +4464,17 @@ export type LicenseChangesByPipelineIdQueryHookResult = ReturnType<typeof useLic
 export type LicenseChangesByPipelineIdLazyQueryHookResult = ReturnType<typeof useLicenseChangesByPipelineIdLazyQuery>;
 export type LicenseChangesByPipelineIdQueryResult = Apollo.QueryResult<LicenseChangesByPipelineIdQuery, LicenseChangesByPipelineIdQueryVariables>;
 export const PressureTestsByPipelineIdDocument = gql`
-    query PressureTestsByPipelineId($pipelineId: String!, $length: Float!, $mop: Int, $outsideDiameter: Float, $yieldStrength: Int, $wallThickness: Float) {
+    query PressureTestsByPipelineId($pipelineId: String!) {
   pressureTestsByPipelineId(pipelineId: $pipelineId) {
     id
-    requiredWTForMop(
-      mop: $mop
-      outsideDiameter: $outsideDiameter
-      yieldStrength: $yieldStrength
-    )
-    mopTestPressure(
-      mop: $mop
-      outsideDiameter: $outsideDiameter
-      yieldStrength: $yieldStrength
-    )
+    requiredWTForMop
+    mopTestPressure
     limitingSpec
     maxPressureOfLimitingSpec
-    pressureTestPressure(
-      mop: $mop
-      outsideDiameter: $outsideDiameter
-      yieldStrength: $yieldStrength
-    )
-    requiredWTForTestPressure(
-      mop: $mop
-      outsideDiameter: $outsideDiameter
-      yieldStrength: $yieldStrength
-    )
-    pressureTestCorrosionAllowance(
-      mop: $mop
-      outsideDiameter: $outsideDiameter
-      yieldStrength: $yieldStrength
-    )
-    waterForPigging(
-      length: $length
-      outsideDiameter: $outsideDiameter
-      wallThickness: $wallThickness
-    )
+    pressureTestPressure
+    requiredWTForTestPressure
+    pressureTestCorrosionAllowance
+    waterForPigging
     infoSentOutDate
     ddsDate
     pressureTestDate
@@ -4534,6 +4491,7 @@ export const PressureTestsByPipelineIdDocument = gql`
       email
     }
     updatedAt
+    authorized
   }
 }
     `;
@@ -4551,11 +4509,6 @@ export const PressureTestsByPipelineIdDocument = gql`
  * const { data, loading, error } = usePressureTestsByPipelineIdQuery({
  *   variables: {
  *      pipelineId: // value for 'pipelineId'
- *      length: // value for 'length'
- *      mop: // value for 'mop'
- *      outsideDiameter: // value for 'outsideDiameter'
- *      yieldStrength: // value for 'yieldStrength'
- *      wallThickness: // value for 'wallThickness'
  *   },
  * });
  */
@@ -4627,6 +4580,61 @@ export function useWellsByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type WellsByPipelineIdQueryHookResult = ReturnType<typeof useWellsByPipelineIdQuery>;
 export type WellsByPipelineIdLazyQueryHookResult = ReturnType<typeof useWellsByPipelineIdLazyQuery>;
 export type WellsByPipelineIdQueryResult = Apollo.QueryResult<WellsByPipelineIdQuery, WellsByPipelineIdQueryVariables>;
+export const SalespointsByPipelineIdDocument = gql`
+    query SalespointsByPipelineId($pipelineId: String!) {
+  salespointsByPipelineId(pipelineId: $pipelineId) {
+    id
+    name
+    oil
+    water
+    gas
+    gasAssociatedLiquids
+    totalFluids
+    firstFlow
+    lastFlow
+    fdcRecId
+    createdBy {
+      id
+      email
+    }
+    createdAt
+    updatedBy {
+      id
+      email
+    }
+    updatedAt
+    authorized
+  }
+}
+    `;
+
+/**
+ * __useSalespointsByPipelineIdQuery__
+ *
+ * To run a query within a React component, call `useSalespointsByPipelineIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSalespointsByPipelineIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSalespointsByPipelineIdQuery({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useSalespointsByPipelineIdQuery(baseOptions: Apollo.QueryHookOptions<SalespointsByPipelineIdQuery, SalespointsByPipelineIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SalespointsByPipelineIdQuery, SalespointsByPipelineIdQueryVariables>(SalespointsByPipelineIdDocument, options);
+      }
+export function useSalespointsByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SalespointsByPipelineIdQuery, SalespointsByPipelineIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SalespointsByPipelineIdQuery, SalespointsByPipelineIdQueryVariables>(SalespointsByPipelineIdDocument, options);
+        }
+export type SalespointsByPipelineIdQueryHookResult = ReturnType<typeof useSalespointsByPipelineIdQuery>;
+export type SalespointsByPipelineIdLazyQueryHookResult = ReturnType<typeof useSalespointsByPipelineIdLazyQuery>;
+export type SalespointsByPipelineIdQueryResult = Apollo.QueryResult<SalespointsByPipelineIdQuery, SalespointsByPipelineIdQueryVariables>;
 export const RiskByIdDocument = gql`
     query RiskById($id: String!) {
   riskById(id: $id) {
@@ -4672,6 +4680,7 @@ export const RiskByIdDocument = gql`
       email
     }
     updatedAt
+    authorized
   }
 }
     `;
