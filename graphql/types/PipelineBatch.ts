@@ -120,44 +120,54 @@ export const PipelineBatchMutation = extendType({
       },
       resolve: async (_parent, args, ctx: Context) => {
         const user = ctx.user;
-        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'CHEMICAL')) {
-          const { id: userId } = user;
+        if (user) {
+          const { id: userId, role, firstName } = user;
 
-          if (args.product) {
-            const { id: productId } = await ctx.prisma.batchProduct.findUnique({
-              where: { product: args.product },
-              select: { id: true },
-            }) || {};
-            if (productId) {
-              const pipelineBatch = await ctx.prisma.pipelineBatch.update({
-                where: { id: args.id },
-                data: {
-                  productId,
-                  updatedById: userId,
-                },
-              });
-              return { pipelineBatch }
-            }
-            return {
-              error: {
-                field: 'Product',
-                message: `Product ${args.product} doesn't exist.`,
+          if (role === 'ADMIN' || role === 'ENGINEER' || role === 'CHEMICAL') {
+            if (args.product) {
+              const { id: productId } = await ctx.prisma.batchProduct.findUnique({
+                where: { product: args.product },
+                select: { id: true },
+              }) || {};
+              if (productId) {
+                const pipelineBatch = await ctx.prisma.pipelineBatch.update({
+                  where: { id: args.id },
+                  data: {
+                    productId,
+                    updatedById: userId,
+                  },
+                });
+                return { pipelineBatch }
+              }
+              const products = (await ctx.prisma.batchProduct.findMany({
+                select: { product: true },
+              })).map(batchProduct => batchProduct.product).join(', ');
+              return {
+                error: {
+                  field: 'Product',
+                  message: `Product ${args.product} doesn't exist. Please choose from the following products: ${products}`,
+                }
               }
             }
+            const pipelineBatch = await ctx.prisma.pipelineBatch.update({
+              where: { id: args.id },
+              data: {
+                date: args.date || undefined,
+                cost: args.cost,
+                chemicalVolume: args.chemicalVolume,
+                diluentVolume: args.diluentVolume,
+                comment: args.comment,
+                updatedById: userId,
+              },
+            });
+            return { pipelineBatch }
           }
-
-          const pipelineBatch = await ctx.prisma.pipelineBatch.update({
-            where: { id: args.id },
-            data: {
-              date: args.date || undefined,
-              cost: args.cost,
-              chemicalVolume: args.chemicalVolume,
-              diluentVolume: args.diluentVolume,
-              comment: args.comment,
-              updatedById: userId,
-            },
-          });
-          return { pipelineBatch }
+          return {
+            error: {
+              field: 'Pipeline batch',
+              message: `Hi ${firstName}, your user privilages do not allow you to edit pipeline batches.`,
+            }
+          }
         }
         return {
           error: {
