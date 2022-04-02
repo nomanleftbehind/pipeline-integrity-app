@@ -750,6 +750,7 @@ type Query {
   userCount: Int
   validators: Validator
   wellBatchesByWellId(wellId: String!): [WellBatch]
+  wellOptions: [WellOptions]
   wellsByPipelineId(pipelineId: String!): [Well]
 }
 
@@ -1121,6 +1122,13 @@ input WellCreateInput {
   oil: Float!
   uwi: String!
   water: Float!
+}
+
+type WellOptions {
+  facility: String!
+  id: String!
+  satellite: String!
+  source: String!
 }
 
 type WellPayload {

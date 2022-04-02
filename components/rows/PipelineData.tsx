@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import InjectionPoints from '../fields/injection_points/InjectionPoints';
+// import InjectionPoints from '../fields/injection_points/InjectionPoints';
+import Wells from './InjectionPoints';
 import PipelineProperties from '../fields/PipelineProperties';
 import LicenseChanges from './LicenseChanges';
 import MechanicalProperties from './MechanicalProperties';
@@ -60,13 +61,7 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, au
       />
     }
     if (view === 'injection point') {
-      return <InjectionPoints
-        open={open}
-        id={id}
-        flowCalculationDirection={flowCalculationDirection}
-        upstream={upstream}
-        injectionPoints={{ injectionPoints, upstream }}
-      />
+      return <Wells pipelineId={id} />
     }
     if (view === 'mechanical properties') {
       return <MechanicalProperties

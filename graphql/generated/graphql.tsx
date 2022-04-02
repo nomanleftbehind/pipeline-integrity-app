@@ -1022,6 +1022,7 @@ export type Query = {
   userCount?: Maybe<Scalars['Int']>;
   validators?: Maybe<Validator>;
   wellBatchesByWellId?: Maybe<Array<Maybe<WellBatch>>>;
+  wellOptions?: Maybe<Array<Maybe<WellOptions>>>;
   wellsByPipelineId?: Maybe<Array<Maybe<Well>>>;
 };
 
@@ -1452,6 +1453,13 @@ export type WellCreateInput = {
   water: Scalars['Float'];
 };
 
+export type WellOptions = {
+  facility: Scalars['String'];
+  id: Scalars['String'];
+  satellite: Scalars['String'];
+  source: Scalars['String'];
+};
+
 export type WellPayload = {
   error?: Maybe<FieldError>;
   well?: Maybe<Well>;
@@ -1839,6 +1847,11 @@ export type WellsByPipelineIdQueryVariables = Exact<{
 
 
 export type WellsByPipelineIdQuery = { wellsByPipelineId?: Array<{ id: string, uwi: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined, fdcRecId?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+
+export type WellOptionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type WellOptionsQuery = { wellOptions?: Array<{ facility: string, satellite: string, id: string, source: string } | null | undefined> | null | undefined };
 
 export type SalespointsByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -4580,6 +4593,43 @@ export function useWellsByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type WellsByPipelineIdQueryHookResult = ReturnType<typeof useWellsByPipelineIdQuery>;
 export type WellsByPipelineIdLazyQueryHookResult = ReturnType<typeof useWellsByPipelineIdLazyQuery>;
 export type WellsByPipelineIdQueryResult = Apollo.QueryResult<WellsByPipelineIdQuery, WellsByPipelineIdQueryVariables>;
+export const WellOptionsDocument = gql`
+    query WellOptions {
+  wellOptions {
+    facility
+    satellite
+    id
+    source
+  }
+}
+    `;
+
+/**
+ * __useWellOptionsQuery__
+ *
+ * To run a query within a React component, call `useWellOptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useWellOptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useWellOptionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useWellOptionsQuery(baseOptions?: Apollo.QueryHookOptions<WellOptionsQuery, WellOptionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<WellOptionsQuery, WellOptionsQueryVariables>(WellOptionsDocument, options);
+      }
+export function useWellOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WellOptionsQuery, WellOptionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<WellOptionsQuery, WellOptionsQueryVariables>(WellOptionsDocument, options);
+        }
+export type WellOptionsQueryHookResult = ReturnType<typeof useWellOptionsQuery>;
+export type WellOptionsLazyQueryHookResult = ReturnType<typeof useWellOptionsLazyQuery>;
+export type WellOptionsQueryResult = Apollo.QueryResult<WellOptionsQuery, WellOptionsQueryVariables>;
 export const SalespointsByPipelineIdDocument = gql`
     query SalespointsByPipelineId($pipelineId: String!) {
   salespointsByPipelineId(pipelineId: $pipelineId) {

@@ -888,6 +888,15 @@ query WellsByPipelineId($pipelineId: String!) {
   }
 }
 
+query WellOptions {
+  wellOptions {
+    facility
+    satellite
+    id
+    source
+  }
+}
+
 query SalespointsByPipelineId($pipelineId: String!) {
   salespointsByPipelineId(pipelineId: $pipelineId) {
     id

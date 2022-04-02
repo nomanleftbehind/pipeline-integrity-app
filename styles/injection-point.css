@@ -1,0 +1,19 @@
+.injection-point {
+  border: 1px solid black;
+  border-spacing: 0px;
+}
+
+.injection-point>thead {
+  font-size: small;
+}
+
+.injection-point th:first-child() {
+  width: 1000px;
+}
+
+.injection-point td {
+  /* padding: 2px; */
+  /* border: 1px solid red; */
+  font-size: small;
+  text-align: center;
+}

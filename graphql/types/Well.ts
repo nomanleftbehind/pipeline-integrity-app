@@ -1,6 +1,7 @@
 import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
 import { User as IUser } from '@prisma/client';
+import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
 
 
 export const gasAssociatedLiquidsCalc = (gas: number) => {
@@ -91,6 +92,16 @@ const resolveWellAuthorized = (user: IUser) => {
   return role === 'ADMIN' || role === 'ENGINEER';
 }
 
+export const WellOptions = objectType({
+  name: 'WellOptions',
+  definition(t) {
+    t.nonNull.string('facility')
+    t.nonNull.string('satellite')
+    t.nonNull.string('id')
+    t.nonNull.string('source')
+  }
+});
+
 
 export const WellQuery = extendType({
   type: 'Query',
@@ -107,6 +118,28 @@ export const WellQuery = extendType({
         });
         return result;
       },
+    })
+    t.list.field('wellOptions', {
+      type: 'WellOptions',
+      resolve: async (_parent, _args, ctx: Context) => {
+
+        const result = await ctx.prisma.$queryRaw<NexusGenObjects['WellOptions'][]>`
+        SELECT
+
+        COALESCE(f.name, 'no facility') "facility",
+        COALESCE(s.name, 'no satellite') "satellite",
+        w.id,
+        w.uwi "source"
+
+        FROM "ppl_db"."Well" w
+        LEFT OUTER JOIN "ppl_db"."Pipeline" pip ON pip."id" = w."pipelineId"
+        LEFT OUTER JOIN "ppl_db"."Satellite" s ON s."id" = pip."satelliteId"
+        LEFT OUTER JOIN "ppl_db"."Facility" f ON f."id" = s."facilityId"
+
+        ORDER BY f.name, s.name, w.uwi
+        `
+        return result;
+      }
     })
   }
 })
