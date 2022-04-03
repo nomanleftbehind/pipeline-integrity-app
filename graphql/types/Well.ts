@@ -26,7 +26,7 @@ export const Well = objectType({
   },
   definition(t) {
     t.nonNull.string('id')
-    t.nonNull.string('uwi')
+    t.nonNull.string('name')
     t.nonNull.float('oil')
     t.nonNull.float('water')
     t.nonNull.float('gas')
@@ -92,8 +92,8 @@ const resolveWellAuthorized = (user: IUser) => {
   return role === 'ADMIN' || role === 'ENGINEER';
 }
 
-export const WellOptions = objectType({
-  name: 'WellOptions',
+export const SourceOptions = objectType({
+  name: 'SourceOptions',
   definition(t) {
     t.nonNull.string('facility')
     t.nonNull.string('satellite')
@@ -114,29 +114,29 @@ export const WellQuery = extendType({
       resolve: async (_, { pipelineId }, ctx: Context) => {
         const result = await ctx.prisma.well.findMany({
           where: { pipelineId },
-          orderBy: { uwi: 'asc' },
+          orderBy: { name: 'asc' },
         });
         return result;
       },
     })
     t.list.field('wellOptions', {
-      type: 'WellOptions',
+      type: 'SourceOptions',
       resolve: async (_parent, _args, ctx: Context) => {
 
-        const result = await ctx.prisma.$queryRaw<NexusGenObjects['WellOptions'][]>`
+        const result = await ctx.prisma.$queryRaw<NexusGenObjects['SourceOptions'][]>`
         SELECT
 
         COALESCE(f.name, 'no facility') "facility",
         COALESCE(s.name, 'no satellite') "satellite",
         w.id,
-        w.uwi "source"
+        w.name "source"
 
         FROM "ppl_db"."Well" w
         LEFT OUTER JOIN "ppl_db"."Pipeline" pip ON pip."id" = w."pipelineId"
         LEFT OUTER JOIN "ppl_db"."Satellite" s ON s."id" = pip."satelliteId"
         LEFT OUTER JOIN "ppl_db"."Facility" f ON f."id" = s."facilityId"
 
-        ORDER BY f.name, s.name, w.uwi
+        ORDER BY f.name, s.name, w.name
         `
         return result;
       }
@@ -148,7 +148,7 @@ export const WellQuery = extendType({
 export const WellCreateInput = inputObjectType({
   name: 'WellCreateInput',
   definition(t) {
-    t.nonNull.string('uwi')
+    t.nonNull.string('name')
     t.nonNull.float('oil')
     t.nonNull.float('water')
     t.nonNull.float('gas')
@@ -177,7 +177,7 @@ export const WellMutation = extendType({
       args: {
         id: nonNull(stringArg()),
         pipelineId: stringArg(),
-        uwi: stringArg(),
+        name: stringArg(),
         oil: floatArg(),
         water: floatArg(),
         gas: floatArg(),
@@ -195,7 +195,7 @@ export const WellMutation = extendType({
             where: { id: args.id },
             data: {
               pipelineId: args.pipelineId || undefined,
-              uwi: args.uwi || undefined,
+              name: args.name || undefined,
               oil: args.oil || undefined,
               water: args.water || undefined,
               gas: args.gas || undefined,
@@ -216,6 +216,91 @@ export const WellMutation = extendType({
           }
         }
       },
+    })
+    t.field('connectWell', {
+      type: 'WellPayload',
+      args: {
+        id: nonNull(stringArg()),
+        pipelineId: nonNull(stringArg()),
+      },
+      resolve: async (_, { id, pipelineId }, ctx: Context) => {
+        const user = ctx.user;
+        if (user) {
+          const { id: userId, firstName } = user
+          const authorized = resolveWellAuthorized(user);
+          if (authorized) {
+            const well = await ctx.prisma.well.update({
+              where: { id },
+              data: {
+                pipeline: {
+                  connect: {
+                    id: pipelineId,
+                  }
+                },
+                updatedBy: {
+                  connect: {
+                    id: userId,
+                  }
+                }
+              }
+            });
+            return { well }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to make changes to wells.`,
+            }
+          }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
+      }
+    })
+    t.field('disconnectWell', {
+      type: 'WellPayload',
+      args: {
+        id: nonNull(stringArg()),
+      },
+      resolve: async (_, { id }, ctx: Context) => {
+        const user = ctx.user;
+        if (user) {
+          const { id: userId, firstName } = user
+          const authorized = resolveWellAuthorized(user);
+          if (authorized) {
+            const well = await ctx.prisma.well.update({
+              where: { id },
+              data: {
+                pipeline: {
+                  disconnect: true,
+                },
+                updatedBy: {
+                  connect: {
+                    id: userId,
+                  }
+                }
+              }
+            });
+            return { well }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to make changes to wells.`,
+            }
+          }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
+      }
     })
   }
 });

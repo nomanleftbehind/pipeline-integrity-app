@@ -757,30 +757,48 @@ export const PipelineMutation = extendType({
       type: 'PipelinePayload',
       args: {
         id: nonNull(stringArg()),
-        connectPipelineId: nonNull(stringArg()),
-        flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
+        pipelineId: nonNull(stringArg()),
       },
-      resolve: async (_parent, { id, connectPipelineId, flowCalculationDirection }, ctx: Context) => {
+      resolve: async (_parent, { id, pipelineId }, ctx: Context) => {
         const user = ctx.user;
-        const authorized = !!user && resolvePipelineAuthorized(user);
-        if (authorized) {
-          const pipeline = await ctx.prisma.pipeline.update({
-            where: { id },
-            data: {
-              upstream: flowCalculationDirection === 'Upstream' ? {
-                connect: { id: connectPipelineId }
-              } : undefined,
-              downstream: flowCalculationDirection === 'Downstream' ? {
-                connect: { id: connectPipelineId }
-              } : undefined,
-              updatedBy: {
-                update: {
-                  id: user.id,
+        if (user) {
+          const { id: userId, firstName } = user
+          const authorized = resolvePipelineAuthorized(user);
+          if (authorized) {
+            const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({
+              where: { id },
+              select: { flowCalculationDirection: true }
+            }) || {};
+            if (flowCalculationDirection) {
+              const pipeline = await ctx.prisma.pipeline.update({
+                where: { id },
+                data: {
+                  upstream: flowCalculationDirection === 'Upstream' ? {
+                    connect: { id: pipelineId }
+                  } : undefined,
+                  downstream: flowCalculationDirection === 'Downstream' ? {
+                    connect: { id: pipelineId }
+                  } : undefined,
+                  updatedBy: {
+                    connect: { id: userId }
+                  }
                 }
+              });
+              return { pipeline }
+            }
+            return {
+              error: {
+                field: 'Flow calculation direction',
+                message: `Hi ${firstName}, query is unable to determine direction used to calculate flow.`,
               }
             }
-          });
-          return { pipeline }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to make changes to pipelines.`,
+            }
+          }
         }
         return {
           error: {
@@ -794,98 +812,48 @@ export const PipelineMutation = extendType({
       type: 'PipelinePayload',
       args: {
         id: nonNull(stringArg()),
-        disconnectPipelineId: nonNull(stringArg()),
-        flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
+        pipelineId: nonNull(stringArg()),
       },
-      resolve: async (_, { id, disconnectPipelineId, flowCalculationDirection }, ctx: Context) => {
+      resolve: async (_, { id, pipelineId }, ctx: Context) => {
         const user = ctx.user;
-        const authorized = !!user && resolvePipelineAuthorized(user);
-        if (authorized) {
-          const pipeline = await ctx.prisma.pipeline.update({
-            where: { id },
-            data: {
-              upstream: flowCalculationDirection === 'Upstream' ? {
-                disconnect: { id: disconnectPipelineId }
-              } : undefined,
-              downstream: flowCalculationDirection === 'Downstream' ? {
-                disconnect: { id: disconnectPipelineId }
-              } : undefined,
-              updatedBy: {
-                update: {
-                  id: user.id,
+        if (user) {
+          const { id: userId, firstName } = user
+          const authorized = resolvePipelineAuthorized(user);
+          if (authorized) {
+            const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({
+              where: { id },
+              select: { flowCalculationDirection: true }
+            }) || {};
+            if (flowCalculationDirection) {
+              const pipeline = await ctx.prisma.pipeline.update({
+                where: { id },
+                data: {
+                  upstream: flowCalculationDirection === 'Upstream' ? {
+                    disconnect: { id: pipelineId }
+                  } : undefined,
+                  downstream: flowCalculationDirection === 'Downstream' ? {
+                    disconnect: { id: pipelineId }
+                  } : undefined,
+                  updatedBy: {
+                    connect: { id: userId }
+                  }
                 }
+              });
+              return { pipeline }
+            }
+            return {
+              error: {
+                field: 'Flow calculation direction',
+                message: `Hi ${firstName}, query is unable to determine direction used to calculate flow.`,
               }
             }
-          });
-          return { pipeline }
-        }
-        return {
-          error: {
-            field: 'User',
-            message: 'Not authorized',
           }
-        }
-      }
-    })
-    t.field('connectWell', {
-      type: 'PipelinePayload',
-      args: {
-        id: nonNull(stringArg()),
-        wellId: nonNull(stringArg()),
-      },
-      resolve: async (_parent, { id, wellId }, ctx: Context) => {
-        const user = ctx.user;
-        const authorized = !!user && resolvePipelineAuthorized(user);
-        if (authorized) {
-          const pipeline = await ctx.prisma.pipeline.update({
-            where: { id },
-            data: {
-              wells: {
-                connect: {
-                  id: wellId
-                }
-              },
-              updatedBy: {
-                update: {
-                  id: user.id,
-                }
-              }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to make changes to pipelines.`,
             }
-          });
-          return { pipeline }
-        }
-        return {
-          error: {
-            field: 'User',
-            message: 'Not authorized',
           }
-        }
-      }
-    })
-    t.field('disconnectWell', {
-      type: 'PipelinePayload',
-      args: {
-        id: nonNull(stringArg()),
-        wellId: nonNull(stringArg()),
-      },
-      resolve: async (_parent, { id, wellId }, ctx: Context) => {
-        const user = ctx.user;
-        const authorized = !!user && resolvePipelineAuthorized(user);
-        if (authorized) {
-          const pipeline = await ctx.prisma.pipeline.update({
-            where: { id },
-            data: {
-              wells: {
-                disconnect: { id: wellId }
-              },
-              updatedBy: {
-                update: {
-                  id: user.id,
-                }
-              }
-            }
-          });
-          return { pipeline }
         }
         return {
           error: {

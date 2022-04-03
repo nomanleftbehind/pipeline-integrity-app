@@ -332,7 +332,8 @@ export type Mutation = {
   addRisk?: Maybe<RiskPayload>;
   addWellBatch?: Maybe<WellBatchPayload>;
   connectPipeline?: Maybe<PipelinePayload>;
-  connectWell?: Maybe<PipelinePayload>;
+  connectSalesPoint?: Maybe<SalesPointPayload>;
+  connectWell?: Maybe<WellPayload>;
   createFacility?: Maybe<Facility>;
   deleteLicenseChange?: Maybe<LicenseChangePayload>;
   deletePigRun?: Maybe<PigRunPayload>;
@@ -343,7 +344,8 @@ export type Mutation = {
   deleteSatellite?: Maybe<Satellite>;
   deleteWellBatch?: Maybe<WellBatchPayload>;
   disconnectPipeline?: Maybe<PipelinePayload>;
-  disconnectWell?: Maybe<PipelinePayload>;
+  disconnectSalesPoint?: Maybe<SalesPointPayload>;
+  disconnectWell?: Maybe<WellPayload>;
   duplicatePipeline?: Maybe<PipelinePayload>;
   editFacility?: Maybe<Facility>;
   editLicenseChange?: Maybe<LicenseChangePayload>;
@@ -393,15 +395,20 @@ export type MutationAddWellBatchArgs = {
 
 
 export type MutationConnectPipelineArgs = {
-  connectPipelineId: Scalars['String'];
-  flowCalculationDirection: FlowCalculationDirectionEnum;
   id: Scalars['String'];
+  pipelineId: Scalars['String'];
+};
+
+
+export type MutationConnectSalesPointArgs = {
+  id: Scalars['String'];
+  pipelineId: Scalars['String'];
 };
 
 
 export type MutationConnectWellArgs = {
   id: Scalars['String'];
-  wellId: Scalars['String'];
+  pipelineId: Scalars['String'];
 };
 
 
@@ -451,15 +458,18 @@ export type MutationDeleteWellBatchArgs = {
 
 
 export type MutationDisconnectPipelineArgs = {
-  disconnectPipelineId: Scalars['String'];
-  flowCalculationDirection: FlowCalculationDirectionEnum;
+  id: Scalars['String'];
+  pipelineId: Scalars['String'];
+};
+
+
+export type MutationDisconnectSalesPointArgs = {
   id: Scalars['String'];
 };
 
 
 export type MutationDisconnectWellArgs = {
   id: Scalars['String'];
-  wellId: Scalars['String'];
 };
 
 
@@ -570,10 +580,12 @@ export type MutationEditRiskArgs = {
 
 export type MutationEditSalesPointArgs = {
   fdcRecId?: Maybe<Scalars['String']>;
-  firstFlow?: Maybe<Scalars['DateTime']>;
+  firstInjection?: Maybe<Scalars['DateTime']>;
+  firstProduction?: Maybe<Scalars['DateTime']>;
   gas?: Maybe<Scalars['Float']>;
   id: Scalars['String'];
-  lastFlow?: Maybe<Scalars['DateTime']>;
+  lastInjection?: Maybe<Scalars['DateTime']>;
+  lastProduction?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
   oil?: Maybe<Scalars['Float']>;
   pipelineId?: Maybe<Scalars['String']>;
@@ -596,9 +608,9 @@ export type MutationEditWellArgs = {
   id: Scalars['String'];
   lastInjection?: Maybe<Scalars['DateTime']>;
   lastProduction?: Maybe<Scalars['DateTime']>;
+  name?: Maybe<Scalars['String']>;
   oil?: Maybe<Scalars['Float']>;
   pipelineId?: Maybe<Scalars['String']>;
-  uwi?: Maybe<Scalars['String']>;
   water?: Maybe<Scalars['Float']>;
 };
 
@@ -1016,13 +1028,14 @@ export type Query = {
   pipelinesByUser?: Maybe<Array<Maybe<Pipeline>>>;
   pressureTestsByPipelineId?: Maybe<Array<Maybe<PressureTest>>>;
   riskById?: Maybe<Risk>;
-  salespointsByPipelineId?: Maybe<Array<Maybe<SalesPoint>>>;
+  salesPointOptions?: Maybe<Array<Maybe<SourceOptions>>>;
+  salesPointsByPipelineId?: Maybe<Array<Maybe<SalesPoint>>>;
   sideBar?: Maybe<Array<Maybe<SideBar>>>;
   sourceOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   userCount?: Maybe<Scalars['Int']>;
   validators?: Maybe<Validator>;
   wellBatchesByWellId?: Maybe<Array<Maybe<WellBatch>>>;
-  wellOptions?: Maybe<Array<Maybe<WellOptions>>>;
+  wellOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   wellsByPipelineId?: Maybe<Array<Maybe<Well>>>;
 };
 
@@ -1069,7 +1082,7 @@ export type QueryRiskByIdArgs = {
 };
 
 
-export type QuerySalespointsByPipelineIdArgs = {
+export type QuerySalesPointsByPipelineIdArgs = {
   pipelineId: Scalars['String'];
 };
 
@@ -1134,11 +1147,13 @@ export type SalesPoint = {
   createdAt: Scalars['DateTime'];
   createdBy: User;
   fdcRecId?: Maybe<Scalars['String']>;
-  firstFlow?: Maybe<Scalars['DateTime']>;
+  firstInjection?: Maybe<Scalars['DateTime']>;
+  firstProduction?: Maybe<Scalars['DateTime']>;
   gas: Scalars['Float'];
   gasAssociatedLiquids: Scalars['Float'];
   id: Scalars['String'];
-  lastFlow?: Maybe<Scalars['DateTime']>;
+  lastInjection?: Maybe<Scalars['DateTime']>;
+  lastProduction?: Maybe<Scalars['DateTime']>;
   name: Scalars['String'];
   oil: Scalars['Float'];
   pipeline?: Maybe<Pipeline>;
@@ -1150,9 +1165,11 @@ export type SalesPoint = {
 
 export type SalesPointCreateInput = {
   fdcRecId?: Maybe<Scalars['String']>;
-  firstFlow?: Maybe<Scalars['DateTime']>;
+  firstInjection?: Maybe<Scalars['DateTime']>;
+  firstProduction?: Maybe<Scalars['DateTime']>;
   gas: Scalars['Float'];
-  lastFlow?: Maybe<Scalars['DateTime']>;
+  lastInjection?: Maybe<Scalars['DateTime']>;
+  lastProduction?: Maybe<Scalars['DateTime']>;
   name: Scalars['String'];
   oil: Scalars['Float'];
   water: Scalars['Float'];
@@ -1410,12 +1427,12 @@ export type Well = {
   id: Scalars['String'];
   lastInjection?: Maybe<Scalars['DateTime']>;
   lastProduction?: Maybe<Scalars['DateTime']>;
+  name: Scalars['String'];
   oil: Scalars['Float'];
   pipeline?: Maybe<Pipeline>;
   totalFluids: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
-  uwi: Scalars['String'];
   water: Scalars['Float'];
   wellBatches?: Maybe<Array<Maybe<WellBatch>>>;
 };
@@ -1448,16 +1465,9 @@ export type WellCreateInput = {
   gas: Scalars['Float'];
   lastInjection?: Maybe<Scalars['DateTime']>;
   lastProduction?: Maybe<Scalars['DateTime']>;
+  name: Scalars['String'];
   oil: Scalars['Float'];
-  uwi: Scalars['String'];
   water: Scalars['Float'];
-};
-
-export type WellOptions = {
-  facility: Scalars['String'];
-  id: Scalars['String'];
-  satellite: Scalars['String'];
-  source: Scalars['String'];
 };
 
 export type WellPayload = {
@@ -1501,8 +1511,7 @@ export type DuplicatePipelineMutation = { duplicatePipeline?: { pipeline?: { id:
 
 export type ConnectPipelineMutationVariables = Exact<{
   id: Scalars['String'];
-  connectPipelineId: Scalars['String'];
-  flowCalculationDirection: FlowCalculationDirectionEnum;
+  pipelineId: Scalars['String'];
 }>;
 
 
@@ -1510,8 +1519,7 @@ export type ConnectPipelineMutation = { connectPipeline?: { pipeline?: { id: str
 
 export type DisconnectPipelineMutationVariables = Exact<{
   id: Scalars['String'];
-  disconnectPipelineId: Scalars['String'];
-  flowCalculationDirection: FlowCalculationDirectionEnum;
+  pipelineId: Scalars['String'];
 }>;
 
 
@@ -1519,19 +1527,33 @@ export type DisconnectPipelineMutation = { disconnectPipeline?: { pipeline?: { i
 
 export type ConnectWellMutationVariables = Exact<{
   id: Scalars['String'];
-  wellId: Scalars['String'];
+  pipelineId: Scalars['String'];
 }>;
 
 
-export type ConnectWellMutation = { connectWell?: { pipeline?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+export type ConnectWellMutation = { connectWell?: { well?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type DisconnectWellMutationVariables = Exact<{
   id: Scalars['String'];
-  wellId: Scalars['String'];
 }>;
 
 
-export type DisconnectWellMutation = { disconnectWell?: { pipeline?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+export type DisconnectWellMutation = { disconnectWell?: { well?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type ConnectSalesPointMutationVariables = Exact<{
+  id: Scalars['String'];
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type ConnectSalesPointMutation = { connectSalesPoint?: { salesPoint?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type DisconnectSalesPointMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DisconnectSalesPointMutation = { disconnectSalesPoint?: { salesPoint?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type EditPipelineMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1846,19 +1868,24 @@ export type WellsByPipelineIdQueryVariables = Exact<{
 }>;
 
 
-export type WellsByPipelineIdQuery = { wellsByPipelineId?: Array<{ id: string, uwi: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined, fdcRecId?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type WellsByPipelineIdQuery = { wellsByPipelineId?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined, fdcRecId?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type WellOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type WellOptionsQuery = { wellOptions?: Array<{ facility: string, satellite: string, id: string, source: string } | null | undefined> | null | undefined };
 
-export type SalespointsByPipelineIdQueryVariables = Exact<{
+export type SalesPointsByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
 }>;
 
 
-export type SalespointsByPipelineIdQuery = { salespointsByPipelineId?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstFlow?: string | null | undefined, lastFlow?: string | null | undefined, fdcRecId?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type SalesPointsByPipelineIdQuery = { salesPointsByPipelineId?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined, fdcRecId?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+
+export type SalesPointOptionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SalesPointOptionsQuery = { salesPointOptions?: Array<{ facility: string, satellite: string, id: string, source: string } | null | undefined> | null | undefined };
 
 export type RiskByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -2077,12 +2104,8 @@ export type DuplicatePipelineMutationHookResult = ReturnType<typeof useDuplicate
 export type DuplicatePipelineMutationResult = Apollo.MutationResult<DuplicatePipelineMutation>;
 export type DuplicatePipelineMutationOptions = Apollo.BaseMutationOptions<DuplicatePipelineMutation, DuplicatePipelineMutationVariables>;
 export const ConnectPipelineDocument = gql`
-    mutation ConnectPipeline($id: String!, $connectPipelineId: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
-  connectPipeline(
-    id: $id
-    connectPipelineId: $connectPipelineId
-    flowCalculationDirection: $flowCalculationDirection
-  ) {
+    mutation ConnectPipeline($id: String!, $pipelineId: String!) {
+  connectPipeline(id: $id, pipelineId: $pipelineId) {
     pipeline {
       id
     }
@@ -2109,8 +2132,7 @@ export type ConnectPipelineMutationFn = Apollo.MutationFunction<ConnectPipelineM
  * const [connectPipelineMutation, { data, loading, error }] = useConnectPipelineMutation({
  *   variables: {
  *      id: // value for 'id'
- *      connectPipelineId: // value for 'connectPipelineId'
- *      flowCalculationDirection: // value for 'flowCalculationDirection'
+ *      pipelineId: // value for 'pipelineId'
  *   },
  * });
  */
@@ -2122,12 +2144,8 @@ export type ConnectPipelineMutationHookResult = ReturnType<typeof useConnectPipe
 export type ConnectPipelineMutationResult = Apollo.MutationResult<ConnectPipelineMutation>;
 export type ConnectPipelineMutationOptions = Apollo.BaseMutationOptions<ConnectPipelineMutation, ConnectPipelineMutationVariables>;
 export const DisconnectPipelineDocument = gql`
-    mutation DisconnectPipeline($id: String!, $disconnectPipelineId: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
-  disconnectPipeline(
-    id: $id
-    disconnectPipelineId: $disconnectPipelineId
-    flowCalculationDirection: $flowCalculationDirection
-  ) {
+    mutation DisconnectPipeline($id: String!, $pipelineId: String!) {
+  disconnectPipeline(id: $id, pipelineId: $pipelineId) {
     pipeline {
       id
     }
@@ -2154,8 +2172,7 @@ export type DisconnectPipelineMutationFn = Apollo.MutationFunction<DisconnectPip
  * const [disconnectPipelineMutation, { data, loading, error }] = useDisconnectPipelineMutation({
  *   variables: {
  *      id: // value for 'id'
- *      disconnectPipelineId: // value for 'disconnectPipelineId'
- *      flowCalculationDirection: // value for 'flowCalculationDirection'
+ *      pipelineId: // value for 'pipelineId'
  *   },
  * });
  */
@@ -2167,9 +2184,9 @@ export type DisconnectPipelineMutationHookResult = ReturnType<typeof useDisconne
 export type DisconnectPipelineMutationResult = Apollo.MutationResult<DisconnectPipelineMutation>;
 export type DisconnectPipelineMutationOptions = Apollo.BaseMutationOptions<DisconnectPipelineMutation, DisconnectPipelineMutationVariables>;
 export const ConnectWellDocument = gql`
-    mutation ConnectWell($id: String!, $wellId: String!) {
-  connectWell(id: $id, wellId: $wellId) {
-    pipeline {
+    mutation ConnectWell($id: String!, $pipelineId: String!) {
+  connectWell(id: $id, pipelineId: $pipelineId) {
+    well {
       id
     }
     error {
@@ -2195,7 +2212,7 @@ export type ConnectWellMutationFn = Apollo.MutationFunction<ConnectWellMutation,
  * const [connectWellMutation, { data, loading, error }] = useConnectWellMutation({
  *   variables: {
  *      id: // value for 'id'
- *      wellId: // value for 'wellId'
+ *      pipelineId: // value for 'pipelineId'
  *   },
  * });
  */
@@ -2207,9 +2224,9 @@ export type ConnectWellMutationHookResult = ReturnType<typeof useConnectWellMuta
 export type ConnectWellMutationResult = Apollo.MutationResult<ConnectWellMutation>;
 export type ConnectWellMutationOptions = Apollo.BaseMutationOptions<ConnectWellMutation, ConnectWellMutationVariables>;
 export const DisconnectWellDocument = gql`
-    mutation DisconnectWell($id: String!, $wellId: String!) {
-  disconnectWell(id: $id, wellId: $wellId) {
-    pipeline {
+    mutation DisconnectWell($id: String!) {
+  disconnectWell(id: $id) {
+    well {
       id
     }
     error {
@@ -2235,7 +2252,6 @@ export type DisconnectWellMutationFn = Apollo.MutationFunction<DisconnectWellMut
  * const [disconnectWellMutation, { data, loading, error }] = useDisconnectWellMutation({
  *   variables: {
  *      id: // value for 'id'
- *      wellId: // value for 'wellId'
  *   },
  * });
  */
@@ -2246,6 +2262,85 @@ export function useDisconnectWellMutation(baseOptions?: Apollo.MutationHookOptio
 export type DisconnectWellMutationHookResult = ReturnType<typeof useDisconnectWellMutation>;
 export type DisconnectWellMutationResult = Apollo.MutationResult<DisconnectWellMutation>;
 export type DisconnectWellMutationOptions = Apollo.BaseMutationOptions<DisconnectWellMutation, DisconnectWellMutationVariables>;
+export const ConnectSalesPointDocument = gql`
+    mutation ConnectSalesPoint($id: String!, $pipelineId: String!) {
+  connectSalesPoint(id: $id, pipelineId: $pipelineId) {
+    salesPoint {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type ConnectSalesPointMutationFn = Apollo.MutationFunction<ConnectSalesPointMutation, ConnectSalesPointMutationVariables>;
+
+/**
+ * __useConnectSalesPointMutation__
+ *
+ * To run a mutation, you first call `useConnectSalesPointMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConnectSalesPointMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [connectSalesPointMutation, { data, loading, error }] = useConnectSalesPointMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useConnectSalesPointMutation(baseOptions?: Apollo.MutationHookOptions<ConnectSalesPointMutation, ConnectSalesPointMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ConnectSalesPointMutation, ConnectSalesPointMutationVariables>(ConnectSalesPointDocument, options);
+      }
+export type ConnectSalesPointMutationHookResult = ReturnType<typeof useConnectSalesPointMutation>;
+export type ConnectSalesPointMutationResult = Apollo.MutationResult<ConnectSalesPointMutation>;
+export type ConnectSalesPointMutationOptions = Apollo.BaseMutationOptions<ConnectSalesPointMutation, ConnectSalesPointMutationVariables>;
+export const DisconnectSalesPointDocument = gql`
+    mutation DisconnectSalesPoint($id: String!) {
+  disconnectSalesPoint(id: $id) {
+    salesPoint {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type DisconnectSalesPointMutationFn = Apollo.MutationFunction<DisconnectSalesPointMutation, DisconnectSalesPointMutationVariables>;
+
+/**
+ * __useDisconnectSalesPointMutation__
+ *
+ * To run a mutation, you first call `useDisconnectSalesPointMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDisconnectSalesPointMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [disconnectSalesPointMutation, { data, loading, error }] = useDisconnectSalesPointMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDisconnectSalesPointMutation(baseOptions?: Apollo.MutationHookOptions<DisconnectSalesPointMutation, DisconnectSalesPointMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DisconnectSalesPointMutation, DisconnectSalesPointMutationVariables>(DisconnectSalesPointDocument, options);
+      }
+export type DisconnectSalesPointMutationHookResult = ReturnType<typeof useDisconnectSalesPointMutation>;
+export type DisconnectSalesPointMutationResult = Apollo.MutationResult<DisconnectSalesPointMutation>;
+export type DisconnectSalesPointMutationOptions = Apollo.BaseMutationOptions<DisconnectSalesPointMutation, DisconnectSalesPointMutationVariables>;
 export const EditPipelineDocument = gql`
     mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $from: String, $fromFeature: FromToFeatureEnum, $to: String, $toFeature: FromToFeatureEnum, $licenseDate: DateTime, $length: Float, $type: TypeEnum, $grade: GradeEnum, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
   editPipeline(
@@ -4540,7 +4635,7 @@ export const WellsByPipelineIdDocument = gql`
     query WellsByPipelineId($pipelineId: String!) {
   wellsByPipelineId(pipelineId: $pipelineId) {
     id
-    uwi
+    name
     oil
     water
     gas
@@ -4630,9 +4725,9 @@ export function useWellOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type WellOptionsQueryHookResult = ReturnType<typeof useWellOptionsQuery>;
 export type WellOptionsLazyQueryHookResult = ReturnType<typeof useWellOptionsLazyQuery>;
 export type WellOptionsQueryResult = Apollo.QueryResult<WellOptionsQuery, WellOptionsQueryVariables>;
-export const SalespointsByPipelineIdDocument = gql`
-    query SalespointsByPipelineId($pipelineId: String!) {
-  salespointsByPipelineId(pipelineId: $pipelineId) {
+export const SalesPointsByPipelineIdDocument = gql`
+    query SalesPointsByPipelineId($pipelineId: String!) {
+  salesPointsByPipelineId(pipelineId: $pipelineId) {
     id
     name
     oil
@@ -4640,8 +4735,10 @@ export const SalespointsByPipelineIdDocument = gql`
     gas
     gasAssociatedLiquids
     totalFluids
-    firstFlow
-    lastFlow
+    firstProduction
+    lastProduction
+    firstInjection
+    lastInjection
     fdcRecId
     createdBy {
       id
@@ -4659,32 +4756,69 @@ export const SalespointsByPipelineIdDocument = gql`
     `;
 
 /**
- * __useSalespointsByPipelineIdQuery__
+ * __useSalesPointsByPipelineIdQuery__
  *
- * To run a query within a React component, call `useSalespointsByPipelineIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useSalespointsByPipelineIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSalesPointsByPipelineIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSalesPointsByPipelineIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSalespointsByPipelineIdQuery({
+ * const { data, loading, error } = useSalesPointsByPipelineIdQuery({
  *   variables: {
  *      pipelineId: // value for 'pipelineId'
  *   },
  * });
  */
-export function useSalespointsByPipelineIdQuery(baseOptions: Apollo.QueryHookOptions<SalespointsByPipelineIdQuery, SalespointsByPipelineIdQueryVariables>) {
+export function useSalesPointsByPipelineIdQuery(baseOptions: Apollo.QueryHookOptions<SalesPointsByPipelineIdQuery, SalesPointsByPipelineIdQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SalespointsByPipelineIdQuery, SalespointsByPipelineIdQueryVariables>(SalespointsByPipelineIdDocument, options);
+        return Apollo.useQuery<SalesPointsByPipelineIdQuery, SalesPointsByPipelineIdQueryVariables>(SalesPointsByPipelineIdDocument, options);
       }
-export function useSalespointsByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SalespointsByPipelineIdQuery, SalespointsByPipelineIdQueryVariables>) {
+export function useSalesPointsByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SalesPointsByPipelineIdQuery, SalesPointsByPipelineIdQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SalespointsByPipelineIdQuery, SalespointsByPipelineIdQueryVariables>(SalespointsByPipelineIdDocument, options);
+          return Apollo.useLazyQuery<SalesPointsByPipelineIdQuery, SalesPointsByPipelineIdQueryVariables>(SalesPointsByPipelineIdDocument, options);
         }
-export type SalespointsByPipelineIdQueryHookResult = ReturnType<typeof useSalespointsByPipelineIdQuery>;
-export type SalespointsByPipelineIdLazyQueryHookResult = ReturnType<typeof useSalespointsByPipelineIdLazyQuery>;
-export type SalespointsByPipelineIdQueryResult = Apollo.QueryResult<SalespointsByPipelineIdQuery, SalespointsByPipelineIdQueryVariables>;
+export type SalesPointsByPipelineIdQueryHookResult = ReturnType<typeof useSalesPointsByPipelineIdQuery>;
+export type SalesPointsByPipelineIdLazyQueryHookResult = ReturnType<typeof useSalesPointsByPipelineIdLazyQuery>;
+export type SalesPointsByPipelineIdQueryResult = Apollo.QueryResult<SalesPointsByPipelineIdQuery, SalesPointsByPipelineIdQueryVariables>;
+export const SalesPointOptionsDocument = gql`
+    query SalesPointOptions {
+  salesPointOptions {
+    facility
+    satellite
+    id
+    source
+  }
+}
+    `;
+
+/**
+ * __useSalesPointOptionsQuery__
+ *
+ * To run a query within a React component, call `useSalesPointOptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSalesPointOptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSalesPointOptionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSalesPointOptionsQuery(baseOptions?: Apollo.QueryHookOptions<SalesPointOptionsQuery, SalesPointOptionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SalesPointOptionsQuery, SalesPointOptionsQueryVariables>(SalesPointOptionsDocument, options);
+      }
+export function useSalesPointOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SalesPointOptionsQuery, SalesPointOptionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SalesPointOptionsQuery, SalesPointOptionsQueryVariables>(SalesPointOptionsDocument, options);
+        }
+export type SalesPointOptionsQueryHookResult = ReturnType<typeof useSalesPointOptionsQuery>;
+export type SalesPointOptionsLazyQueryHookResult = ReturnType<typeof useSalesPointOptionsLazyQuery>;
+export type SalesPointOptionsQueryResult = Apollo.QueryResult<SalesPointOptionsQuery, SalesPointOptionsQueryVariables>;
 export const RiskByIdDocument = gql`
     query RiskById($id: String!) {
   riskById(id: $id) {

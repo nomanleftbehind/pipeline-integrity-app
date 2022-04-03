@@ -58,8 +58,8 @@ mutation DuplicatePipeline($id: String!) {
   }
 }
 
-mutation ConnectPipeline($id: String!, $connectPipelineId: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
-  connectPipeline(id: $id, connectPipelineId: $connectPipelineId, flowCalculationDirection: $flowCalculationDirection) {
+mutation ConnectPipeline($id: String!, $pipelineId: String!) {
+  connectPipeline(id: $id, pipelineId: $pipelineId) {
     pipeline {
       id
     }
@@ -70,8 +70,8 @@ mutation ConnectPipeline($id: String!, $connectPipelineId: String!, $flowCalcula
   }
 }
 
-mutation DisconnectPipeline($id: String!, $disconnectPipelineId: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
-  disconnectPipeline(id: $id, disconnectPipelineId: $disconnectPipelineId, flowCalculationDirection: $flowCalculationDirection) {
+mutation DisconnectPipeline($id: String!, $pipelineId: String!) {
+  disconnectPipeline(id: $id, pipelineId: $pipelineId) {
     pipeline {
       id
     }
@@ -82,9 +82,9 @@ mutation DisconnectPipeline($id: String!, $disconnectPipelineId: String!, $flowC
   }
 }
 
-mutation ConnectWell($id: String!, $wellId: String!) {
-  connectWell(id: $id, wellId: $wellId) {
-    pipeline {
+mutation ConnectWell($id: String!, $pipelineId: String!) {
+  connectWell(id: $id, pipelineId: $pipelineId) {
+    well {
       id
     }
     error {
@@ -94,9 +94,33 @@ mutation ConnectWell($id: String!, $wellId: String!) {
   }
 }
 
-mutation DisconnectWell($id: String!, $wellId: String!) {
-  disconnectWell(id: $id, wellId: $wellId) {
-    pipeline {
+mutation DisconnectWell($id: String!) {
+  disconnectWell(id: $id) {
+    well {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
+mutation ConnectSalesPoint($id: String!, $pipelineId: String!) {
+  connectSalesPoint(id: $id, pipelineId: $pipelineId) {
+    salesPoint {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
+mutation DisconnectSalesPoint($id: String!) {
+  disconnectSalesPoint(id: $id) {
+    salesPoint {
       id
     }
     error {

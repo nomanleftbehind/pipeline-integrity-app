@@ -863,7 +863,7 @@ query PressureTestsByPipelineId($pipelineId: String!) {
 query WellsByPipelineId($pipelineId: String!) {
   wellsByPipelineId(pipelineId: $pipelineId) {
     id
-    uwi
+    name
     oil
     water
     gas
@@ -897,8 +897,8 @@ query WellOptions {
   }
 }
 
-query SalespointsByPipelineId($pipelineId: String!) {
-  salespointsByPipelineId(pipelineId: $pipelineId) {
+query SalesPointsByPipelineId($pipelineId: String!) {
+  salesPointsByPipelineId(pipelineId: $pipelineId) {
     id
     name
     oil
@@ -906,8 +906,10 @@ query SalespointsByPipelineId($pipelineId: String!) {
     gas
     gasAssociatedLiquids
     totalFluids
-    firstFlow
-    lastFlow
+    firstProduction
+    lastProduction
+    firstInjection
+    lastInjection
     fdcRecId
     createdBy {
       id
@@ -920,6 +922,15 @@ query SalespointsByPipelineId($pipelineId: String!) {
     }
     updatedAt
     authorized
+  }
+}
+
+query SalesPointOptions {
+  salesPointOptions {
+    facility
+    satellite
+    id
+    source
   }
 }
 

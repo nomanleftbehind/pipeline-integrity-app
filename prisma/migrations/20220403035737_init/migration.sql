@@ -201,7 +201,7 @@ CREATE TABLE "Risk" (
 -- CreateTable
 CREATE TABLE "Well" (
     "id" TEXT NOT NULL,
-    "uwi" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "oil" DOUBLE PRECISION NOT NULL,
     "water" DOUBLE PRECISION NOT NULL,
     "gas" DOUBLE PRECISION NOT NULL,
@@ -226,8 +226,10 @@ CREATE TABLE "SalesPoint" (
     "oil" DOUBLE PRECISION NOT NULL,
     "water" DOUBLE PRECISION NOT NULL,
     "gas" DOUBLE PRECISION NOT NULL,
-    "firstFlow" TIMESTAMP(3),
-    "lastFlow" TIMESTAMP(3),
+    "firstProduction" TIMESTAMP(3),
+    "lastProduction" TIMESTAMP(3),
+    "firstInjection" TIMESTAMP(3),
+    "lastInjection" TIMESTAMP(3),
     "fdcRecId" TEXT,
     "pipelineId" TEXT,
     "createdById" TEXT NOT NULL,
@@ -311,7 +313,7 @@ CREATE UNIQUE INDEX "Pipeline_license_segment_key" ON "Pipeline"("license", "seg
 CREATE UNIQUE INDEX "LicenseChange_pipelineId_date_key" ON "LicenseChange"("pipelineId", "date");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Well_uwi_key" ON "Well"("uwi");
+CREATE UNIQUE INDEX "Well_name_key" ON "Well"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Well_fdcRecId_key" ON "Well"("fdcRecId");

@@ -1,6 +1,7 @@
 import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
 import { User as IUser } from '@prisma/client';
+import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
 import {
   gasAssociatedLiquidsCalc,
   totalFluidsCalc,
@@ -24,8 +25,10 @@ export const SalesPoint = objectType({
     t.nonNull.float('totalFluids', {
       resolve: async ({ oil, water, gas }) => totalFluidsCalc({ oil, water, gas })
     })
-    t.field('firstFlow', { type: 'DateTime' })
-    t.field('lastFlow', { type: 'DateTime' })
+    t.field('firstProduction', { type: 'DateTime' })
+    t.field('lastProduction', { type: 'DateTime' })
+    t.field('firstInjection', { type: 'DateTime' })
+    t.field('lastInjection', { type: 'DateTime' })
     t.string('fdcRecId')
     t.nonNull.field('createdBy', {
       type: 'User',
@@ -74,7 +77,7 @@ const resolveSalesPointAuthorized = (user: IUser) => {
 export const SalesPointQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.list.field('salespointsByPipelineId', {
+    t.list.field('salesPointsByPipelineId', {
       type: 'SalesPoint',
       args: {
         pipelineId: nonNull(stringArg()),
@@ -87,6 +90,28 @@ export const SalesPointQuery = extendType({
         return result;
       },
     })
+    t.list.field('salesPointOptions', {
+      type: 'SourceOptions',
+      resolve: async (_parent, _args, ctx: Context) => {
+
+        const result = await ctx.prisma.$queryRaw<NexusGenObjects['SourceOptions'][]>`
+        SELECT
+
+        COALESCE(f.name, 'no facility') "facility",
+        COALESCE(s.name, 'no satellite') "satellite",
+        sp.id,
+        sp.name "source"
+
+        FROM "ppl_db"."SalesPoint" sp
+        LEFT OUTER JOIN "ppl_db"."Pipeline" pip ON pip."id" = sp."pipelineId"
+        LEFT OUTER JOIN "ppl_db"."Satellite" s ON s."id" = pip."satelliteId"
+        LEFT OUTER JOIN "ppl_db"."Facility" f ON f."id" = s."facilityId"
+
+        ORDER BY f.name, s.name, sp.name
+        `
+        return result;
+      }
+    })
   }
 })
 
@@ -98,8 +123,10 @@ export const SalesPointCreateInput = inputObjectType({
     t.nonNull.float('oil')
     t.nonNull.float('water')
     t.nonNull.float('gas')
-    t.field('firstFlow', { type: 'DateTime' })
-    t.field('lastFlow', { type: 'DateTime' })
+    t.field('firstProduction', { type: 'DateTime' })
+    t.field('lastProduction', { type: 'DateTime' })
+    t.field('firstInjection', { type: 'DateTime' })
+    t.field('lastInjection', { type: 'DateTime' })
     t.string('fdcRecId')
   },
 });
@@ -126,29 +153,42 @@ export const SalesPointMutation = extendType({
         oil: floatArg(),
         water: floatArg(),
         gas: floatArg(),
-        firstFlow: arg({ type: 'DateTime' }),
-        lastFlow: arg({ type: 'DateTime' }),
+        firstProduction: arg({ type: 'DateTime' }),
+        lastProduction: arg({ type: 'DateTime' }),
+        firstInjection: arg({ type: 'DateTime' }),
+        lastInjection: arg({ type: 'DateTime' }),
         fdcRecId: stringArg()
       },
       resolve: async (_, args, ctx: Context) => {
         const user = ctx.user;
-        const authorized = !!user && resolveSalesPointAuthorized(user);
-        if (authorized) {
-          const salesPoint = await ctx.prisma.salesPoint.update({
-            where: { id: args.id },
-            data: {
-              pipelineId: args.pipelineId || undefined,
-              name: args.name || undefined,
-              oil: args.oil || undefined,
-              water: args.water || undefined,
-              gas: args.gas || undefined,
-              firstFlow: args.firstFlow,
-              lastFlow: args.lastFlow,
-              fdcRecId: args.fdcRecId,
-              updatedById: user.id,
-            },
-          })
-          return { salesPoint }
+        if (user) {
+          const { firstName } = user
+          const authorized = resolveSalesPointAuthorized(user);
+          if (authorized) {
+            const salesPoint = await ctx.prisma.salesPoint.update({
+              where: { id: args.id },
+              data: {
+                pipelineId: args.pipelineId || undefined,
+                name: args.name || undefined,
+                oil: args.oil || undefined,
+                water: args.water || undefined,
+                gas: args.gas || undefined,
+                firstProduction: args.firstProduction,
+                lastProduction: args.lastProduction,
+                firstInjection: args.firstInjection,
+                lastInjection: args.lastInjection,
+                fdcRecId: args.fdcRecId,
+                updatedById: user.id,
+              },
+            });
+            return { salesPoint }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to make changes to sales points.`,
+            }
+          }
         }
         return {
           error: {
@@ -157,6 +197,91 @@ export const SalesPointMutation = extendType({
           }
         }
       },
+    })
+    t.field('connectSalesPoint', {
+      type: 'SalesPointPayload',
+      args: {
+        id: nonNull(stringArg()),
+        pipelineId: nonNull(stringArg()),
+      },
+      resolve: async (_, { id, pipelineId }, ctx: Context) => {
+        const user = ctx.user;
+        if (user) {
+          const { id: userId, firstName } = user
+          const authorized = resolveSalesPointAuthorized(user);
+          if (authorized) {
+            const salesPoint = await ctx.prisma.salesPoint.update({
+              where: { id },
+              data: {
+                pipeline: {
+                  connect: {
+                    id: pipelineId,
+                  }
+                },
+                updatedBy: {
+                  connect: {
+                    id: userId,
+                  }
+                }
+              }
+            });
+            return { salesPoint }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to make changes to sales points.`,
+            }
+          }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
+      }
+    })
+    t.field('disconnectSalesPoint', {
+      type: 'SalesPointPayload',
+      args: {
+        id: nonNull(stringArg()),
+      },
+      resolve: async (_, { id }, ctx: Context) => {
+        const user = ctx.user;
+        if (user) {
+          const { id: userId, firstName } = user
+          const authorized = resolveSalesPointAuthorized(user);
+          if (authorized) {
+            const salesPoint = await ctx.prisma.salesPoint.update({
+              where: { id },
+              data: {
+                pipeline: {
+                  disconnect: true,
+                },
+                updatedBy: {
+                  connect: {
+                    id: userId,
+                  }
+                }
+              }
+            });
+            return { salesPoint }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to make changes to sales points.`,
+            }
+          }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
+      }
     })
   }
 });

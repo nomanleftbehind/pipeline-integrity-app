@@ -13,3 +13,4 @@ export * from './PressureTest';
 export * from './Risk';
 export * from './Well';
 export * from './SalesPoint';
+export * from './PipelineFlow';

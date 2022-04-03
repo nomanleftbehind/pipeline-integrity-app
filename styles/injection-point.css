@@ -11,7 +11,7 @@
   width: 1000px;
 }
 
-.injection-point td {
+.injection-point td, th {
   /* padding: 2px; */
   /* border: 1px solid red; */
   font-size: small;

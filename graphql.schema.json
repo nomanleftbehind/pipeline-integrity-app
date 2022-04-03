@@ -3208,7 +3208,7 @@
             "description": null,
             "args": [
               {
-                "name": "connectPipelineId",
+                "name": "id",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3224,23 +3224,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "flowCalculationDirection",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "FlowCalculationDirectionEnum",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "id",
+                "name": "pipelineId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3259,6 +3243,51 @@
             "type": {
               "kind": "OBJECT",
               "name": "PipelinePayload",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "connectSalesPoint",
+            "description": null,
+            "args": [
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "pipelineId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "SalesPointPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3285,7 +3314,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "wellId",
+                "name": "pipelineId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3303,7 +3332,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PipelinePayload",
+              "name": "WellPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3575,7 +3604,7 @@
             "description": null,
             "args": [
               {
-                "name": "disconnectPipelineId",
+                "name": "id",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3591,23 +3620,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "flowCalculationDirection",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "FlowCalculationDirectionEnum",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "id",
+                "name": "pipelineId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3632,6 +3645,35 @@
             "deprecationReason": null
           },
           {
+            "name": "disconnectSalesPoint",
+            "description": null,
+            "args": [
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "SalesPointPayload",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "disconnectWell",
             "description": null,
             "args": [
@@ -3650,27 +3692,11 @@
                 "defaultValue": null,
                 "isDeprecated": false,
                 "deprecationReason": null
-              },
-              {
-                "name": "wellId",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
               }
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PipelinePayload",
+              "name": "WellPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -4705,7 +4731,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "firstFlow",
+                "name": "firstInjection",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "firstProduction",
                 "description": null,
                 "type": {
                   "kind": "SCALAR",
@@ -4745,7 +4783,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "lastFlow",
+                "name": "lastInjection",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "lastProduction",
                 "description": null,
                 "type": {
                   "kind": "SCALAR",
@@ -4959,6 +5009,18 @@
                 "deprecationReason": null
               },
               {
+                "name": "name",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "oil",
                 "description": null,
                 "type": {
@@ -4972,18 +5034,6 @@
               },
               {
                 "name": "pipelineId",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "uwi",
                 "description": null,
                 "type": {
                   "kind": "SCALAR",
@@ -9764,7 +9814,23 @@
             "deprecationReason": null
           },
           {
-            "name": "salespointsByPipelineId",
+            "name": "salesPointOptions",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "SourceOptions",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "salesPointsByPipelineId",
             "description": null,
             "args": [
               {
@@ -9894,7 +9960,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "WellOptions",
+                "name": "SourceOptions",
                 "ofType": null
               }
             },
@@ -10536,7 +10602,19 @@
             "deprecationReason": null
           },
           {
-            "name": "firstFlow",
+            "name": "firstInjection",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "DateTime",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "firstProduction",
             "description": null,
             "args": [],
             "type": {
@@ -10596,7 +10674,19 @@
             "deprecationReason": null
           },
           {
-            "name": "lastFlow",
+            "name": "lastInjection",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "DateTime",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "lastProduction",
             "description": null,
             "args": [],
             "type": {
@@ -10740,7 +10830,19 @@
             "deprecationReason": null
           },
           {
-            "name": "firstFlow",
+            "name": "firstInjection",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "DateTime",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "firstProduction",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -10768,7 +10870,19 @@
             "deprecationReason": null
           },
           {
-            "name": "lastFlow",
+            "name": "lastInjection",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "DateTime",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "lastProduction",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -13527,6 +13641,22 @@
             "deprecationReason": null
           },
           {
+            "name": "name",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "oil",
             "description": null,
             "args": [],
@@ -13596,22 +13726,6 @@
               "ofType": {
                 "kind": "OBJECT",
                 "name": "User",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "uwi",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
                 "ofType": null
               }
             },
@@ -13977,14 +14091,14 @@
             "deprecationReason": null
           },
           {
-            "name": "oil",
+            "name": "name",
             "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Float",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -13993,14 +14107,14 @@
             "deprecationReason": null
           },
           {
-            "name": "uwi",
+            "name": "oil",
             "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "Float",
                 "ofType": null
               }
             },
@@ -14026,81 +14140,6 @@
           }
         ],
         "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "WellOptions",
-        "description": null,
-        "fields": [
-          {
-            "name": "facility",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "satellite",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "source",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
       },

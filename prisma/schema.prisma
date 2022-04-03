@@ -212,7 +212,7 @@ model Risk {
 
 model Well {
   id              String      @id @default(uuid())
-  uwi             String      @unique
+  name            String      @unique
   oil             Float
   water           Float
   gas             Float
@@ -234,22 +234,24 @@ model Well {
 }
 
 model SalesPoint {
-  id          String    @id @default(uuid())
-  name        String    @unique
-  oil         Float
-  water       Float
-  gas         Float
-  firstFlow   DateTime?
-  lastFlow    DateTime?
-  fdcRecId    String?   @unique
-  pipeline    Pipeline? @relation(fields: [pipelineId], references: [id])
-  pipelineId  String?
-  createdBy   User      @relation("salesPointCreatedBy", fields: [createdById], references: [id])
-  createdById String
-  createdAt   DateTime  @default(now())
-  updatedBy   User      @relation("salesPointUpdatedBy", fields: [updatedById], references: [id])
-  updatedById String
-  updatedAt   DateTime  @updatedAt
+  id              String    @id @default(uuid())
+  name            String    @unique
+  oil             Float
+  water           Float
+  gas             Float
+  firstProduction DateTime?
+  lastProduction  DateTime?
+  firstInjection  DateTime?
+  lastInjection   DateTime?
+  fdcRecId        String?   @unique
+  pipeline        Pipeline? @relation(fields: [pipelineId], references: [id])
+  pipelineId      String?
+  createdBy       User      @relation("salesPointCreatedBy", fields: [createdById], references: [id])
+  createdById     String
+  createdAt       DateTime  @default(now())
+  updatedBy       User      @relation("salesPointUpdatedBy", fields: [updatedById], references: [id])
+  updatedById     String
+  updatedAt       DateTime  @updatedAt
 
 }
 
