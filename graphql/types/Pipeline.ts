@@ -2,6 +2,7 @@ import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, n
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
 import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
+import { totalPipelineFlowRawQuery } from './PipelineFlow';
 import { Prisma, User as IUser } from '@prisma/client';
 
 
@@ -466,6 +467,42 @@ export const PipelineQuery = extendType({
         }
       }
     })
+    t.list.field('connectedPipelinesByPipelineId', {
+      type: 'PipelineFlow',
+      args: {
+        id: nonNull(stringArg()),
+        flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
+      },
+      resolve: async (_, { id, flowCalculationDirection }, ctx: Context) => {
+        if (flowCalculationDirection === 'Upstream') {
+          const { upstream } = await ctx.prisma.pipeline.findUnique({
+            where: { id },
+            select: {
+              upstream: { select: { id: true } },
+            },
+          }) || {};
+          if (upstream) {
+            const idList = upstream.map(({ id }) => id);
+            const result = await totalPipelineFlowRawQuery({ idList, flowCalculationDirection, ctx });
+            return result;
+          }
+        }
+        if (flowCalculationDirection === 'Downstream') {
+          const { downstream } = await ctx.prisma.pipeline.findUnique({
+            where: { id },
+            select: {
+              downstream: { select: { id: true } },
+            },
+          }) || {};
+          if (downstream) {
+            const idList = downstream.map(({ id }) => id);
+            const result = await totalPipelineFlowRawQuery({ idList, flowCalculationDirection, ctx });
+            return result;
+          }
+        }
+        return null;
+      }
+    });
   },
 });
 
@@ -760,24 +797,26 @@ export const PipelineMutation = extendType({
         pipelineId: nonNull(stringArg()),
       },
       resolve: async (_parent, { id, pipelineId }, ctx: Context) => {
+        console.log('id:', id, 'pipelineId:', pipelineId);
+
         const user = ctx.user;
         if (user) {
           const { id: userId, firstName } = user
           const authorized = resolvePipelineAuthorized(user);
           if (authorized) {
             const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({
-              where: { id },
+              where: { id: pipelineId },
               select: { flowCalculationDirection: true }
             }) || {};
             if (flowCalculationDirection) {
               const pipeline = await ctx.prisma.pipeline.update({
-                where: { id },
+                where: { id: pipelineId },
                 data: {
                   upstream: flowCalculationDirection === 'Upstream' ? {
-                    connect: { id: pipelineId }
+                    connect: { id }
                   } : undefined,
                   downstream: flowCalculationDirection === 'Downstream' ? {
-                    connect: { id: pipelineId }
+                    connect: { id }
                   } : undefined,
                   updatedBy: {
                     connect: { id: userId }
@@ -821,18 +860,18 @@ export const PipelineMutation = extendType({
           const authorized = resolvePipelineAuthorized(user);
           if (authorized) {
             const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({
-              where: { id },
+              where: { id: pipelineId },
               select: { flowCalculationDirection: true }
             }) || {};
             if (flowCalculationDirection) {
               const pipeline = await ctx.prisma.pipeline.update({
-                where: { id },
+                where: { id: pipelineId },
                 data: {
                   upstream: flowCalculationDirection === 'Upstream' ? {
-                    disconnect: { id: pipelineId }
+                    disconnect: { id }
                   } : undefined,
                   downstream: flowCalculationDirection === 'Downstream' ? {
-                    disconnect: { id: pipelineId }
+                    disconnect: { id }
                   } : undefined,
                   updatedBy: {
                     connect: { id: userId }

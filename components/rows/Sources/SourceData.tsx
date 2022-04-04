@@ -12,6 +12,8 @@ import {
   WellOptionsQuery,
   SalesPointsByPipelineIdQuery,
   SalesPointOptionsQuery,
+  ConnectedPipelinesByPipelineIdQuery,
+  PipelineOptionsQuery,
 } from '../../../graphql/generated/graphql';
 
 
@@ -28,9 +30,9 @@ export interface ISourceMap {
 interface ISourcesDataProps {
   pipelineId: string;
   label: string;
-  data?: WellsByPipelineIdQuery['wellsByPipelineId'] | SalesPointsByPipelineIdQuery['salesPointsByPipelineId'];
+  data?: WellsByPipelineIdQuery['wellsByPipelineId'] | SalesPointsByPipelineIdQuery['salesPointsByPipelineId'] | ConnectedPipelinesByPipelineIdQuery['connectedPipelinesByPipelineId'];
   loadOptions: () => void;
-  dataOptions?: WellOptionsQuery['wellOptions'] | SalesPointOptionsQuery['salesPointOptions'];
+  dataOptions?: WellOptionsQuery['wellOptions'] | SalesPointOptionsQuery['salesPointOptions'] | PipelineOptionsQuery['pipelineOptions'];
   connectSource: (arg0: IConnectSource) => void;
   disconnectSource: (arg0: IConnectSource) => void;
 }
@@ -73,15 +75,15 @@ export default function SourceData({ pipelineId, label, data, loadOptions, dataO
         </tr>}
         {data?.map((source, row) => {
           if (source) {
-            const { id, name, oil, water, gas, gasAssociatedLiquids, totalFluids, lastProduction, firstProduction, lastInjection, firstInjection, createdBy, createdAt, updatedBy, updatedAt, authorized } = source;
+            const { id, name, oil, water, gas, gasAssociatedLiquids, totalFluids, lastProduction, firstProduction, lastInjection, firstInjection } = source;
 
             const columns: ISourceMap[] = [
               { record: <IconButton aria-label='delete row' size='small' onClick={() => disconnectSource({ id, pipelineId })}><DeleteOutlineOutlinedIcon /></IconButton> },
               { record: name, style: { borderRight: 'unset', textAlign: 'left' } },
               { record: <IconButton aria-label='delete row' size='small' onClick={() => alert('hello')}><EditOutlinedIcon /></IconButton>, style: { borderLeft: 'unset' } },
-              { record: oil },
-              { record: water },
-              { record: gas },
+              { record: oil.toFixed(2) },
+              { record: water.toFixed(2) },
+              { record: gas.toFixed(2) },
               { record: gasAssociatedLiquids.toFixed(3) },
               { record: totalFluids.toFixed(2) },
               { record: lastProduction?.split('T')[0] },

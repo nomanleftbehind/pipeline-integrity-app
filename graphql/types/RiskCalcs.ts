@@ -12,17 +12,22 @@ interface ICostPerM3ReleasedCalcArgs {
 
 export const costPerM3ReleasedCalc = async ({ id, ctx }: ICostPerM3ReleasedCalcArgs) => {
 
+
   const { substance: currentSubstance } = await ctx.prisma.licenseChange.findFirst({
     where: { pipelineId: id },
     orderBy: { date: 'desc' },
     select: { substance: true },
   }) || {};
-
-  const { oil, water, gas } = (await totalPipelineFlowRawQuery({ idList: [id], ctx }))?.[0] || {};
-  if (typeof oil === 'number' && typeof water === 'number' && typeof gas === 'number') {
+  const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({
+    where: { id },
+    select: { flowCalculationDirection: true }
+  }) || {};
+  if (flowCalculationDirection) {
+    const { oil, water, gas } = (await totalPipelineFlowRawQuery({ idList: [id], flowCalculationDirection, ctx }))[0];
     return currentSubstance === 'FreshWater' ? 0 : 25000 * water + 1000 * gas + 15000 * oil;
   }
   return null;
+
 }
 
 interface IConsequenceEnviroCalcArgs {
@@ -44,43 +49,50 @@ export const consequenceEnviroCalc = async ({ id, environmentProximityTo, ctx }:
 
   environmentProximityTo = databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, environmentProximityTo) || null;
 
-  const { oil, water, gas } = (await totalPipelineFlowRawQuery({ idList: [id], ctx }))?.[0] || {};
+  const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({
+    where: { id },
+    select: { flowCalculationDirection: true }
+  }) || {};
+  if (flowCalculationDirection) {
+    const { oil, water, gas } = (await totalPipelineFlowRawQuery({ idList: [id], flowCalculationDirection, ctx }))[0];
 
-  if (oil == null || water == null || gas == null) {
-    return null;
-  } else {
-    const totalFluids = totalFluidsCalc({ oil, water, gas });
-    if (currentStatus === 'Discontinued' || currentStatus === 'Abandoned' || currentSubstance === 'FreshWater') {
-      return 1;
-    } else if (currentSubstance === 'NaturalGas' || currentSubstance === 'FuelGas' || currentSubstance === 'SourNaturalGas') {
-
-      if (environmentProximityTo === null) {
-        // no water body and no crossing.  (eg. middle of field)
-        return totalFluids >= 1 ? 2 : 1;
-      } else if (['WC1', 'WB3'].includes(environmentProximityTo)) {
-        // WC1 = Ephemeral, WB3 = non-permanent seasonal/temporary wetlands; Fens; Bogs;
-        return totalFluids >= 1 ? 3 : 2;
-      } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WC3' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB5' || environmentProximityTo === 'WB4') {
-        return totalFluids >= 1 ? 4 : 3;
-      } else {
-        return null;
-      }
-    } else if (currentSubstance === 'OilWellEffluent' || currentSubstance === 'CrudeOil' || currentSubstance === 'SaltWater' /*|| currentSubstance === 'Sour Crude'*/) {
-      if (environmentProximityTo === null || environmentProximityTo === 'WB1') {
-        return 2;
-      } else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB3') {
-        return 3;
-      } else if (environmentProximityTo === 'WC3' || environmentProximityTo === 'WB4') {
-        return 4;
-      } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WB5') {
-        return 5;
-      } else {
-        return null;
-      }
-    } else {
+    if (oil == null || water == null || gas == null) {
       return null;
+    } else {
+      const totalFluids = totalFluidsCalc({ oil, water, gas });
+      if (currentStatus === 'Discontinued' || currentStatus === 'Abandoned' || currentSubstance === 'FreshWater') {
+        return 1;
+      } else if (currentSubstance === 'NaturalGas' || currentSubstance === 'FuelGas' || currentSubstance === 'SourNaturalGas') {
+
+        if (environmentProximityTo === null) {
+          // no water body and no crossing.  (eg. middle of field)
+          return totalFluids >= 1 ? 2 : 1;
+        } else if (['WC1', 'WB3'].includes(environmentProximityTo)) {
+          // WC1 = Ephemeral, WB3 = non-permanent seasonal/temporary wetlands; Fens; Bogs;
+          return totalFluids >= 1 ? 3 : 2;
+        } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WC3' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB5' || environmentProximityTo === 'WB4') {
+          return totalFluids >= 1 ? 4 : 3;
+        } else {
+          return null;
+        }
+      } else if (currentSubstance === 'OilWellEffluent' || currentSubstance === 'CrudeOil' || currentSubstance === 'SaltWater' /*|| currentSubstance === 'Sour Crude'*/) {
+        if (environmentProximityTo === null || environmentProximityTo === 'WB1') {
+          return 2;
+        } else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB3') {
+          return 3;
+        } else if (environmentProximityTo === 'WC3' || environmentProximityTo === 'WB4') {
+          return 4;
+        } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WB5') {
+          return 5;
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
     }
   }
+  return null;
 }
 
 interface IConsequenceAssetCalcArgs {
@@ -97,25 +109,23 @@ export const consequenceAssetCalc = async ({ id, repairTimeDays, oilReleaseCost,
     select: { flowCalculationDirection: true }
   }) || {};
   if (flowCalculationDirection) {
-    const { oil, water, gas } = (await totalPipelineFlowRawQuery({ idList: [id], ctx }))?.[0] || {};
-    if (typeof oil === 'number' && typeof water === 'number' && typeof gas === 'number') {
-      const totalFluids = totalFluidsCalc({ oil, water, gas });
-      if (totalFluids === 0) {
-        return 1;
-      } else if (gasReleaseCost != null && oilReleaseCost != null && repairTimeDays != null) {
-        const i = (gas * gasReleaseCost + oil * oilReleaseCost) * repairTimeDays
-        if (i >= 1_000_000) {
-          return 4;
-        } else if (i < 1_000_000 && i >= 500_000) {
-          return 3;
-        } else if (i < 500_000 && i > 0) {
-          return 2;
-        } else {
-          return 1
-        }
+    const { oil, water, gas } = (await totalPipelineFlowRawQuery({ idList: [id], flowCalculationDirection, ctx }))[0];
+    const totalFluids = totalFluidsCalc({ oil, water, gas });
+    if (totalFluids === 0) {
+      return 1;
+    } else if (gasReleaseCost != null && oilReleaseCost != null && repairTimeDays != null) {
+      const i = (gas * gasReleaseCost + oil * oilReleaseCost) * repairTimeDays
+      if (i >= 1_000_000) {
+        return 4;
+      } else if (i < 1_000_000 && i >= 500_000) {
+        return 3;
+      } else if (i < 500_000 && i > 0) {
+        return 2;
       } else {
-        return null;
+        return 1
       }
+    } else {
+      return null;
     }
   }
   return null;

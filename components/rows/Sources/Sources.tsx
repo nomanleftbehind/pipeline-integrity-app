@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { IRecord } from '../../fields/RecordEntry';
 import SourceData from './SourceData';
 import { ModalFieldError } from '../../Modal';
+import { IPipeline } from '../RenderPipeline';
 import {
   useWellsByPipelineIdQuery,
   useWellOptionsLazyQuery,
@@ -15,8 +16,13 @@ import {
   useDisconnectSalesPointMutation,
   SalesPointsByPipelineIdDocument,
 
-  RiskByIdDocument,
+  useConnectedPipelinesByPipelineIdQuery,
   usePipelineOptionsLazyQuery,
+  useConnectPipelineMutation,
+  useDisconnectPipelineMutation,
+  ConnectedPipelinesByPipelineIdDocument,
+
+  RiskByIdDocument,
 } from '../../../graphql/generated/graphql';
 
 export interface ISourceHeaderMap {
@@ -29,16 +35,17 @@ export interface ISourceMap {
   style?: React.HTMLAttributes<HTMLTableCellElement>['style'];
 }
 
-export interface IConnectSource {
+export interface IDis_ConnectSource {
   id: string;
   pipelineId: string;
 }
 
 interface ISourcesProps {
   pipelineId: string;
+  flowCalculationDirection: IPipeline['flowCalculationDirection'];
 }
 
-export default function Sources({ pipelineId }: ISourcesProps) {
+export default function Sources({ pipelineId, flowCalculationDirection }: ISourcesProps) {
 
   // Well queries and mutations
   const { data: dataWells } = useWellsByPipelineIdQuery({ variables: { pipelineId } });
@@ -50,7 +57,7 @@ export default function Sources({ pipelineId }: ISourcesProps) {
   }
 
   const [connectWell] = useConnectWellMutation({
-    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId', RiskByIdDocument, 'RiskById'],
+    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId'],
     onCompleted: ({ connectWell }) => {
       const { error } = connectWell || {};
       if (error) {
@@ -58,12 +65,12 @@ export default function Sources({ pipelineId }: ISourcesProps) {
       }
     }
   });
-  const handleConnectWell = ({ id, pipelineId }: IConnectSource) => {
+  const handleConnectWell = ({ id, pipelineId }: IDis_ConnectSource) => {
     connectWell({ variables: { id, pipelineId } });
   }
 
   const [disconnectWell] = useDisconnectWellMutation({
-    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId', RiskByIdDocument, 'RiskById'],
+    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId'],
     onCompleted: ({ disconnectWell }) => {
       const { error } = disconnectWell || {};
       if (error) {
@@ -71,7 +78,7 @@ export default function Sources({ pipelineId }: ISourcesProps) {
       }
     }
   });
-  const handleDisconnectWell = ({ id, pipelineId }: IConnectSource) => {
+  const handleDisconnectWell = ({ id }: IDis_ConnectSource) => {
     disconnectWell({ variables: { id } });
   }
 
@@ -88,7 +95,7 @@ export default function Sources({ pipelineId }: ISourcesProps) {
   }
 
   const [connectSalesPoint] = useConnectSalesPointMutation({
-    refetchQueries: [SalesPointsByPipelineIdDocument, 'SalesPointsByPipelineId', RiskByIdDocument, 'RiskById'],
+    refetchQueries: [SalesPointsByPipelineIdDocument, 'SalesPointsByPipelineId'],
     onCompleted: ({ connectSalesPoint }) => {
       const { error } = connectSalesPoint || {};
       if (error) {
@@ -96,12 +103,12 @@ export default function Sources({ pipelineId }: ISourcesProps) {
       }
     }
   });
-  const handleConnectSalesPoint = ({ id, pipelineId }: IConnectSource) => {
+  const handleConnectSalesPoint = ({ id, pipelineId }: IDis_ConnectSource) => {
     connectSalesPoint({ variables: { id, pipelineId } });
   }
 
   const [disconnectSalesPoint] = useDisconnectSalesPointMutation({
-    refetchQueries: [SalesPointsByPipelineIdDocument, 'SalesPointsByPipelineId', RiskByIdDocument, 'RiskById'],
+    refetchQueries: [SalesPointsByPipelineIdDocument, 'SalesPointsByPipelineId'],
     onCompleted: ({ disconnectSalesPoint }) => {
       const { error } = disconnectSalesPoint || {};
       if (error) {
@@ -109,11 +116,47 @@ export default function Sources({ pipelineId }: ISourcesProps) {
       }
     }
   });
-  const handleDisconnectSalesPoint = ({ id, pipelineId }: IConnectSource) => {
+  const handleDisconnectSalesPoint = ({ id }: IDis_ConnectSource) => {
     disconnectSalesPoint({ variables: { id } });
   }
 
 
+
+
+  // Connected pipeline queries and mutations
+  const { data: dataConnectedPipelines } = useConnectedPipelinesByPipelineIdQuery({ variables: { id: pipelineId, flowCalculationDirection } });
+  const [pipelineOptions, { data: dataPipelineOptions }] = usePipelineOptionsLazyQuery({
+    fetchPolicy: 'no-cache'
+  });
+  const loadPipelineOptions = () => {
+    pipelineOptions();
+  }
+
+  const [connectPipeline] = useConnectPipelineMutation({
+    refetchQueries: [ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId'],
+    onCompleted: ({ connectPipeline }) => {
+      const { error } = connectPipeline || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
+  const handleConnectPipeline = ({ id, pipelineId }: IDis_ConnectSource) => {
+    connectPipeline({ variables: { id, pipelineId } });
+  }
+
+  const [disconnectPipeline] = useDisconnectPipelineMutation({
+    refetchQueries: [ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId'],
+    onCompleted: ({ disconnectPipeline }) => {
+      const { error } = disconnectPipeline || {};
+      if (error) {
+        setFieldError(error);
+      }
+    }
+  });
+  const handleDisconnectPipeline = ({ id, pipelineId }: IDis_ConnectSource) => {
+    disconnectPipeline({ variables: { id, pipelineId } });
+  }
 
 
   const initialFieldError = { field: '', message: '' };
@@ -123,9 +166,9 @@ export default function Sources({ pipelineId }: ISourcesProps) {
     setFieldError(initialFieldError);
   }
 
-  const wellHeader: ISourceHeaderMap[] = [
+  const sourceHeader: ISourceHeaderMap[] = [
     {},
-    { label: 'Source', props: { style: { width: '250px' } } },
+    { label: 'Sources', props: { style: { width: '250px' } } },
     {},
     { label: 'Oil (m³/d)', props: { style: { width: '50px' } } },
     { label: 'Water (m³/d)', props: { style: { width: '120px' } } },
@@ -147,7 +190,7 @@ export default function Sources({ pipelineId }: ISourcesProps) {
       <table className='injection-point'>
         <thead>
           <tr>
-            {wellHeader.map(({ label, props }, i) => <th key={i} {...props}>{label}</th>)}
+            {sourceHeader.map(({ label, props }, i) => <th key={i} {...props}>{label}</th>)}
           </tr>
         </thead>
         <SourceData
@@ -167,6 +210,15 @@ export default function Sources({ pipelineId }: ISourcesProps) {
           dataOptions={dataSalesPointOptions?.salesPointOptions}
           connectSource={handleConnectSalesPoint}
           disconnectSource={handleDisconnectSalesPoint}
+        />
+        <SourceData
+          pipelineId={pipelineId}
+          label={`Connected ${flowCalculationDirection} Pipelines'`}
+          data={dataConnectedPipelines?.connectedPipelinesByPipelineId}
+          loadOptions={loadPipelineOptions}
+          dataOptions={dataPipelineOptions?.pipelineOptions}
+          connectSource={handleConnectPipeline}
+          disconnectSource={handleDisconnectPipeline}
         />
       </table>
     </>

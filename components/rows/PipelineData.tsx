@@ -1,6 +1,6 @@
 import { useState } from 'react';
 // import InjectionPoints from '../fields/injection_points/InjectionPoints';
-import Wells from './Sources/Sources';
+import Sources from './Sources/Sources';
 import PipelineProperties from '../fields/PipelineProperties';
 import LicenseChanges from './LicenseChanges';
 import MechanicalProperties from './MechanicalProperties';
@@ -38,7 +38,7 @@ interface ITabPanelProps extends ITabPanelMap {
 }
 
 export default function PipelineData({ gridRow, open, pipeline, editPipeline, authorized, isEven }: IPipelineDataProps) {
-  const [view, setView] = useState<IView>('mechanical properties');
+  const [view, setView] = useState<IView>('license change');
 
   const { id, currentSubstance, flowCalculationDirection, currentStatus, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, firstLicenseDate } = pipeline;
 
@@ -61,7 +61,10 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, au
       />
     }
     if (view === 'injection point') {
-      return <Wells pipelineId={id} />
+      return <Sources
+      pipelineId={id}
+      flowCalculationDirection={flowCalculationDirection}
+      />
     }
     if (view === 'mechanical properties') {
       return <MechanicalProperties

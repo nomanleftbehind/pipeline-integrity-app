@@ -3,10 +3,11 @@ CREATE OR REPLACE FUNCTION "ppl_db".pipeline_flow(
 	flow_calculation_direction "ppl_db"."flow_calculation_direction"
 )
 RETURNS TABLE (
-	id text,
-	oil double precision,
-	water double precision,
-	gas double precision,
+	"id" text,
+	"name" text,
+	"oil" double precision,
+	"water" double precision,
+	"gas" double precision,
 	"firstProduction" timestamp without time zone,
 	"lastProduction" timestamp without time zone,
 	"firstInjection" timestamp without time zone,
@@ -28,14 +29,15 @@ WITH pipeline_volume as (
 SELECT
 
 pip.id,
+CONCAT(pip.license, ''-'', pip.segment) as "name",
 fl.' || connected_pipeline_column || ' as "connected_pipeline_id",
 SUM(COALESCE(w.oil,0) + COALESCE(sp.oil,0))  as "oil",
 SUM(COALESCE(w.water,0) + COALESCE(sp.water,0)) as "water",
 SUM(COALESCE(w.gas,0) + COALESCE(sp.gas,0)) as "gas",
-MIN(LEAST(w."firstProduction", sp."firstFlow")) as "firstProduction",
-MAX(GREATEST(w."lastProduction", sp."lastFlow")) as "lastProduction",
-MIN(w."firstInjection") as "firstInjection",
-MAX(w."lastInjection") as "lastInjection"
+MIN(LEAST(w."firstProduction", sp."firstProduction")) as "firstProduction",
+MAX(GREATEST(w."lastProduction", sp."lastProduction")) as "lastProduction",
+MIN(LEAST(w."firstInjection", sp."firstInjection")) as "firstInjection",
+MAX(GREATEST(w."lastInjection", sp."lastInjection")) as "lastInjection"
 
 FROM "ppl_db"."Pipeline" pip
 LEFT OUTER JOIN "ppl_db"."_PipelineFollows" fl ON fl.' || connected_pipeline_join_on_column || ' = pip.id
@@ -44,6 +46,8 @@ LEFT OUTER JOIN "ppl_db"."SalesPoint" sp ON sp."pipelineId" = pip.id
 
 GROUP BY
 pip.id,
+pip.license,
+pip.segment,
 fl.' || connected_pipeline_column || '
 )
 ';
@@ -51,17 +55,20 @@ fl.' || connected_pipeline_column || '
 	query_select text := '
 SELECT
 
-pv1.id';
+pv1.id,
+pv1.name';
 
 	query_select2 text := '
 SELECT
 
-pv.id';
+pv.id,
+pv.name';
 
 	query_select3 text := '
 SELECT
 
 pv.id,
+pv.name,
 ';
 
 	coalesce_oil text;
@@ -155,7 +162,8 @@ FROM (
 ) pv
 
 GROUP BY 
-pv.id
+pv.id,
+pv.name
 ) pv
 
 ORDER BY

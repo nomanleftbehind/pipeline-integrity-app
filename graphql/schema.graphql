@@ -679,6 +679,10 @@ type PipelineFlow {
   id: String!
   lastInjection: DateTime
   lastProduction: DateTime
+
+  """
+  This field is a concatonated license and segment of a pipeline to conform with Well and Sales Point objects
+  """
   name: String!
   oil: Float!
   totalFluids: Float!
@@ -729,6 +733,7 @@ type Query {
   allFacilities: [Facility]
   allSatellites: [Satellite]
   allUsers: [User]
+  connectedPipelinesByPipelineId(flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): [PipelineFlow]
   licenseChangesByPipelineId(pipelineId: String!): [LicenseChange]
   me: User
   pigRunsByPipelineId(pipelineId: String!): [PigRun]

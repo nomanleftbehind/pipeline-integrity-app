@@ -1,5 +1,6 @@
 import { objectType, extendType, nonNull, stringArg, list, arg } from 'nexus';
 import { gasAssociatedLiquidsCalc, totalFluidsCalc } from './Well';
+import type { FlowCalculationDirectionEnum } from '@prisma/client';
 import { Context } from '../context';
 import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
 
@@ -7,7 +8,9 @@ export const PipelineFlow = objectType({
   name: 'PipelineFlow',
   definition(t) {
     t.nonNull.string('id')
-    t.nonNull.string('name')
+    t.nonNull.string('name', {
+      description: 'This field is a concatonated license and segment of a pipeline to conform with Well and Sales Point objects'
+    })
     t.nonNull.float('oil')
     t.nonNull.float('water')
     t.nonNull.float('gas')
@@ -26,28 +29,20 @@ export const PipelineFlow = objectType({
 
 interface ITotalPipelineFlowRawQueryArgs {
   idList: (string | null)[];
+  flowCalculationDirection: FlowCalculationDirectionEnum;
   ctx: Context;
 }
 
-export const totalPipelineFlowRawQuery = async ({ idList, ctx }: ITotalPipelineFlowRawQueryArgs) => {
+export const totalPipelineFlowRawQuery = async ({ idList, flowCalculationDirection, ctx }: ITotalPipelineFlowRawQueryArgs) => {
   const ids = idList.join("', '");
-  const id = idList[0];
-  if (id) {
-    const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({
-      where: { id },
-      select: { flowCalculationDirection: true },
-    }) || {};
-    if (flowCalculationDirection) {
-      // This raw query calls user defined custom function on PostgreSQL database.
-      // For it to work, sql function must first be created by executing file `/prisma/pipeline_flow_dynamic.sql` on database as the Administrator.
-      const result = await ctx.prisma.$queryRaw<NexusGenObjects['PipelineFlow'][]>`
+
+  // This raw query calls user defined custom function on PostgreSQL database.
+  // For it to work, sql function must first be created by executing file `/prisma/pipeline_flow_dynamic.sql` on database as the Administrator.
+  const result = await ctx.prisma.$queryRaw<NexusGenObjects['PipelineFlow'][]>`
       SELECT * FROM "ppl_db".pipeline_flow(${ids}, ${flowCalculationDirection});
       `
 
-      return result;
-    }
-  }
-  return null;
+  return result;
 }
 
 
@@ -79,9 +74,10 @@ export const PipelineFlowQuery = extendType({
       type: 'PipelineFlow',
       args: {
         idList: nonNull(list(stringArg())),
+        flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
       },
-      resolve: async (_parent, { idList }, ctx: Context) => {
-        const result = await totalPipelineFlowRawQuery({ idList, ctx });
+      resolve: async (_parent, { idList, flowCalculationDirection }, ctx: Context) => {
+        const result = await totalPipelineFlowRawQuery({ idList, flowCalculationDirection, ctx });
 
         return result;
       }
