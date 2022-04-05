@@ -15,7 +15,16 @@ export type IInferFromArray<T> = T extends (infer U)[] ? NonNullable<U> : never;
 export type IPipeline = IInferFromArray<NonNullable<PipelinesByIdQuery['pipelinesById']>>;
 export type IValidators = GetValidatorsQuery['validators'];
 
-type IValidatorsPipeline = ValidatorsPipelineQuery['validators']
+type IValidatorsPipeline = ValidatorsPipelineQuery['validators'];
+
+type IFieldError = {
+  field: string;
+  message: string;
+}
+
+export const openModal = ({ field, message }: IFieldError) => {
+  return field !== '' && message !== '';
+}
 
 interface IRenderPipelineProps {
   gridRow: number;
@@ -33,6 +42,8 @@ export default function RenderPipeline({ gridRow, pipeline, validators }: IRende
 
   const [open, setOpen] = useState(false);
   const [showDeletePipelineModal, setShowDeletePipelineModal] = useState(false);
+  const initialFieldError = { field: '', message: '' };
+  const [fieldError, setFieldError] = useState(initialFieldError);
 
   const [editPipeline] = useEditPipelineMutation({
     refetchQueries: [PipelinesByIdDocument, 'PipelinesById', RiskByIdDocument, 'RiskById'],
@@ -64,9 +75,6 @@ export default function RenderPipeline({ gridRow, pipeline, validators }: IRende
     }
   });
 
-
-  const initialFieldError = { field: '', message: '' };
-  const [fieldError, setFieldError] = useState(initialFieldError);
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {
@@ -106,6 +114,8 @@ export default function RenderPipeline({ gridRow, pipeline, validators }: IRende
     setFieldError(initialFieldError);
   }
 
+  const isModalOpen = openModal(fieldError);
+
   const { id, license, segment, from, fromFeature, to, toFeature, currentStatus, currentSubstance, authorized } = pipeline;
   const { licenseMatchPattern, segmentMatchPattern, fromToMatchPattern, fromToFeatureEnum, statusEnum, substanceEnum } = validators || {};
 
@@ -144,7 +154,7 @@ export default function RenderPipeline({ gridRow, pipeline, validators }: IRende
           <AddCircleOutlineOutlinedIcon />
         </IconButton>}
       </div>
-      {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
+      {isModalOpen && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
       />}

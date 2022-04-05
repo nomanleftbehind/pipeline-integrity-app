@@ -15,6 +15,7 @@ import { ModalFieldError } from '../Modal';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import { openModal } from './RenderPipeline';
 
 export type IRecordEntryMap = Omit<IRecordEntryProps, 'id' | 'createdById' | 'authorized'>;
 
@@ -23,6 +24,10 @@ interface ILicenseChangesProps {
 }
 
 export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
+
+  const initialFieldError = { field: '', message: '' };
+  const [fieldError, setFieldError] = useState(initialFieldError);
+
   const { data, loading, error } = useLicenseChangesByPipelineIdQuery({ variables: { pipelineId } });
   const { data: dataValidators } = useValidatorsLicenseChangeQuery();
   const [editLicenseChange] = useEditLicenseChangeMutation({
@@ -53,9 +58,6 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
       }
     }
   });
-
-  const initialFieldError = { field: '', message: '' };
-  const [fieldError, setFieldError] = useState(initialFieldError);
 
   const { statusEnum, substanceEnum } = dataValidators?.validators || {};
 
@@ -92,6 +94,8 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
     setFieldError(initialFieldError);
   }
 
+  const isModalOpen = openModal(fieldError);
+
   const licenseChangeHeader = [
     { label: 'Date' },
     { label: 'Status' },
@@ -114,7 +118,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>
-      {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
+      {isModalOpen && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
       />}

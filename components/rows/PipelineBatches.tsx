@@ -13,6 +13,7 @@ import { ModalFieldError } from '../Modal';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import { openModal } from './RenderPipeline';
 
 export type IRecordEntryMap = Omit<IRecordEntryProps, 'id' | 'createdById' | 'authorized'>;
 
@@ -21,6 +22,10 @@ interface IPipelineBatchesProps {
 }
 
 export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
+
+  const initialFieldError = { field: '', message: '' };
+  const [fieldError, setFieldError] = useState(initialFieldError);
+
   const { data, loading, error } = usePipelineBatchesByPipelineIdQuery({ variables: { pipelineId } });
   const { data: dataValidators } = useValidatorsBatchProductQuery();
   const [editPipelineBatch] = useEditPipelineBatchMutation({
@@ -52,8 +57,6 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
     }
   });
 
-  const initialFieldError = { field: '', message: '' };
-  const [fieldError, setFieldError] = useState(initialFieldError);
 
   const { solubilityEnum } = dataValidators?.validators || {};
 
@@ -90,6 +93,8 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
     setFieldError(initialFieldError);
   }
 
+  const isModalOpen = openModal(fieldError);
+
   const pipelineBatchHeader = [
     { label: 'Date' },
     { label: 'Product' },
@@ -114,7 +119,7 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>
-      {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
+      {isModalOpen && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
       />}

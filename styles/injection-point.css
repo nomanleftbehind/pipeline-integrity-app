@@ -1,19 +1,27 @@
-.injection-point {
-  border: 1px solid black;
-  border-spacing: 0px;
-}
-
-.injection-point>thead {
-  font-size: small;
-}
-
-.injection-point th:first-child() {
-  width: 1000px;
-}
-
-.injection-point td, th {
-  /* padding: 2px; */
-  /* border: 1px solid red; */
+.connected-source {
+  border-spacing: 0;
   font-size: small;
   text-align: center;
+}
+
+.connected-source>thead {
+  font-size: small;
+}
+
+/* .connected-source th:first-child() {
+  width: 1000px;
+} */
+
+/* .connected-source thead {
+  padding: 2px;
+  background-color: blue;
+  border: 1px solid red;
+
+} */
+
+.source-data td {
+  /* border-bottom: 0px solid red; */
+  /* padding: 1px; */
+  /* border-color: aqua; */
+  /* background-color: blue; */
 }

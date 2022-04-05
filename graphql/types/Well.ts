@@ -102,6 +102,35 @@ export const SourceOptions = objectType({
   }
 });
 
+export const SourceGroupBy = objectType({
+  name: 'SourceGroupBy',
+  definition(t) {
+    t.float('oil')
+    t.float('water')
+    t.float('gas')
+    t.float('gasAssociatedLiquids', {
+      resolve: async ({ gas }) => {
+        if (typeof gas === 'number') {
+          return gasAssociatedLiquidsCalc(gas);
+        }
+        return null
+      }
+    })
+    t.float('totalFluids', {
+      resolve: async ({ oil, water, gas }) => {
+        if (typeof oil === 'number' && typeof water === 'number' && typeof gas === 'number') {
+          return totalFluidsCalc({ oil, water, gas });
+        }
+        return null
+      }
+    })
+    t.field('firstProduction', { type: 'DateTime' })
+    t.field('lastProduction', { type: 'DateTime' })
+    t.field('firstInjection', { type: 'DateTime' })
+    t.field('lastInjection', { type: 'DateTime' })
+  }
+});
+
 
 export const WellQuery = extendType({
   type: 'Query',
@@ -140,6 +169,24 @@ export const WellQuery = extendType({
         `
         return result;
       }
+    })
+    t.field('wellsGroupByPipelineId', {
+      type: 'SourceGroupBy',
+      args: {
+        pipelineId: nonNull(stringArg()),
+      },
+      resolve: async (_, { pipelineId }, ctx: Context) => {
+        const total = await ctx.prisma.well.groupBy({
+          by: ['pipelineId'],
+          _sum: { oil: true, water: true, gas: true },
+          _max: { lastProduction: true, lastInjection: true },
+          _min: { firstProduction: true, firstInjection: true },
+          where: { pipelineId }
+        });
+        const { _sum: { oil, water, gas }, _max: { lastProduction, lastInjection }, _min: { firstProduction, firstInjection } } = total[0] || {};
+        const result = { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection }
+        return result;
+      },
     })
   }
 })

@@ -2,13 +2,16 @@ import { useState } from 'react';
 import { IRecord } from '../../fields/RecordEntry';
 import SourceData from './SourceData';
 import { ModalFieldError } from '../../Modal';
-import { IPipeline } from '../RenderPipeline';
+import { IPipeline, openModal } from '../RenderPipeline';
 import {
   useWellsByPipelineIdQuery,
+  useWellsGroupByPipelineIdQuery,
   useWellOptionsLazyQuery,
   useConnectWellMutation,
   useDisconnectWellMutation,
   WellsByPipelineIdDocument,
+  WellsGroupByPipelineIdDocument,
+
 
   useSalesPointsByPipelineIdQuery,
   useSalesPointOptionsLazyQuery,
@@ -45,10 +48,11 @@ interface ISourcesProps {
   flowCalculationDirection: IPipeline['flowCalculationDirection'];
 }
 
-export default function Sources({ pipelineId, flowCalculationDirection }: ISourcesProps) {
+export default function ConnectedSources({ pipelineId, flowCalculationDirection }: ISourcesProps) {
 
   // Well queries and mutations
   const { data: dataWells } = useWellsByPipelineIdQuery({ variables: { pipelineId } });
+  const { data: dataWellsGroupBy } = useWellsGroupByPipelineIdQuery({ variables: { pipelineId } });
   const [wellOptions, { data: dataWellOptions }] = useWellOptionsLazyQuery({
     fetchPolicy: 'no-cache'
   });
@@ -56,8 +60,9 @@ export default function Sources({ pipelineId, flowCalculationDirection }: ISourc
     wellOptions();
   }
 
+
   const [connectWell] = useConnectWellMutation({
-    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId'],
+    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId', WellsGroupByPipelineIdDocument, 'WellsGroupByPipelineId'],
     onCompleted: ({ connectWell }) => {
       const { error } = connectWell || {};
       if (error) {
@@ -70,7 +75,7 @@ export default function Sources({ pipelineId, flowCalculationDirection }: ISourc
   }
 
   const [disconnectWell] = useDisconnectWellMutation({
-    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId'],
+    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId', WellsGroupByPipelineIdDocument, 'WellsGroupByPipelineId'],
     onCompleted: ({ disconnectWell }) => {
       const { error } = disconnectWell || {};
       if (error) {
@@ -166,6 +171,8 @@ export default function Sources({ pipelineId, flowCalculationDirection }: ISourc
     setFieldError(initialFieldError);
   }
 
+  const isModalOpen = openModal(fieldError);
+
   const sourceHeader: ISourceHeaderMap[] = [
     {},
     { label: 'Sources', props: { style: { width: '250px' } } },
@@ -176,27 +183,38 @@ export default function Sources({ pipelineId, flowCalculationDirection }: ISourc
     { label: 'Gas Associated Liquids (m³/d)', props: { style: { width: '100px' } } },
     { label: 'Total Fluids (m³/d)', props: { style: { width: '100px' } } },
     { label: 'Last Production', props: { style: { width: '100px' } } },
-    { label: 'First Production', props: { style: { width: '100px' } } },
     { label: 'Last Injection', props: { style: { width: '100px' } } },
+    { label: 'First Production', props: { style: { width: '100px' } } },
     { label: 'First Injection', props: { style: { width: '100px' } } },
   ];
 
   return (
     <>
-      {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
+      {isModalOpen && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
       />}
-      <table className='injection-point'>
+      <table className='connected-source'>
         <thead>
           <tr>
-            {sourceHeader.map(({ label, props }, i) => <th key={i} {...props}>{label}</th>)}
+            {sourceHeader.map(({ label, props }, column) => {
+              return (
+                <th
+                  key={column}
+                  {...props}
+                  className={`pipeline-data-view-header sticky top left${column === 0 ? ' left' : ''}`}
+                >
+                  {label}
+                </th>
+              )
+            })}
           </tr>
         </thead>
         <SourceData
           pipelineId={pipelineId}
           label='Wells'
           data={dataWells?.wellsByPipelineId}
+          dataGroupBy={dataWellsGroupBy?.wellsGroupByPipelineId}
           loadOptions={loadWellOptions}
           dataOptions={dataWellOptions?.wellOptions}
           connectSource={handleConnectWell}
@@ -213,7 +231,7 @@ export default function Sources({ pipelineId, flowCalculationDirection }: ISourc
         />
         <SourceData
           pipelineId={pipelineId}
-          label={`Connected ${flowCalculationDirection} Pipelines'`}
+          label={`Connected ${flowCalculationDirection} Pipelines`}
           data={dataConnectedPipelines?.connectedPipelinesByPipelineId}
           loadOptions={loadPipelineOptions}
           dataOptions={dataPipelineOptions?.pipelineOptions}

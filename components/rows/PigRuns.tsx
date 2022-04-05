@@ -5,6 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { IRecordEntryMap } from './LicenseChanges';
+import { openModal } from './RenderPipeline';
 
 import {
   usePigRunsByPipelineIdQuery,
@@ -90,6 +91,8 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
     setFieldError(initialFieldError);
   }
 
+  const isModalOpen = openModal(fieldError);
+
   const pigRunHeader = [
     { label: 'Pig Type' },
     { label: 'Date In' },
@@ -109,12 +112,12 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
     <div className='pig-run'>
       <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
         <IconButton
-          style={{ margin: 0, position: 'relative', top: '50%', left: '50%', msTransform: 'translate(-50%, -50%)', transform: 'translate(-50%, -50%)' }}
+          className='button-container'
           aria-label='add row' size='small' onClick={addRecord}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>
-      {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
+      {isModalOpen && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
       />}

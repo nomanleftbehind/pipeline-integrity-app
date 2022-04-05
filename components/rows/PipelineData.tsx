@@ -1,6 +1,6 @@
 import { useState } from 'react';
 // import InjectionPoints from '../fields/injection_points/InjectionPoints';
-import Sources from './Sources/Sources';
+import ConnectedSources from './Sources/ConnectedSources';
 import PipelineProperties from '../fields/PipelineProperties';
 import LicenseChanges from './LicenseChanges';
 import MechanicalProperties from './MechanicalProperties';
@@ -25,7 +25,7 @@ export interface IPipelineDataProps {
   isEven: "even" | "odd";
 }
 
-type IView = 'license change' | 'injection point' | 'mechanical properties' | 'pressure test' | 'pig run' | 'pipeline batch' | 'risk' | 'system fields';
+type IView = 'license change' | 'connected source' | 'mechanical properties' | 'pressure test' | 'pig run' | 'pipeline batch' | 'risk' | 'system fields';
 
 interface ITabPanelMap {
   title: string;
@@ -60,10 +60,10 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, au
         pipelineId={id}
       />
     }
-    if (view === 'injection point') {
-      return <Sources
-      pipelineId={id}
-      flowCalculationDirection={flowCalculationDirection}
+    if (view === 'connected source') {
+      return <ConnectedSources
+        pipelineId={id}
+        flowCalculationDirection={flowCalculationDirection}
       />
     }
     if (view === 'mechanical properties') {
@@ -118,7 +118,7 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, au
 
   const tabs: ITabPanelMap[] = [
     { title: 'License Changes', view: 'license change' },
-    { title: 'Injection Points', view: 'injection point' },
+    { title: 'Connected Sources', view: 'connected source' },
     { title: 'Mechanical Properties', view: 'mechanical properties' },
     { title: 'Pressure Tests', view: 'pressure test' },
     { title: 'Pig Runs', view: 'pig run' },

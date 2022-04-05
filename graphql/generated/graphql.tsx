@@ -1031,6 +1031,7 @@ export type Query = {
   wellBatchesByWellId?: Maybe<Array<Maybe<WellBatch>>>;
   wellOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   wellsByPipelineId?: Maybe<Array<Maybe<Well>>>;
+  wellsGroupByPipelineId?: Maybe<SourceGroupBy>;
 };
 
 
@@ -1093,6 +1094,11 @@ export type QueryWellBatchesByWellIdArgs = {
 
 
 export type QueryWellsByPipelineIdArgs = {
+  pipelineId: Scalars['String'];
+};
+
+
+export type QueryWellsGroupByPipelineIdArgs = {
   pipelineId: Scalars['String'];
 };
 
@@ -1221,6 +1227,18 @@ export enum SolubilityEnum {
 export type SolubilityEnumObject = {
   Oil: Scalars['String'];
   Water: Scalars['String'];
+};
+
+export type SourceGroupBy = {
+  firstInjection?: Maybe<Scalars['DateTime']>;
+  firstProduction?: Maybe<Scalars['DateTime']>;
+  gas?: Maybe<Scalars['Float']>;
+  gasAssociatedLiquids?: Maybe<Scalars['Float']>;
+  lastInjection?: Maybe<Scalars['DateTime']>;
+  lastProduction?: Maybe<Scalars['DateTime']>;
+  oil?: Maybe<Scalars['Float']>;
+  totalFluids?: Maybe<Scalars['Float']>;
+  water?: Maybe<Scalars['Float']>;
 };
 
 export type SourceOptions = {
@@ -1859,6 +1877,13 @@ export type WellsByPipelineIdQueryVariables = Exact<{
 
 
 export type WellsByPipelineIdQuery = { wellsByPipelineId?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined, fdcRecId?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+
+export type WellsGroupByPipelineIdQueryVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type WellsGroupByPipelineIdQuery = { wellsGroupByPipelineId?: { oil?: number | null | undefined, water?: number | null | undefined, gas?: number | null | undefined, gasAssociatedLiquids?: number | null | undefined, firstProduction?: string | null | undefined, totalFluids?: number | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined };
 
 export type WellOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4616,6 +4641,49 @@ export function useWellsByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type WellsByPipelineIdQueryHookResult = ReturnType<typeof useWellsByPipelineIdQuery>;
 export type WellsByPipelineIdLazyQueryHookResult = ReturnType<typeof useWellsByPipelineIdLazyQuery>;
 export type WellsByPipelineIdQueryResult = Apollo.QueryResult<WellsByPipelineIdQuery, WellsByPipelineIdQueryVariables>;
+export const WellsGroupByPipelineIdDocument = gql`
+    query WellsGroupByPipelineId($pipelineId: String!) {
+  wellsGroupByPipelineId(pipelineId: $pipelineId) {
+    oil
+    water
+    gas
+    gasAssociatedLiquids
+    firstProduction
+    totalFluids
+    lastProduction
+    firstInjection
+    lastInjection
+  }
+}
+    `;
+
+/**
+ * __useWellsGroupByPipelineIdQuery__
+ *
+ * To run a query within a React component, call `useWellsGroupByPipelineIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useWellsGroupByPipelineIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useWellsGroupByPipelineIdQuery({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useWellsGroupByPipelineIdQuery(baseOptions: Apollo.QueryHookOptions<WellsGroupByPipelineIdQuery, WellsGroupByPipelineIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<WellsGroupByPipelineIdQuery, WellsGroupByPipelineIdQueryVariables>(WellsGroupByPipelineIdDocument, options);
+      }
+export function useWellsGroupByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WellsGroupByPipelineIdQuery, WellsGroupByPipelineIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<WellsGroupByPipelineIdQuery, WellsGroupByPipelineIdQueryVariables>(WellsGroupByPipelineIdDocument, options);
+        }
+export type WellsGroupByPipelineIdQueryHookResult = ReturnType<typeof useWellsGroupByPipelineIdQuery>;
+export type WellsGroupByPipelineIdLazyQueryHookResult = ReturnType<typeof useWellsGroupByPipelineIdLazyQuery>;
+export type WellsGroupByPipelineIdQueryResult = Apollo.QueryResult<WellsGroupByPipelineIdQuery, WellsGroupByPipelineIdQueryVariables>;
 export const WellOptionsDocument = gql`
     query WellOptions {
   wellOptions {

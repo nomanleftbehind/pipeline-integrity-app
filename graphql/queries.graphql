@@ -869,6 +869,20 @@ query WellsByPipelineId($pipelineId: String!) {
   }
 }
 
+query WellsGroupByPipelineId($pipelineId: String!) {
+  wellsGroupByPipelineId(pipelineId: $pipelineId) {
+    oil
+    water
+    gas
+    gasAssociatedLiquids
+    firstProduction
+    totalFluids
+    lastProduction
+    firstInjection
+    lastInjection
+  }
+}
+
 query WellOptions {
   wellOptions {
     facility

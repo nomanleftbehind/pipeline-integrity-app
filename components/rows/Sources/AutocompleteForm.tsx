@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
-import { IConnectSource } from './Sources';
+import { IDis_ConnectSource } from './ConnectedSources';
 import TextField from '@mui/material/TextField';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
@@ -13,7 +13,7 @@ import {
 interface IAutocompleteFormProps {
   pipelineId: string;
   options: WellOptionsQuery['wellOptions'];
-  connectSource: (arg0: IConnectSource) => void;
+  connectSource: (arg0: IDis_ConnectSource) => void;
 }
 
 export default function AutocompleteForm({ pipelineId, options, connectSource }: IAutocompleteFormProps) {

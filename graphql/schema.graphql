@@ -752,6 +752,7 @@ type Query {
   wellBatchesByWellId(wellId: String!): [WellBatch]
   wellOptions: [SourceOptions]
   wellsByPipelineId(pipelineId: String!): [Well]
+  wellsGroupByPipelineId(pipelineId: String!): SourceGroupBy
 }
 
 type Risk {
@@ -879,6 +880,18 @@ enum SolubilityEnum {
 type SolubilityEnumObject {
   Oil: String!
   Water: String!
+}
+
+type SourceGroupBy {
+  firstInjection: DateTime
+  firstProduction: DateTime
+  gas: Float
+  gasAssociatedLiquids: Float
+  lastInjection: DateTime
+  lastProduction: DateTime
+  oil: Float
+  totalFluids: Float
+  water: Float
 }
 
 type SourceOptions {
