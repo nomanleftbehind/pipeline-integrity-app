@@ -689,11 +689,6 @@ type PipelineFlow {
   water: Float!
 }
 
-type PipelineFlowAndSourceGroupBy {
-  pipelineFlow: [PipelineFlow]
-  sourceGroupBy: SourceGroupBy
-}
-
 type PipelinePayload {
   error: FieldError
   pipeline: Pipeline
@@ -703,6 +698,11 @@ input PipelineUniqueInput {
   id: String
   license: String
   segment: String
+}
+
+type PipelinesFlowAndSourceGroupBy {
+  pipelinesFlow: [PipelineFlow]
+  sourceGroupBy: SourceGroupBy
 }
 
 type PressureTest {
@@ -738,18 +738,19 @@ type Query {
   allFacilities: [Facility]
   allSatellites: [Satellite]
   allUsers: [User]
-  connectedPipelinesByPipelineId(flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): PipelineFlowAndSourceGroupBy
+  connectedPipelinesByPipelineId(flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): PipelinesFlowAndSourceGroupBy
   licenseChangesByPipelineId(pipelineId: String!): [LicenseChange]
   me: User
   pigRunsByPipelineId(pipelineId: String!): [PigRun]
   pipelineBatchesByPipelineId(pipelineId: String!): [PipelineBatch]
-  pipelineFlow(flowCalculationDirection: FlowCalculationDirectionEnum!, idList: [String]!): [PipelineFlow]
+  pipelineFlow(flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): PipelineFlow
   pipelineOptions(id: String!): [SourceOptions]
   pipelinesById(id: String, table: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
+  pipelinesFlow(flowCalculationDirection: FlowCalculationDirectionEnum!, idList: [String]!): [PipelineFlow]
   pressureTestsByPipelineId(pipelineId: String!): [PressureTest]
   riskById(id: String!): Risk
-  salesPointOptions: [SourceOptions]
+  salesPointOptions(pipelineId: String!): [SourceOptions]
   salesPointsByPipelineId(pipelineId: String!): [SalesPoint]
   salesPointsGroupByPipelineId(pipelineId: String!): SourceGroupBy
   sideBar: [SideBar]

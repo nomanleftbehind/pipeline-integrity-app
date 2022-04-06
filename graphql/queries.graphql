@@ -935,8 +935,8 @@ query SalesPointsGroupByPipelineId($pipelineId: String!) {
   }
 }
 
-query SalesPointOptions {
-  salesPointOptions {
+query SalesPointOptions($pipelineId: String!) {
+  salesPointOptions(pipelineId: $pipelineId) {
     facility
     satellite
     id
@@ -947,7 +947,7 @@ query SalesPointOptions {
 
 query ConnectedPipelinesByPipelineId($id: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
   connectedPipelinesByPipelineId(id: $id, flowCalculationDirection: $flowCalculationDirection) {
-    pipelineFlow {
+    pipelinesFlow {
       id
       name
       oil
@@ -971,6 +971,20 @@ query ConnectedPipelinesByPipelineId($id: String!, $flowCalculationDirection: Fl
       firstInjection
       lastInjection
     }
+  }
+}
+
+query PipelineFlow($id: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
+  pipelineFlow(id: $id, flowCalculationDirection: $flowCalculationDirection) {
+    oil
+    water
+    gas
+    gasAssociatedLiquids
+    totalFluids
+    firstProduction
+    lastProduction
+    firstInjection
+    lastInjection
   }
 }
 
@@ -1032,8 +1046,8 @@ query RiskById($id: String!) {
   }
 }
 
-query PipelineFlow($idList: [String]!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
-  pipelineFlow(idList: $idList, flowCalculationDirection: $flowCalculationDirection) {
+query PipelinesFlow($idList: [String]!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
+  pipelinesFlow(idList: $idList, flowCalculationDirection: $flowCalculationDirection) {
     id
     name
     oil

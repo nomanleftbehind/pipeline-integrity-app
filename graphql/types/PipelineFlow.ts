@@ -27,10 +27,10 @@ export const PipelineFlow = objectType({
   }
 });
 
-export const PipelineFlowAndSourceGroupBy = objectType({
-  name: 'PipelineFlowAndSourceGroupBy',
+export const PipelinesFlowAndSourceGroupBy = objectType({
+  name: 'PipelinesFlowAndSourceGroupBy',
   definition(t) {
-    t.list.field('pipelineFlow', { type: 'PipelineFlow' })
+    t.list.field('pipelinesFlow', { type: 'PipelineFlow' })
     t.field('sourceGroupBy', { type: 'SourceGroupBy' })
   }
 });
@@ -108,7 +108,7 @@ export const PipelineFlowQuery = extendType({
         return result;
       }
     })
-    t.list.field('pipelineFlow', {
+    t.list.field('pipelinesFlow', {
       type: 'PipelineFlow',
       args: {
         idList: nonNull(list(stringArg())),

@@ -4,8 +4,20 @@
   text-align: center;
 }
 
-.connected-source>thead {
-  font-size: small;
+.source-data th:not(:first-child) {
+  border-top: 2px black solid;
+}
+
+.source-data td {
+  padding: 2px 0 2px 0;
+}
+
+.total-flow th {
+  padding: 6px 0 6px 0;
+}
+
+.total-flow th:not(:first-child) {
+  background-color: rgb(220, 220, 220);
 }
 
 /* .connected-source th:first-child() {
@@ -18,10 +30,3 @@
   border: 1px solid red;
 
 } */
-
-.source-data td {
-  /* border-bottom: 0px solid red; */
-  /* padding: 1px; */
-  /* border-color: aqua; */
-  /* background-color: blue; */
-}

@@ -92,23 +92,48 @@ export const SalesPointQuery = extendType({
     })
     t.list.field('salesPointOptions', {
       type: 'SourceOptions',
-      resolve: async (_parent, _args, ctx: Context) => {
+      args: {
+        pipelineId: nonNull(stringArg()),
+      },
+      resolve: async (_parent, {pipelineId}, ctx: Context) => {
 
-        const result = await ctx.prisma.$queryRaw<NexusGenObjects['SourceOptions'][]>`
-        SELECT
+        const connectedSalesPoints = await ctx.prisma.salesPoint.findMany({
+          where: { pipelineId },
+          select: {
+            id: true,
+          },
+        });
+        const ids = connectedSalesPoints.map(({ id }) => id);
+        const options = await ctx.prisma.salesPoint.findMany({
+          select: {
+            id: true,
+            name: true,
+            pipeline: {
+              select: {
+                satellite: {
+                  select: {
+                    name: true,
+                    facility: {
+                      select: {
+                        name: true,
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          orderBy: [{ pipeline: { satellite: { facility: { name: 'asc' } } } }, { pipeline: { satellite: { name: 'asc' } } }, { name: 'asc' }]
+        });
 
-        COALESCE(f.name, 'no facility') "facility",
-        COALESCE(s.name, 'no satellite') "satellite",
-        sp.id,
-        sp.name "source"
+        const result = options.map(({ id, pipeline, name }) => {
+          const { satellite } = pipeline || {};
+          const { name: satelliteName, facility } = satellite || {};
+          const { name: facilityName } = facility || {};
+          const result = { source: name, facility: facilityName, satellite: satelliteName, id, disabled: ids.includes(id) }
+          return result;
+        });
 
-        FROM "ppl_db"."SalesPoint" sp
-        LEFT OUTER JOIN "ppl_db"."Pipeline" pip ON pip."id" = sp."pipelineId"
-        LEFT OUTER JOIN "ppl_db"."Satellite" s ON s."id" = pip."satelliteId"
-        LEFT OUTER JOIN "ppl_db"."Facility" f ON f."id" = s."facilityId"
-
-        ORDER BY f.name, s.name, sp.name
-        `
         return result;
       }
     })

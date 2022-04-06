@@ -468,7 +468,7 @@ export const PipelineQuery = extendType({
       }
     })
     t.field('connectedPipelinesByPipelineId', {
-      type: 'PipelineFlowAndSourceGroupBy',
+      type: 'PipelinesFlowAndSourceGroupBy',
       args: {
         id: nonNull(stringArg()),
         flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
@@ -485,8 +485,8 @@ export const PipelineQuery = extendType({
           if (upstream && upstream.length > 0) {
 
             const idList = upstream.map(({ id }) => id);
-            const pipelineFlow = await totalPipelineFlowRawQuery({ idList, flowCalculationDirection, ctx });
-            const pipelineGroupBy = pipelineFlow.reduce((
+            const pipelinesFlow = await totalPipelineFlowRawQuery({ idList, flowCalculationDirection, ctx });
+            const pipelineGroupBy = pipelinesFlow.reduce((
               { oil: previousOil, water: previousWater, gas: previousGas, lastProduction: previousLastProduction, lastInjection: previousLastInjection, firstProduction: previousFirstProduction, firstInjection: previousFirstInjection },
               { oil: currentOil, water: currentWater, gas: currentGas, lastProduction: currentLastProduction, lastInjection: currentLastInjection, firstProduction: currentFirstProduction, firstInjection: currentFirstInjection }) => {
 
@@ -505,7 +505,7 @@ export const PipelineQuery = extendType({
             const { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection } = pipelineGroupBy;
             const sourceGroupBy = { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection }
 
-            return { pipelineFlow, sourceGroupBy };
+            return { pipelinesFlow, sourceGroupBy };
           }
         }
         if (flowCalculationDirection === 'Downstream') {
@@ -518,8 +518,8 @@ export const PipelineQuery = extendType({
           if (downstream && downstream.length > 0) {
 
             const idList = downstream.map(({ id }) => id);
-            const pipelineFlow = await totalPipelineFlowRawQuery({ idList, flowCalculationDirection, ctx });
-            const pipelineGroupBy = pipelineFlow.reduce((
+            const pipelinesFlow = await totalPipelineFlowRawQuery({ idList, flowCalculationDirection, ctx });
+            const pipelineGroupBy = pipelinesFlow.reduce((
               { oil: previousOil, water: previousWater, gas: previousGas, lastProduction: previousLastProduction, lastInjection: previousLastInjection, firstProduction: previousFirstProduction, firstInjection: previousFirstInjection },
               { oil: currentOil, water: currentWater, gas: currentGas, lastProduction: currentLastProduction, lastInjection: currentLastInjection, firstProduction: currentFirstProduction, firstInjection: currentFirstInjection }) => {
 
@@ -538,10 +538,23 @@ export const PipelineQuery = extendType({
             const { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection } = pipelineGroupBy;
             const sourceGroupBy = { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection }
 
-            return { pipelineFlow, sourceGroupBy };
+            return { pipelinesFlow, sourceGroupBy };
           }
         }
         return null;
+      }
+    })
+    t.field('pipelineFlow', {
+      type: 'PipelineFlow',
+      args: {
+        id: nonNull(stringArg()),
+        flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
+      },
+      resolve: async (_parent, { id, flowCalculationDirection }, ctx: Context) => {
+        const resultArray = await totalPipelineFlowRawQuery({ idList: [id], flowCalculationDirection, ctx });
+        const result = resultArray[0];
+
+        return result;
       }
     })
   },

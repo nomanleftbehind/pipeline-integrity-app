@@ -968,11 +968,6 @@ export type PipelineFlow = {
   water: Scalars['Float'];
 };
 
-export type PipelineFlowAndSourceGroupBy = {
-  pipelineFlow?: Maybe<Array<Maybe<PipelineFlow>>>;
-  sourceGroupBy?: Maybe<SourceGroupBy>;
-};
-
 export type PipelinePayload = {
   error?: Maybe<FieldError>;
   pipeline?: Maybe<Pipeline>;
@@ -982,6 +977,11 @@ export type PipelineUniqueInput = {
   id?: Maybe<Scalars['String']>;
   license?: Maybe<Scalars['String']>;
   segment?: Maybe<Scalars['String']>;
+};
+
+export type PipelinesFlowAndSourceGroupBy = {
+  pipelinesFlow?: Maybe<Array<Maybe<PipelineFlow>>>;
+  sourceGroupBy?: Maybe<SourceGroupBy>;
 };
 
 export type PressureTest = {
@@ -1017,15 +1017,16 @@ export type Query = {
   allFacilities?: Maybe<Array<Maybe<Facility>>>;
   allSatellites?: Maybe<Array<Maybe<Satellite>>>;
   allUsers?: Maybe<Array<Maybe<User>>>;
-  connectedPipelinesByPipelineId?: Maybe<PipelineFlowAndSourceGroupBy>;
+  connectedPipelinesByPipelineId?: Maybe<PipelinesFlowAndSourceGroupBy>;
   licenseChangesByPipelineId?: Maybe<Array<Maybe<LicenseChange>>>;
   me?: Maybe<User>;
   pigRunsByPipelineId?: Maybe<Array<Maybe<PigRun>>>;
   pipelineBatchesByPipelineId?: Maybe<Array<Maybe<PipelineBatch>>>;
-  pipelineFlow?: Maybe<Array<Maybe<PipelineFlow>>>;
+  pipelineFlow?: Maybe<PipelineFlow>;
   pipelineOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   pipelinesById?: Maybe<Array<Maybe<Pipeline>>>;
   pipelinesByUser?: Maybe<Array<Maybe<Pipeline>>>;
+  pipelinesFlow?: Maybe<Array<Maybe<PipelineFlow>>>;
   pressureTestsByPipelineId?: Maybe<Array<Maybe<PressureTest>>>;
   riskById?: Maybe<Risk>;
   salesPointOptions?: Maybe<Array<Maybe<SourceOptions>>>;
@@ -1064,7 +1065,7 @@ export type QueryPipelineBatchesByPipelineIdArgs = {
 
 export type QueryPipelineFlowArgs = {
   flowCalculationDirection: FlowCalculationDirectionEnum;
-  idList: Array<Maybe<Scalars['String']>>;
+  id: Scalars['String'];
 };
 
 
@@ -1084,6 +1085,12 @@ export type QueryPipelinesByUserArgs = {
 };
 
 
+export type QueryPipelinesFlowArgs = {
+  flowCalculationDirection: FlowCalculationDirectionEnum;
+  idList: Array<Maybe<Scalars['String']>>;
+};
+
+
 export type QueryPressureTestsByPipelineIdArgs = {
   pipelineId: Scalars['String'];
 };
@@ -1091,6 +1098,11 @@ export type QueryPressureTestsByPipelineIdArgs = {
 
 export type QueryRiskByIdArgs = {
   id: Scalars['String'];
+};
+
+
+export type QuerySalesPointOptionsArgs = {
+  pipelineId: Scalars['String'];
 };
 
 
@@ -1928,7 +1940,9 @@ export type SalesPointsGroupByPipelineIdQueryVariables = Exact<{
 
 export type SalesPointsGroupByPipelineIdQuery = { salesPointsGroupByPipelineId?: { oil?: number | null | undefined, water?: number | null | undefined, gas?: number | null | undefined, gasAssociatedLiquids?: number | null | undefined, totalFluids?: number | null | undefined, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined };
 
-export type SalesPointOptionsQueryVariables = Exact<{ [key: string]: never; }>;
+export type SalesPointOptionsQueryVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
 
 
 export type SalesPointOptionsQuery = { salesPointOptions?: Array<{ facility?: string | null | undefined, satellite?: string | null | undefined, id: string, source: string, disabled: boolean } | null | undefined> | null | undefined };
@@ -1939,7 +1953,15 @@ export type ConnectedPipelinesByPipelineIdQueryVariables = Exact<{
 }>;
 
 
-export type ConnectedPipelinesByPipelineIdQuery = { connectedPipelinesByPipelineId?: { pipelineFlow?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined, sourceGroupBy?: { oil?: number | null | undefined, water?: number | null | undefined, gas?: number | null | undefined, gasAssociatedLiquids?: number | null | undefined, totalFluids?: number | null | undefined, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined } | null | undefined };
+export type ConnectedPipelinesByPipelineIdQuery = { connectedPipelinesByPipelineId?: { pipelinesFlow?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined, sourceGroupBy?: { oil?: number | null | undefined, water?: number | null | undefined, gas?: number | null | undefined, gasAssociatedLiquids?: number | null | undefined, totalFluids?: number | null | undefined, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined } | null | undefined };
+
+export type PipelineFlowQueryVariables = Exact<{
+  id: Scalars['String'];
+  flowCalculationDirection: FlowCalculationDirectionEnum;
+}>;
+
+
+export type PipelineFlowQuery = { pipelineFlow?: { oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined };
 
 export type PipelineOptionsQueryVariables = Exact<{
   id: Scalars['String'];
@@ -1955,13 +1977,13 @@ export type RiskByIdQueryVariables = Exact<{
 
 export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, consequenceEnviro?: number | null | undefined, consequenceAsset?: number | null | undefined, probabilityInterior?: number | null | undefined, probabilityExterior?: number | null | undefined, conequenceMax?: number | null | undefined, riskPotentialGeo?: number | null | undefined, riskPotentialInternal?: number | null | undefined, riskPotentialExternal?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, consequencePeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: number | null | undefined, safeguardPigging?: number | null | undefined, safeguardChemicalInhibition?: number | null | undefined, probabilityInteriorWithSafeguards?: number | null | undefined, riskPotentialInternalWithSafeguards?: number | null | undefined, safeguardExternalCoating?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
 
-export type PipelineFlowQueryVariables = Exact<{
+export type PipelinesFlowQueryVariables = Exact<{
   idList: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
   flowCalculationDirection: FlowCalculationDirectionEnum;
 }>;
 
 
-export type PipelineFlowQuery = { pipelineFlow?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined };
+export type PipelinesFlowQuery = { pipelinesFlow?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined };
 
 export type SideBarQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4857,8 +4879,8 @@ export type SalesPointsGroupByPipelineIdQueryHookResult = ReturnType<typeof useS
 export type SalesPointsGroupByPipelineIdLazyQueryHookResult = ReturnType<typeof useSalesPointsGroupByPipelineIdLazyQuery>;
 export type SalesPointsGroupByPipelineIdQueryResult = Apollo.QueryResult<SalesPointsGroupByPipelineIdQuery, SalesPointsGroupByPipelineIdQueryVariables>;
 export const SalesPointOptionsDocument = gql`
-    query SalesPointOptions {
-  salesPointOptions {
+    query SalesPointOptions($pipelineId: String!) {
+  salesPointOptions(pipelineId: $pipelineId) {
     facility
     satellite
     id
@@ -4880,10 +4902,11 @@ export const SalesPointOptionsDocument = gql`
  * @example
  * const { data, loading, error } = useSalesPointOptionsQuery({
  *   variables: {
+ *      pipelineId: // value for 'pipelineId'
  *   },
  * });
  */
-export function useSalesPointOptionsQuery(baseOptions?: Apollo.QueryHookOptions<SalesPointOptionsQuery, SalesPointOptionsQueryVariables>) {
+export function useSalesPointOptionsQuery(baseOptions: Apollo.QueryHookOptions<SalesPointOptionsQuery, SalesPointOptionsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<SalesPointOptionsQuery, SalesPointOptionsQueryVariables>(SalesPointOptionsDocument, options);
       }
@@ -4900,7 +4923,7 @@ export const ConnectedPipelinesByPipelineIdDocument = gql`
     id: $id
     flowCalculationDirection: $flowCalculationDirection
   ) {
-    pipelineFlow {
+    pipelinesFlow {
       id
       name
       oil
@@ -4956,6 +4979,50 @@ export function useConnectedPipelinesByPipelineIdLazyQuery(baseOptions?: Apollo.
 export type ConnectedPipelinesByPipelineIdQueryHookResult = ReturnType<typeof useConnectedPipelinesByPipelineIdQuery>;
 export type ConnectedPipelinesByPipelineIdLazyQueryHookResult = ReturnType<typeof useConnectedPipelinesByPipelineIdLazyQuery>;
 export type ConnectedPipelinesByPipelineIdQueryResult = Apollo.QueryResult<ConnectedPipelinesByPipelineIdQuery, ConnectedPipelinesByPipelineIdQueryVariables>;
+export const PipelineFlowDocument = gql`
+    query PipelineFlow($id: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
+  pipelineFlow(id: $id, flowCalculationDirection: $flowCalculationDirection) {
+    oil
+    water
+    gas
+    gasAssociatedLiquids
+    totalFluids
+    firstProduction
+    lastProduction
+    firstInjection
+    lastInjection
+  }
+}
+    `;
+
+/**
+ * __usePipelineFlowQuery__
+ *
+ * To run a query within a React component, call `usePipelineFlowQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePipelineFlowQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePipelineFlowQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      flowCalculationDirection: // value for 'flowCalculationDirection'
+ *   },
+ * });
+ */
+export function usePipelineFlowQuery(baseOptions: Apollo.QueryHookOptions<PipelineFlowQuery, PipelineFlowQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PipelineFlowQuery, PipelineFlowQueryVariables>(PipelineFlowDocument, options);
+      }
+export function usePipelineFlowLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PipelineFlowQuery, PipelineFlowQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PipelineFlowQuery, PipelineFlowQueryVariables>(PipelineFlowDocument, options);
+        }
+export type PipelineFlowQueryHookResult = ReturnType<typeof usePipelineFlowQuery>;
+export type PipelineFlowLazyQueryHookResult = ReturnType<typeof usePipelineFlowLazyQuery>;
+export type PipelineFlowQueryResult = Apollo.QueryResult<PipelineFlowQuery, PipelineFlowQueryVariables>;
 export const PipelineOptionsDocument = gql`
     query PipelineOptions($id: String!) {
   pipelineOptions(id: $id) {
@@ -5072,9 +5139,9 @@ export function useRiskByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<R
 export type RiskByIdQueryHookResult = ReturnType<typeof useRiskByIdQuery>;
 export type RiskByIdLazyQueryHookResult = ReturnType<typeof useRiskByIdLazyQuery>;
 export type RiskByIdQueryResult = Apollo.QueryResult<RiskByIdQuery, RiskByIdQueryVariables>;
-export const PipelineFlowDocument = gql`
-    query PipelineFlow($idList: [String]!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
-  pipelineFlow(
+export const PipelinesFlowDocument = gql`
+    query PipelinesFlow($idList: [String]!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
+  pipelinesFlow(
     idList: $idList
     flowCalculationDirection: $flowCalculationDirection
   ) {
@@ -5094,33 +5161,33 @@ export const PipelineFlowDocument = gql`
     `;
 
 /**
- * __usePipelineFlowQuery__
+ * __usePipelinesFlowQuery__
  *
- * To run a query within a React component, call `usePipelineFlowQuery` and pass it any options that fit your needs.
- * When your component renders, `usePipelineFlowQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `usePipelinesFlowQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePipelinesFlowQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = usePipelineFlowQuery({
+ * const { data, loading, error } = usePipelinesFlowQuery({
  *   variables: {
  *      idList: // value for 'idList'
  *      flowCalculationDirection: // value for 'flowCalculationDirection'
  *   },
  * });
  */
-export function usePipelineFlowQuery(baseOptions: Apollo.QueryHookOptions<PipelineFlowQuery, PipelineFlowQueryVariables>) {
+export function usePipelinesFlowQuery(baseOptions: Apollo.QueryHookOptions<PipelinesFlowQuery, PipelinesFlowQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<PipelineFlowQuery, PipelineFlowQueryVariables>(PipelineFlowDocument, options);
+        return Apollo.useQuery<PipelinesFlowQuery, PipelinesFlowQueryVariables>(PipelinesFlowDocument, options);
       }
-export function usePipelineFlowLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PipelineFlowQuery, PipelineFlowQueryVariables>) {
+export function usePipelinesFlowLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PipelinesFlowQuery, PipelinesFlowQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<PipelineFlowQuery, PipelineFlowQueryVariables>(PipelineFlowDocument, options);
+          return Apollo.useLazyQuery<PipelinesFlowQuery, PipelinesFlowQueryVariables>(PipelinesFlowDocument, options);
         }
-export type PipelineFlowQueryHookResult = ReturnType<typeof usePipelineFlowQuery>;
-export type PipelineFlowLazyQueryHookResult = ReturnType<typeof usePipelineFlowLazyQuery>;
-export type PipelineFlowQueryResult = Apollo.QueryResult<PipelineFlowQuery, PipelineFlowQueryVariables>;
+export type PipelinesFlowQueryHookResult = ReturnType<typeof usePipelinesFlowQuery>;
+export type PipelinesFlowLazyQueryHookResult = ReturnType<typeof usePipelinesFlowLazyQuery>;
+export type PipelinesFlowQueryResult = Apollo.QueryResult<PipelinesFlowQuery, PipelinesFlowQueryVariables>;
 export const SideBarDocument = gql`
     query SideBar {
   sideBar {

@@ -156,24 +156,6 @@ export const WellQuery = extendType({
       },
       resolve: async (_parent, { pipelineId }, ctx: Context) => {
 
-        // const result = await ctx.prisma.$queryRaw<NexusGenObjects['SourceOptions'][]>`
-        // SELECT
-
-        // COALESCE(f.name, 'no facility') "facility",
-        // COALESCE(s.name, 'no satellite') "satellite",
-        // w.id,
-        // w.name "source"
-
-        // FROM "ppl_db"."Well" w
-        // LEFT OUTER JOIN "ppl_db"."Pipeline" pip ON pip."id" = w."pipelineId"
-        // LEFT OUTER JOIN "ppl_db"."Satellite" s ON s."id" = pip."satelliteId"
-        // LEFT OUTER JOIN "ppl_db"."Facility" f ON f."id" = s."facilityId"
-
-        // ORDER BY f.name, s.name, w.name
-        // `
-        // return result;
-
-        // const ids: string[] = [];
         const connectedWells = await ctx.prisma.well.findMany({
           where: { pipelineId },
           select: {

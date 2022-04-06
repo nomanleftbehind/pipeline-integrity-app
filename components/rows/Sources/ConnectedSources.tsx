@@ -22,10 +22,12 @@ import {
   SalesPointsGroupByPipelineIdDocument,
 
   useConnectedPipelinesByPipelineIdQuery,
+  usePipelineFlowQuery,
   usePipelineOptionsLazyQuery,
   useConnectPipelineMutation,
   useDisconnectPipelineMutation,
   ConnectedPipelinesByPipelineIdDocument,
+  PipelineFlowDocument,
 
   RiskByIdDocument,
 } from '../../../graphql/generated/graphql';
@@ -52,6 +54,12 @@ interface ISourcesProps {
 
 export default function ConnectedSources({ pipelineId, flowCalculationDirection }: ISourcesProps) {
 
+  // Total pipeline flow
+  const { data: dataPipelineFlow } = usePipelineFlowQuery({ variables: { id: pipelineId, flowCalculationDirection } });
+  const { oil, water, gas, gasAssociatedLiquids, totalFluids, lastProduction, lastInjection, firstProduction, firstInjection } = dataPipelineFlow?.pipelineFlow || {};
+
+
+
   // Well queries and mutations
   const { data: dataWells } = useWellsByPipelineIdQuery({ variables: { pipelineId } });
   const { data: dataWellsGroupBy } = useWellsGroupByPipelineIdQuery({ variables: { pipelineId } });
@@ -65,7 +73,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
 
 
   const [connectWell] = useConnectWellMutation({
-    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId', WellsGroupByPipelineIdDocument, 'WellsGroupByPipelineId', ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId'],
+    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId', WellsGroupByPipelineIdDocument, 'WellsGroupByPipelineId', ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId', PipelineFlowDocument, 'PipelineFlow'],
     onCompleted: ({ connectWell }) => {
       const { error } = connectWell || {};
       if (error) {
@@ -78,7 +86,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
   }
 
   const [disconnectWell] = useDisconnectWellMutation({
-    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId', WellsGroupByPipelineIdDocument, 'WellsGroupByPipelineId', ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId'],
+    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId', WellsGroupByPipelineIdDocument, 'WellsGroupByPipelineId', ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId', PipelineFlowDocument, 'PipelineFlow'],
     onCompleted: ({ disconnectWell }) => {
       const { error } = disconnectWell || {};
       if (error) {
@@ -97,6 +105,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
   const { data: dataSalesPoints } = useSalesPointsByPipelineIdQuery({ variables: { pipelineId } });
   const { data: dataSalesPointsGroupBy } = useSalesPointsGroupByPipelineIdQuery({ variables: { pipelineId } });
   const [salesPointOptions, { data: dataSalesPointOptions }] = useSalesPointOptionsLazyQuery({
+    variables: { pipelineId },
     fetchPolicy: 'no-cache'
   });
   const loadSalesPointOptions = () => {
@@ -104,7 +113,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
   }
 
   const [connectSalesPoint] = useConnectSalesPointMutation({
-    refetchQueries: [SalesPointsByPipelineIdDocument, 'SalesPointsByPipelineId', SalesPointsGroupByPipelineIdDocument, 'SalesPointsGroupByPipelineId', ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId'],
+    refetchQueries: [SalesPointsByPipelineIdDocument, 'SalesPointsByPipelineId', SalesPointsGroupByPipelineIdDocument, 'SalesPointsGroupByPipelineId', ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId', PipelineFlowDocument, 'PipelineFlow'],
     onCompleted: ({ connectSalesPoint }) => {
       const { error } = connectSalesPoint || {};
       if (error) {
@@ -117,7 +126,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
   }
 
   const [disconnectSalesPoint] = useDisconnectSalesPointMutation({
-    refetchQueries: [SalesPointsByPipelineIdDocument, 'SalesPointsByPipelineId', SalesPointsGroupByPipelineIdDocument, 'SalesPointsGroupByPipelineId', ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId'],
+    refetchQueries: [SalesPointsByPipelineIdDocument, 'SalesPointsByPipelineId', SalesPointsGroupByPipelineIdDocument, 'SalesPointsGroupByPipelineId', ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId', PipelineFlowDocument, 'PipelineFlow'],
     onCompleted: ({ disconnectSalesPoint }) => {
       const { error } = disconnectSalesPoint || {};
       if (error) {
@@ -143,7 +152,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
   }
 
   const [connectPipeline] = useConnectPipelineMutation({
-    refetchQueries: [ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId'],
+    refetchQueries: [ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId', PipelineFlowDocument, 'PipelineFlow'],
     onCompleted: ({ connectPipeline }) => {
       const { error } = connectPipeline || {};
       if (error) {
@@ -156,7 +165,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
   }
 
   const [disconnectPipeline] = useDisconnectPipelineMutation({
-    refetchQueries: [ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId'],
+    refetchQueries: [ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId', PipelineFlowDocument, 'PipelineFlow'],
     onCompleted: ({ disconnectPipeline }) => {
       const { error } = disconnectPipeline || {};
       if (error) {
@@ -193,6 +202,18 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
     { label: 'First Injection', props: { style: { width: '100px' } } },
   ];
 
+  const totalFlow = [
+    { record: oil?.toFixed(2) },
+    { record: water?.toFixed(2) },
+    { record: gas?.toFixed(2) },
+    { record: gasAssociatedLiquids?.toFixed(3) },
+    { record: totalFluids?.toFixed(2) },
+    { record: lastProduction?.split('T')[0] },
+    { record: lastInjection?.split('T')[0] },
+    { record: firstProduction?.split('T')[0] },
+    { record: firstInjection?.split('T')[0] },
+  ];
+
   return (
     <>
       {isModalOpen && <ModalFieldError
@@ -213,6 +234,14 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
                 </th>
               )
             })}
+          </tr>
+        </thead>
+        <thead className='total-flow'>
+          <tr>
+            <th className='sticky left'></th>
+            <th>Total</th>
+            <th></th>
+            {totalFlow.map(({ record }, key) => <th key={key}>{record}</th>)}
           </tr>
         </thead>
         <SourceData
@@ -238,7 +267,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
         <SourceData
           pipelineId={pipelineId}
           label={`Connected ${flowCalculationDirection} Pipelines`}
-          data={dataConnectedPipelines?.connectedPipelinesByPipelineId?.pipelineFlow}
+          data={dataConnectedPipelines?.connectedPipelinesByPipelineId?.pipelinesFlow}
           dataGroupBy={dataConnectedPipelines?.connectedPipelinesByPipelineId?.sourceGroupBy}
           loadOptions={loadPipelineOptions}
           dataOptions={dataPipelineOptions?.pipelineOptions}
