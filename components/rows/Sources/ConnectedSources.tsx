@@ -14,10 +14,12 @@ import {
 
 
   useSalesPointsByPipelineIdQuery,
+  useSalesPointsGroupByPipelineIdQuery,
   useSalesPointOptionsLazyQuery,
   useConnectSalesPointMutation,
   useDisconnectSalesPointMutation,
   SalesPointsByPipelineIdDocument,
+  SalesPointsGroupByPipelineIdDocument,
 
   useConnectedPipelinesByPipelineIdQuery,
   usePipelineOptionsLazyQuery,
@@ -54,6 +56,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
   const { data: dataWells } = useWellsByPipelineIdQuery({ variables: { pipelineId } });
   const { data: dataWellsGroupBy } = useWellsGroupByPipelineIdQuery({ variables: { pipelineId } });
   const [wellOptions, { data: dataWellOptions }] = useWellOptionsLazyQuery({
+    variables: { pipelineId },
     fetchPolicy: 'no-cache'
   });
   const loadWellOptions = () => {
@@ -62,7 +65,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
 
 
   const [connectWell] = useConnectWellMutation({
-    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId', WellsGroupByPipelineIdDocument, 'WellsGroupByPipelineId'],
+    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId', WellsGroupByPipelineIdDocument, 'WellsGroupByPipelineId', ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId'],
     onCompleted: ({ connectWell }) => {
       const { error } = connectWell || {};
       if (error) {
@@ -75,7 +78,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
   }
 
   const [disconnectWell] = useDisconnectWellMutation({
-    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId', WellsGroupByPipelineIdDocument, 'WellsGroupByPipelineId'],
+    refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId', WellsGroupByPipelineIdDocument, 'WellsGroupByPipelineId', ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId'],
     onCompleted: ({ disconnectWell }) => {
       const { error } = disconnectWell || {};
       if (error) {
@@ -92,6 +95,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
 
   // Sales point queries and mutations
   const { data: dataSalesPoints } = useSalesPointsByPipelineIdQuery({ variables: { pipelineId } });
+  const { data: dataSalesPointsGroupBy } = useSalesPointsGroupByPipelineIdQuery({ variables: { pipelineId } });
   const [salesPointOptions, { data: dataSalesPointOptions }] = useSalesPointOptionsLazyQuery({
     fetchPolicy: 'no-cache'
   });
@@ -100,7 +104,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
   }
 
   const [connectSalesPoint] = useConnectSalesPointMutation({
-    refetchQueries: [SalesPointsByPipelineIdDocument, 'SalesPointsByPipelineId'],
+    refetchQueries: [SalesPointsByPipelineIdDocument, 'SalesPointsByPipelineId', SalesPointsGroupByPipelineIdDocument, 'SalesPointsGroupByPipelineId', ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId'],
     onCompleted: ({ connectSalesPoint }) => {
       const { error } = connectSalesPoint || {};
       if (error) {
@@ -113,7 +117,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
   }
 
   const [disconnectSalesPoint] = useDisconnectSalesPointMutation({
-    refetchQueries: [SalesPointsByPipelineIdDocument, 'SalesPointsByPipelineId'],
+    refetchQueries: [SalesPointsByPipelineIdDocument, 'SalesPointsByPipelineId', SalesPointsGroupByPipelineIdDocument, 'SalesPointsGroupByPipelineId', ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId'],
     onCompleted: ({ disconnectSalesPoint }) => {
       const { error } = disconnectSalesPoint || {};
       if (error) {
@@ -131,6 +135,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
   // Connected pipeline queries and mutations
   const { data: dataConnectedPipelines } = useConnectedPipelinesByPipelineIdQuery({ variables: { id: pipelineId, flowCalculationDirection } });
   const [pipelineOptions, { data: dataPipelineOptions }] = usePipelineOptionsLazyQuery({
+    variables: { id: pipelineId },
     fetchPolicy: 'no-cache'
   });
   const loadPipelineOptions = () => {
@@ -224,6 +229,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
           pipelineId={pipelineId}
           label='Sales Points'
           data={dataSalesPoints?.salesPointsByPipelineId}
+          dataGroupBy={dataSalesPointsGroupBy?.salesPointsGroupByPipelineId}
           loadOptions={loadSalesPointOptions}
           dataOptions={dataSalesPointOptions?.salesPointOptions}
           connectSource={handleConnectSalesPoint}
@@ -232,7 +238,8 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
         <SourceData
           pipelineId={pipelineId}
           label={`Connected ${flowCalculationDirection} Pipelines`}
-          data={dataConnectedPipelines?.connectedPipelinesByPipelineId}
+          data={dataConnectedPipelines?.connectedPipelinesByPipelineId?.pipelineFlow}
+          dataGroupBy={dataConnectedPipelines?.connectedPipelinesByPipelineId?.sourceGroupBy}
           loadOptions={loadPipelineOptions}
           dataOptions={dataPipelineOptions?.pipelineOptions}
           connectSource={handleConnectPipeline}

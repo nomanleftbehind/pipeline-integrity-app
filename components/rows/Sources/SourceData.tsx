@@ -12,6 +12,7 @@ import {
   WellsGroupByPipelineIdQuery,
   WellOptionsQuery,
   SalesPointsByPipelineIdQuery,
+  SalesPointsGroupByPipelineIdQuery,
   SalesPointOptionsQuery,
   ConnectedPipelinesByPipelineIdQuery,
   PipelineOptionsQuery,
@@ -31,8 +32,8 @@ export interface ISourceMap {
 interface ISourcesDataProps {
   pipelineId: string;
   label: string;
-  data?: WellsByPipelineIdQuery['wellsByPipelineId'] | SalesPointsByPipelineIdQuery['salesPointsByPipelineId'] | ConnectedPipelinesByPipelineIdQuery['connectedPipelinesByPipelineId'];
-  dataGroupBy?: WellsGroupByPipelineIdQuery['wellsGroupByPipelineId'];
+  data?: WellsByPipelineIdQuery['wellsByPipelineId'] | SalesPointsByPipelineIdQuery['salesPointsByPipelineId'] | NonNullable<ConnectedPipelinesByPipelineIdQuery['connectedPipelinesByPipelineId']>['pipelineFlow'];
+  dataGroupBy?: WellsGroupByPipelineIdQuery['wellsGroupByPipelineId'] | SalesPointsGroupByPipelineIdQuery['salesPointsGroupByPipelineId'] | NonNullable<ConnectedPipelinesByPipelineIdQuery['connectedPipelinesByPipelineId']>['sourceGroupBy'];
   loadOptions: () => void;
   dataOptions?: WellOptionsQuery['wellOptions'] | SalesPointOptionsQuery['salesPointOptions'] | PipelineOptionsQuery['pipelineOptions'];
   connectSource: (arg0: IConnectSource) => void;

@@ -112,6 +112,24 @@ export const SalesPointQuery = extendType({
         return result;
       }
     })
+    t.field('salesPointsGroupByPipelineId', {
+      type: 'SourceGroupBy',
+      args: {
+        pipelineId: nonNull(stringArg()),
+      },
+      resolve: async (_, { pipelineId }, ctx: Context) => {
+        const total = await ctx.prisma.salesPoint.groupBy({
+          by: ['pipelineId'],
+          _sum: { oil: true, water: true, gas: true },
+          _max: { lastProduction: true, lastInjection: true },
+          _min: { firstProduction: true, firstInjection: true },
+          where: { pipelineId }
+        });
+        const { _sum: { oil, water, gas }, _max: { lastProduction, lastInjection }, _min: { firstProduction, firstInjection } } = total[0] || {};
+        const result = { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection }
+        return result;
+      },
+    })
   }
 })
 

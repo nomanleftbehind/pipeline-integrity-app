@@ -31,8 +31,8 @@ export default function AutocompleteForm({ pipelineId, options, connectSource }:
       for (let i = 0; i < options.length; i++) {
         const sourceOption = options[i];
         if (sourceOption) {
-          const { facility, satellite, id, source } = sourceOption;
-          arr.push({ disabled: false, groupBy: facility, value: source, id });
+          const { facility, satellite, id, source, disabled } = sourceOption;
+          arr.push({ disabled, groupBy: facility || 'no facility', value: source, id });
         }
       }
 
@@ -74,6 +74,7 @@ export default function AutocompleteForm({ pipelineId, options, connectSource }:
             options={optionsArray}
             getOptionLabel={(option) => option.value}
             groupBy={(option) => option.groupBy}
+            getOptionDisabled={(option) => option.disabled}
             size="small"
             sx={{ width: 230, height: 33,/* Default button padding is 12px and makes button fall awkwardly half way outside of input element, so we are setting it to 0 */ '& button': { padding: 0 }, '& div': { height: 33 } }}
             renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, style: { fontSize: 'small' } }} /*label={injectionPointType}*/ />}

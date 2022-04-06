@@ -95,10 +95,11 @@ const resolveWellAuthorized = (user: IUser) => {
 export const SourceOptions = objectType({
   name: 'SourceOptions',
   definition(t) {
-    t.nonNull.string('facility')
-    t.nonNull.string('satellite')
+    t.string('facility')
+    t.string('satellite')
     t.nonNull.string('id')
     t.nonNull.string('source')
+    t.nonNull.boolean('disabled')
   }
 });
 
@@ -150,23 +151,66 @@ export const WellQuery = extendType({
     })
     t.list.field('wellOptions', {
       type: 'SourceOptions',
-      resolve: async (_parent, _args, ctx: Context) => {
+      args: {
+        pipelineId: nonNull(stringArg()),
+      },
+      resolve: async (_parent, { pipelineId }, ctx: Context) => {
 
-        const result = await ctx.prisma.$queryRaw<NexusGenObjects['SourceOptions'][]>`
-        SELECT
+        // const result = await ctx.prisma.$queryRaw<NexusGenObjects['SourceOptions'][]>`
+        // SELECT
 
-        COALESCE(f.name, 'no facility') "facility",
-        COALESCE(s.name, 'no satellite') "satellite",
-        w.id,
-        w.name "source"
+        // COALESCE(f.name, 'no facility') "facility",
+        // COALESCE(s.name, 'no satellite') "satellite",
+        // w.id,
+        // w.name "source"
 
-        FROM "ppl_db"."Well" w
-        LEFT OUTER JOIN "ppl_db"."Pipeline" pip ON pip."id" = w."pipelineId"
-        LEFT OUTER JOIN "ppl_db"."Satellite" s ON s."id" = pip."satelliteId"
-        LEFT OUTER JOIN "ppl_db"."Facility" f ON f."id" = s."facilityId"
+        // FROM "ppl_db"."Well" w
+        // LEFT OUTER JOIN "ppl_db"."Pipeline" pip ON pip."id" = w."pipelineId"
+        // LEFT OUTER JOIN "ppl_db"."Satellite" s ON s."id" = pip."satelliteId"
+        // LEFT OUTER JOIN "ppl_db"."Facility" f ON f."id" = s."facilityId"
 
-        ORDER BY f.name, s.name, w.name
-        `
+        // ORDER BY f.name, s.name, w.name
+        // `
+        // return result;
+
+        // const ids: string[] = [];
+        const connectedWells = await ctx.prisma.well.findMany({
+          where: { pipelineId },
+          select: {
+            id: true,
+          },
+        });
+        const ids = connectedWells.map(({ id }) => id);
+        const options = await ctx.prisma.well.findMany({
+          select: {
+            id: true,
+            name: true,
+            pipeline: {
+              select: {
+                satellite: {
+                  select: {
+                    name: true,
+                    facility: {
+                      select: {
+                        name: true,
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          orderBy: [{ pipeline: { satellite: { facility: { name: 'asc' } } } }, { pipeline: { satellite: { name: 'asc' } } }, { name: 'asc' }]
+        });
+
+        const result = options.map(({ id, pipeline, name }) => {
+          const { satellite } = pipeline || {};
+          const { name: satelliteName, facility } = satellite || {};
+          const { name: facilityName } = facility || {};
+          const result = { source: name, facility: facilityName, satellite: satelliteName, id, disabled: ids.includes(id) }
+          return result;
+        });
+
         return result;
       }
     })

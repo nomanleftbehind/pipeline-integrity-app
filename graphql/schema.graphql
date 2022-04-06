@@ -689,6 +689,11 @@ type PipelineFlow {
   water: Float!
 }
 
+type PipelineFlowAndSourceGroupBy {
+  pipelineFlow: [PipelineFlow]
+  sourceGroupBy: SourceGroupBy
+}
+
 type PipelinePayload {
   error: FieldError
   pipeline: Pipeline
@@ -733,24 +738,25 @@ type Query {
   allFacilities: [Facility]
   allSatellites: [Satellite]
   allUsers: [User]
-  connectedPipelinesByPipelineId(flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): [PipelineFlow]
+  connectedPipelinesByPipelineId(flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): PipelineFlowAndSourceGroupBy
   licenseChangesByPipelineId(pipelineId: String!): [LicenseChange]
   me: User
   pigRunsByPipelineId(pipelineId: String!): [PigRun]
   pipelineBatchesByPipelineId(pipelineId: String!): [PipelineBatch]
   pipelineFlow(flowCalculationDirection: FlowCalculationDirectionEnum!, idList: [String]!): [PipelineFlow]
-  pipelineOptions: [SourceOptions]
+  pipelineOptions(id: String!): [SourceOptions]
   pipelinesById(id: String, table: String): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
   pressureTestsByPipelineId(pipelineId: String!): [PressureTest]
   riskById(id: String!): Risk
   salesPointOptions: [SourceOptions]
   salesPointsByPipelineId(pipelineId: String!): [SalesPoint]
+  salesPointsGroupByPipelineId(pipelineId: String!): SourceGroupBy
   sideBar: [SideBar]
   userCount: Int
   validators: Validator
   wellBatchesByWellId(wellId: String!): [WellBatch]
-  wellOptions: [SourceOptions]
+  wellOptions(pipelineId: String!): [SourceOptions]
   wellsByPipelineId(pipelineId: String!): [Well]
   wellsGroupByPipelineId(pipelineId: String!): SourceGroupBy
 }
@@ -895,9 +901,10 @@ type SourceGroupBy {
 }
 
 type SourceOptions {
-  facility: String!
+  disabled: Boolean!
+  facility: String
   id: String!
-  satellite: String!
+  satellite: String
   source: String!
 }
 

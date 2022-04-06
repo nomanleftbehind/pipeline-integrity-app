@@ -883,12 +883,13 @@ query WellsGroupByPipelineId($pipelineId: String!) {
   }
 }
 
-query WellOptions {
-  wellOptions {
+query WellOptions($pipelineId: String!) {
+  wellOptions(pipelineId: $pipelineId) {
     facility
     satellite
     id
     source
+    disabled
   }
 }
 
@@ -920,19 +921,8 @@ query SalesPointsByPipelineId($pipelineId: String!) {
   }
 }
 
-query SalesPointOptions {
-  salesPointOptions {
-    facility
-    satellite
-    id
-    source
-  }
-}
-
-query ConnectedPipelinesByPipelineId($id: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
-  connectedPipelinesByPipelineId(id: $id, flowCalculationDirection: $flowCalculationDirection) {
-    id
-    name
+query SalesPointsGroupByPipelineId($pipelineId: String!) {
+  salesPointsGroupByPipelineId(pipelineId: $pipelineId) {
     oil
     water
     gas
@@ -945,12 +935,52 @@ query ConnectedPipelinesByPipelineId($id: String!, $flowCalculationDirection: Fl
   }
 }
 
-query PipelineOptions {
-  pipelineOptions {
+query SalesPointOptions {
+  salesPointOptions {
     facility
     satellite
     id
     source
+    disabled
+  }
+}
+
+query ConnectedPipelinesByPipelineId($id: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
+  connectedPipelinesByPipelineId(id: $id, flowCalculationDirection: $flowCalculationDirection) {
+    pipelineFlow {
+      id
+      name
+      oil
+      water
+      gas
+      gasAssociatedLiquids
+      totalFluids
+      firstProduction
+      lastProduction
+      firstInjection
+      lastInjection
+    }
+    sourceGroupBy {
+      oil
+      water
+      gas
+      gasAssociatedLiquids
+      totalFluids
+      firstProduction
+      lastProduction
+      firstInjection
+      lastInjection
+    }
+  }
+}
+
+query PipelineOptions($id: String!) {
+  pipelineOptions(id: $id) {
+    facility
+    satellite
+    id
+    source
+    disabled
   }
 }
 

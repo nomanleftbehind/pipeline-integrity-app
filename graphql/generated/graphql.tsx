@@ -968,6 +968,11 @@ export type PipelineFlow = {
   water: Scalars['Float'];
 };
 
+export type PipelineFlowAndSourceGroupBy = {
+  pipelineFlow?: Maybe<Array<Maybe<PipelineFlow>>>;
+  sourceGroupBy?: Maybe<SourceGroupBy>;
+};
+
 export type PipelinePayload = {
   error?: Maybe<FieldError>;
   pipeline?: Maybe<Pipeline>;
@@ -1012,7 +1017,7 @@ export type Query = {
   allFacilities?: Maybe<Array<Maybe<Facility>>>;
   allSatellites?: Maybe<Array<Maybe<Satellite>>>;
   allUsers?: Maybe<Array<Maybe<User>>>;
-  connectedPipelinesByPipelineId?: Maybe<Array<Maybe<PipelineFlow>>>;
+  connectedPipelinesByPipelineId?: Maybe<PipelineFlowAndSourceGroupBy>;
   licenseChangesByPipelineId?: Maybe<Array<Maybe<LicenseChange>>>;
   me?: Maybe<User>;
   pigRunsByPipelineId?: Maybe<Array<Maybe<PigRun>>>;
@@ -1025,6 +1030,7 @@ export type Query = {
   riskById?: Maybe<Risk>;
   salesPointOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   salesPointsByPipelineId?: Maybe<Array<Maybe<SalesPoint>>>;
+  salesPointsGroupByPipelineId?: Maybe<SourceGroupBy>;
   sideBar?: Maybe<Array<Maybe<SideBar>>>;
   userCount?: Maybe<Scalars['Int']>;
   validators?: Maybe<Validator>;
@@ -1062,6 +1068,11 @@ export type QueryPipelineFlowArgs = {
 };
 
 
+export type QueryPipelineOptionsArgs = {
+  id: Scalars['String'];
+};
+
+
 export type QueryPipelinesByIdArgs = {
   id?: Maybe<Scalars['String']>;
   table?: Maybe<Scalars['String']>;
@@ -1088,8 +1099,18 @@ export type QuerySalesPointsByPipelineIdArgs = {
 };
 
 
+export type QuerySalesPointsGroupByPipelineIdArgs = {
+  pipelineId: Scalars['String'];
+};
+
+
 export type QueryWellBatchesByWellIdArgs = {
   wellId: Scalars['String'];
+};
+
+
+export type QueryWellOptionsArgs = {
+  pipelineId: Scalars['String'];
 };
 
 
@@ -1242,9 +1263,10 @@ export type SourceGroupBy = {
 };
 
 export type SourceOptions = {
-  facility: Scalars['String'];
+  disabled: Scalars['Boolean'];
+  facility?: Maybe<Scalars['String']>;
   id: Scalars['String'];
-  satellite: Scalars['String'];
+  satellite?: Maybe<Scalars['String']>;
   source: Scalars['String'];
 };
 
@@ -1885,10 +1907,12 @@ export type WellsGroupByPipelineIdQueryVariables = Exact<{
 
 export type WellsGroupByPipelineIdQuery = { wellsGroupByPipelineId?: { oil?: number | null | undefined, water?: number | null | undefined, gas?: number | null | undefined, gasAssociatedLiquids?: number | null | undefined, firstProduction?: string | null | undefined, totalFluids?: number | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined };
 
-export type WellOptionsQueryVariables = Exact<{ [key: string]: never; }>;
+export type WellOptionsQueryVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
 
 
-export type WellOptionsQuery = { wellOptions?: Array<{ facility: string, satellite: string, id: string, source: string } | null | undefined> | null | undefined };
+export type WellOptionsQuery = { wellOptions?: Array<{ facility?: string | null | undefined, satellite?: string | null | undefined, id: string, source: string, disabled: boolean } | null | undefined> | null | undefined };
 
 export type SalesPointsByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -1897,10 +1921,17 @@ export type SalesPointsByPipelineIdQueryVariables = Exact<{
 
 export type SalesPointsByPipelineIdQuery = { salesPointsByPipelineId?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined, fdcRecId?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
+export type SalesPointsGroupByPipelineIdQueryVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type SalesPointsGroupByPipelineIdQuery = { salesPointsGroupByPipelineId?: { oil?: number | null | undefined, water?: number | null | undefined, gas?: number | null | undefined, gasAssociatedLiquids?: number | null | undefined, totalFluids?: number | null | undefined, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined };
+
 export type SalesPointOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SalesPointOptionsQuery = { salesPointOptions?: Array<{ facility: string, satellite: string, id: string, source: string } | null | undefined> | null | undefined };
+export type SalesPointOptionsQuery = { salesPointOptions?: Array<{ facility?: string | null | undefined, satellite?: string | null | undefined, id: string, source: string, disabled: boolean } | null | undefined> | null | undefined };
 
 export type ConnectedPipelinesByPipelineIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -1908,12 +1939,14 @@ export type ConnectedPipelinesByPipelineIdQueryVariables = Exact<{
 }>;
 
 
-export type ConnectedPipelinesByPipelineIdQuery = { connectedPipelinesByPipelineId?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined };
+export type ConnectedPipelinesByPipelineIdQuery = { connectedPipelinesByPipelineId?: { pipelineFlow?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined> | null | undefined, sourceGroupBy?: { oil?: number | null | undefined, water?: number | null | undefined, gas?: number | null | undefined, gasAssociatedLiquids?: number | null | undefined, totalFluids?: number | null | undefined, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined } | null | undefined };
 
-export type PipelineOptionsQueryVariables = Exact<{ [key: string]: never; }>;
+export type PipelineOptionsQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
 
 
-export type PipelineOptionsQuery = { pipelineOptions?: Array<{ facility: string, satellite: string, id: string, source: string } | null | undefined> | null | undefined };
+export type PipelineOptionsQuery = { pipelineOptions?: Array<{ facility?: string | null | undefined, satellite?: string | null | undefined, id: string, source: string, disabled: boolean } | null | undefined> | null | undefined };
 
 export type RiskByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -4685,12 +4718,13 @@ export type WellsGroupByPipelineIdQueryHookResult = ReturnType<typeof useWellsGr
 export type WellsGroupByPipelineIdLazyQueryHookResult = ReturnType<typeof useWellsGroupByPipelineIdLazyQuery>;
 export type WellsGroupByPipelineIdQueryResult = Apollo.QueryResult<WellsGroupByPipelineIdQuery, WellsGroupByPipelineIdQueryVariables>;
 export const WellOptionsDocument = gql`
-    query WellOptions {
-  wellOptions {
+    query WellOptions($pipelineId: String!) {
+  wellOptions(pipelineId: $pipelineId) {
     facility
     satellite
     id
     source
+    disabled
   }
 }
     `;
@@ -4707,10 +4741,11 @@ export const WellOptionsDocument = gql`
  * @example
  * const { data, loading, error } = useWellOptionsQuery({
  *   variables: {
+ *      pipelineId: // value for 'pipelineId'
  *   },
  * });
  */
-export function useWellOptionsQuery(baseOptions?: Apollo.QueryHookOptions<WellOptionsQuery, WellOptionsQueryVariables>) {
+export function useWellOptionsQuery(baseOptions: Apollo.QueryHookOptions<WellOptionsQuery, WellOptionsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<WellOptionsQuery, WellOptionsQueryVariables>(WellOptionsDocument, options);
       }
@@ -4778,6 +4813,49 @@ export function useSalesPointsByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQue
 export type SalesPointsByPipelineIdQueryHookResult = ReturnType<typeof useSalesPointsByPipelineIdQuery>;
 export type SalesPointsByPipelineIdLazyQueryHookResult = ReturnType<typeof useSalesPointsByPipelineIdLazyQuery>;
 export type SalesPointsByPipelineIdQueryResult = Apollo.QueryResult<SalesPointsByPipelineIdQuery, SalesPointsByPipelineIdQueryVariables>;
+export const SalesPointsGroupByPipelineIdDocument = gql`
+    query SalesPointsGroupByPipelineId($pipelineId: String!) {
+  salesPointsGroupByPipelineId(pipelineId: $pipelineId) {
+    oil
+    water
+    gas
+    gasAssociatedLiquids
+    totalFluids
+    firstProduction
+    lastProduction
+    firstInjection
+    lastInjection
+  }
+}
+    `;
+
+/**
+ * __useSalesPointsGroupByPipelineIdQuery__
+ *
+ * To run a query within a React component, call `useSalesPointsGroupByPipelineIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSalesPointsGroupByPipelineIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSalesPointsGroupByPipelineIdQuery({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useSalesPointsGroupByPipelineIdQuery(baseOptions: Apollo.QueryHookOptions<SalesPointsGroupByPipelineIdQuery, SalesPointsGroupByPipelineIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SalesPointsGroupByPipelineIdQuery, SalesPointsGroupByPipelineIdQueryVariables>(SalesPointsGroupByPipelineIdDocument, options);
+      }
+export function useSalesPointsGroupByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SalesPointsGroupByPipelineIdQuery, SalesPointsGroupByPipelineIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SalesPointsGroupByPipelineIdQuery, SalesPointsGroupByPipelineIdQueryVariables>(SalesPointsGroupByPipelineIdDocument, options);
+        }
+export type SalesPointsGroupByPipelineIdQueryHookResult = ReturnType<typeof useSalesPointsGroupByPipelineIdQuery>;
+export type SalesPointsGroupByPipelineIdLazyQueryHookResult = ReturnType<typeof useSalesPointsGroupByPipelineIdLazyQuery>;
+export type SalesPointsGroupByPipelineIdQueryResult = Apollo.QueryResult<SalesPointsGroupByPipelineIdQuery, SalesPointsGroupByPipelineIdQueryVariables>;
 export const SalesPointOptionsDocument = gql`
     query SalesPointOptions {
   salesPointOptions {
@@ -4785,6 +4863,7 @@ export const SalesPointOptionsDocument = gql`
     satellite
     id
     source
+    disabled
   }
 }
     `;
@@ -4821,17 +4900,30 @@ export const ConnectedPipelinesByPipelineIdDocument = gql`
     id: $id
     flowCalculationDirection: $flowCalculationDirection
   ) {
-    id
-    name
-    oil
-    water
-    gas
-    gasAssociatedLiquids
-    totalFluids
-    firstProduction
-    lastProduction
-    firstInjection
-    lastInjection
+    pipelineFlow {
+      id
+      name
+      oil
+      water
+      gas
+      gasAssociatedLiquids
+      totalFluids
+      firstProduction
+      lastProduction
+      firstInjection
+      lastInjection
+    }
+    sourceGroupBy {
+      oil
+      water
+      gas
+      gasAssociatedLiquids
+      totalFluids
+      firstProduction
+      lastProduction
+      firstInjection
+      lastInjection
+    }
   }
 }
     `;
@@ -4865,12 +4957,13 @@ export type ConnectedPipelinesByPipelineIdQueryHookResult = ReturnType<typeof us
 export type ConnectedPipelinesByPipelineIdLazyQueryHookResult = ReturnType<typeof useConnectedPipelinesByPipelineIdLazyQuery>;
 export type ConnectedPipelinesByPipelineIdQueryResult = Apollo.QueryResult<ConnectedPipelinesByPipelineIdQuery, ConnectedPipelinesByPipelineIdQueryVariables>;
 export const PipelineOptionsDocument = gql`
-    query PipelineOptions {
-  pipelineOptions {
+    query PipelineOptions($id: String!) {
+  pipelineOptions(id: $id) {
     facility
     satellite
     id
     source
+    disabled
   }
 }
     `;
@@ -4887,10 +4980,11 @@ export const PipelineOptionsDocument = gql`
  * @example
  * const { data, loading, error } = usePipelineOptionsQuery({
  *   variables: {
+ *      id: // value for 'id'
  *   },
  * });
  */
-export function usePipelineOptionsQuery(baseOptions?: Apollo.QueryHookOptions<PipelineOptionsQuery, PipelineOptionsQueryVariables>) {
+export function usePipelineOptionsQuery(baseOptions: Apollo.QueryHookOptions<PipelineOptionsQuery, PipelineOptionsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<PipelineOptionsQuery, PipelineOptionsQueryVariables>(PipelineOptionsDocument, options);
       }

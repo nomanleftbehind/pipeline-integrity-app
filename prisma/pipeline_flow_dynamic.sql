@@ -41,8 +41,34 @@ MAX(GREATEST(w."lastInjection", sp."lastInjection")) as "lastInjection"
 
 FROM "ppl_db"."Pipeline" pip
 LEFT OUTER JOIN "ppl_db"."_PipelineFollows" fl ON fl.' || connected_pipeline_join_on_column || ' = pip.id
-LEFT OUTER JOIN "ppl_db"."Well" w ON w."pipelineId" = pip.id
-LEFT OUTER JOIN "ppl_db"."SalesPoint" sp ON sp."pipelineId" = pip.id
+LEFT OUTER JOIN (	SELECT
+
+					w."pipelineId",
+					SUM(w.oil) "oil",
+					SUM(w.water) "water",
+					SUM(w.gas) as "gas",
+					MIN(w."firstProduction") as "firstProduction",
+					MAX(w."lastProduction") as "lastProduction",
+					MIN(w."firstInjection") as "firstInjection",
+					MAX(w."lastInjection") as "lastInjection"
+
+					FROM "ppl_db"."Well" w
+
+					GROUP BY w."pipelineId") w ON w."pipelineId" = pip.id
+LEFT OUTER JOIN (	SELECT
+
+					sp."pipelineId",
+					SUM(sp.oil) "oil",
+					SUM(sp.water) "water",
+					SUM(sp.gas) as "gas",
+					MIN(sp."firstProduction") as "firstProduction",
+					MAX(sp."lastProduction") as "lastProduction",
+					MIN(sp."firstInjection") as "firstInjection",
+					MAX(sp."lastInjection") as "lastInjection"
+
+					FROM "ppl_db"."SalesPoint" sp
+
+					GROUP BY sp."pipelineId") sp ON sp."pipelineId" = pip.id
 
 GROUP BY
 pip.id,

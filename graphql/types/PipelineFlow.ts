@@ -27,6 +27,14 @@ export const PipelineFlow = objectType({
   }
 });
 
+export const PipelineFlowAndSourceGroupBy = objectType({
+  name: 'PipelineFlowAndSourceGroupBy',
+  definition(t) {
+    t.list.field('pipelineFlow', { type: 'PipelineFlow' })
+    t.field('sourceGroupBy', { type: 'SourceGroupBy' })
+  }
+});
+
 interface ITotalPipelineFlowRawQueryArgs {
   idList: (string | null)[];
   flowCalculationDirection: FlowCalculationDirectionEnum;
@@ -51,22 +59,52 @@ export const PipelineFlowQuery = extendType({
   definition(t) {
     t.list.field('pipelineOptions', {
       type: 'SourceOptions',
-      resolve: async (_, _args, ctx: Context) => {
+      args: {
+        id: nonNull(stringArg()),
+      },
+      resolve: async (_, { id }, ctx: Context) => {
+        const ids = [id];
+        const currentPipeline = await ctx.prisma.pipeline.findMany({
+          where: { id },
+          select: {
+            upstream: { select: { id: true } },
+            downstream: { select: { id: true } },
+          },
+        });
+        for (const { upstream, downstream } of currentPipeline) {
+          for (const { id } of upstream) {
+            ids.push(id);
+          }
+          for (const { id } of downstream) {
+            ids.push(id);
+          }
+        }
+        const options = await ctx.prisma.pipeline.findMany({
+          select: {
+            id: true,
+            license: true,
+            segment: true,
+            satellite: {
+              select: {
+                name: true,
+                facility: {
+                  select: {
+                    name: true
+                  }
+                }
+              }
+            }
+          },
+          orderBy: [{ satellite: { facility: { name: 'asc' } } }, { satellite: { name: 'asc' } }, { license: 'asc' }, { segment: 'asc' }]
+        });
 
-        const result = await ctx.prisma.$queryRaw<NexusGenObjects['SourceOptions'][]>`
-        SELECT
+        const result = options.map(({ id, license, segment, satellite }) => {
+          const { name, facility } = satellite || {};
+          const { name: facilityName } = facility || {};
+          const result = { source: license + '-' + segment, facility: facilityName, satellite: name, id, disabled: ids.includes(id) }
+          return result;
+        });
 
-        COALESCE(f.name, 'no facility') "facility",
-        COALESCE(s.name, 'no satellite') "satellite",
-        pip.id,
-        CONCAT(pip.license, '-', pip.segment) "source"
-
-        FROM "ppl_db"."Pipeline" pip
-        LEFT OUTER JOIN "ppl_db"."Satellite" s ON s."id" = pip."satelliteId"
-        LEFT OUTER JOIN "ppl_db"."Facility" f ON f."id" = s."facilityId"
-
-        ORDER BY f.name, s.name, pip.license, pip.segment
-        `
         return result;
       }
     })
