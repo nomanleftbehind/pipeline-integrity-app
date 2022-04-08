@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
+import RecordEntry, { IRecord, IEditRecordFunction } from '../../fields/RecordEntry';
+import { IPipeline } from '../RenderPipeline';
 import SourceRow from './SourceRow';
 import { IDis_ConnectSource } from './ConnectedSources';
 import AutocompleteForm from './AutocompleteForm';
-import { IRecord } from '../../fields/RecordEntry';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
@@ -31,6 +32,15 @@ export type IDataOptions = WellOptionsQuery['wellOptions'] | SalesPointOptionsQu
 interface ISourcesDataProps {
   pipelineId: string;
   label: string;
+  recordEntryProps?: {
+    editRecord: IEditRecordFunction;
+    authorized: boolean;
+    record: IPipeline['flowCalculationDirection'];
+    validator: {
+      Upstream: string;
+      Downstream: string;
+    } | undefined;
+  };
   formId: string;
   data?: WellsByPipelineIdQuery['wellsByPipelineId'] | SalesPointsByPipelineIdQuery['salesPointsByPipelineId'] | NonNullable<ConnectedPipelinesByPipelineIdQuery['connectedPipelinesByPipelineId']>['pipelinesFlow'];
   dataGroupBy?: WellsGroupByPipelineIdQuery['wellsGroupByPipelineId'] | SalesPointsGroupByPipelineIdQuery['salesPointsGroupByPipelineId'] | NonNullable<ConnectedPipelinesByPipelineIdQuery['connectedPipelinesByPipelineId']>['sourceGroupBy'];
@@ -40,7 +50,7 @@ interface ISourcesDataProps {
   disconnectSource: (arg0: IDis_ConnectSource) => void;
 }
 
-export default function SourceData({ pipelineId, label, formId, data, dataGroupBy, loadOptions, dataOptions, connectSource, disconnectSource }: ISourcesDataProps) {
+export default function SourceData({ pipelineId, label, recordEntryProps, formId, data, dataGroupBy, loadOptions, dataOptions, connectSource, disconnectSource }: ISourcesDataProps) {
 
   useEffect(() => {
     console.log('well options', dataOptions);
@@ -77,7 +87,14 @@ export default function SourceData({ pipelineId, label, formId, data, dataGroupB
       <thead className='source-data'>
         <tr>
           <th className='connected-source-row sticky left'></th>
-          <th>{label}</th>
+          <th>{recordEntryProps ?
+            <div style={{ display: 'flex' }}>
+              <div style={{lineHeight: '38px'}}>Connected</div>
+              <div style={{ width: '130px' }}>
+                <RecordEntry id={pipelineId} columnName='flowCalculationDirection' columnType='string' nullable={false} record={recordEntryProps.record} validator={recordEntryProps.validator} authorized={recordEntryProps.authorized} editRecord={recordEntryProps.editRecord} />
+              </div>
+              <div style={{lineHeight: '38px'}}>Pipelines</div>
+            </div> : label}</th>
           <th>
             <IconButton aria-label="expand row" size="small" onClick={toggleShowOptionsForm}>
               {showOptionsForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}

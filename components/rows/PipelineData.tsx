@@ -64,6 +64,8 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, au
       return <ConnectedSources
         pipelineId={id}
         flowCalculationDirection={flowCalculationDirection}
+        editPipeline={editPipeline}
+        authorized={authorized}
       />
     }
     if (view === 'mechanical properties') {

@@ -1,7 +1,6 @@
 import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
 import { User as IUser } from '@prisma/client';
-import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
 import {
   gasAssociatedLiquidsCalc,
   totalFluidsCalc,

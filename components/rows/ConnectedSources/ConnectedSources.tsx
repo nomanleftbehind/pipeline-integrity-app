@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IRecord } from '../../fields/RecordEntry';
+import RecordEntry, { IRecord, IEditRecordFunction } from '../../fields/RecordEntry';
 import SourceData from './SourceData';
 import { ModalFieldError } from '../../Modal';
 import { IPipeline, openModal } from '../RenderPipeline';
@@ -28,7 +28,9 @@ import {
   useDisconnectPipelineMutation,
   ConnectedPipelinesByPipelineIdDocument,
   PipelineFlowDocument,
-  
+
+  useValidatorFlowCalculationDirectionQuery,
+
 } from '../../../graphql/generated/graphql';
 
 export interface ISourceHeaderMap {
@@ -50,9 +52,11 @@ export interface IDis_ConnectSource {
 interface ISourcesProps {
   pipelineId: string;
   flowCalculationDirection: IPipeline['flowCalculationDirection'];
+  editPipeline: IEditRecordFunction;
+  authorized: boolean;
 }
 
-export default function ConnectedSources({ pipelineId, flowCalculationDirection }: ISourcesProps) {
+export default function ConnectedSources({ pipelineId, flowCalculationDirection, editPipeline, authorized }: ISourcesProps) {
 
   // Total pipeline flow
   const { data: dataPipelineFlow } = usePipelineFlowQuery({ variables: { id: pipelineId, flowCalculationDirection } });
@@ -188,6 +192,13 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
     disconnectPipeline({ variables: { id, pipelineId } });
   }
 
+  const { data: dataValidatorFlowCalculationDirection } = useValidatorFlowCalculationDirectionQuery();
+  const validator = dataValidatorFlowCalculationDirection?.validators?.flowCalculationDirectionEnum;
+
+  const recordEntryProps = { editRecord: editPipeline, authorized, record: flowCalculationDirection, validator };
+
+  type a = typeof recordEntryProps
+
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
@@ -281,6 +292,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
         <SourceData
           pipelineId={pipelineId}
           label={`Connected ${flowCalculationDirection} Pipelines`}
+          recordEntryProps={recordEntryProps}
           formId='connected-pipeline'
           data={dataConnectedPipelines?.connectedPipelinesByPipelineId?.pipelinesFlow}
           dataGroupBy={dataConnectedPipelines?.connectedPipelinesByPipelineId?.sourceGroupBy}

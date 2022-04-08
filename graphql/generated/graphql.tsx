@@ -1870,6 +1870,11 @@ export type ValidatorsPipelineQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ValidatorsPipelineQuery = { validators?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, fromToFeatureEnum: { BlindEnd: string, Battery: string, Pipeline: string, Satellite: string, StorageTank: string, InjectionPlant: string, Well: string, CompressorStation: string, MeterStation: string, PumpStation: string, GasProcessingPlant: string, UndergroundCapOrTieIn: string, Header: string }, statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string } } | null | undefined };
 
+export type ValidatorFlowCalculationDirectionQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ValidatorFlowCalculationDirectionQuery = { validators?: { flowCalculationDirectionEnum: { Upstream: string, Downstream: string } } | null | undefined };
+
 export type ValidatorsLicenseChangeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -4180,6 +4185,43 @@ export function useValidatorsPipelineLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type ValidatorsPipelineQueryHookResult = ReturnType<typeof useValidatorsPipelineQuery>;
 export type ValidatorsPipelineLazyQueryHookResult = ReturnType<typeof useValidatorsPipelineLazyQuery>;
 export type ValidatorsPipelineQueryResult = Apollo.QueryResult<ValidatorsPipelineQuery, ValidatorsPipelineQueryVariables>;
+export const ValidatorFlowCalculationDirectionDocument = gql`
+    query ValidatorFlowCalculationDirection {
+  validators {
+    flowCalculationDirectionEnum {
+      Upstream
+      Downstream
+    }
+  }
+}
+    `;
+
+/**
+ * __useValidatorFlowCalculationDirectionQuery__
+ *
+ * To run a query within a React component, call `useValidatorFlowCalculationDirectionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorFlowCalculationDirectionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatorFlowCalculationDirectionQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useValidatorFlowCalculationDirectionQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorFlowCalculationDirectionQuery, ValidatorFlowCalculationDirectionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorFlowCalculationDirectionQuery, ValidatorFlowCalculationDirectionQueryVariables>(ValidatorFlowCalculationDirectionDocument, options);
+      }
+export function useValidatorFlowCalculationDirectionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorFlowCalculationDirectionQuery, ValidatorFlowCalculationDirectionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorFlowCalculationDirectionQuery, ValidatorFlowCalculationDirectionQueryVariables>(ValidatorFlowCalculationDirectionDocument, options);
+        }
+export type ValidatorFlowCalculationDirectionQueryHookResult = ReturnType<typeof useValidatorFlowCalculationDirectionQuery>;
+export type ValidatorFlowCalculationDirectionLazyQueryHookResult = ReturnType<typeof useValidatorFlowCalculationDirectionLazyQuery>;
+export type ValidatorFlowCalculationDirectionQueryResult = Apollo.QueryResult<ValidatorFlowCalculationDirectionQuery, ValidatorFlowCalculationDirectionQueryVariables>;
 export const ValidatorsLicenseChangeDocument = gql`
     query ValidatorsLicenseChange {
   validators {
