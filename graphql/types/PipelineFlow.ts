@@ -24,6 +24,44 @@ export const PipelineFlow = objectType({
     t.field('lastProduction', { type: 'DateTime' })
     t.field('firstInjection', { type: 'DateTime' })
     t.field('lastInjection', { type: 'DateTime' })
+    t.field('createdBy', {
+      type: 'User',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+        }).createdBy()
+        return result;
+      },
+    })
+    t.field('createdAt', {
+      type: 'DateTime',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const { createdAt } = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+          select: { createdAt: true },
+        }) || {}
+        return createdAt;
+      },
+    })
+    t.field('updatedBy', {
+      type: 'User',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+        }).updatedBy()
+        return result;
+      },
+    })
+    t.field('updatedAt', {
+      type: 'DateTime',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const { updatedAt } = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+          select: { updatedAt: true },
+        }) || {}
+        return updatedAt;
+      }
+    })
   }
 });
 

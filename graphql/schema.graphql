@@ -672,6 +672,8 @@ input PipelineCreateInput {
 }
 
 type PipelineFlow {
+  createdAt: DateTime
+  createdBy: User
   firstInjection: DateTime
   firstProduction: DateTime
   gas: Float!
@@ -686,6 +688,8 @@ type PipelineFlow {
   name: String!
   oil: Float!
   totalFluids: Float!
+  updatedAt: DateTime
+  updatedBy: User
   water: Float!
 }
 

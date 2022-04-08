@@ -155,7 +155,7 @@ export const WellQuery = extendType({
         pipelineId: nonNull(stringArg()),
       },
       resolve: async (_parent, { pipelineId }, ctx: Context) => {
-
+        
         const connectedWells = await ctx.prisma.well.findMany({
           where: { pipelineId },
           select: {

@@ -959,6 +959,16 @@ query ConnectedPipelinesByPipelineId($id: String!, $flowCalculationDirection: Fl
       lastProduction
       firstInjection
       lastInjection
+      createdBy {
+        id
+        email
+      }
+      createdAt
+      updatedBy {
+        id
+        email
+      }
+      updatedAt
     }
     sourceGroupBy {
       oil

@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import SourceRow from './SourceRow';
+import { IDis_ConnectSource } from './ConnectedSources';
 import AutocompleteForm from './AutocompleteForm';
 import { IRecord } from '../../fields/RecordEntry';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
-import DisconnectIcon from '../../svg/disconnect';
 
 import {
   WellsByPipelineIdQuery,
@@ -19,28 +19,33 @@ import {
 } from '../../../graphql/generated/graphql';
 
 
-interface IConnectSource {
-  id: string;
-  pipelineId: string;
-}
+
 
 export interface ISourceMap {
   record: IRecord | JSX.Element;
   style?: React.HTMLAttributes<HTMLTableCellElement>['style'];
 }
 
+export type IDataOptions = WellOptionsQuery['wellOptions'] | SalesPointOptionsQuery['salesPointOptions'] | PipelineOptionsQuery['pipelineOptions'];
+
 interface ISourcesDataProps {
   pipelineId: string;
   label: string;
+  formId: string;
   data?: WellsByPipelineIdQuery['wellsByPipelineId'] | SalesPointsByPipelineIdQuery['salesPointsByPipelineId'] | NonNullable<ConnectedPipelinesByPipelineIdQuery['connectedPipelinesByPipelineId']>['pipelinesFlow'];
   dataGroupBy?: WellsGroupByPipelineIdQuery['wellsGroupByPipelineId'] | SalesPointsGroupByPipelineIdQuery['salesPointsGroupByPipelineId'] | NonNullable<ConnectedPipelinesByPipelineIdQuery['connectedPipelinesByPipelineId']>['sourceGroupBy'];
   loadOptions: () => void;
-  dataOptions?: WellOptionsQuery['wellOptions'] | SalesPointOptionsQuery['salesPointOptions'] | PipelineOptionsQuery['pipelineOptions'];
-  connectSource: (arg0: IConnectSource) => void;
-  disconnectSource: (arg0: IConnectSource) => void;
+  dataOptions?: IDataOptions;
+  connectSource: (arg0: IDis_ConnectSource) => void;
+  disconnectSource: (arg0: IDis_ConnectSource) => void;
 }
 
-export default function SourceData({ pipelineId, label, data, dataGroupBy, loadOptions, dataOptions, connectSource, disconnectSource }: ISourcesDataProps) {
+export default function SourceData({ pipelineId, label, formId, data, dataGroupBy, loadOptions, dataOptions, connectSource, disconnectSource }: ISourcesDataProps) {
+
+  useEffect(() => {
+    console.log('well options', dataOptions);
+
+  }, [dataOptions])
 
   const [showOptionsForm, setShowOptionsForm] = useState(false);
 
@@ -49,9 +54,9 @@ export default function SourceData({ pipelineId, label, data, dataGroupBy, loadO
     setShowOptionsForm(!showOptionsForm);
   }
 
-  const handleConnectSource = ({ id, pipelineId }: IConnectSource) => {
+  const handleConnectSource = ({ id, pipelineId, oldSourceId }: IDis_ConnectSource) => {
     setShowOptionsForm(false);
-    connectSource({ id, pipelineId });
+    connectSource({ id, pipelineId, oldSourceId });
   }
 
   const { oil, water, gas, gasAssociatedLiquids, totalFluids, lastProduction, firstProduction, lastInjection, firstInjection } = dataGroupBy || {}
@@ -78,6 +83,7 @@ export default function SourceData({ pipelineId, label, data, dataGroupBy, loadO
               {showOptionsForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
             </IconButton>
           </th>
+          <th></th>
           {groupBy.map(({ record }, key) => <th key={key}>{record}</th>)}
         </tr>
       </thead>
@@ -86,42 +92,26 @@ export default function SourceData({ pipelineId, label, data, dataGroupBy, loadO
           <td className='connected-source-row sticky left'></td>
           <AutocompleteForm
             pipelineId={pipelineId}
+            formId={formId}
             connectSource={handleConnectSource}
             options={dataOptions}
           />
         </tr>}
         {data?.map((source, row) => {
           if (source) {
-            const { id, name, oil, water, gas, gasAssociatedLiquids, totalFluids, lastProduction, firstProduction, lastInjection, firstInjection } = source;
-            const isLastRow = data.length === row + 1;
-            const columns: ISourceMap[] = [
-              { record: <IconButton aria-label='delete row' size='small' onClick={() => disconnectSource({ id, pipelineId })}><DisconnectIcon /></IconButton> },
-              { record: name, style: { borderRight: 'unset', textAlign: 'left', paddingLeft: '6px' } },
-              { record: <IconButton aria-label='delete row' size='small' onClick={() => alert('hello')}><EditOutlinedIcon /></IconButton>, style: { borderLeft: 'unset' } },
-              { record: oil.toFixed(2) },
-              { record: water.toFixed(2) },
-              { record: gas.toFixed(2) },
-              { record: gasAssociatedLiquids.toFixed(3) },
-              { record: totalFluids.toFixed(2) },
-              { record: lastProduction?.split('T')[0] },
-              { record: lastInjection?.split('T')[0] },
-              { record: firstProduction?.split('T')[0] },
-              { record: firstInjection?.split('T')[0] }
-            ];
             return (
-              <tr key={row}>
-                {columns.map(({ record, style }, column) => {
-                  return (
-                    <td
-                      key={column}
-                      className={column === 0 ? `connected-source-row sticky left${isLastRow ? ' last' : ''}` : undefined}
-                      style={style}
-                    >
-                      {record}
-                    </td>
-                  );
-                })}
-              </tr>
+              <SourceRow
+                key={row}
+                pipelineId={pipelineId}
+                source={source}
+                formId={formId}
+                loadOptions={loadOptions}
+                dataOptions={dataOptions}
+                connectSource={connectSource}
+                disconnectSource={disconnectSource}
+                length={data.length}
+                row={row}
+              />
             );
           }
         })}

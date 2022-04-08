@@ -7,22 +7,26 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import {
 
   WellOptionsQuery,
+  SalesPointOptionsQuery,
+  PipelineOptionsQuery,
 
 } from '../../../graphql/generated/graphql';
 
 interface IAutocompleteFormProps {
   pipelineId: string;
-  options: WellOptionsQuery['wellOptions'];
+  sourceId?: string;
+  formId: string;
+  options: WellOptionsQuery['wellOptions'] | SalesPointOptionsQuery['salesPointOptions'] | PipelineOptionsQuery['pipelineOptions'];
   connectSource: (arg0: IDis_ConnectSource) => void;
 }
 
-export default function AutocompleteForm({ pipelineId, options, connectSource }: IAutocompleteFormProps) {
+export default function AutocompleteForm({ pipelineId, sourceId, formId, options, connectSource }: IAutocompleteFormProps) {
   const [state, setState] = useState('');
 
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    connectSource({ id: e.currentTarget.name, pipelineId });
+    connectSource({ id: e.currentTarget.name, pipelineId, oldSourceId: sourceId });
   }
 
   function renderOptions() {
@@ -42,10 +46,12 @@ export default function AutocompleteForm({ pipelineId, options, connectSource }:
 
   const optionsArray = renderOptions();
 
+  const elementId = `form-${formId}-for-pipeline-${pipelineId}-source-${sourceId}`;
+
   return (
     <>
       <td>
-        <form id='sourceForm' style={{ display: 'flex' }} name={state} onSubmit={onSubmit}>
+        <form id={elementId} style={{ display: 'flex' }} name={state} onSubmit={onSubmit}>
           <Autocomplete
             blurOnSelect
             autoComplete
@@ -76,14 +82,14 @@ export default function AutocompleteForm({ pipelineId, options, connectSource }:
             groupBy={(option) => option.groupBy}
             getOptionDisabled={(option) => option.disabled}
             size="small"
-            sx={{ width: 230, height: 33,/* Default button padding is 12px and makes button fall awkwardly half way outside of input element, so we are setting it to 0 */ '& button': { padding: 0 }, '& div': { height: 33 } }}
+            sx={{ width: 230, height: 30,/* Default button padding is 12px and makes button fall awkwardly half way outside of input element, so we are setting it to 0 */ '& button': { padding: 0 }, '& div': { height: 33 } }}
             renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, style: { fontSize: 'small' } }} /*label={injectionPointType}*/ />}
             ListboxProps={{ style: { fontSize: 'small' } }}
           />
         </form>
       </td>
       <td>
-        <button className='MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1pe4mpk-MuiButtonBase-root-MuiIconButton-root' type='submit' form='sourceForm' disabled={state === '' ? true : false}>
+        <button className='MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1pe4mpk-MuiButtonBase-root-MuiIconButton-root' type='submit' form={elementId} disabled={state === '' ? true : false}>
           <CheckCircleOutlineIcon />
         </ button>
       </td>

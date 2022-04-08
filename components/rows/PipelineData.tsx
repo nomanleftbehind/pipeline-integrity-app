@@ -1,6 +1,6 @@
 import { useState } from 'react';
 // import InjectionPoints from '../fields/injection_points/InjectionPoints';
-import ConnectedSources from './Sources/ConnectedSources';
+import ConnectedSources from './ConnectedSources/ConnectedSources';
 import PipelineProperties from '../fields/PipelineProperties';
 import LicenseChanges from './LicenseChanges';
 import MechanicalProperties from './MechanicalProperties';

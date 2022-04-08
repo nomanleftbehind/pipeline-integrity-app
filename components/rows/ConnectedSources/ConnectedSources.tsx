@@ -28,8 +28,7 @@ import {
   useDisconnectPipelineMutation,
   ConnectedPipelinesByPipelineIdDocument,
   PipelineFlowDocument,
-
-  RiskByIdDocument,
+  
 } from '../../../graphql/generated/graphql';
 
 export interface ISourceHeaderMap {
@@ -45,6 +44,7 @@ export interface ISourceMap {
 export interface IDis_ConnectSource {
   id: string;
   pipelineId: string;
+  oldSourceId?: string;
 }
 
 interface ISourcesProps {
@@ -71,7 +71,6 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
     wellOptions();
   }
 
-
   const [connectWell] = useConnectWellMutation({
     refetchQueries: [WellsByPipelineIdDocument, 'WellsByPipelineId', WellsGroupByPipelineIdDocument, 'WellsGroupByPipelineId', ConnectedPipelinesByPipelineIdDocument, 'ConnectedPipelinesByPipelineId', PipelineFlowDocument, 'PipelineFlow'],
     onCompleted: ({ connectWell }) => {
@@ -81,7 +80,13 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
       }
     }
   });
-  const handleConnectWell = ({ id, pipelineId }: IDis_ConnectSource) => {
+  const handleConnectWell = ({ id, pipelineId, oldSourceId }: IDis_ConnectSource) => {
+    // Very important this is the first mutation called in this block,
+    // as otherwise if you click OK, while not having selected a different injection point,
+    // it would first override injection point with itself and then delete it.
+    if (oldSourceId) {
+      disconnectWell({ variables: { id: oldSourceId } });
+    }
     connectWell({ variables: { id, pipelineId } });
   }
 
@@ -121,7 +126,10 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
       }
     }
   });
-  const handleConnectSalesPoint = ({ id, pipelineId }: IDis_ConnectSource) => {
+  const handleConnectSalesPoint = ({ id, pipelineId, oldSourceId }: IDis_ConnectSource) => {
+    if (oldSourceId) {
+      disconnectSalesPoint({ variables: { id: oldSourceId } });
+    }
     connectSalesPoint({ variables: { id, pipelineId } });
   }
 
@@ -160,7 +168,10 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
       }
     }
   });
-  const handleConnectPipeline = ({ id, pipelineId }: IDis_ConnectSource) => {
+  const handleConnectPipeline = ({ id, pipelineId, oldSourceId }: IDis_ConnectSource) => {
+    if (oldSourceId) {
+      disconnectPipeline({ variables: { id: oldSourceId, pipelineId } });
+    }
     connectPipeline({ variables: { id, pipelineId } });
   }
 
@@ -190,7 +201,8 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
   const sourceHeader: ISourceHeaderMap[] = [
     {},
     { label: 'Sources', props: { style: { width: '250px' } } },
-    {},
+    { props: { style: { width: '30px' } } },
+    { props: { style: { width: '30px' } } },
     { label: 'Oil (m³/d)', props: { style: { width: '50px' } } },
     { label: 'Water (m³/d)', props: { style: { width: '120px' } } },
     { label: 'Gas (E3m³/d)', props: { style: { width: '100px' } } },
@@ -240,13 +252,14 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
           <tr>
             <th className='sticky left'></th>
             <th>Total</th>
-            <th></th>
+            <th colSpan={2}></th>
             {totalFlow.map(({ record }, key) => <th key={key}>{record}</th>)}
           </tr>
         </thead>
         <SourceData
           pipelineId={pipelineId}
           label='Wells'
+          formId='well'
           data={dataWells?.wellsByPipelineId}
           dataGroupBy={dataWellsGroupBy?.wellsGroupByPipelineId}
           loadOptions={loadWellOptions}
@@ -257,6 +270,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
         <SourceData
           pipelineId={pipelineId}
           label='Sales Points'
+          formId='sales-point'
           data={dataSalesPoints?.salesPointsByPipelineId}
           dataGroupBy={dataSalesPointsGroupBy?.salesPointsGroupByPipelineId}
           loadOptions={loadSalesPointOptions}
@@ -267,6 +281,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection 
         <SourceData
           pipelineId={pipelineId}
           label={`Connected ${flowCalculationDirection} Pipelines`}
+          formId='connected-pipeline'
           data={dataConnectedPipelines?.connectedPipelinesByPipelineId?.pipelinesFlow}
           dataGroupBy={dataConnectedPipelines?.connectedPipelinesByPipelineId?.sourceGroupBy}
           loadOptions={loadPipelineOptions}
