@@ -182,32 +182,48 @@ model PressureTest {
 }
 
 model Risk {
-  pipeline                    Pipeline                    @relation(fields: [id], references: [id])
-  id                          String                      @id
-  aerialReview                Boolean?
-  environmentProximityTo      EnvironmentProximityToEnum?
-  geotechnicalSlopeAngleS1    Int?
-  geotechnicalFacingS1        GeotechnicalFacingEnum?
-  geotechnicalHeightS1        Int?
-  geotechnicalSlopeAngleS2    Int?
-  geotechnicalFacingS2        GeotechnicalFacingEnum?
-  geotechnicalHeightS2        Int?
-  dateSlopeChecked            DateTime?
-  repairTimeDays              Int?
-  releaseTimeDays             Int?
-  oilReleaseCost              Float?
-  gasReleaseCost              Float?
-  consequencePeople           Int?
-  probabilityGeo              Float?
-  safeguardInternalProtection Int?
-  safeguardExternalCoating    Int?
-  comment                     String?
-  createdBy                   User                        @relation("riskCreatedBy", fields: [createdById], references: [id])
-  createdById                 String
-  createdAt                   DateTime                    @default(now())
-  updatedBy                   User                        @relation("riskUpdatedBy", fields: [updatedById], references: [id])
-  updatedById                 String
-  updatedAt                   DateTime                    @updatedAt
+  pipeline                            Pipeline                    @relation(fields: [id], references: [id])
+  id                                  String                      @id
+  aerialReview                        Boolean?
+  environmentProximityTo              EnvironmentProximityToEnum?
+  geotechnicalSlopeAngleS1            Int?
+  geotechnicalFacingS1                GeotechnicalFacingEnum?
+  geotechnicalHeightS1                Int?
+  geotechnicalSlopeAngleS2            Int?
+  geotechnicalFacingS2                GeotechnicalFacingEnum?
+  geotechnicalHeightS2                Int?
+  dateSlopeChecked                    DateTime?
+  repairTimeDays                      Int?
+  releaseTimeDays                     Int?
+  oilReleaseCost                      Float?
+  gasReleaseCost                      Float?
+  consequencePeople                   Int?
+  probabilityGeo                      Float?
+  safeguardInternalProtection         Int?
+  safeguardExternalCoating            Int?
+  comment                             String?
+  createdBy                           User                        @relation("riskCreatedBy", fields: [createdById], references: [id])
+  createdById                         String
+  createdAt                           DateTime                    @default(now())
+  updatedBy                           User                        @relation("riskUpdatedBy", fields: [updatedById], references: [id])
+  updatedById                         String
+  updatedAt                           DateTime                    @updatedAt
+  // Below are calculated fields.
+  // Normaly we wouldn't have to define them in schema as we could just calculate them inside resolvers.
+  // But because we want to easily be able to search pipelines by risk potential, we want to store calculated values inside database.
+  costPerM3Released                   Float?
+  consequenceEnviro                   Int?
+  consequenceAsset                    Int?
+  consequenceMax                      Int?
+  probabilityInterior                 Int?
+  probabilityExterior                 Int?
+  riskPotentialGeo                    Int?
+  riskPotentialInternal               Int?
+  riskPotentialExternal               Int?
+  safeguardPigging                    Int?
+  safeguardChemicalInhibition         Int?
+  probabilityInteriorWithSafeguards   Int?
+  riskPotentialInternalWithSafeguards Int?
 }
 
 model Well {

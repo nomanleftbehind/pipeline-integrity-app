@@ -1,9 +1,10 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
+import { totalFluidsCalc } from './Well';
+import { totalPipelineFlowRawQuery } from './PipelineFlow';
 import { databaseEnumToServerEnum } from './Pipeline';
 import { Context } from '../context';
 import { User as IUser } from '@prisma/client';
 import {
-  costPerM3ReleasedCalc,
   consequenceAssetCalc,
   consequenceEnviroCalc,
   probabilityExteriorCalc,
@@ -47,51 +48,26 @@ export const Risk = objectType({
     t.field('dateSlopeChecked', { type: 'DateTime' })
     t.int('repairTimeDays')
     t.int('releaseTimeDays')
-    t.float('costPerM3Released', {
-      resolve: async ({ id }, _args, ctx: Context) => await costPerM3ReleasedCalc({ id, ctx })
-    })
-    t.int('consequenceEnviro', {
-      resolve: async ({ id, environmentProximityTo }, _args, ctx: Context) => await consequenceEnviroCalc({ id, environmentProximityTo, ctx })
-    })
-    t.int('consequenceAsset', {
-      resolve: async ({ id, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await consequenceAssetCalc({ id, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
-    })
-    t.int('probabilityInterior', {
-      resolve: async ({ id }, _args, ctx: Context) => await probabilityInteriorCalc({ id, ctx })
-    })
-    t.int('probabilityExterior', {
-      resolve: async ({ id }, _args, ctx: Context) => await probabilityExteriorCalc({ id, ctx })
-    })
-    t.int('conequenceMax', {
-      resolve: async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await conequenceMaxCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
-    })
-    t.int('riskPotentialGeo', {
-      resolve: async ({ id, consequencePeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await riskPotentialGeoCalc({ id, consequencePeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
-    })
-    t.int('riskPotentialInternal', {
-      resolve: async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await riskPotentialInternalCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
-    })
-    t.int('riskPotentialExternal', {
-      resolve: async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost }, _args, ctx: Context) => await riskPotentialExternalCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx })
-    })
+    t.float('costPerM3Released')
+    t.int('consequenceEnviro')
+    t.int('consequenceAsset')
+    t.int('probabilityInterior')
+    t.int('probabilityExterior')
+    t.int('consequenceMax')
+    t.int('riskPotentialGeo')
+    t.int('riskPotentialInternal')
+    t.int('riskPotentialExternal')
     t.float('oilReleaseCost')
     t.float('gasReleaseCost')
     t.int('consequencePeople')
     t.float('probabilityGeo')
     t.int('safeguardInternalProtection')
-    t.int('safeguardPigging', {
-      resolve: async ({ id }, _args, ctx: Context) => await safeguardPiggingCalc({ id, ctx })
-    })
-    t.int('safeguardChemicalInhibition', {
-      resolve: async () => await safeguardChemicalInhibitionCalc()
-    })
-    t.int('probabilityInteriorWithSafeguards', {
-      resolve: async ({ id, safeguardInternalProtection }, _args, ctx: Context) => await probabilityInteriorWithSafeguardsCalc({ id, safeguardInternalProtection, ctx })
-    })
-    t.int('riskPotentialInternalWithSafeguards', {
-      resolve: async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, safeguardInternalProtection }, _args, ctx: Context) => await riskPotentialInternalWithSafeguardsCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, safeguardInternalProtection, ctx })
-    })
+    t.int('safeguardPigging')
+    t.int('safeguardChemicalInhibition')
+    t.int('probabilityInteriorWithSafeguards')
+    t.int('riskPotentialInternalWithSafeguards')
     t.int('safeguardExternalCoating')
+    t.string('comment')
     t.nonNull.field('createdBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -101,7 +77,6 @@ export const Risk = objectType({
         return result!;
       },
     })
-    t.string('comment')
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedBy', {
       type: 'User',
@@ -176,6 +151,101 @@ export const RiskQuery = extendType({
         id: nonNull(stringArg()),
       },
       resolve: async (_parent, { id }, ctx: Context) => {
+        console.log('riskById');
+
+        const risk = await ctx.prisma.risk.findUnique({
+          where: { id },
+          select: {
+            environmentProximityTo: true,
+            repairTimeDays: true,
+            oilReleaseCost: true,
+            gasReleaseCost: true,
+            consequencePeople: true,
+            probabilityGeo: true,
+            safeguardInternalProtection: true,
+          }
+        });
+
+        const lastLicenseChange = await ctx.prisma.licenseChange.findFirst({
+          where: { pipelineId: id },
+          orderBy: { date: 'desc' },
+          select: {
+            substance: true,
+            status: true,
+          },
+        });
+
+        const firstLicenseChange = await ctx.prisma.licenseChange.findFirst({
+          where: { pipelineId: id },
+          orderBy: { date: 'asc' },
+          select: { date: true },
+        });
+
+        const pipeline = await ctx.prisma.pipeline.findUnique({
+          where: { id },
+          select: {
+            flowCalculationDirection: true,
+            type: true,
+            material: true,
+            piggable: true,
+          }
+        });
+
+        if (risk && lastLicenseChange && firstLicenseChange && pipeline) {
+          const { environmentProximityTo, oilReleaseCost, gasReleaseCost, repairTimeDays, consequencePeople, probabilityGeo, safeguardInternalProtection } = risk;
+          const { substance: currentSubstance, status: currentStatus } = lastLicenseChange;
+          const { date: firstLicenseDate } = firstLicenseChange;
+          const { flowCalculationDirection, type, material, piggable } = pipeline;
+
+          const { oil, water, gas } = (await totalPipelineFlowRawQuery({ idList: [id], flowCalculationDirection, ctx }))[0];
+          const totalFluids = await totalFluidsCalc({ oil, water, gas });
+
+          const costPerM3Released = currentSubstance === 'FreshWater' ? 0 : 25000 * water + 1000 * gas + 15000 * oil;
+
+          const consequenceEnviro = await consequenceEnviroCalc({ environmentProximityTo, currentSubstance, currentStatus, totalFluids });
+
+          const consequenceAsset = await consequenceAssetCalc({ repairTimeDays, oilReleaseCost, gasReleaseCost, oil, gas, totalFluids });
+
+          const consequenceMax = await conequenceMaxCalc({ consequencePeople, consequenceEnviro, consequenceAsset });
+
+          const probabilityInterior = await probabilityInteriorCalc({ type, material, currentStatus, currentSubstance });
+
+          const probabilityExterior = await probabilityExteriorCalc({ firstLicenseDate, currentStatus, material });
+
+          const riskPotentialGeo = await riskPotentialGeoCalc({ consequenceMax, probabilityGeo });
+
+          const riskPotentialInternal = await riskPotentialInternalCalc({ consequenceMax, probabilityInterior });
+
+          const riskPotentialExternal = await riskPotentialExternalCalc({ consequenceMax, probabilityExterior });
+
+          const safeguardPigging = await safeguardPiggingCalc({ piggable });
+
+          const safeguardChemicalInhibition = await safeguardChemicalInhibitionCalc();
+
+          const probabilityInteriorWithSafeguards = await probabilityInteriorWithSafeguardsCalc({ probabilityInterior, safeguardPigging, safeguardChemicalInhibition, safeguardInternalProtection });
+
+          const riskPotentialInternalWithSafeguards = await riskPotentialInternalWithSafeguardsCalc({ consequenceMax, probabilityInteriorWithSafeguards });
+
+          const result = await ctx.prisma.risk.update({
+            where: { id },
+            data: {
+              costPerM3Released,
+              consequenceEnviro,
+              consequenceAsset,
+              consequenceMax,
+              probabilityInterior,
+              probabilityExterior,
+              riskPotentialGeo,
+              riskPotentialInternal,
+              riskPotentialExternal,
+              safeguardPigging,
+              safeguardChemicalInhibition,
+              probabilityInteriorWithSafeguards,
+              riskPotentialInternalWithSafeguards,
+            }
+          });
+          return result;
+        }
         const result = await ctx.prisma.risk.findUnique({
           where: { id },
         });

@@ -15,10 +15,10 @@ export const PipelineFlow = objectType({
     t.nonNull.float('water')
     t.nonNull.float('gas')
     t.nonNull.float('gasAssociatedLiquids', {
-      resolve: async ({ gas }) => gasAssociatedLiquidsCalc(gas)
+      resolve: async ({ gas }) => await gasAssociatedLiquidsCalc(gas)
     })
     t.nonNull.float('totalFluids', {
-      resolve: async ({ oil, water, gas }) => totalFluidsCalc({ oil, water, gas })
+      resolve: async ({ oil, water, gas }) => await totalFluidsCalc({ oil, water, gas })
     })
     t.field('firstProduction', { type: 'DateTime' })
     t.field('lastProduction', { type: 'DateTime' })

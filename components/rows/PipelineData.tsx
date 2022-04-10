@@ -1,7 +1,5 @@
 import { useState } from 'react';
-// import InjectionPoints from '../fields/injection_points/InjectionPoints';
 import ConnectedSources from './ConnectedSources/ConnectedSources';
-import PipelineProperties from '../fields/PipelineProperties';
 import LicenseChanges from './LicenseChanges';
 import MechanicalProperties from './MechanicalProperties';
 import PressureTests from './PressureTests';
@@ -11,7 +9,6 @@ import Risk from './Risk';
 import { IEditRecordFunction } from '../fields/RecordEntry';
 import { IPipeline } from './RenderPipeline';
 import Collapse from '@mui/material/Collapse';
-import { IPipelineProperty } from '../fields/PipelineProperties';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export type ITable = 'pressure tests' | 'pig runs' | 'risk' | 'license change';

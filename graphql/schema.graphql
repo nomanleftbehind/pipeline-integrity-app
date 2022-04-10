@@ -770,9 +770,9 @@ type Risk {
   aerialReview: Boolean
   authorized: Boolean!
   comment: String
-  conequenceMax: Int
   consequenceAsset: Int
   consequenceEnviro: Int
+  consequenceMax: Int
   consequencePeople: Int
   costPerM3Released: Float
   createdAt: DateTime!

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import FacilityIcon from './svg/facility';
+import SatelliteIcon from './svg/satellite';
 
 import List from '@mui/material/List';
 import Collapse from '@mui/material/Collapse';
@@ -33,16 +35,14 @@ function SidebarItem({ id, name, paddingLeft, onClick, onExpand, open }: ISideba
       }
     >
       {onExpand ?
-        <ListItemAvatar>
-          <Avatar>
-            <IconButton edge="end" aria-label="open" value={id} onClick={onClick} size='small'>
-              <FolderIcon />
-            </IconButton>
-          </Avatar>
-        </ListItemAvatar> :
         <ListItemIcon>
           <IconButton edge="end" aria-label="open" value={id} onClick={onClick} size='small'>
-            <FolderIcon />
+            <FacilityIcon />
+          </IconButton>
+        </ListItemIcon> :
+        <ListItemIcon>
+          <IconButton edge="end" aria-label="open" value={id} onClick={onClick} size='small'>
+            <SatelliteIcon />
           </IconButton>
         </ListItemIcon>
       }

@@ -10247,18 +10247,6 @@
             "deprecationReason": null
           },
           {
-            "name": "conequenceMax",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "consequenceAsset",
             "description": null,
             "args": [],
@@ -10272,6 +10260,18 @@
           },
           {
             "name": "consequenceEnviro",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "consequenceMax",
             "description": null,
             "args": [],
             "type": {

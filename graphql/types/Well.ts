@@ -4,7 +4,7 @@ import { User as IUser } from '@prisma/client';
 import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
 
 
-export const gasAssociatedLiquidsCalc = (gas: number) => {
+export const gasAssociatedLiquidsCalc = async (gas: number) => {
   return gas * 35.49 * 0.00355238191999475 / 6.3;
 }
 
@@ -14,8 +14,8 @@ interface ItotalFluidsCalcArgs {
   gas: number;
 }
 
-export const totalFluidsCalc = ({ oil, water, gas }: ItotalFluidsCalcArgs) => {
-  return oil + water + gasAssociatedLiquidsCalc(gas);
+export const totalFluidsCalc = async ({ oil, water, gas }: ItotalFluidsCalcArgs) => {
+  return oil + water + await gasAssociatedLiquidsCalc(gas);
 }
 
 export const Well = objectType({
@@ -31,10 +31,10 @@ export const Well = objectType({
     t.nonNull.float('water')
     t.nonNull.float('gas')
     t.nonNull.float('gasAssociatedLiquids', {
-      resolve: async ({ gas }) => gasAssociatedLiquidsCalc(gas)
+      resolve: async ({ gas }) => await gasAssociatedLiquidsCalc(gas)
     })
     t.nonNull.float('totalFluids', {
-      resolve: async ({ oil, water, gas }) => totalFluidsCalc({ oil, water, gas })
+      resolve: async ({ oil, water, gas }) => await totalFluidsCalc({ oil, water, gas })
     })
     t.field('firstProduction', { type: 'DateTime' })
     t.field('lastProduction', { type: 'DateTime' })
@@ -112,7 +112,7 @@ export const SourceGroupBy = objectType({
     t.float('gasAssociatedLiquids', {
       resolve: async ({ gas }) => {
         if (typeof gas === 'number') {
-          return gasAssociatedLiquidsCalc(gas);
+          return await gasAssociatedLiquidsCalc(gas);
         }
         return null
       }
@@ -120,7 +120,7 @@ export const SourceGroupBy = objectType({
     t.float('totalFluids', {
       resolve: async ({ oil, water, gas }) => {
         if (typeof oil === 'number' && typeof water === 'number' && typeof gas === 'number') {
-          return totalFluidsCalc({ oil, water, gas });
+          return await totalFluidsCalc({ oil, water, gas });
         }
         return null
       }
@@ -155,7 +155,7 @@ export const WellQuery = extendType({
         pipelineId: nonNull(stringArg()),
       },
       resolve: async (_parent, { pipelineId }, ctx: Context) => {
-        
+
         const connectedWells = await ctx.prisma.well.findMany({
           where: { pipelineId },
           select: {

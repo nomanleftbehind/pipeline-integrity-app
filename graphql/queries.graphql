@@ -1036,7 +1036,7 @@ query RiskById($id: String!) {
     consequenceAsset
     probabilityInterior
     probabilityExterior
-    conequenceMax
+    consequenceMax
     riskPotentialGeo
     riskPotentialInternal
     riskPotentialExternal

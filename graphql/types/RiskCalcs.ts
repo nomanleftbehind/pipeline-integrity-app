@@ -1,157 +1,87 @@
-import { EnvironmentProximityToEnumMembers } from './Risk';
-import { totalFluidsCalc } from './Well';
-import { totalPipelineFlowRawQuery } from './PipelineFlow';
-import { databaseEnumToServerEnum } from './Pipeline';
-import { Context } from '../context';
-import { Risk as IRisk } from '@prisma/client';
-
-interface ICostPerM3ReleasedCalcArgs {
-  id: IRisk['id'];
-  ctx: Context;
-}
-
-export const costPerM3ReleasedCalc = async ({ id, ctx }: ICostPerM3ReleasedCalcArgs) => {
+import { Risk as IRisk, LicenseChange as ILicenseChange, Pipeline as IPipeline } from '@prisma/client';
 
 
-  const { substance: currentSubstance } = await ctx.prisma.licenseChange.findFirst({
-    where: { pipelineId: id },
-    orderBy: { date: 'desc' },
-    select: { substance: true },
-  }) || {};
-  const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({
-    where: { id },
-    select: { flowCalculationDirection: true }
-  }) || {};
-  if (flowCalculationDirection) {
-    const { oil, water, gas } = (await totalPipelineFlowRawQuery({ idList: [id], flowCalculationDirection, ctx }))[0];
-    return currentSubstance === 'FreshWater' ? 0 : 25000 * water + 1000 * gas + 15000 * oil;
-  }
-  return null;
-
-}
 
 interface IConsequenceEnviroCalcArgs {
-  id: IRisk['id'];
   environmentProximityTo: IRisk['environmentProximityTo'];
-  ctx: Context;
+  currentSubstance: ILicenseChange['substance'];
+  currentStatus: ILicenseChange['status'];
+  totalFluids: number;
 }
 
-export const consequenceEnviroCalc = async ({ id, environmentProximityTo, ctx }: IConsequenceEnviroCalcArgs) => {
+export const consequenceEnviroCalc = async ({ environmentProximityTo, currentSubstance, currentStatus, totalFluids }: IConsequenceEnviroCalcArgs) => {
 
-  const { status: currentStatus, substance: currentSubstance } = await ctx.prisma.licenseChange.findFirst({
-    where: { pipelineId: id },
-    orderBy: { date: 'desc' },
-    select: {
-      status: true,
-      substance: true
-    },
-  }) || {};
+  // environmentProximityTo = databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, environmentProximityTo) || null;
 
-  environmentProximityTo = databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, environmentProximityTo) || null;
+  if (currentStatus === 'Discontinued' || currentStatus === 'Abandoned' || currentSubstance === 'FreshWater') {
+    return 1;
+  } else if (currentSubstance === 'NaturalGas' || currentSubstance === 'FuelGas' || currentSubstance === 'SourNaturalGas') {
 
-  const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({
-    where: { id },
-    select: { flowCalculationDirection: true }
-  }) || {};
-  if (flowCalculationDirection) {
-    const { oil, water, gas } = (await totalPipelineFlowRawQuery({ idList: [id], flowCalculationDirection, ctx }))[0];
-
-    if (oil == null || water == null || gas == null) {
-      return null;
+    if (environmentProximityTo === null) {
+      // no water body and no crossing.  (eg. middle of field)
+      return totalFluids >= 1 ? 2 : 1;
+    } else if (['WC1', 'WB3'].includes(environmentProximityTo)) {
+      // WC1 = Ephemeral, WB3 = non-permanent seasonal/temporary wetlands; Fens; Bogs;
+      return totalFluids >= 1 ? 3 : 2;
+    } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WC3' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB5' || environmentProximityTo === 'WB4') {
+      return totalFluids >= 1 ? 4 : 3;
     } else {
-      const totalFluids = totalFluidsCalc({ oil, water, gas });
-      if (currentStatus === 'Discontinued' || currentStatus === 'Abandoned' || currentSubstance === 'FreshWater') {
-        return 1;
-      } else if (currentSubstance === 'NaturalGas' || currentSubstance === 'FuelGas' || currentSubstance === 'SourNaturalGas') {
-
-        if (environmentProximityTo === null) {
-          // no water body and no crossing.  (eg. middle of field)
-          return totalFluids >= 1 ? 2 : 1;
-        } else if (['WC1', 'WB3'].includes(environmentProximityTo)) {
-          // WC1 = Ephemeral, WB3 = non-permanent seasonal/temporary wetlands; Fens; Bogs;
-          return totalFluids >= 1 ? 3 : 2;
-        } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WC3' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB5' || environmentProximityTo === 'WB4') {
-          return totalFluids >= 1 ? 4 : 3;
-        } else {
-          return null;
-        }
-      } else if (currentSubstance === 'OilWellEffluent' || currentSubstance === 'CrudeOil' || currentSubstance === 'SaltWater' /*|| currentSubstance === 'Sour Crude'*/) {
-        if (environmentProximityTo === null || environmentProximityTo === 'WB1') {
-          return 2;
-        } else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB3') {
-          return 3;
-        } else if (environmentProximityTo === 'WC3' || environmentProximityTo === 'WB4') {
-          return 4;
-        } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WB5') {
-          return 5;
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
+      return null;
     }
+  } else if (currentSubstance === 'OilWellEffluent' || currentSubstance === 'CrudeOil' || currentSubstance === 'SaltWater' /*|| currentSubstance === 'Sour Crude'*/) {
+    if (environmentProximityTo === null || environmentProximityTo === 'WB1') {
+      return 2;
+    } else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB3') {
+      return 3;
+    } else if (environmentProximityTo === 'WC3' || environmentProximityTo === 'WB4') {
+      return 4;
+    } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WB5') {
+      return 5;
+    } else {
+      return null;
+    }
+  } else {
+    return null;
   }
-  return null;
 }
 
 interface IConsequenceAssetCalcArgs {
-  id: IRisk['id'];
   repairTimeDays: IRisk['repairTimeDays'];
   oilReleaseCost: IRisk['oilReleaseCost'];
   gasReleaseCost: IRisk['gasReleaseCost'];
-  ctx: Context;
+  oil: number;
+  gas: number;
+  totalFluids: number;
 }
 
-export const consequenceAssetCalc = async ({ id, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IConsequenceAssetCalcArgs) => {
-  const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({
-    where: { id },
-    select: { flowCalculationDirection: true }
-  }) || {};
-  if (flowCalculationDirection) {
-    const { oil, water, gas } = (await totalPipelineFlowRawQuery({ idList: [id], flowCalculationDirection, ctx }))[0];
-    const totalFluids = totalFluidsCalc({ oil, water, gas });
-    if (totalFluids === 0) {
-      return 1;
-    } else if (gasReleaseCost != null && oilReleaseCost != null && repairTimeDays != null) {
-      const i = (gas * gasReleaseCost + oil * oilReleaseCost) * repairTimeDays
-      if (i >= 1_000_000) {
-        return 4;
-      } else if (i < 1_000_000 && i >= 500_000) {
-        return 3;
-      } else if (i < 500_000 && i > 0) {
-        return 2;
-      } else {
-        return 1
-      }
+export const consequenceAssetCalc = async ({ repairTimeDays, oilReleaseCost, gasReleaseCost, oil, gas, totalFluids }: IConsequenceAssetCalcArgs) => {
+
+  if (totalFluids === 0) {
+    return 1;
+  } else if (gasReleaseCost !== null && oilReleaseCost !== null && repairTimeDays !== null) {
+    const i = (gas * gasReleaseCost + oil * oilReleaseCost) * repairTimeDays
+    if (i >= 1_000_000) {
+      return 4;
+    } else if (i < 1_000_000 && i >= 500_000) {
+      return 3;
+    } else if (i < 500_000 && i > 0) {
+      return 2;
     } else {
-      return null;
+      return 1
     }
+  } else {
+    return null;
   }
-  return null;
 }
 
 interface IProbabilityInteriorCalcArgs {
-  id: IRisk['id'];
-  ctx: Context;
+  type: IPipeline['type'];
+  material: IPipeline['material'];
+  currentSubstance: ILicenseChange['substance'];
+  currentStatus: ILicenseChange['status'];
 }
 
-export const probabilityInteriorCalc = async ({ id, ctx }: IProbabilityInteriorCalcArgs) => {
-  const { type, material } = await ctx.prisma.pipeline.findUnique({
-    where: { id },
-    select: {
-      type: true,
-      material: true,
-    }
-  }) || {};
-  const { status: currentStatus, substance: currentSubstance } = await ctx.prisma.licenseChange.findFirst({
-    where: { pipelineId: id },
-    orderBy: { date: 'desc' },
-    select: {
-      status: true,
-      substance: true
-    },
-  }) || {};
+export const probabilityInteriorCalc = async ({ type, material, currentSubstance, currentStatus }: IProbabilityInteriorCalcArgs) => {
 
   const isTypeZ245 = type && ['TypeZ2451', 'TypeZ2453'].includes(type);
 
@@ -187,40 +117,19 @@ export const probabilityInteriorCalc = async ({ id, ctx }: IProbabilityInteriorC
 }
 
 interface IProbabilityExteriorCalcArgs {
-  id: IRisk['id'];
-  ctx: Context;
+  firstLicenseDate: ILicenseChange['date'];
+  currentStatus: ILicenseChange['status'];
+  material: IPipeline['material'];
 }
 
-export const probabilityExteriorCalc = async ({ id, ctx }: IProbabilityExteriorCalcArgs) => {
-  const { status: currentStatus } = await ctx.prisma.licenseChange.findFirst({
-    where: { pipelineId: id },
-    orderBy: { date: 'desc' },
-    select: { status: true },
-  }) || {};
-
-  const { date: firstLicenseDate } = await ctx.prisma.licenseChange.findFirst({
-    where: { pipelineId: id },
-    orderBy: { date: 'asc' },
-    select: { date: true },
-  }) || {};
-
-  const { material } = await ctx.prisma.pipeline.findUnique({
-    where: { id },
-    select: { material: true }
-  }) || {};
+export const probabilityExteriorCalc = async ({ firstLicenseDate, currentStatus, material }: IProbabilityExteriorCalcArgs) => {
 
   if (currentStatus === 'Discontinued' || currentStatus === 'Abandoned') {
     return 1;
   }
   if (material === 'Steel') {
-    let vintage;
-    if (firstLicenseDate instanceof Date) {
-      vintage = firstLicenseDate.getFullYear();
-    }
-    if (typeof firstLicenseDate === 'string') {
-      vintage = new Date(firstLicenseDate).getFullYear();
-    }
-    if (typeof vintage === 'number' && vintage > 2000) {
+    const vintage = firstLicenseDate.getFullYear();
+    if (vintage > 2000) {
       return 3;
     }
     return 4;
@@ -233,19 +142,12 @@ export const probabilityExteriorCalc = async ({ id, ctx }: IProbabilityExteriorC
 
 
 interface IConequenceMaxCalcArgs {
-  id: IRisk['id'];
   consequencePeople: IRisk['consequencePeople'];
-  environmentProximityTo: IRisk['environmentProximityTo'];
-  repairTimeDays: IRisk['repairTimeDays'];
-  oilReleaseCost: IRisk['oilReleaseCost'];
-  gasReleaseCost: IRisk['gasReleaseCost'];
-  ctx: Context;
+  consequenceEnviro: IRisk['consequenceEnviro'];
+  consequenceAsset: IRisk['consequenceAsset'];
 }
 
-export const conequenceMaxCalc = async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IConequenceMaxCalcArgs) => {
-  const consequenceEnviro = await consequenceEnviroCalc({ id, environmentProximityTo, ctx });
-  const consequenceAsset = await consequenceAssetCalc({ id, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
-
+export const conequenceMaxCalc = async ({ consequencePeople, consequenceEnviro, consequenceAsset }: IConequenceMaxCalcArgs) => {
   const maxConsequence = [consequencePeople, consequenceEnviro, consequenceAsset].reduce((previousValue, currentValue) => {
     if (typeof previousValue === 'number' && typeof currentValue === 'number') {
       return currentValue > previousValue ? currentValue : previousValue;
@@ -260,73 +162,48 @@ export const conequenceMaxCalc = async ({ id, consequencePeople, environmentProx
 
 
 interface IRiskPotentialGeoCalcArgs {
-  id: IRisk['id'];
-  consequencePeople: IRisk['consequencePeople'];
+  consequenceMax: IRisk['consequenceMax'];
   probabilityGeo: IRisk['probabilityGeo'];
-  environmentProximityTo: IRisk['environmentProximityTo'];
-  repairTimeDays: IRisk['repairTimeDays'];
-  oilReleaseCost: IRisk['oilReleaseCost'];
-  gasReleaseCost: IRisk['gasReleaseCost'];
-  ctx: Context;
 }
 
-export const riskPotentialGeoCalc = async ({ id, consequencePeople, probabilityGeo, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IRiskPotentialGeoCalcArgs) => {
-  const maxConsequence = await conequenceMaxCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
-  if (typeof maxConsequence === 'number' && typeof probabilityGeo === 'number') {
-    return maxConsequence * probabilityGeo;
+export const riskPotentialGeoCalc = async ({ consequenceMax, probabilityGeo }: IRiskPotentialGeoCalcArgs) => {
+  if (typeof consequenceMax === 'number' && typeof probabilityGeo === 'number') {
+    return consequenceMax * probabilityGeo;
   }
   return null;
 }
 
 interface IRiskPotentialInternalCalcArgs {
-  id: IRisk['id'];
-  consequencePeople: IRisk['consequencePeople'];
-  environmentProximityTo: IRisk['environmentProximityTo'];
-  repairTimeDays: IRisk['repairTimeDays'];
-  oilReleaseCost: IRisk['oilReleaseCost'];
-  gasReleaseCost: IRisk['gasReleaseCost'];
-  ctx: Context;
+  consequenceMax: IRisk['consequenceMax'];
+  probabilityInterior: IRisk['probabilityInterior'];
+
 }
 
-export const riskPotentialInternalCalc = async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IRiskPotentialInternalCalcArgs) => {
-  const maxConsequence = await conequenceMaxCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
-  const probabilityInterior = await probabilityInteriorCalc({ id, ctx });
-  if (typeof maxConsequence === 'number' && typeof probabilityInterior === 'number') {
-    return maxConsequence * probabilityInterior;
+export const riskPotentialInternalCalc = async ({ consequenceMax, probabilityInterior }: IRiskPotentialInternalCalcArgs) => {
+  if (typeof consequenceMax === 'number' && typeof probabilityInterior === 'number') {
+    return consequenceMax * probabilityInterior;
   }
   return null;
 }
 
 interface IRiskPotentialExternalCalcArgs {
-  id: IRisk['id'];
-  consequencePeople: IRisk['consequencePeople'];
-  environmentProximityTo: IRisk['environmentProximityTo'];
-  repairTimeDays: IRisk['repairTimeDays'];
-  oilReleaseCost: IRisk['oilReleaseCost'];
-  gasReleaseCost: IRisk['gasReleaseCost'];
-  ctx: Context;
+  consequenceMax: IRisk['consequenceMax'];
+  probabilityExterior: IRisk['probabilityExterior'];
 }
 
-export const riskPotentialExternalCalc = async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx }: IRiskPotentialExternalCalcArgs) => {
-  const maxConsequence = await conequenceMaxCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
-  const probabilityExterior = await probabilityExteriorCalc({ id, ctx });
-  if (typeof maxConsequence === 'number' && typeof probabilityExterior === 'number') {
-    return maxConsequence * probabilityExterior;
+export const riskPotentialExternalCalc = async ({ consequenceMax, probabilityExterior }: IRiskPotentialExternalCalcArgs) => {
+  if (typeof consequenceMax === 'number' && typeof probabilityExterior === 'number') {
+    return consequenceMax * probabilityExterior;
   }
   return null;
 }
 
 interface ISafeguardPiggingCalcArgs {
-  id: IRisk['id'];
-  ctx: Context;
+  piggable: IPipeline['piggable'];
 }
 
-export const safeguardPiggingCalc = async ({ id, ctx }: ISafeguardPiggingCalcArgs) => {
-  const { piggable } = await ctx.prisma.pipeline.findUnique({
-    where: { id },
-    select: { piggable: true }
-  }) || {};
-  if (piggable != null) {
+export const safeguardPiggingCalc = async ({ piggable }: ISafeguardPiggingCalcArgs) => {
+  if (piggable !== null) {
     if (piggable) {
       return 1;
     }
@@ -336,22 +213,20 @@ export const safeguardPiggingCalc = async ({ id, ctx }: ISafeguardPiggingCalcArg
 }
 
 export const safeguardChemicalInhibitionCalc = async () => {
-  return 0;
+  return null;
 }
 
 
 interface IProbabilityInteriorWithSafeguardsArgs {
-  id: IRisk['id'];
+  probabilityInterior: IRisk['probabilityInterior'];
+  safeguardPigging: IRisk['safeguardPigging'];
+  safeguardChemicalInhibition: IRisk['safeguardChemicalInhibition'];
   safeguardInternalProtection: IRisk['safeguardInternalProtection'];
-  ctx: Context;
 }
 
-export const probabilityInteriorWithSafeguardsCalc = async ({ id, safeguardInternalProtection, ctx }: IProbabilityInteriorWithSafeguardsArgs) => {
-  const probabilityInterior = await probabilityInteriorCalc({ id, ctx });
-  const safeguardPigging = await safeguardPiggingCalc({ id, ctx });
-  const safeguardChemicalInhibition = await safeguardChemicalInhibitionCalc();
+export const probabilityInteriorWithSafeguardsCalc = async ({ probabilityInterior, safeguardPigging, safeguardChemicalInhibition, safeguardInternalProtection }: IProbabilityInteriorWithSafeguardsArgs) => {
   if (typeof probabilityInterior === 'number') {
-    const result = probabilityInterior - (safeguardInternalProtection || 0) - (safeguardPigging || 0) - safeguardChemicalInhibition;
+    const result = probabilityInterior - (safeguardInternalProtection || 0) - (safeguardPigging || 0) - (safeguardChemicalInhibition || 0);
     return result < 0 ? 0 : result;
   }
   return null;
@@ -359,21 +234,13 @@ export const probabilityInteriorWithSafeguardsCalc = async ({ id, safeguardInter
 
 
 interface IRiskPotentialInternalWithSafeguardsCalcArgs {
-  id: IRisk['id'];
-  consequencePeople: IRisk['consequencePeople'];
-  environmentProximityTo: IRisk['environmentProximityTo'];
-  repairTimeDays: IRisk['repairTimeDays'];
-  oilReleaseCost: IRisk['oilReleaseCost'];
-  gasReleaseCost: IRisk['gasReleaseCost'];
-  safeguardInternalProtection: IRisk['safeguardInternalProtection'];
-  ctx: Context;
+  consequenceMax: IRisk['consequenceMax'];
+  probabilityInteriorWithSafeguards: IRisk['probabilityInteriorWithSafeguards'];
 }
 
-export const riskPotentialInternalWithSafeguardsCalc = async ({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, safeguardInternalProtection, ctx }: IRiskPotentialInternalWithSafeguardsCalcArgs) => {
-  const maxConsequence = await conequenceMaxCalc({ id, consequencePeople, environmentProximityTo, repairTimeDays, oilReleaseCost, gasReleaseCost, ctx });
-  const probabilityInteriorWithSafeguards = await probabilityInteriorWithSafeguardsCalc({ id, safeguardInternalProtection, ctx });
-  if (typeof maxConsequence === 'number' && typeof probabilityInteriorWithSafeguards === 'number') {
-    return maxConsequence * probabilityInteriorWithSafeguards;
+export const riskPotentialInternalWithSafeguardsCalc = async ({ consequenceMax, probabilityInteriorWithSafeguards }: IRiskPotentialInternalWithSafeguardsCalcArgs) => {
+  if (typeof consequenceMax === 'number' && typeof probabilityInteriorWithSafeguards === 'number') {
+    return consequenceMax * probabilityInteriorWithSafeguards;
   }
   return null;
 }

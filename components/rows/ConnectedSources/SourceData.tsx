@@ -89,11 +89,11 @@ export default function SourceData({ pipelineId, label, recordEntryProps, formId
           <th className='connected-source-row sticky left'></th>
           <th>{recordEntryProps ?
             <div style={{ display: 'flex' }}>
-              <div style={{lineHeight: '38px'}}>Connected</div>
-              <div style={{ width: '130px' }}>
+              <div style={{lineHeight: '38px', paddingRight: '4px'}}>Connected</div>
+              <div style={{ width: '88px' }}>
                 <RecordEntry id={pipelineId} columnName='flowCalculationDirection' columnType='string' nullable={false} record={recordEntryProps.record} validator={recordEntryProps.validator} authorized={recordEntryProps.authorized} editRecord={recordEntryProps.editRecord} />
               </div>
-              <div style={{lineHeight: '38px'}}>Pipelines</div>
+              <div style={{lineHeight: '38px', paddingLeft: '4px'}}>Pipelines</div>
             </div> : label}</th>
           <th>
             <IconButton aria-label="expand row" size="small" onClick={toggleShowOptionsForm}>

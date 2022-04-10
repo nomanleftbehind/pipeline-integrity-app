@@ -117,7 +117,7 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
   if (data?.riskById) {
 
     const { id, aerialReview, environmentProximityTo, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS1, geotechnicalFacingS2, geotechnicalHeightS2, geotechnicalSlopeAngleS2, dateSlopeChecked,
-      consequencePeople, consequenceEnviro, consequenceAsset, conequenceMax, probabilityGeo, probabilityInterior, probabilityExterior, riskPotentialGeo, riskPotentialInternal, riskPotentialExternal,
+      consequencePeople, consequenceEnviro, consequenceAsset, consequenceMax, probabilityGeo, probabilityInterior, probabilityExterior, riskPotentialGeo, riskPotentialInternal, riskPotentialExternal,
       safeguardInternalProtection, safeguardPigging, safeguardChemicalInhibition, probabilityInteriorWithSafeguards, riskPotentialInternalWithSafeguards,
       oilReleaseCost, gasReleaseCost, repairTimeDays, releaseTimeDays, costPerM3Released, safeguardExternalCoating, createdBy, createdAt, updatedBy, updatedAt } = data.riskById;
     const { environmentProximityToEnum, geotechnicalFacingEnum, typeEnum, materialEnum } = dataValidatorsRisk?.validators || {};
@@ -147,7 +147,7 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
       { columnName: 'consequencePeople', record: consequencePeople, columnType: 'number', label: 'People', nullable: true, editRecord },
       { columnName: 'consequenceEnviro', record: consequenceEnviro, columnType: 'number', label: 'Environment', nullable: true },
       { columnName: 'consequenceAsset', record: consequenceAsset, columnType: 'number', label: 'Assets', nullable: true },
-      { columnName: 'conequenceMax', record: conequenceMax, columnType: 'number', label: 'Used Consequence', nullable: true },
+      { columnName: 'consequenceMax', record: consequenceMax, columnType: 'number', label: 'Used Consequence', nullable: true },
     ];
 
     const probabilityInteriorFields: IRiskPropertyRecordEntryMap[] = [
@@ -209,7 +209,7 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
             <RiskMatrix
               label='Geo Risk Potential'
               currentProbability={probabilityGeo}
-              currentConsequence={conequenceMax}
+              currentConsequence={consequenceMax}
               currentRiskPotential={riskPotentialGeo}
             />
           </div>
@@ -229,13 +229,13 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
             <RiskMatrix
               label='Internal Risk Potential'
               currentProbability={probabilityInterior}
-              currentConsequence={conequenceMax}
+              currentConsequence={consequenceMax}
               currentRiskPotential={riskPotentialInternal}
             />
             <RiskMatrix
               label='Internal Risk Potential with Safeguards'
               currentProbability={probabilityInteriorWithSafeguards}
-              currentConsequence={conequenceMax}
+              currentConsequence={consequenceMax}
               currentRiskPotential={riskPotentialInternalWithSafeguards}
             />
           </div>
@@ -255,7 +255,7 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
             <RiskMatrix
               label='External Risk Potential'
               currentProbability={probabilityExterior}
-              currentConsequence={conequenceMax}
+              currentConsequence={consequenceMax}
               currentRiskPotential={riskPotentialExternal}
             />
           </div>
