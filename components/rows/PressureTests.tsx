@@ -1,5 +1,6 @@
 import { useState, Fragment } from 'react';
 import RecordEntry, { IEditRecord } from '../fields/RecordEntry';
+import { openModal } from './RenderPipeline';
 import { ModalFieldError } from '../Modal';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
@@ -91,6 +92,8 @@ export default function PressureTests({ pipelineId }: IPressureTestsProps) {
     setFieldError(initialFieldError);
   }
 
+  const isModalOpen = openModal(fieldError);
+
   const pressureTestHeader = [
     { label: 'Pressure Test Date' },
     { label: 'Pressure Test Received Date' },
@@ -122,7 +125,7 @@ export default function PressureTests({ pipelineId }: IPressureTestsProps) {
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>
-      {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
+      {isModalOpen && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
       />}
@@ -166,7 +169,7 @@ export default function PressureTests({ pipelineId }: IPressureTestsProps) {
               <div className={`pressure-test-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   className='button-container'
-                  aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
+                  aria-label='delete row' size='small' disabled={!authorized} onClick={() => deleteRecord(id)}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </div>

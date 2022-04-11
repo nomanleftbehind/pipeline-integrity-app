@@ -164,64 +164,68 @@ export const LicenseChangeMutation = extendType({
         linkToDocumentation: stringArg(),
       },
       resolve: async (_parent, args, ctx: Context) => {
-
         const user = ctx.user;
-
-        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'OFFICE')) {
-
-          const { id: userId, firstName, role } = user;
-
-          const currentLicenseChange = await ctx.prisma.licenseChange.findUnique({
-            where: { id: args.id },
-            select: {
-              pipelineId: true,
-              createdById: true,
-              date: true,
-            }
-          });
-
-          if (currentLicenseChange) {
-
-            const { pipelineId, createdById, date } = currentLicenseChange;
-
-            const pipelineLicenseChanges = await ctx.prisma.licenseChange.findMany({
-              where: { pipelineId },
-              select: { date: true, }
+        if (user) {
+          const { id: userId, role, firstName } = user;
+          if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') {
+            const currentLicenseChange = await ctx.prisma.licenseChange.findUnique({
+              where: { id: args.id },
+              select: {
+                pipelineId: true,
+                createdById: true,
+                date: true,
+              }
             });
 
-            const licenseChangeDates = pipelineLicenseChanges.map(licenseChange => licenseChange.date.getTime());
+            if (currentLicenseChange) {
 
-            if (args.date && licenseChangeDates.includes(args.date.getTime()) && args.date.getTime() !== date.getTime()) {
-              return {
-                error: {
-                  field: 'License change date',
-                  message: `License change date ${args.date.toISOString().split('T')[0]} is already entered for this pipeline. One pipeline cannot have multiple license changes on the same date.`,
+              const { pipelineId, createdById, date } = currentLicenseChange;
+
+              const pipelineLicenseChanges = await ctx.prisma.licenseChange.findMany({
+                where: { pipelineId },
+                select: { date: true, }
+              });
+
+              const licenseChangeDates = pipelineLicenseChanges.map(licenseChange => licenseChange.date.getTime());
+
+              if (args.date && licenseChangeDates.includes(args.date.getTime()) && args.date.getTime() !== date.getTime()) {
+                return {
+                  error: {
+                    field: 'License change date',
+                    message: `License change date ${args.date.toISOString().split('T')[0]} is already entered for this pipeline. One pipeline cannot have multiple license changes on the same date.`,
+                  }
+                }
+              }
+
+              if (role === 'OFFICE' && createdById !== userId) {
+                return {
+                  error: {
+                    field: 'License change',
+                    message: `Hi ${firstName}. Your user privilages do not allow you to edit license change entries not authored by you.`,
+                  }
                 }
               }
             }
 
-            if (role === 'OFFICE' && createdById !== userId) {
-              return {
-                error: {
-                  field: 'License change',
-                  message: `Hi ${firstName}. Your user privilages do not allow you to edit license change entries not authored by you.`,
-                }
-              }
+            const licenseChange = await ctx.prisma.licenseChange.update({
+              where: { id: args.id },
+              data: {
+                status: databaseEnumToServerEnum(StatusEnumMembers, args.status) || undefined,
+                substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
+                date: args.date || undefined,
+                linkToDocumentation: args.linkToDocumentation,
+                comment: args.comment,
+                updatedById: userId,
+              },
+            });
+            return { licenseChange }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to make changes to license changes.`,
             }
           }
-
-          const licenseChange = await ctx.prisma.licenseChange.update({
-            where: { id: args.id },
-            data: {
-              status: databaseEnumToServerEnum(StatusEnumMembers, args.status) || undefined,
-              substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
-              date: args.date || undefined,
-              linkToDocumentation: args.linkToDocumentation,
-              comment: args.comment,
-              updatedById: userId,
-            },
-          });
-          return { licenseChange }
         }
         return {
           error: {
@@ -240,38 +244,46 @@ export const LicenseChangeMutation = extendType({
 
         const user = ctx.user;
 
-        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'OFFICE')) {
-          const userId = user.id;
-          const pipelineLicenseChanges = await ctx.prisma.licenseChange.findMany({
-            where: {
-              pipelineId,
-            },
-            select: {
-              date: true,
-            },
-            orderBy: {
-              date: 'asc'
+        if (user) {
+          const { id: userId, role, firstName } = user;
+          if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') {
+            const pipelineLicenseChanges = await ctx.prisma.licenseChange.findMany({
+              where: {
+                pipelineId,
+              },
+              select: {
+                date: true,
+              },
+              orderBy: {
+                date: 'asc'
+              }
+            });
+            // When adding new license change entry, date when license was changed is mandatory and has to be unique,
+            // so we set it to today and check if it already exists in which case we will keep increasing it by 1 until it's unique.
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            for (const i of pipelineLicenseChanges) {
+              if (i.date.getTime() === today.getTime()) {
+                today.setDate(today.getDate() + 1);
+              }
             }
-          });
-          // When adding new license change entry, date when license was changed is mandatory and has to be unique,
-          // so we set it to today and check if it already exists in which case we will keep increasing it by 1 until it's unique.
-          const today = new Date();
-          today.setUTCHours(0, 0, 0, 0);
-          for (const i of pipelineLicenseChanges) {
-            if (i.date.getTime() === today.getTime()) {
-              today.setDate(today.getDate() + 1);
+
+            const licenseChange = await ctx.prisma.licenseChange.create({
+              data: {
+                pipelineId,
+                date: today,
+                createdById: userId,
+                updatedById: userId,
+              }
+            });
+            return { licenseChange };
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to add new license changes.`,
             }
           }
-
-          const licenseChange = await ctx.prisma.licenseChange.create({
-            data: {
-              pipelineId,
-              date: today,
-              createdById: userId,
-              updatedById: userId,
-            }
-          });
-          return { licenseChange };
         }
 
         return {
@@ -291,35 +303,39 @@ export const LicenseChangeMutation = extendType({
 
         const user = ctx.user;
 
-        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'OFFICE')) {
+        if (user) {
+          const { id: userId, role, firstName } = user;
+          if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') {
 
-          const { id: userId, firstName, role } = user;
+            if (role === 'OFFICE') {
+              const currentLicenseChange = await ctx.prisma.licenseChange.findUnique({
+                where: { id },
+                select: {
+                  createdById: true,
+                }
+              });
 
-          if (role === 'OFFICE') {
-            const currentLicenseChange = await ctx.prisma.licenseChange.findUnique({
-              where: { id },
-              select: {
-                createdById: true,
-              }
-            });
-
-            if (currentLicenseChange && currentLicenseChange.createdById !== userId) {
-              return {
-                error: {
-                  field: 'License change created by',
-                  message: `Hi ${firstName}. Your user privilages do not allow you to delete license change entries not authored by you.`,
+              if (currentLicenseChange && currentLicenseChange.createdById !== userId) {
+                return {
+                  error: {
+                    field: 'License change created by',
+                    message: `Hi ${firstName}. Your user privilages do not allow you to delete license changes not authored by you.`,
+                  }
                 }
               }
             }
+            const licenseChange = await ctx.prisma.licenseChange.delete({
+              where: { id }
+            });
+            return { licenseChange }
           }
-
-          const licenseChange = await ctx.prisma.licenseChange.delete({
-            where: { id }
-          });
-
-          return { licenseChange }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to delete license changes.`,
+            }
+          }
         }
-
         return {
           error: {
             field: 'User',

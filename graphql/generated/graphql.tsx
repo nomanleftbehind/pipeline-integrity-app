@@ -954,6 +954,7 @@ export type PipelineCreateInput = {
 };
 
 export type PipelineFlow = {
+  authorized: Scalars['Boolean'];
   createdAt?: Maybe<Scalars['DateTime']>;
   createdBy?: Maybe<User>;
   firstInjection?: Maybe<Scalars['DateTime']>;
@@ -1962,7 +1963,7 @@ export type ConnectedPipelinesByPipelineIdQueryVariables = Exact<{
 }>;
 
 
-export type ConnectedPipelinesByPipelineIdQuery = { connectedPipelinesByPipelineId?: { pipelinesFlow?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined, createdAt?: string | null | undefined, updatedAt?: string | null | undefined, createdBy?: { id: string, email: string } | null | undefined, updatedBy?: { id: string, email: string } | null | undefined } | null | undefined> | null | undefined, sourceGroupBy?: { oil?: number | null | undefined, water?: number | null | undefined, gas?: number | null | undefined, gasAssociatedLiquids?: number | null | undefined, totalFluids?: number | null | undefined, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined } | null | undefined };
+export type ConnectedPipelinesByPipelineIdQuery = { connectedPipelinesByPipelineId?: { pipelinesFlow?: Array<{ id: string, name: string, oil: number, water: number, gas: number, gasAssociatedLiquids: number, totalFluids: number, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined, authorized: boolean, createdAt?: string | null | undefined, updatedAt?: string | null | undefined, createdBy?: { id: string, email: string } | null | undefined, updatedBy?: { id: string, email: string } | null | undefined } | null | undefined> | null | undefined, sourceGroupBy?: { oil?: number | null | undefined, water?: number | null | undefined, gas?: number | null | undefined, gasAssociatedLiquids?: number | null | undefined, totalFluids?: number | null | undefined, firstProduction?: string | null | undefined, lastProduction?: string | null | undefined, firstInjection?: string | null | undefined, lastInjection?: string | null | undefined } | null | undefined } | null | undefined };
 
 export type PipelineFlowQueryVariables = Exact<{
   id: Scalars['String'];
@@ -4981,6 +4982,7 @@ export const ConnectedPipelinesByPipelineIdDocument = gql`
       lastProduction
       firstInjection
       lastInjection
+      authorized
       createdBy {
         id
         email

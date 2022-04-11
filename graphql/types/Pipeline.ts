@@ -409,7 +409,7 @@ export const FlowCalculationDirectionEnum = enumType({
 });
 
 
-const resolvePipelineAuthorized = (user: IUser) => {
+export const resolvePipelineAuthorized = (user: IUser) => {
   const { role } = user;
   return role === 'ADMIN' || role === 'ENGINEER';
 }
@@ -652,109 +652,118 @@ export const PipelineMutation = extendType({
       },
       resolve: async (_, args, ctx: Context) => {
         const user = ctx.user;
-        const authorized = !!user && resolvePipelineAuthorized(user);
-        if (authorized) {
-          if (args.license) {
-            const currentPipeline = await ctx.prisma.pipeline.findUnique({
-              where: { id: args.id },
-              select: {
-                segment: true,
-              }
-            });
-            if (currentPipeline) {
-              const { segment } = currentPipeline;
-              const pipelineWithSameSegment = await ctx.prisma.pipeline.findUnique({
-                where: { license_segment: { license: args.license, segment } },
+        if (user) {
+          const { id: userId, firstName } = user;
+          const authorized = resolvePipelineAuthorized(user);
+          if (authorized) {
+            if (args.license) {
+              const currentPipeline = await ctx.prisma.pipeline.findUnique({
+                where: { id: args.id },
                 select: {
-                  id: true,
-                  satellite: {
-                    select: {
-                      name: true,
-                      facility: {
-                        select: {
-                          name: true,
+                  segment: true,
+                }
+              });
+              if (currentPipeline) {
+                const { segment } = currentPipeline;
+                const pipelineWithSameSegment = await ctx.prisma.pipeline.findUnique({
+                  where: { license_segment: { license: args.license, segment } },
+                  select: {
+                    id: true,
+                    satellite: {
+                      select: {
+                        name: true,
+                        facility: {
+                          select: {
+                            name: true,
+                          }
                         }
                       }
                     }
                   }
-                }
-              });
-              if (pipelineWithSameSegment && pipelineWithSameSegment.id !== args.id) {
-                const facility = pipelineWithSameSegment.satellite?.facility?.name;
-                const satellite = pipelineWithSameSegment.satellite?.name;
-                return {
-                  error: {
-                    field: 'license',
-                    message: `Pipeline ${args.license}-${segment} already exists at facility ${facility}, satellite ${satellite}.`,
+                });
+                if (pipelineWithSameSegment && pipelineWithSameSegment.id !== args.id) {
+                  const facility = pipelineWithSameSegment.satellite?.facility?.name;
+                  const satellite = pipelineWithSameSegment.satellite?.name;
+                  return {
+                    error: {
+                      field: 'license',
+                      message: `Pipeline ${args.license}-${segment} already exists at facility ${facility}, satellite ${satellite}.`,
+                    }
                   }
                 }
               }
             }
-          }
-          if (args.segment) {
-            const currentPipeline = await ctx.prisma.pipeline.findUnique({
-              where: { id: args.id },
-              select: {
-                license: true,
-              }
-            });
-            if (currentPipeline) {
-              const { license } = currentPipeline;
-              const pipelineWithSameLicense = await ctx.prisma.pipeline.findUnique({
-                where: { license_segment: { license, segment: args.segment } },
+            if (args.segment) {
+              const currentPipeline = await ctx.prisma.pipeline.findUnique({
+                where: { id: args.id },
                 select: {
-                  id: true,
-                  satellite: {
-                    select: {
-                      name: true,
-                      facility: {
-                        select: {
-                          name: true,
+                  license: true,
+                }
+              });
+              if (currentPipeline) {
+                const { license } = currentPipeline;
+                const pipelineWithSameLicense = await ctx.prisma.pipeline.findUnique({
+                  where: { license_segment: { license, segment: args.segment } },
+                  select: {
+                    id: true,
+                    satellite: {
+                      select: {
+                        name: true,
+                        facility: {
+                          select: {
+                            name: true,
+                          }
                         }
                       }
                     }
                   }
-                }
-              });
-              if (pipelineWithSameLicense && pipelineWithSameLicense.id !== args.id) {
-                const facility = pipelineWithSameLicense.satellite?.facility?.name;
-                const satellite = pipelineWithSameLicense.satellite?.name;
-                return {
-                  error: {
-                    field: 'segment',
-                    message: `Pipeline ${license}-${args.segment} already exists at facility ${facility}, satellite ${satellite}.`,
+                });
+                if (pipelineWithSameLicense && pipelineWithSameLicense.id !== args.id) {
+                  const facility = pipelineWithSameLicense.satellite?.facility?.name;
+                  const satellite = pipelineWithSameLicense.satellite?.name;
+                  return {
+                    error: {
+                      field: 'segment',
+                      message: `Pipeline ${license}-${args.segment} already exists at facility ${facility}, satellite ${satellite}.`,
+                    }
                   }
                 }
               }
             }
+            const pipeline = await ctx.prisma.pipeline.update({
+              where: { id: args.id },
+              data: {
+                satelliteId: args.satelliteId || undefined,
+                license: args.license || undefined,
+                segment: args.segment || undefined,
+                flowCalculationDirection: args.flowCalculationDirection || undefined,
+                from: args.from || undefined,
+                fromFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.fromFeature),
+                to: args.to || undefined,
+                toFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.toFeature),
+                length: args.length || undefined,
+                type: databaseEnumToServerEnum(TypeEnumMembers, args.type),
+                grade: databaseEnumToServerEnum(GradeEnumMembers, args.grade),
+                yieldStrength: args.yieldStrength,
+                outsideDiameter: args.outsideDiameter,
+                wallThickness: args.wallThickness,
+                material: databaseEnumToServerEnum(MaterialEnumMembers, args.material),
+                mop: args.mop,
+                internalProtection: databaseEnumToServerEnum(InternalProtectionEnumMembers, args.internalProtection),
+                piggable: args.piggable,
+                piggingFrequency: args.piggingFrequency,
+                batchFrequency: databaseEnumToServerEnum(BatchFrequencyEnumMembers, args.batchFrequency),
+                updatedById: userId,
+              },
+            });
+            return { pipeline }
           }
-          const pipeline = await ctx.prisma.pipeline.update({
-            where: { id: args.id },
-            data: {
-              satelliteId: args.satelliteId || undefined,
-              license: args.license || undefined,
-              segment: args.segment || undefined,
-              flowCalculationDirection: args.flowCalculationDirection || undefined,
-              from: args.from || undefined,
-              fromFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.fromFeature),
-              to: args.to || undefined,
-              toFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.toFeature),
-              length: args.length || undefined,
-              type: databaseEnumToServerEnum(TypeEnumMembers, args.type),
-              grade: databaseEnumToServerEnum(GradeEnumMembers, args.grade),
-              yieldStrength: args.yieldStrength,
-              outsideDiameter: args.outsideDiameter,
-              wallThickness: args.wallThickness,
-              material: databaseEnumToServerEnum(MaterialEnumMembers, args.material),
-              mop: args.mop,
-              internalProtection: databaseEnumToServerEnum(InternalProtectionEnumMembers, args.internalProtection),
-              piggable: args.piggable,
-              piggingFrequency: args.piggingFrequency,
-              batchFrequency: databaseEnumToServerEnum(BatchFrequencyEnumMembers, args.batchFrequency),
-              updatedById: user.id,
-            },
-          });
-          return { pipeline }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to make changes to pipelines.`,
+            }
+          }
         }
         return {
           error: {
@@ -771,12 +780,21 @@ export const PipelineMutation = extendType({
       },
       resolve: async (_, { id }, ctx: Context) => {
         const user = ctx.user;
-        const authorized = !!user && resolvePipelineAuthorized(user);
-        if (authorized) {
-          const pipeline = await ctx.prisma.pipeline.delete({
-            where: { id },
-          });
-          return { pipeline }
+        if (user) {
+          const { firstName } = user;
+          const authorized = resolvePipelineAuthorized(user);
+          if (authorized) {
+            const pipeline = await ctx.prisma.pipeline.delete({
+              where: { id },
+            });
+            return { pipeline }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to delete pipelines.`,
+            }
+          }
         }
         return {
           error: {
@@ -794,45 +812,53 @@ export const PipelineMutation = extendType({
       resolve: async (_, { id }, ctx: Context) => {
 
         const user = ctx.user;
-        const authorized = !!user && resolvePipelineAuthorized(user);
-        if (authorized) {
-          const userId = user.id;
-          const newPipeline = await ctx.prisma.pipeline.findUnique({
-            where: { id }
-          }) as IPipelinePartialBy;
+        if (user) {
+          const authorized = resolvePipelineAuthorized(user);
+          const { id: userId, firstName } = user;
+          if (authorized) {
+            const newPipeline = await ctx.prisma.pipeline.findUnique({
+              where: { id }
+            }) as IPipelinePartialBy | null;
 
-          if (newPipeline) {
-            newPipeline.license += '_copy';
-            newPipeline.segment += '_copy';
-            delete newPipeline.id;
-            delete newPipeline.createdAt;
-            delete newPipeline.updatedAt;
-            newPipeline.createdById = userId;
-            newPipeline.updatedById = userId;
+            if (newPipeline) {
+              newPipeline.license += '_copy';
+              newPipeline.segment += '_copy';
+              delete newPipeline.id;
+              delete newPipeline.createdAt;
+              delete newPipeline.updatedAt;
+              newPipeline.createdById = userId;
+              newPipeline.updatedById = userId;
 
-            try {
-              const pipeline = await ctx.prisma.pipeline.create({
-                data: newPipeline
-              });
-              return { pipeline }
-            } catch (e) {
-              if (e instanceof Prisma.PrismaClientKnownRequestError) {
-                if (e.code === 'P2002') {
-                  return {
-                    error: {
-                      field: 'License and Segment',
-                      message: 'There is a unique constraint violation, a new pipeline cannot be created with this license and segment',
+              try {
+                const pipeline = await ctx.prisma.pipeline.create({
+                  data: newPipeline
+                });
+                return { pipeline }
+              } catch (e) {
+                if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                  if (e.code === 'P2002') {
+                    return {
+                      error: {
+                        field: 'License and Segment',
+                        message: 'There is a unique constraint violation, a new pipeline cannot be created with this license and segment',
+                      }
                     }
                   }
                 }
+                throw e;
               }
-              throw e;
+            };
+            return {
+              error: {
+                field: 'ID',
+                message: `Couldn't find pipeline with ID ${id}.`,
+              }
             }
-          };
+          }
           return {
             error: {
-              field: 'ID',
-              message: `Couldn't find pipeline with ID ${id}.`,
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to create a new pipeline.`,
             }
           }
         }
@@ -855,7 +881,7 @@ export const PipelineMutation = extendType({
 
         const user = ctx.user;
         if (user) {
-          const { id: userId, firstName } = user
+          const { id: userId, firstName } = user;
           const authorized = resolvePipelineAuthorized(user);
           if (authorized) {
             const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({
@@ -910,7 +936,7 @@ export const PipelineMutation = extendType({
       resolve: async (_, { id, pipelineId }, ctx: Context) => {
         const user = ctx.user;
         if (user) {
-          const { id: userId, firstName } = user
+          const { id: userId, firstName } = user;
           const authorized = resolvePipelineAuthorized(user);
           if (authorized) {
             const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({

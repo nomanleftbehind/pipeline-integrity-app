@@ -37,7 +37,7 @@ interface ITabPanelProps extends ITabPanelMap {
 export default function PipelineData({ gridRow, open, pipeline, editPipeline, authorized, isEven }: IPipelineDataProps) {
   const [view, setView] = useState<IView>('license change');
 
-  const { id, currentSubstance, flowCalculationDirection, currentStatus, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, firstLicenseDate } = pipeline;
+  const { id, license, segment, currentSubstance, flowCalculationDirection, currentStatus, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, firstLicenseDate, piggable, piggingFrequency, batchFrequency } = pipeline;
 
   // const systemFields: IPipelineProperty[] = [
   //   { columnName: 'createdBy', record: createdBy.email, columnType: 'string' },
@@ -77,6 +77,9 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, au
         material={material}
         mop={mop}
         internalProtection={internalProtection}
+        piggable={piggable}
+        piggingFrequency={piggingFrequency}
+        batchFrequency={batchFrequency}
         authorized={authorized}
         editPipeline={editPipeline}
       />
@@ -95,6 +98,8 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, au
     if (view === 'risk') {
       return <Risk
         id={id}
+        license={license}
+        segment={segment}
         flowCalculationDirection={flowCalculationDirection}
         currentSubstance={currentSubstance}
         currentStatus={currentStatus}

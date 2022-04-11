@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import { IPipeline } from './RenderPipeline';
 import RecordEntry, { IEditRecord, IEditRecordFunction } from '../fields/RecordEntry';
 import { ModalFieldError } from '../Modal';
 import { IMechanicalPropertyRecordEntryMap as IRiskPropertyRecordEntryMap } from './MechanicalProperties';
+import IconButton from '@mui/material/IconButton';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import { openModal } from './RenderPipeline';
 
 import {
   useRiskByIdQuery,
@@ -17,6 +20,8 @@ import {
 
 export interface IRiskProps {
   id: string;
+  license: IPipeline['license'];
+  segment: IPipeline['segment'];
   flowCalculationDirection: IPipeline['flowCalculationDirection'];
   currentSubstance: IPipeline['currentSubstance'];
   currentStatus: IPipeline['currentStatus'];
@@ -27,11 +32,11 @@ export interface IRiskProps {
 }
 
 
-export default function Risk({ id, flowCalculationDirection, currentSubstance, currentStatus, type, material, firstLicenseDate, editPipeline }: IRiskProps) {
+export default function Risk({ id, license, segment, flowCalculationDirection, currentSubstance, currentStatus, type, material, firstLicenseDate, editPipeline }: IRiskProps) {
 
-  const { user } = useAuth() || {};
-  const { role } = user || {};
-  const authorized = role === 'ADMIN' || role === 'ENGINEER';
+  const initialFieldError = { field: '', message: '' };
+  const [fieldError, setFieldError] = useState(initialFieldError);
+  const [confirmDeleteRiskModal, setConfirmDeleteRiskModal] = useState(false);
 
   const { data } = useRiskByIdQuery({
     variables: { id },
@@ -75,9 +80,6 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
     }
   });
 
-
-
-
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {
       switch (columnType) {
@@ -99,14 +101,13 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
     editRisk({ variables: { id, [columnName]: newRecord } });
   }
 
-  const initialFieldError = { field: '', message: '' };
-  const [fieldError, setFieldError] = useState(initialFieldError);
 
   const addRecord = () => {
     addRisk();
   }
 
   const deleteRecord = () => {
+    setConfirmDeleteRiskModal(false);
     deleteRisk();
   }
 
@@ -114,157 +115,182 @@ export default function Risk({ id, flowCalculationDirection, currentSubstance, c
     setFieldError(initialFieldError);
   }
 
-  if (data?.riskById) {
+  const isModalOpen = openModal(fieldError);
 
-    const { id, aerialReview, environmentProximityTo, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS1, geotechnicalFacingS2, geotechnicalHeightS2, geotechnicalSlopeAngleS2, dateSlopeChecked,
-      consequencePeople, consequenceEnviro, consequenceAsset, consequenceMax, probabilityGeo, probabilityInterior, probabilityExterior, riskPotentialGeo, riskPotentialInternal, riskPotentialExternal,
-      safeguardInternalProtection, safeguardPigging, safeguardChemicalInhibition, probabilityInteriorWithSafeguards, riskPotentialInternalWithSafeguards,
-      oilReleaseCost, gasReleaseCost, repairTimeDays, releaseTimeDays, costPerM3Released, safeguardExternalCoating, createdBy, createdAt, updatedBy, updatedAt } = data.riskById;
-    const { environmentProximityToEnum, geotechnicalFacingEnum, typeEnum, materialEnum } = dataValidatorsRisk?.validators || {};
+  const renderRisk = () => {
+    if (data?.riskById) {
 
-    const riskProperties: IRiskPropertyRecordEntryMap[] = [
-      { columnName: 'aerialReview', record: aerialReview, columnType: 'boolean', label: 'Aerial Review', nullable: true, editRecord },
-      { columnName: 'environmentProximityTo', record: environmentProximityTo, columnType: 'string', validator: environmentProximityToEnum, label: 'Environment Proximity To', nullable: true, editRecord },
-      { columnName: 'geotechnicalSlopeAngleS1', record: geotechnicalSlopeAngleS1, columnType: 'number', label: 'Geotechnical Slope Angle S1', nullable: true, editRecord },
-      { columnName: 'geotechnicalFacingS1', record: geotechnicalFacingS1, columnType: 'string', validator: geotechnicalFacingEnum, label: 'Geotechnical Facing S1', nullable: true, editRecord },
-      { columnName: 'geotechnicalHeightS1', record: geotechnicalHeightS1, columnType: 'number', label: 'Geotechnical Height S1', nullable: true, editRecord },
-      { columnName: 'geotechnicalSlopeAngleS2', record: geotechnicalSlopeAngleS2, columnType: 'number', label: 'Geotechnical Slope Angle S2', nullable: true, editRecord },
-      { columnName: 'geotechnicalFacingS2', record: geotechnicalFacingS2, columnType: 'string', validator: geotechnicalFacingEnum, label: 'Geotechnical Facing S2', nullable: true, editRecord },
-      { columnName: 'geotechnicalHeightS2', record: geotechnicalHeightS2, columnType: 'number', label: 'Geotechnical Height S2', nullable: true, editRecord },
-      { columnName: 'dateSlopeChecked', record: dateSlopeChecked, columnType: 'date', label: 'Date Slope Checked', nullable: true, editRecord },
-      { columnName: 'repairTimeDays', record: repairTimeDays, columnType: 'number', label: 'Repair Time Days', nullable: true, editRecord },
-      { columnName: 'releaseTimeDays', record: releaseTimeDays, columnType: 'number', label: 'Release Time Days', nullable: true, editRecord },
-      { columnName: 'costPerM3Released', record: costPerM3Released, columnType: 'number', label: 'Cost Per m³ Released', nullable: true },
-      { columnName: 'oilReleaseCost', record: oilReleaseCost, columnType: 'number', label: 'Oil Release Cost', nullable: true, editRecord },
-      { columnName: 'gasReleaseCost', record: gasReleaseCost, columnType: 'number', label: 'Gas Release Cost', nullable: true, editRecord },
-      { columnName: 'createdBy', record: createdBy.email, columnType: 'string', label: 'Created By', nullable: false },
-      { columnName: 'createdAt', record: createdAt, columnType: 'date', label: 'Created At', nullable: false },
-      { columnName: 'updatedBy', record: updatedBy.email, columnType: 'string', label: 'Updated By', nullable: false },
-      { columnName: 'updatedAt', record: updatedAt, columnType: 'date', label: 'Updated At', nullable: false },
-    ];
+      const { id, aerialReview, environmentProximityTo, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS1, geotechnicalFacingS2, geotechnicalHeightS2, geotechnicalSlopeAngleS2, dateSlopeChecked,
+        consequencePeople, consequenceEnviro, consequenceAsset, consequenceMax, probabilityGeo, probabilityInterior, probabilityExterior, riskPotentialGeo, riskPotentialInternal, riskPotentialExternal,
+        safeguardInternalProtection, safeguardPigging, safeguardChemicalInhibition, probabilityInteriorWithSafeguards, riskPotentialInternalWithSafeguards,
+        oilReleaseCost, gasReleaseCost, repairTimeDays, releaseTimeDays, costPerM3Released, safeguardExternalCoating, createdBy, createdAt, updatedBy, updatedAt, comment, authorized } = data.riskById;
+      const { environmentProximityToEnum, geotechnicalFacingEnum, typeEnum, materialEnum } = dataValidatorsRisk?.validators || {};
 
-    const consequenceFields: IRiskPropertyRecordEntryMap[] = [
-      { columnName: 'consequencePeople', record: consequencePeople, columnType: 'number', label: 'People', nullable: true, editRecord },
-      { columnName: 'consequenceEnviro', record: consequenceEnviro, columnType: 'number', label: 'Environment', nullable: true },
-      { columnName: 'consequenceAsset', record: consequenceAsset, columnType: 'number', label: 'Assets', nullable: true },
-      { columnName: 'consequenceMax', record: consequenceMax, columnType: 'number', label: 'Used Consequence', nullable: true },
-    ];
+      const riskProperties: IRiskPropertyRecordEntryMap[] = [
+        { columnName: 'aerialReview', record: aerialReview, columnType: 'boolean', label: 'Aerial Review', nullable: true, editRecord },
+        { columnName: 'environmentProximityTo', record: environmentProximityTo, columnType: 'string', validator: environmentProximityToEnum, label: 'Environment Proximity To', nullable: true, editRecord },
+        { columnName: 'geotechnicalSlopeAngleS1', record: geotechnicalSlopeAngleS1, columnType: 'number', label: 'Geotechnical Slope Angle S1', nullable: true, editRecord },
+        { columnName: 'geotechnicalFacingS1', record: geotechnicalFacingS1, columnType: 'string', validator: geotechnicalFacingEnum, label: 'Geotechnical Facing S1', nullable: true, editRecord },
+        { columnName: 'geotechnicalHeightS1', record: geotechnicalHeightS1, columnType: 'number', label: 'Geotechnical Height S1', nullable: true, editRecord },
+        { columnName: 'geotechnicalSlopeAngleS2', record: geotechnicalSlopeAngleS2, columnType: 'number', label: 'Geotechnical Slope Angle S2', nullable: true, editRecord },
+        { columnName: 'geotechnicalFacingS2', record: geotechnicalFacingS2, columnType: 'string', validator: geotechnicalFacingEnum, label: 'Geotechnical Facing S2', nullable: true, editRecord },
+        { columnName: 'geotechnicalHeightS2', record: geotechnicalHeightS2, columnType: 'number', label: 'Geotechnical Height S2', nullable: true, editRecord },
+        { columnName: 'dateSlopeChecked', record: dateSlopeChecked, columnType: 'date', label: 'Date Slope Checked', nullable: true, editRecord },
+        { columnName: 'repairTimeDays', record: repairTimeDays, columnType: 'number', label: 'Repair Time Days', nullable: true, editRecord },
+        { columnName: 'releaseTimeDays', record: releaseTimeDays, columnType: 'number', label: 'Release Time Days', nullable: true, editRecord },
+        { columnName: 'costPerM3Released', record: costPerM3Released, columnType: 'number', label: 'Cost Per m³ Released', nullable: true },
+        { columnName: 'oilReleaseCost', record: oilReleaseCost, columnType: 'number', label: 'Oil Release Cost', nullable: true, editRecord },
+        { columnName: 'gasReleaseCost', record: gasReleaseCost, columnType: 'number', label: 'Gas Release Cost', nullable: true, editRecord },
+        { columnName: 'createdBy', record: createdBy.email, columnType: 'string', label: 'Created By', nullable: false },
+        { columnName: 'createdAt', record: createdAt, columnType: 'date', label: 'Created At', nullable: false },
+        { columnName: 'updatedBy', record: updatedBy.email, columnType: 'string', label: 'Updated By', nullable: false },
+        { columnName: 'updatedAt', record: updatedAt, columnType: 'date', label: 'Updated At', nullable: false },
+      ];
 
-    const probabilityInteriorFields: IRiskPropertyRecordEntryMap[] = [
-      { columnName: 'type', record: type, columnType: 'string', label: 'Pipeline Type', nullable: true, validator: typeEnum, editRecord: editPipeline },
-      { columnName: 'material', record: material, columnType: 'string', label: 'Pipeline Material', nullable: true, validator: materialEnum, editRecord: editPipeline },
-      { columnName: 'safeguardInternalProtection', record: safeguardInternalProtection, columnType: 'number', label: 'Internal Protection Safeguard', nullable: true, editRecord },
-      { columnName: 'safeguardPigging', record: safeguardPigging, columnType: 'number', label: 'Pigging Safeguard', nullable: true },
-      { columnName: 'safeguardChemicalInhibition', record: safeguardChemicalInhibition, columnType: 'number', label: 'Chemical Inhibition Safeguard', nullable: true },
-    ];
+      const consequenceFields: IRiskPropertyRecordEntryMap[] = [
+        { columnName: 'consequencePeople', record: consequencePeople, columnType: 'number', label: 'People', nullable: true, editRecord },
+        { columnName: 'consequenceEnviro', record: consequenceEnviro, columnType: 'number', label: 'Environment', nullable: true },
+        { columnName: 'consequenceAsset', record: consequenceAsset, columnType: 'number', label: 'Assets', nullable: true },
+        { columnName: 'consequenceMax', record: consequenceMax, columnType: 'number', label: 'Used Consequence', nullable: true },
+      ];
 
-    const probabilityExteriorFields: IRiskPropertyRecordEntryMap[] = [
-      { columnName: 'safeguardExternalCoating', record: safeguardExternalCoating, columnType: 'number', label: 'External Coating Safeguard', nullable: true, editRecord },
-    ];
+      const probabilityInteriorFields: IRiskPropertyRecordEntryMap[] = [
+        { columnName: 'type', record: type, columnType: 'string', label: 'Pipeline Type', nullable: true, validator: typeEnum, editRecord: editPipeline },
+        { columnName: 'material', record: material, columnType: 'string', label: 'Pipeline Material', nullable: true, validator: materialEnum, editRecord: editPipeline },
+        { columnName: 'safeguardInternalProtection', record: safeguardInternalProtection, columnType: 'number', label: 'Internal Protection Safeguard', nullable: true, editRecord },
+        { columnName: 'safeguardPigging', record: safeguardPigging, columnType: 'number', label: 'Pigging Safeguard', nullable: true },
+        { columnName: 'safeguardChemicalInhibition', record: safeguardChemicalInhibition, columnType: 'number', label: 'Chemical Inhibition Safeguard', nullable: true },
+      ];
 
-    let gridRow = 0;
+      const probabilityExteriorFields: IRiskPropertyRecordEntryMap[] = [
+        { columnName: 'safeguardExternalCoating', record: safeguardExternalCoating, columnType: 'number', label: 'External Coating Safeguard', nullable: true, editRecord },
+      ];
 
-    return (
-      <div className='risk'>
-        {JSON.stringify(fieldError) !== JSON.stringify(initialFieldError) && <ModalFieldError
-          fieldError={fieldError}
-          hideFieldError={hideFieldErrorModal}
-        />}
-        <div className='risk-fields'>
-          {riskProperties.map(({ columnName, label, record, validator, columnType, nullable, editRecord }, i) => {
-            let gridColumn = i;
-            gridColumn = gridColumn % 2 + 1;
-            if (gridColumn === 1) {
-              gridRow += 1;
-            }
-            return (
-              <div key={i} style={{ gridColumn, gridRow }}>
-                <div className='property-header'>{label}</div>
-                <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
-              </div>
-            );
-          })}
-        </div>
-        <div className='risk-matrix-wrapper'>
-          <h4 style={{ textAlign: 'left', borderBottom: '1px solid #909496', margin: '0 0 4px 0', paddingBottom: '4px' }}>Consequences</h4>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px' }}>
-            {consequenceFields.map(({ columnName, label, record, validator, columnType, nullable, editRecord }, i) => {
+      let gridRow = 0;
+
+      return (
+        <>
+          <div className='risk-fields' style={{ gridColumn: 2, gridRow: '1/3' }}>
+            {riskProperties.map(({ columnName, label, record, validator, columnType, nullable, editRecord }, i) => {
+              let gridColumn = i;
+              gridColumn = gridColumn % 2 + 1;
+              if (gridColumn === 1) {
+                gridRow += 1;
+              }
               return (
-                <div key={i} style={{ width: '180px', padding: '4px' }}>
+                <div key={i} style={{ gridColumn, gridRow }}>
                   <div className='property-header'>{label}</div>
                   <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
                 </div>
               );
             })}
           </div>
+          <div className='risk-matrix-wrapper' style={{ gridColumn: 3, gridRow: '1/3' }}>
+            <h4 style={{ textAlign: 'left', borderBottom: '1px solid #909496', margin: '0 0 4px 0', paddingBottom: '4px' }}>Consequences</h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px' }}>
+              {consequenceFields.map(({ columnName, label, record, validator, columnType, nullable, editRecord }, i) => {
+                return (
+                  <div key={i} style={{ width: '180px', padding: '4px' }}>
+                    <div className='property-header'>{label}</div>
+                    <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+                  </div>
+                );
+              })}
+            </div>
 
-          <h4 style={{ textAlign: 'left', borderBottom: '1px solid #909496', margin: '8px 0 4px 0', paddingBottom: '4px' }}>Geo Risk Potential</h4>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px' }}>
-            <div style={{ width: '200px', padding: '4px' }}>
-              <div className='property-header'>Probability Geo</div>
-              <RecordEntry id={id} columnName='probabilityGeo' columnType='number' nullable={true} record={probabilityGeo} authorized={authorized} editRecord={editRecord} />
+            <h4 style={{ textAlign: 'left', borderBottom: '1px solid #909496', margin: '8px 0 4px 0', paddingBottom: '4px' }}>Geo Risk Potential</h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px' }}>
+              <div style={{ width: '200px', padding: '4px' }}>
+                <div className='property-header'>Probability Geo</div>
+                <RecordEntry id={id} columnName='probabilityGeo' columnType='number' nullable={true} record={probabilityGeo} authorized={authorized} editRecord={editRecord} />
+              </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px', margin: '4px 0 4px 0' }}>
+              <RiskMatrix
+                label='Geo Risk Potential'
+                currentProbability={probabilityGeo}
+                currentConsequence={consequenceMax}
+                currentRiskPotential={riskPotentialGeo}
+              />
+            </div>
+
+            <h4 style={{ textAlign: 'left', borderBottom: '1px solid #909496', margin: '8px 0 4px 0', paddingBottom: '4px' }}>Internal Risk Potential</h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', flexWrap: 'wrap', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px' }}>
+              {probabilityInteriorFields.map(({ columnName, label, record, validator, columnType, nullable, editRecord }, i) => {
+                return (
+                  <div key={i} style={{ width: '120px', padding: '4px' }}>
+                    <div className='property-header'>{label}</div>
+                    <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px', margin: '4px 0 4px 0' }}>
+              <RiskMatrix
+                label='Internal Risk Potential'
+                currentProbability={probabilityInterior}
+                currentConsequence={consequenceMax}
+                currentRiskPotential={riskPotentialInternal}
+              />
+              <RiskMatrix
+                label='Internal Risk Potential with Safeguards'
+                currentProbability={probabilityInteriorWithSafeguards}
+                currentConsequence={consequenceMax}
+                currentRiskPotential={riskPotentialInternalWithSafeguards}
+              />
+            </div>
+
+            <h4 style={{ textAlign: 'left', borderBottom: '1px solid #909496', margin: '8px 0 4px 0', paddingBottom: '4px' }}>External Risk Potential</h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', flexWrap: 'wrap', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px' }}>
+              {probabilityExteriorFields.map(({ columnName, label, record, validator, columnType, nullable, editRecord }, i) => {
+                return (
+                  <div key={i} style={{ width: '200px', padding: '4px' }}>
+                    <div className='property-header'>{label}</div>
+                    <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px', margin: '4px 0 4px 0' }}>
+              <RiskMatrix
+                label='External Risk Potential'
+                currentProbability={probabilityExterior}
+                currentConsequence={consequenceMax}
+                currentRiskPotential={riskPotentialExternal}
+              />
             </div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px', margin: '4px 0 4px 0' }}>
-            <RiskMatrix
-              label='Geo Risk Potential'
-              currentProbability={probabilityGeo}
-              currentConsequence={consequenceMax}
-              currentRiskPotential={riskPotentialGeo}
-            />
-          </div>
-
-          <h4 style={{ textAlign: 'left', borderBottom: '1px solid #909496', margin: '8px 0 4px 0', paddingBottom: '4px' }}>Internal Risk Potential</h4>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', flexWrap: 'wrap', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px' }}>
-            {probabilityInteriorFields.map(({ columnName, label, record, validator, columnType, nullable, editRecord }, i) => {
-              return (
-                <div key={i} style={{ width: '120px', padding: '4px' }}>
-                  <div className='property-header'>{label}</div>
-                  <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
-                </div>
-              );
-            })}
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px', margin: '4px 0 4px 0' }}>
-            <RiskMatrix
-              label='Internal Risk Potential'
-              currentProbability={probabilityInterior}
-              currentConsequence={consequenceMax}
-              currentRiskPotential={riskPotentialInternal}
-            />
-            <RiskMatrix
-              label='Internal Risk Potential with Safeguards'
-              currentProbability={probabilityInteriorWithSafeguards}
-              currentConsequence={consequenceMax}
-              currentRiskPotential={riskPotentialInternalWithSafeguards}
-            />
-          </div>
-
-          <h4 style={{ textAlign: 'left', borderBottom: '1px solid #909496', margin: '8px 0 4px 0', paddingBottom: '4px' }}>External Risk Potential</h4>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', flexWrap: 'wrap', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px' }}>
-            {probabilityExteriorFields.map(({ columnName, label, record, validator, columnType, nullable, editRecord }, i) => {
-              return (
-                <div key={i} style={{ width: '200px', padding: '4px' }}>
-                  <div className='property-header'>{label}</div>
-                  <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
-                </div>
-              );
-            })}
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px', border: '1px solid #B6B6B6', borderRadius: '4px', margin: '4px 0 4px 0' }}>
-            <RiskMatrix
-              label='External Risk Potential'
-              currentProbability={probabilityExterior}
-              currentConsequence={consequenceMax}
-              currentRiskPotential={riskPotentialExternal}
-            />
-          </div>
-
-        </div>
-      </div>
-    );
+        </>
+      );
+    }
   }
-  return null;
+
+  return (
+    <div className='risk'>
+      {isModalOpen && <ModalFieldError
+        fieldError={fieldError}
+        hideFieldError={hideFieldErrorModal}
+      />}
+      {confirmDeleteRiskModal && <ModalFieldError
+        fieldError={{ field: 'Risk', message: `Are you sure you want to delete risk section for ${license}-${segment} pipeline? You will need to reenter all risk fields when creating a new risk.` }}
+        hideFieldError={() => setConfirmDeleteRiskModal(false)}
+        executeFunction={deleteRecord}
+      />}
+      <div style={{ gridColumn: 1, gridRow: 1 }}>
+        {data?.riskById ?
+          <IconButton
+            className='button-container'
+            aria-label='delete row' size='small' disabled={!data.riskById.authorized} onClick={() => setConfirmDeleteRiskModal(true)}>
+            <DeleteOutlineOutlinedIcon />
+          </IconButton> :
+          <IconButton
+            className='button-container'
+            aria-label='add row' size='small' onClick={addRecord}>
+            <AddCircleOutlineOutlinedIcon />
+          </IconButton>}
+      </div>
+      {renderRisk()}
+    </div>);
 }
 
 

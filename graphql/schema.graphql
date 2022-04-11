@@ -672,6 +672,7 @@ input PipelineCreateInput {
 }
 
 type PipelineFlow {
+  authorized: Boolean!
   createdAt: DateTime
   createdBy: User
   firstInjection: DateTime

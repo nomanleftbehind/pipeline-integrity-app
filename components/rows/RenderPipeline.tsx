@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import RecordEntry, { IEditRecord } from '../fields/RecordEntry';
-import { ModalFieldError, ModalDeletePipeline } from '../Modal';
+import { ModalFieldError } from '../Modal';
 import PipelineData from './PipelineData';
 import IconButton from '@mui/material/IconButton';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -41,9 +41,9 @@ const isEven = (value: number): 'even' | 'odd' => {
 export default function RenderPipeline({ gridRow, pipeline, validators }: IRenderPipelineProps) {
 
   const [open, setOpen] = useState(false);
-  const [showDeletePipelineModal, setShowDeletePipelineModal] = useState(false);
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
+  const [confirmDeletePipelineModal, setConfirmDeletePipelineModal] = useState(false);
 
   const [editPipeline] = useEditPipelineMutation({
     refetchQueries: [PipelinesByIdDocument, 'PipelinesById', RiskByIdDocument, 'RiskById'],
@@ -97,17 +97,9 @@ export default function RenderPipeline({ gridRow, pipeline, validators }: IRende
     editPipeline({ variables: { id, [columnName]: newRecord } });
   }
 
-  function showModalDeletePipeline() {
-    setShowDeletePipelineModal(true);
-  }
-
-  function hideModalDeletePipeline() {
-    setShowDeletePipelineModal(false);
-  }
-
-  function handleDeletePipeline() {
+  const deleteRecord = () => {
+    setConfirmDeletePipelineModal(false);
     deletePipeline();
-    setShowDeletePipelineModal(false);
   }
 
   const hideFieldErrorModal = () => {
@@ -130,27 +122,25 @@ export default function RenderPipeline({ gridRow, pipeline, validators }: IRende
     { columnName: 'currentSubstance', columnType: 'string', nullable: false, record: currentSubstance, validator: substanceEnum },
   ];
 
-  const modalDeletePipeline = showDeletePipelineModal ?
-    <ModalDeletePipeline
-      license={license}
-      segment={segment}
-      deletePipeline={handleDeletePipeline}
-      hideModalDeletePipeline={hideModalDeletePipeline} /> : null;
-
   return (
     <>
+      {confirmDeletePipelineModal && <ModalFieldError
+        fieldError={{ field: 'Pipeline', message: `Are you sure you want to delete pipeline ${license}-${segment}?` }}
+        hideFieldError={() => setConfirmDeletePipelineModal(false)}
+        executeFunction={deleteRecord}
+      />}
       <div className='pipeline-row' style={{ gridColumn: 1, gridRow: gridRow }}>
         <IconButton className='button-container' aria-label='expand row' size='small' onClick={() => setOpen(!open)}>
           {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
         </IconButton>
       </div>
       <div className='pipeline-row' style={{ gridColumn: 2, gridRow: gridRow }}>
-        {authorized && <IconButton className='button-container' aria-label='delete row' size='small' onClick={showModalDeletePipeline}>
+        {<IconButton className='button-container' aria-label='delete row' size='small' disabled={!authorized} onClick={() => setConfirmDeletePipelineModal(true)}>
           <DeleteOutlineOutlinedIcon />
         </IconButton>}
       </div>
       <div className='pipeline-row' style={{ gridColumn: 3, gridRow: gridRow }}>
-        {authorized && <IconButton className='button-container' aria-label='add row' size='small' onClick={() => duplicatePipeline()}>
+        {<IconButton className='button-container' aria-label='add row' size='small' disabled={!authorized} onClick={() => duplicatePipeline()}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>}
       </div>
@@ -158,7 +148,6 @@ export default function RenderPipeline({ gridRow, pipeline, validators }: IRende
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
       />}
-      {modalDeletePipeline}
       {pipelineColumns.map(({ columnName, columnType, nullable, record, validator, editRecord }, gridColumn) => {
         gridColumn += 4;
         return (

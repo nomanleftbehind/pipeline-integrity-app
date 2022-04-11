@@ -151,7 +151,6 @@ export const RiskQuery = extendType({
         id: nonNull(stringArg()),
       },
       resolve: async (_parent, { id }, ctx: Context) => {
-        console.log('riskById');
 
         const risk = await ctx.prisma.risk.findUnique({
           where: { id },
@@ -295,35 +294,42 @@ export const RiskMutation = extendType({
 
         const user = ctx.user;
 
-        if (user && ['ADMIN', 'ENGINEER'].includes(user.role)) {
-
-          const { id: userId } = user;
-
-          const risk = await ctx.prisma.risk.update({
-            where: { id: args.id },
-            data: {
-              aerialReview: args.aerialReview,
-              environmentProximityTo: databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, args.environmentProximityTo),
-              geotechnicalSlopeAngleS1: args.geotechnicalSlopeAngleS1,
-              geotechnicalFacingS1: databaseEnumToServerEnum(GeotechnicalFacingEnumMembers, args.geotechnicalFacingS1),
-              geotechnicalHeightS1: args.geotechnicalHeightS1,
-              geotechnicalSlopeAngleS2: args.geotechnicalSlopeAngleS2,
-              geotechnicalFacingS2: databaseEnumToServerEnum(GeotechnicalFacingEnumMembers, args.geotechnicalFacingS2),
-              geotechnicalHeightS2: args.geotechnicalHeightS2,
-              dateSlopeChecked: args.dateSlopeChecked,
-              repairTimeDays: args.repairTimeDays,
-              releaseTimeDays: args.releaseTimeDays,
-              oilReleaseCost: args.oilReleaseCost,
-              gasReleaseCost: args.gasReleaseCost,
-              consequencePeople: args.consequencePeople,
-              probabilityGeo: args.probabilityGeo,
-              safeguardInternalProtection: args.safeguardInternalProtection,
-              safeguardExternalCoating: args.safeguardExternalCoating,
-              comment: args.comment,
-              updatedById: userId,
-            },
-          });
-          return { risk }
+        if (user) {
+          const { id: userId, firstName } = user;
+          const authorized = resolveRiskAuthorized(user);
+          if (authorized) {
+            const risk = await ctx.prisma.risk.update({
+              where: { id: args.id },
+              data: {
+                aerialReview: args.aerialReview,
+                environmentProximityTo: databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, args.environmentProximityTo),
+                geotechnicalSlopeAngleS1: args.geotechnicalSlopeAngleS1,
+                geotechnicalFacingS1: databaseEnumToServerEnum(GeotechnicalFacingEnumMembers, args.geotechnicalFacingS1),
+                geotechnicalHeightS1: args.geotechnicalHeightS1,
+                geotechnicalSlopeAngleS2: args.geotechnicalSlopeAngleS2,
+                geotechnicalFacingS2: databaseEnumToServerEnum(GeotechnicalFacingEnumMembers, args.geotechnicalFacingS2),
+                geotechnicalHeightS2: args.geotechnicalHeightS2,
+                dateSlopeChecked: args.dateSlopeChecked,
+                repairTimeDays: args.repairTimeDays,
+                releaseTimeDays: args.releaseTimeDays,
+                oilReleaseCost: args.oilReleaseCost,
+                gasReleaseCost: args.gasReleaseCost,
+                consequencePeople: args.consequencePeople,
+                probabilityGeo: args.probabilityGeo,
+                safeguardInternalProtection: args.safeguardInternalProtection,
+                safeguardExternalCoating: args.safeguardExternalCoating,
+                comment: args.comment,
+                updatedById: userId,
+              },
+            });
+            return { risk }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to make changes to risk.`,
+            }
+          }
         }
         return {
           error: {
@@ -340,16 +346,25 @@ export const RiskMutation = extendType({
       },
       resolve: async (_, { id }, ctx: Context) => {
         const user = ctx.user;
-        if (user && ['ADMIN', 'ENGINEER'].includes(user.role)) {
-          const userId = user.id;
-          const risk = await ctx.prisma.risk.create({
-            data: {
-              id,
-              createdById: userId,
-              updatedById: userId,
+        if (user) {
+          const { id: userId, firstName } = user;
+          const authorized = resolveRiskAuthorized(user);
+          if (authorized) {
+            const risk = await ctx.prisma.risk.create({
+              data: {
+                id,
+                createdById: userId,
+                updatedById: userId,
+              }
+            });
+            return { risk }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to add risk.`,
             }
-          });
-          return { risk }
+          }
         }
         return {
           error: {
@@ -366,11 +381,21 @@ export const RiskMutation = extendType({
       },
       resolve: async (_, { id }, ctx: Context) => {
         const user = ctx.user;
-        if (user && ['ADMIN', 'ENGINEER'].includes(user.role)) {
-          const risk = await ctx.prisma.risk.delete({
-            where: { id }
-          });
-          return { risk }
+        if (user) {
+          const { firstName } = user;
+          const authorized = resolveRiskAuthorized(user);
+          if (authorized) {
+            const risk = await ctx.prisma.risk.delete({
+              where: { id }
+            });
+            return { risk }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to delete risk.`,
+            }
+          }
         }
         return {
           error: {

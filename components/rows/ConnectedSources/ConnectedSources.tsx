@@ -210,7 +210,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection,
   const isModalOpen = openModal(fieldError);
 
   const sourceHeader: ISourceHeaderMap[] = [
-    {},
+    { props: { style: { width: '30px' } } },
     { label: 'Sources', props: { style: { width: '250px' } } },
     { props: { style: { width: '30px' } } },
     { props: { style: { width: '30px' } } },

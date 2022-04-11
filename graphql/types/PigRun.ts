@@ -78,7 +78,7 @@ interface IresolvePigRunAuthorizedArgs {
 
 const resolvePigRunAuthorized = ({ user, createdById }: IresolvePigRunAuthorizedArgs) => {
 	const { role, id } = user;
-	return role === 'ADMIN' || role === 'ENGINEER' || (role === 'CATHODIC' && createdById === id);
+	return role === 'ADMIN' || role === 'ENGINEER' || (role === 'OPERATOR' && createdById === id);
 }
 
 
@@ -130,68 +130,73 @@ export const PigRunMutation = extendType({
 
 				const user = ctx.user;
 
-				if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'OPERATOR')) {
+				if (user) {
+					const { id: userId, role, firstName } = user;
 
-					const { id: userId, firstName, role } = user;
+					if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR') {
 
-					const currentPigRun = await ctx.prisma.pigRun.findUnique({
-						where: { id: args.id },
-						select: {
-							createdById: true,
-							dateIn: true,
-							dateOut: true,
-						}
-					});
+						const currentPigRun = await ctx.prisma.pigRun.findUnique({
+							where: { id: args.id },
+							select: {
+								createdById: true,
+								dateIn: true,
+								dateOut: true,
+							}
+						});
 
-					if (currentPigRun) {
+						if (currentPigRun) {
 
-						const { createdById, dateIn, dateOut } = currentPigRun;
+							const { createdById, dateIn, dateOut } = currentPigRun;
 
-						if (role === 'OPERATOR' && createdById !== userId) {
-							return {
-								error: {
-									field: 'Pig run Created By',
-									message: `Hi ${firstName}. Your user privilages do not allow you to edit pig run entries not authored by you.`,
+							if (role === 'OPERATOR' && createdById !== userId) {
+								return {
+									error: {
+										field: 'Pig run Created By',
+										message: `Hi ${firstName}. Your user privilages do not allow you to edit pig run entries not authored by you.`,
+									}
+								}
+							}
+
+							if (args.dateOut && args.dateOut.getTime() < dateIn.getTime()) {
+								return {
+									error: {
+										field: 'Pig run date out',
+										message: `Pig out date ${args.dateOut.toISOString().split('T')[0]} you are trying to enter is before pig in date ${dateIn.toISOString().split('T')[0]} which is impossible. Change pig in date first before entering pig out date.`,
+									}
+								}
+							}
+
+							if (args.dateIn && dateOut && args.dateIn.getTime() > dateOut.getTime()) {
+								return {
+									error: {
+										field: 'Pig run date in',
+										message: `Pig in date ${args.dateIn.toISOString().split('T')[0]} you are trying to enter is after pig out date ${dateOut.toISOString().split('T')[0]} which is impossible. Change or delete pig out date first before entering pig in date.`,
+									}
 								}
 							}
 						}
-
-						if (args.dateOut && args.dateOut.getTime() < dateIn.getTime()) {
-							return {
-								error: {
-									field: 'Pig run date out',
-									message: `Pig out date ${args.dateOut.toISOString().split('T')[0]} you are trying to enter is before pig in date ${dateIn.toISOString().split('T')[0]} which is impossible. Change pig in date first before entering pig out date.`,
-								}
-							}
-						}
-
-						if (args.dateIn && dateOut && args.dateIn.getTime() > dateOut.getTime()) {
-							return {
-								error: {
-									field: 'Pig run date in',
-									message: `Pig in date ${args.dateIn.toISOString().split('T')[0]} you are trying to enter is after pig out date ${dateOut.toISOString().split('T')[0]} which is impossible. Change or delete pig out date first before entering pig in date.`,
-								}
-							}
+						const pigRun = await ctx.prisma.pigRun.update({
+							where: { id: args.id },
+							data: {
+								pigType: databaseEnumToServerEnum(PigTypeEnumMembers, args.pigType),
+								dateIn: args.dateIn || undefined,
+								dateOut: args.dateOut,
+								isolationValveFunctionTest: args.isolationValveFunctionTest,
+								pigSenderReceiverInspection: args.pigSenderReceiverInspection,
+								comment: args.comment,
+								operatorId: args.operatorId,
+								updatedById: userId,
+							},
+						});
+						return { pigRun }
+					}
+					return {
+						error: {
+							field: 'User',
+							message: `Hi ${firstName}, you are not authorized to make changes to pig runs.`,
 						}
 					}
-
-					const pigRun = await ctx.prisma.pigRun.update({
-						where: { id: args.id },
-						data: {
-							pigType: databaseEnumToServerEnum(PigTypeEnumMembers, args.pigType),
-							dateIn: args.dateIn || undefined,
-							dateOut: args.dateOut,
-							isolationValveFunctionTest: args.isolationValveFunctionTest,
-							pigSenderReceiverInspection: args.pigSenderReceiverInspection,
-							comment: args.comment,
-							operatorId: args.operatorId,
-							updatedById: userId,
-						},
-					});
-
-					return { pigRun }
 				}
-
 				return {
 					error: {
 						field: 'User',
@@ -209,24 +214,28 @@ export const PigRunMutation = extendType({
 			resolve: async (_parent, { pipelineId }, ctx: Context) => {
 
 				const user = ctx.user;
-
-				if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'OPERATOR')) {
-					const userId = user.id;
-
-					const today = new Date();
-					today.setUTCHours(0, 0, 0, 0);
-					const pigRun = await ctx.prisma.pigRun.create({
-						data: {
-							pipelineId: pipelineId,
-							dateIn: today,
-							createdById: userId,
-							updatedById: userId,
+				if (user) {
+					const { id: userId, role, firstName } = user;
+					if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR') {
+						const today = new Date();
+						today.setUTCHours(0, 0, 0, 0);
+						const pigRun = await ctx.prisma.pigRun.create({
+							data: {
+								pipelineId: pipelineId,
+								dateIn: today,
+								createdById: userId,
+								updatedById: userId,
+							}
+						});
+						return { pigRun };
+					}
+					return {
+						error: {
+							field: 'User',
+							message: `Hi ${firstName}, you are not authorized to add pig runs.`,
 						}
-					});
-
-					return { pigRun };
+					}
 				}
-
 				return {
 					error: {
 						field: 'User',
@@ -244,34 +253,37 @@ export const PigRunMutation = extendType({
 
 				const user = ctx.user;
 
-				if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'OPERATOR')) {
-
+				if (user) {
 					const { id: userId, firstName, role } = user;
-
-					if (role === 'OPERATOR') {
-						const currentPigRun = await ctx.prisma.pigRun.findUnique({
-							where: { id },
-							select: {
-								createdById: true,
-							}
-						});
-
-						if (currentPigRun && currentPigRun.createdById !== userId) {
-							return {
-								error: {
-									field: 'Pig run created by',
-									message: `Hi ${firstName}. Your user privilages do not allow you to delete pig run entries not authored by you.`,
+					if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR') {
+						if (role === 'OPERATOR') {
+							const currentPigRun = await ctx.prisma.pigRun.findUnique({
+								where: { id },
+								select: {
+									createdById: true,
+								}
+							});
+							if (currentPigRun && currentPigRun.createdById !== userId) {
+								return {
+									error: {
+										field: 'Pig run created by',
+										message: `Hi ${firstName}. Your user privilages do not allow you to delete pig runs not authored by you.`,
+									}
 								}
 							}
 						}
+						const pigRun = await ctx.prisma.pigRun.delete({
+							where: { id }
+						});
+						return { pigRun }
 					}
-
-					const pigRun = await ctx.prisma.pigRun.delete({
-						where: { id }
-					});
-					return { pigRun }
+					return {
+						error: {
+							field: 'User',
+							message: `Hi ${firstName}, you are not authorized to delete pig runs.`,
+						}
+					}
 				}
-
 				return {
 					error: {
 						field: 'User',

@@ -8,9 +8,9 @@ import {
 
 export type IMechanicalPropertyRecordEntryMap = IRecordEntryMap & { label: string };
 
-type IMechanicalPropertiesProps = Pick<IPipeline, 'id' | 'length' | 'type' | 'grade' | 'yieldStrength' | 'outsideDiameter' | 'wallThickness' | 'material' | 'mop' | 'internalProtection' | 'authorized'> & { editPipeline: IEditRecordFunction };
+type IMechanicalPropertiesProps = Pick<IPipeline, 'id' | 'length' | 'type' | 'grade' | 'yieldStrength' | 'outsideDiameter' | 'wallThickness' | 'material' | 'mop' | 'internalProtection' | 'piggable' | 'piggingFrequency' | 'batchFrequency' | 'authorized'> & { editPipeline: IEditRecordFunction };
 
-export default function MechanicalProperties({ id, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, authorized, editPipeline: editRecord }: IMechanicalPropertiesProps) {
+export default function MechanicalProperties({ id, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, piggable, piggingFrequency, batchFrequency, authorized, editPipeline: editRecord }: IMechanicalPropertiesProps) {
 
   const { data: dataValidators } = useValidatorsMechanicalPropertiesQuery();
 
@@ -26,6 +26,9 @@ export default function MechanicalProperties({ id, length, type, grade, yieldStr
     { columnName: 'material', record: material, label: 'Material', columnType: 'string', nullable: true, validator: materialEnum, editRecord },
     { columnName: 'mop', record: mop, label: 'MOP (kPa)', columnType: 'number', nullable: true, validator: mopMatchPattern, editRecord },
     { columnName: 'internalProtection', record: internalProtection, label: 'Internal Protection', columnType: 'string', nullable: true, validator: internalProtectionEnum, editRecord },
+    { columnName: 'piggable', record: piggable, label: 'Piggable', columnType: 'boolean', nullable: true, editRecord },
+    { columnName: 'piggingFrequency', record: piggingFrequency, label: 'Pigging Frequency (#/year)', columnType: 'number', nullable: true, editRecord },
+    { columnName: 'batchFrequency', record: batchFrequency, label: 'Batch Frequency', columnType: 'string', nullable: true, editRecord },
   ];
 
   let gridRow = 0;

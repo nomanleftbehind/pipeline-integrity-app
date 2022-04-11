@@ -151,47 +151,47 @@ export const PressureTestMutation = extendType({
       resolve: async (_, args, ctx: Context) => {
 
         const user = ctx.user;
-
-        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'OPERATOR')) {
-
+        if (user) {
           const { id: userId, firstName, role } = user;
-
-          if (role === 'OPERATOR') {
-
-            const currentPressureTest = await ctx.prisma.pressureTest.findUnique({
-              where: { id: args.id },
-              select: {
-                createdById: true,
-              }
-            });
-
-            if (currentPressureTest && currentPressureTest.createdById !== userId) {
-              return {
-                error: {
-                  field: 'Pressure test created by',
-                  message: `Hi ${firstName}. Your user privilages do not allow you to edit pressure test entries not authored by you.`,
+          if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR') {
+            if (role === 'OPERATOR') {
+              const currentPressureTest = await ctx.prisma.pressureTest.findUnique({
+                where: { id: args.id },
+                select: {
+                  createdById: true,
+                }
+              });
+              if (currentPressureTest && currentPressureTest.createdById !== userId) {
+                return {
+                  error: {
+                    field: 'Pressure test created by',
+                    message: `Hi ${firstName}. Your user privilages do not allow you to edit pressure tests not authored by you.`,
+                  }
                 }
               }
             }
+            const pressureTest = await ctx.prisma.pressureTest.update({
+              where: { id: args.id },
+              data: {
+                limitingSpec: databaseEnumToServerEnum(LimitingSpecEnumMembers, args.limitingSpec),
+                infoSentOutDate: args.infoSentOutDate,
+                ddsDate: args.ddsDate,
+                pressureTestDate: args.pressureTestDate || undefined,
+                pressureTestReceivedDate: args.pressureTestReceivedDate,
+                integritySheetUpdated: args.integritySheetUpdated,
+                comment: args.comment,
+                updatedById: userId,
+              },
+            });
+            return { pressureTest }
           }
-
-          const pressureTest = await ctx.prisma.pressureTest.update({
-            where: { id: args.id },
-            data: {
-              limitingSpec: databaseEnumToServerEnum(LimitingSpecEnumMembers, args.limitingSpec),
-              infoSentOutDate: args.infoSentOutDate,
-              ddsDate: args.ddsDate,
-              pressureTestDate: args.pressureTestDate || undefined,
-              pressureTestReceivedDate: args.pressureTestReceivedDate,
-              integritySheetUpdated: args.integritySheetUpdated,
-              comment: args.comment,
-              updatedById: userId,
-            },
-          });
-
-          return { pressureTest }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to make changes pressure tests.`,
+            }
+          }
         }
-
         return {
           error: {
             field: 'User',
@@ -208,23 +208,28 @@ export const PressureTestMutation = extendType({
       resolve: async (_parent, { pipelineId }, ctx: Context) => {
 
         const user = ctx.user;
-
-        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'OPERATOR')) {
-          const userId = user.id;
-          const today = new Date();
-          today.setUTCHours(0, 0, 0, 0);
-          const pressureTest = await ctx.prisma.pressureTest.create({
-            data: {
-              pipelineId,
-              pressureTestDate: today,
-              createdById: userId,
-              updatedById: userId,
+        if (user) {
+          const { id: userId, role, firstName } = user;
+          if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR') {
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const pressureTest = await ctx.prisma.pressureTest.create({
+              data: {
+                pipelineId,
+                pressureTestDate: today,
+                createdById: userId,
+                updatedById: userId,
+              }
+            });
+            return { pressureTest }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to add pressure tests.`,
             }
-          });
-
-          return { pressureTest }
+          }
         }
-
         return {
           error: {
             field: 'User',
@@ -241,35 +246,37 @@ export const PressureTestMutation = extendType({
       resolve: async (_parent, { id }, ctx: Context) => {
 
         const user = ctx.user;
-
-        if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'OPERATOR')) {
-
+        if (user) {
           const { id: userId, firstName, role } = user;
-
-          if (role === 'OPERATOR') {
-            const currentPressureTest = await ctx.prisma.pressureTest.findUnique({
-              where: { id },
-              select: {
-                createdById: true,
-              }
-            });
-
-            if (currentPressureTest && currentPressureTest.createdById !== userId) {
-              return {
-                error: {
-                  field: 'Pressure test created by',
-                  message: `Hi ${firstName}. Your user privilages do not allow you to delete pressure test entries not authored by you.`,
+          if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR') {
+            if (role === 'OPERATOR') {
+              const currentPressureTest = await ctx.prisma.pressureTest.findUnique({
+                where: { id },
+                select: {
+                  createdById: true,
+                }
+              });
+              if (currentPressureTest && currentPressureTest.createdById !== userId) {
+                return {
+                  error: {
+                    field: 'Pressure test created by',
+                    message: `Hi ${firstName}. Your user privilages do not allow you to delete pressure tests not authored by you.`,
+                  }
                 }
               }
             }
+            const pressureTest = await ctx.prisma.pressureTest.delete({
+              where: { id }
+            });
+            return { pressureTest }
           }
-
-          const pressureTest = await ctx.prisma.pressureTest.delete({
-            where: { id }
-          });
-          return { pressureTest }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to delete pressure tests.`,
+            }
+          }
         }
-
         return {
           error: {
             field: 'User',

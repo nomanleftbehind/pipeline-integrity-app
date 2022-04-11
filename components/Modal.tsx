@@ -32,67 +32,24 @@ function Modal({ children }: IModalProps) {
 }
 
 
-interface IModalDeletePipelineProps {
-  segment: string;
-  license: string;
-  deletePipeline: () => void;
-  hideModalDeletePipeline: () => void;
-}
-
-export function ModalDeletePipeline({ license, segment, deletePipeline, hideModalDeletePipeline }: IModalDeletePipelineProps) {
-
-  return (
-    <Modal>
-      <div className="modal">
-        <div className="modal-box">
-          <div>
-            Are you sure you want to delete {`${license}-${segment}`} pipeline?
-          </div>
-          <button onClick={deletePipeline}>Delete</button>
-          <button onClick={hideModalDeletePipeline}>Cancel</button>
-        </div>
-      </div>
-    </Modal>
-  );
-}
-
-interface IModalDuplicateInjectionPoint {
-  hideDuplicateInjectionPointModal: () => void
-}
-
-export function ModalDuplicateInjectionPoint({ hideDuplicateInjectionPointModal }: IModalDuplicateInjectionPoint) {
-
-  return (
-    <Modal>
-      <div className="modal">
-        <div className="modal-box">
-          <div>
-            Selected source already is injection point to the respective pipeline!
-          </div>
-          <button onClick={hideDuplicateInjectionPointModal}>OK</button>
-        </div>
-      </div>
-    </Modal>
-  );
-}
-
-
 interface IModalFieldErrorProps {
   fieldError: FieldError;
   hideFieldError: () => void;
+  executeFunction?: () => void;
 }
 
-export function ModalFieldError({ fieldError, hideFieldError }: IModalFieldErrorProps) {
+export function ModalFieldError({ fieldError, hideFieldError, executeFunction }: IModalFieldErrorProps) {
   const { field, message } = fieldError;
   return (
     <Modal>
-      <div className="modal">
-        <div className="modal-box">
+      <div className='modal'>
+        <div className='modal-box'>
           <div>
             {`Field: ${field}`}<br />
             {`Message: ${message}`}
           </div>
-          <button onClick={hideFieldError}>OK</button>
+          {executeFunction && <button onClick={executeFunction}>OK</button>}
+          <button onClick={hideFieldError}>{executeFunction ? 'Cancel' : 'OK'}</button>
         </div>
       </div>
     </Modal>

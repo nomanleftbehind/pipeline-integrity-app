@@ -151,7 +151,7 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
               <div className={`pig-run-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   className='button-container'
-                  aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
+                  aria-label='delete row' size='small' disabled={!authorized} onClick={() => deleteRecord(id)}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </div>

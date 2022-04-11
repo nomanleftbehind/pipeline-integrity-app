@@ -968,6 +968,7 @@ query ConnectedPipelinesByPipelineId($id: String!, $flowCalculationDirection: Fl
       lastProduction
       firstInjection
       lastInjection
+      authorized
       createdBy {
         id
         email

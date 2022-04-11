@@ -1,5 +1,6 @@
 import { objectType, extendType, nonNull, stringArg, list, arg } from 'nexus';
 import { gasAssociatedLiquidsCalc, totalFluidsCalc } from './Well';
+import { resolvePipelineAuthorized } from './Pipeline';
 import type { FlowCalculationDirectionEnum } from '@prisma/client';
 import { Context } from '../context';
 import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
@@ -60,6 +61,12 @@ export const PipelineFlow = objectType({
           select: { updatedAt: true },
         }) || {}
         return updatedAt;
+      }
+    })
+    t.nonNull.boolean('authorized', {
+      resolve: async (_, _args, ctx: Context) => {
+        const user = ctx.user;
+        return !!user && resolvePipelineAuthorized(user);
       }
     })
   }

@@ -1,17 +1,26 @@
 .risk {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 30px 380px auto;
+  row-gap: 2px;
+  column-gap: 4px;
+  /* grid-auto-rows: 30px auto; */
+  /* flex-direction: row;
+  justify-content: space-between; */
 }
+
+
 
 .risk-fields {
   padding: 8px;
   display: grid;
-  grid-template-columns: repeat(3, min-content);
+  grid-template-columns: repeat(2, min-content);
   column-gap: 6px;
   row-gap: 20px;
   grid-auto-rows: min-content;
   white-space: nowrap;
+  overflow: auto;
+  max-height: 590px;
+  /* border: 2px solid black; */
 }
 
 .risk-matrix {
@@ -34,8 +43,11 @@
   grid-auto-rows: min-content;
   column-gap: 30px;
   row-gap: 5px;*/
-  border: 2px solid black;
+  /* border: 2px solid black; */
   padding: 5px;
+  overflow: auto;
+  max-height: 590px;
+  max-width: min-content;
 }
 
 .risk-matrix>.probability.consequence {

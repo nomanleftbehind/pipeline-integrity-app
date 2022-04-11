@@ -23,8 +23,7 @@ export type IPipelineFlow = IInferFromArray<NonNullable<ConnectedPipelinesByPipe
 interface ISourceRowProps {
   pipelineId: string;
   source: IWell | ISalesPoint | IPipelineFlow;
-  length: number;
-  row: number;
+  isLastRow: boolean;
   formId: string;
   loadOptions: () => void;
   dataOptions: IDataOptions;
@@ -32,7 +31,7 @@ interface ISourceRowProps {
   disconnectSource: (arg0: IDis_ConnectSource) => void;
 }
 
-export default function SourceRow({ pipelineId, source, formId, length, row, loadOptions, dataOptions, connectSource, disconnectSource }: ISourceRowProps) {
+export default function SourceRow({ pipelineId, source, formId, isLastRow, loadOptions, dataOptions, connectSource, disconnectSource }: ISourceRowProps) {
 
   const [showOptionsForm, setShowOptionsForm] = useState(false);
 
@@ -46,8 +45,7 @@ export default function SourceRow({ pipelineId, source, formId, length, row, loa
     connectSource({ id, pipelineId, oldSourceId });
   }
 
-  const { id, name, oil, water, gas, gasAssociatedLiquids, totalFluids, lastProduction, firstProduction, lastInjection, firstInjection } = source;
-  const isLastRow = length === row + 1;
+  const { id, name, oil, water, gas, gasAssociatedLiquids, totalFluids, lastProduction, firstProduction, lastInjection, firstInjection, authorized } = source;
   const columns: ISourceMap[] = [
     // { record: <IconButton aria-label='delete row' size='small' onClick={() => disconnectSource({ id, pipelineId })}><DisconnectIcon /></IconButton> },
     // { record: name, style: { borderRight: 'unset', textAlign: 'left', paddingLeft: '6px' } },
@@ -65,7 +63,7 @@ export default function SourceRow({ pipelineId, source, formId, length, row, loa
   return (
     <tr>
       <td className={`connected-source-row sticky left${isLastRow ? ' last' : ''}`}>
-        <IconButton aria-label='disconnect row' size='small' onClick={() => disconnectSource({ id, pipelineId })}><DisconnectIcon /></IconButton>
+        <IconButton aria-label='disconnect row' size='small' disabled={!authorized} onClick={() => disconnectSource({ id, pipelineId })}><DisconnectIcon /></IconButton>
       </td>
       {showOptionsForm ? <AutocompleteForm
         pipelineId={pipelineId}
