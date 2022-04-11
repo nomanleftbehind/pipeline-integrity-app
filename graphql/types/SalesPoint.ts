@@ -94,7 +94,7 @@ export const SalesPointQuery = extendType({
       args: {
         pipelineId: nonNull(stringArg()),
       },
-      resolve: async (_parent, {pipelineId}, ctx: Context) => {
+      resolve: async (_parent, { pipelineId }, ctx: Context) => {
 
         const connectedSalesPoints = await ctx.prisma.salesPoint.findMany({
           where: { pipelineId },
@@ -149,9 +149,12 @@ export const SalesPointQuery = extendType({
           _min: { firstProduction: true, firstInjection: true },
           where: { pipelineId }
         });
-        const { _sum: { oil, water, gas }, _max: { lastProduction, lastInjection }, _min: { firstProduction, firstInjection } } = total[0] || {};
-        const result = { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection }
-        return result;
+        if (total.length > 0) {
+          const { _sum: { oil, water, gas }, _max: { lastProduction, lastInjection }, _min: { firstProduction, firstInjection } } = total[0];
+          const result = { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection }
+          return result;
+        }
+        return null;
       },
     })
   }

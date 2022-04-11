@@ -202,6 +202,7 @@ export const WellQuery = extendType({
         pipelineId: nonNull(stringArg()),
       },
       resolve: async (_, { pipelineId }, ctx: Context) => {
+        
         const total = await ctx.prisma.well.groupBy({
           by: ['pipelineId'],
           _sum: { oil: true, water: true, gas: true },
@@ -209,9 +210,13 @@ export const WellQuery = extendType({
           _min: { firstProduction: true, firstInjection: true },
           where: { pipelineId }
         });
-        const { _sum: { oil, water, gas }, _max: { lastProduction, lastInjection }, _min: { firstProduction, firstInjection } } = total[0] || {};
-        const result = { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection }
-        return result;
+
+        if (total.length > 0) {
+          const { _sum: { oil, water, gas }, _max: { lastProduction, lastInjection }, _min: { firstProduction, firstInjection } } = total[0];
+          const result = { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection }
+          return result;
+        }
+        return null;
       },
     })
   }

@@ -66,7 +66,17 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection,
 
   // Well queries and mutations
   const { data: dataWells } = useWellsByPipelineIdQuery({ variables: { pipelineId } });
-  const { data: dataWellsGroupBy } = useWellsGroupByPipelineIdQuery({ variables: { pipelineId } });
+  const { data: dataWellsGroupBy } = useWellsGroupByPipelineIdQuery({
+    variables: { pipelineId },
+    onCompleted: ({ wellsGroupByPipelineId }) => {
+      console.log('on completed:', wellsGroupByPipelineId);
+
+    },
+    onError: ({ message, name }) => {
+      console.log('on error', name, message);
+
+    }
+  });
   const [wellOptions, { data: dataWellOptions }] = useWellOptionsLazyQuery({
     variables: { pipelineId },
     fetchPolicy: 'no-cache'
@@ -196,9 +206,6 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection,
   const validator = dataValidatorFlowCalculationDirection?.validators?.flowCalculationDirectionEnum;
 
   const recordEntryProps = { editRecord: editPipeline, authorized, record: flowCalculationDirection, validator };
-
-  type a = typeof recordEntryProps
-
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);

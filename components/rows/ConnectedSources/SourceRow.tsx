@@ -73,7 +73,7 @@ export default function SourceRow({ pipelineId, source, formId, isLastRow, loadO
         options={dataOptions}
       /> : <td style={{ borderRight: 'unset', textAlign: 'left', paddingLeft: '6px' }}>{name}</td>}
       {!showOptionsForm && <td style={{ display: 'flex' }}>
-        <IconButton size='small' onClick={toggleShowOptionsForm}>{showOptionsForm ? <BlockOutlinedIcon /> : <EditOutlinedIcon />}</IconButton>
+        <IconButton size='small' disabled={!authorized} onClick={toggleShowOptionsForm}>{showOptionsForm ? <BlockOutlinedIcon /> : <EditOutlinedIcon />}</IconButton>
       </td>}
       <td>
         {showOptionsForm && <IconButton size='small' onClick={() => setShowOptionsForm(false)}><BlockOutlinedIcon /></IconButton>}
@@ -81,13 +81,7 @@ export default function SourceRow({ pipelineId, source, formId, isLastRow, loadO
       {columns.map(({ record, style }, column) => {
         column += 3
         return (
-          <td
-            className={column.toString()}
-            key={column}
-            style={style}
-          >
-            {record}
-          </td>
+          <td key={column} style={style}>{record}</td>
         );
       })}
     </tr>
