@@ -66,17 +66,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection,
 
   // Well queries and mutations
   const { data: dataWells } = useWellsByPipelineIdQuery({ variables: { pipelineId } });
-  const { data: dataWellsGroupBy } = useWellsGroupByPipelineIdQuery({
-    variables: { pipelineId },
-    onCompleted: ({ wellsGroupByPipelineId }) => {
-      console.log('on completed:', wellsGroupByPipelineId);
-
-    },
-    onError: ({ message, name }) => {
-      console.log('on error', name, message);
-
-    }
-  });
+  const { data: dataWellsGroupBy } = useWellsGroupByPipelineIdQuery({ variables: { pipelineId } });
   const [wellOptions, { data: dataWellOptions }] = useWellOptionsLazyQuery({
     variables: { pipelineId },
     fetchPolicy: 'no-cache'

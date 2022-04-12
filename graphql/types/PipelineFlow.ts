@@ -10,7 +10,7 @@ export const PipelineFlow = objectType({
   definition(t) {
     t.nonNull.string('id')
     t.nonNull.string('name', {
-      description: 'This field is a concatonated license and segment of a pipeline to conform with Well and Sales Point objects'
+      description: 'This field is a concatenated license and segment of a pipeline to conform with Well and Sales Point objects'
     })
     t.nonNull.float('oil')
     t.nonNull.float('water')
@@ -25,16 +25,16 @@ export const PipelineFlow = objectType({
     t.field('lastProduction', { type: 'DateTime' })
     t.field('firstInjection', { type: 'DateTime' })
     t.field('lastInjection', { type: 'DateTime' })
-    t.field('createdBy', {
+    t.nonNull.field('createdBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
         const result = await ctx.prisma.pipeline.findUnique({
           where: { id },
         }).createdBy()
-        return result;
+        return result!;
       },
     })
-    t.field('createdAt', {
+    t.nonNull.field('createdAt', {
       type: 'DateTime',
       resolve: async ({ id }, _args, ctx: Context) => {
         const { createdAt } = await ctx.prisma.pipeline.findUnique({
@@ -44,16 +44,16 @@ export const PipelineFlow = objectType({
         return createdAt;
       },
     })
-    t.field('updatedBy', {
+    t.nonNull.field('updatedBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
         const result = await ctx.prisma.pipeline.findUnique({
           where: { id },
         }).updatedBy()
-        return result;
+        return result!;
       },
     })
-    t.field('updatedAt', {
+    t.nonNull.field('updatedAt', {
       type: 'DateTime',
       resolve: async ({ id }, _args, ctx: Context) => {
         const { updatedAt } = await ctx.prisma.pipeline.findUnique({
@@ -96,6 +96,21 @@ export const totalPipelineFlowRawQuery = async ({ idList, flowCalculationDirecti
       `
 
   return result;
+}
+
+interface IPipelineFlowArgs {
+  id: string;
+  flowCalculationDirection: FlowCalculationDirectionEnum;
+  ctx: Context;
+}
+
+export const pipelineFlow = async ({ id, flowCalculationDirection, ctx }: IPipelineFlowArgs) => {
+  const resultArray = await totalPipelineFlowRawQuery({ idList: [id], flowCalculationDirection, ctx });
+  if (resultArray.length > 0) {
+    const result = resultArray[0];
+    return result;
+  }
+  return null;
 }
 
 
@@ -160,10 +175,20 @@ export const PipelineFlowQuery = extendType({
         flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
       },
       resolve: async (_parent, { idList, flowCalculationDirection }, ctx: Context) => {
-        const result = await totalPipelineFlowRawQuery({ idList, flowCalculationDirection, ctx });
-
-        return result;
+        return await totalPipelineFlowRawQuery({ idList, flowCalculationDirection, ctx });
+      }
+    })
+    t.field('pipelineFlow', {
+      type: 'PipelineFlow',
+      args: {
+        id: nonNull(stringArg()),
+        flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
+      },
+      resolve: async (_parent, { id, flowCalculationDirection }, ctx: Context) => {
+        return await pipelineFlow({ id, flowCalculationDirection, ctx });
       }
     })
   },
 });
+
+

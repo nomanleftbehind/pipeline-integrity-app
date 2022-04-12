@@ -123,7 +123,9 @@ export default function Risk({ id, license, segment, flowCalculationDirection, c
       const { id, aerialReview, environmentProximityTo, geotechnicalFacingS1, geotechnicalHeightS1, geotechnicalSlopeAngleS1, geotechnicalFacingS2, geotechnicalHeightS2, geotechnicalSlopeAngleS2, dateSlopeChecked,
         consequencePeople, consequenceEnviro, consequenceAsset, consequenceMax, probabilityGeo, probabilityInterior, probabilityExterior, riskPotentialGeo, riskPotentialInternal, riskPotentialExternal,
         safeguardInternalProtection, safeguardPigging, safeguardChemicalInhibition, probabilityInteriorWithSafeguards, riskPotentialInternalWithSafeguards,
-        oilReleaseCost, gasReleaseCost, repairTimeDays, releaseTimeDays, costPerM3Released, safeguardExternalCoating, createdBy, createdAt, updatedBy, updatedAt, comment, authorized } = data.riskById;
+        oilReleaseCost, gasReleaseCost, repairTimeDays, releaseTimeDays, costPerM3Released,
+        safeguardExternalCoating, safeguardCathodic, probabilityExteriorWithSafeguards, riskPotentialExternalWithSafeguards,
+        createdBy, createdAt, updatedBy, updatedAt, comment, authorized } = data.riskById;
       const { environmentProximityToEnum, geotechnicalFacingEnum, typeEnum, materialEnum } = dataValidatorsRisk?.validators || {};
 
       const riskProperties: IRiskPropertyRecordEntryMap[] = [
@@ -164,6 +166,7 @@ export default function Risk({ id, license, segment, flowCalculationDirection, c
 
       const probabilityExteriorFields: IRiskPropertyRecordEntryMap[] = [
         { columnName: 'safeguardExternalCoating', record: safeguardExternalCoating, columnType: 'number', label: 'External Coating Safeguard', nullable: true, editRecord },
+        { columnName: 'safeguardCathodic', record: safeguardCathodic, columnType: 'number', label: 'Cathodic Safeguard', nullable: true },
       ];
 
       let gridRow = 0;
@@ -257,6 +260,12 @@ export default function Risk({ id, license, segment, flowCalculationDirection, c
                 currentProbability={probabilityExterior}
                 currentConsequence={consequenceMax}
                 currentRiskPotential={riskPotentialExternal}
+              />
+              <RiskMatrix
+                label='External Risk Potential with Safeguards'
+                currentProbability={probabilityExteriorWithSafeguards}
+                currentConsequence={consequenceMax}
+                currentRiskPotential={riskPotentialExternalWithSafeguards}
               />
             </div>
           </div>

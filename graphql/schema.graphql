@@ -673,8 +673,8 @@ input PipelineCreateInput {
 
 type PipelineFlow {
   authorized: Boolean!
-  createdAt: DateTime
-  createdBy: User
+  createdAt: DateTime!
+  createdBy: User!
   firstInjection: DateTime
   firstProduction: DateTime
   gas: Float!
@@ -684,13 +684,13 @@ type PipelineFlow {
   lastProduction: DateTime
 
   """
-  This field is a concatonated license and segment of a pipeline to conform with Well and Sales Point objects
+  This field is a concatenated license and segment of a pipeline to conform with Well and Sales Point objects
   """
   name: String!
   oil: Float!
   totalFluids: Float!
-  updatedAt: DateTime
-  updatedBy: User
+  updatedAt: DateTime!
+  updatedBy: User!
   water: Float!
 }
 
@@ -791,15 +791,18 @@ type Risk {
   oilReleaseCost: Float
   pipeline: Pipeline!
   probabilityExterior: Int
+  probabilityExteriorWithSafeguards: Int
   probabilityGeo: Float
   probabilityInterior: Int
   probabilityInteriorWithSafeguards: Int
   releaseTimeDays: Int
   repairTimeDays: Int
   riskPotentialExternal: Int
+  riskPotentialExternalWithSafeguards: Int
   riskPotentialGeo: Int
   riskPotentialInternal: Int
   riskPotentialInternalWithSafeguards: Int
+  safeguardCathodic: Int
   safeguardChemicalInhibition: Int
   safeguardExternalCoating: Int
   safeguardInternalProtection: Int

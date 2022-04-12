@@ -216,7 +216,6 @@ export const safeguardChemicalInhibitionCalc = async () => {
   return null;
 }
 
-
 interface IProbabilityInteriorWithSafeguardsArgs {
   probabilityInterior: IRisk['probabilityInterior'];
   safeguardPigging: IRisk['safeguardPigging'];
@@ -241,6 +240,37 @@ interface IRiskPotentialInternalWithSafeguardsCalcArgs {
 export const riskPotentialInternalWithSafeguardsCalc = async ({ consequenceMax, probabilityInteriorWithSafeguards }: IRiskPotentialInternalWithSafeguardsCalcArgs) => {
   if (typeof consequenceMax === 'number' && typeof probabilityInteriorWithSafeguards === 'number') {
     return consequenceMax * probabilityInteriorWithSafeguards;
+  }
+  return null;
+}
+
+
+export const safeguardCathodicCalc = async () => {
+  return null;
+}
+
+interface IProbabilityExteriorWithSafeguardsArgs {
+  probabilityExterior: IRisk['probabilityExterior'];
+  safeguardCathodic: IRisk['safeguardCathodic'];
+  safeguardExternalCoating: IRisk['safeguardExternalCoating'];
+}
+
+export const probabilityExteriorWithSafeguardsCalc = async ({ probabilityExterior, safeguardCathodic, safeguardExternalCoating }: IProbabilityExteriorWithSafeguardsArgs) => {
+  if (typeof probabilityExterior === 'number') {
+    const result = probabilityExterior - (safeguardCathodic || 0) - (safeguardExternalCoating || 0);
+    return result < 0 ? 0 : result;
+  }
+  return null;
+}
+
+interface IRiskPotentialExternalWithSafeguardsCalcArgs {
+  consequenceMax: IRisk['consequenceMax'];
+  probabilityExteriorWithSafeguards: IRisk['probabilityExteriorWithSafeguards'];
+}
+
+export const riskPotentialExternalWithSafeguardsCalc = async ({ consequenceMax, probabilityExteriorWithSafeguards }: IRiskPotentialExternalWithSafeguardsCalcArgs) => {
+  if (typeof consequenceMax === 'number' && typeof probabilityExteriorWithSafeguards === 'number') {
+    return consequenceMax * probabilityExteriorWithSafeguards;
   }
   return null;
 }

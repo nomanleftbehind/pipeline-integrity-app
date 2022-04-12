@@ -224,6 +224,9 @@ model Risk {
   safeguardChemicalInhibition         Int?
   probabilityInteriorWithSafeguards   Int?
   riskPotentialInternalWithSafeguards Int?
+  safeguardCathodic                   Int?
+  probabilityExteriorWithSafeguards   Int?
+  riskPotentialExternalWithSafeguards Int?
 }
 
 model Well {

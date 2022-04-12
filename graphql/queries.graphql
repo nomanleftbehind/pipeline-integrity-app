@@ -1051,6 +1051,9 @@ query RiskById($id: String!) {
     probabilityInteriorWithSafeguards
     riskPotentialInternalWithSafeguards
     safeguardExternalCoating
+    safeguardCathodic
+    probabilityExteriorWithSafeguards
+    riskPotentialExternalWithSafeguards
     comment
     createdBy {
       id

@@ -486,26 +486,29 @@ export const PipelineQuery = extendType({
 
             const idList = upstream.map(({ id }) => id);
             const pipelinesFlow = await totalPipelineFlowRawQuery({ idList, flowCalculationDirection, ctx });
-            const pipelineGroupBy = pipelinesFlow.reduce((
-              { oil: previousOil, water: previousWater, gas: previousGas, lastProduction: previousLastProduction, lastInjection: previousLastInjection, firstProduction: previousFirstProduction, firstInjection: previousFirstInjection },
-              { oil: currentOil, water: currentWater, gas: currentGas, lastProduction: currentLastProduction, lastInjection: currentLastInjection, firstProduction: currentFirstProduction, firstInjection: currentFirstInjection }) => {
 
-              return {
-                oil: previousOil + currentOil,
-                water: previousWater + currentWater,
-                gas: previousGas + currentGas,
-                lastProduction: currentLastProduction > previousLastProduction || (currentLastProduction != null && previousLastProduction == null) ? currentLastProduction : previousLastProduction,
-                lastInjection: currentLastInjection > previousLastInjection || (currentLastInjection != null && previousLastInjection == null) ? currentLastInjection : previousLastInjection,
-                firstProduction: currentFirstProduction < previousFirstProduction || (currentFirstProduction != null && previousFirstProduction == null) ? currentFirstProduction : previousFirstProduction,
-                firstInjection: currentFirstInjection < previousFirstInjection || (currentFirstInjection != null && previousFirstInjection == null) ? currentFirstInjection : previousFirstInjection,
-                id: '',
-                name: ''
-              }
-            });
-            const { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection } = pipelineGroupBy;
-            const sourceGroupBy = { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection }
+            if (pipelinesFlow.length > 0) {
+              const pipelineGroupBy = pipelinesFlow.reduce((
+                { oil: previousOil, water: previousWater, gas: previousGas, lastProduction: previousLastProduction, lastInjection: previousLastInjection, firstProduction: previousFirstProduction, firstInjection: previousFirstInjection },
+                { oil: currentOil, water: currentWater, gas: currentGas, lastProduction: currentLastProduction, lastInjection: currentLastInjection, firstProduction: currentFirstProduction, firstInjection: currentFirstInjection }) => {
 
-            return { pipelinesFlow, sourceGroupBy };
+                return {
+                  oil: previousOil + currentOil,
+                  water: previousWater + currentWater,
+                  gas: previousGas + currentGas,
+                  lastProduction: currentLastProduction > previousLastProduction || (currentLastProduction != null && previousLastProduction == null) ? currentLastProduction : previousLastProduction,
+                  lastInjection: currentLastInjection > previousLastInjection || (currentLastInjection != null && previousLastInjection == null) ? currentLastInjection : previousLastInjection,
+                  firstProduction: currentFirstProduction < previousFirstProduction || (currentFirstProduction != null && previousFirstProduction == null) ? currentFirstProduction : previousFirstProduction,
+                  firstInjection: currentFirstInjection < previousFirstInjection || (currentFirstInjection != null && previousFirstInjection == null) ? currentFirstInjection : previousFirstInjection,
+                  id: '',
+                  name: ''
+                }
+              });
+              const { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection } = pipelineGroupBy;
+              const sourceGroupBy = { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection }
+
+              return { pipelinesFlow, sourceGroupBy };
+            }
           }
         }
         if (flowCalculationDirection === 'Downstream') {
@@ -519,42 +522,32 @@ export const PipelineQuery = extendType({
 
             const idList = downstream.map(({ id }) => id);
             const pipelinesFlow = await totalPipelineFlowRawQuery({ idList, flowCalculationDirection, ctx });
-            const pipelineGroupBy = pipelinesFlow.reduce((
-              { oil: previousOil, water: previousWater, gas: previousGas, lastProduction: previousLastProduction, lastInjection: previousLastInjection, firstProduction: previousFirstProduction, firstInjection: previousFirstInjection },
-              { oil: currentOil, water: currentWater, gas: currentGas, lastProduction: currentLastProduction, lastInjection: currentLastInjection, firstProduction: currentFirstProduction, firstInjection: currentFirstInjection }) => {
 
-              return {
-                oil: previousOil + currentOil,
-                water: previousWater + currentWater,
-                gas: previousGas + currentGas,
-                lastProduction: currentLastProduction > previousLastProduction || (currentLastProduction != null && previousLastProduction == null) ? currentLastProduction : previousLastProduction,
-                lastInjection: currentLastInjection > previousLastInjection || (currentLastInjection != null && previousLastInjection == null) ? currentLastInjection : previousLastInjection,
-                firstProduction: currentFirstProduction < previousFirstProduction || (currentFirstProduction != null && previousFirstProduction == null) ? currentFirstProduction : previousFirstProduction,
-                firstInjection: currentFirstInjection < previousFirstInjection || (currentFirstInjection != null && previousFirstInjection == null) ? currentFirstInjection : previousFirstInjection,
-                id: '',
-                name: ''
-              }
-            });
-            const { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection } = pipelineGroupBy;
-            const sourceGroupBy = { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection }
+            if (pipelinesFlow.length > 0) {
+              const pipelineGroupBy = pipelinesFlow.reduce((
+                { oil: previousOil, water: previousWater, gas: previousGas, lastProduction: previousLastProduction, lastInjection: previousLastInjection, firstProduction: previousFirstProduction, firstInjection: previousFirstInjection },
+                { oil: currentOil, water: currentWater, gas: currentGas, lastProduction: currentLastProduction, lastInjection: currentLastInjection, firstProduction: currentFirstProduction, firstInjection: currentFirstInjection }) => {
 
-            return { pipelinesFlow, sourceGroupBy };
+                return {
+                  oil: previousOil + currentOil,
+                  water: previousWater + currentWater,
+                  gas: previousGas + currentGas,
+                  lastProduction: currentLastProduction > previousLastProduction || (currentLastProduction != null && previousLastProduction == null) ? currentLastProduction : previousLastProduction,
+                  lastInjection: currentLastInjection > previousLastInjection || (currentLastInjection != null && previousLastInjection == null) ? currentLastInjection : previousLastInjection,
+                  firstProduction: currentFirstProduction < previousFirstProduction || (currentFirstProduction != null && previousFirstProduction == null) ? currentFirstProduction : previousFirstProduction,
+                  firstInjection: currentFirstInjection < previousFirstInjection || (currentFirstInjection != null && previousFirstInjection == null) ? currentFirstInjection : previousFirstInjection,
+                  id: '',
+                  name: ''
+                }
+              });
+              const { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection } = pipelineGroupBy;
+              const sourceGroupBy = { oil, water, gas, lastProduction, lastInjection, firstProduction, firstInjection }
+
+              return { pipelinesFlow, sourceGroupBy };
+            }
           }
         }
         return null;
-      }
-    })
-    t.field('pipelineFlow', {
-      type: 'PipelineFlow',
-      args: {
-        id: nonNull(stringArg()),
-        flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
-      },
-      resolve: async (_parent, { id, flowCalculationDirection }, ctx: Context) => {
-        const resultArray = await totalPipelineFlowRawQuery({ idList: [id], flowCalculationDirection, ctx });
-        const result = resultArray[0];
-
-        return result;
       }
     })
   },

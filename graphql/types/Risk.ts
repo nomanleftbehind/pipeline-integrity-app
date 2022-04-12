@@ -1,6 +1,6 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
 import { totalFluidsCalc } from './Well';
-import { totalPipelineFlowRawQuery } from './PipelineFlow';
+import { pipelineFlow } from './PipelineFlow';
 import { databaseEnumToServerEnum } from './Pipeline';
 import { Context } from '../context';
 import { User as IUser } from '@prisma/client';
@@ -16,7 +16,10 @@ import {
   safeguardPiggingCalc,
   safeguardChemicalInhibitionCalc,
   probabilityInteriorWithSafeguardsCalc,
-  riskPotentialInternalWithSafeguardsCalc
+  riskPotentialInternalWithSafeguardsCalc,
+  safeguardCathodicCalc,
+  probabilityExteriorWithSafeguardsCalc,
+  riskPotentialExternalWithSafeguardsCalc,
 } from './RiskCalcs';
 
 
@@ -67,6 +70,9 @@ export const Risk = objectType({
     t.int('probabilityInteriorWithSafeguards')
     t.int('riskPotentialInternalWithSafeguards')
     t.int('safeguardExternalCoating')
+    t.int('safeguardCathodic')
+    t.int('probabilityExteriorWithSafeguards')
+    t.int('riskPotentialExternalWithSafeguards')
     t.string('comment')
     t.nonNull.field('createdBy', {
       type: 'User',
@@ -162,6 +168,7 @@ export const RiskQuery = extendType({
             consequencePeople: true,
             probabilityGeo: true,
             safeguardInternalProtection: true,
+            safeguardExternalCoating: true,
           }
         });
 
@@ -191,12 +198,13 @@ export const RiskQuery = extendType({
         });
 
         if (risk && lastLicenseChange && firstLicenseChange && pipeline) {
-          const { environmentProximityTo, oilReleaseCost, gasReleaseCost, repairTimeDays, consequencePeople, probabilityGeo, safeguardInternalProtection } = risk;
+          const { environmentProximityTo, oilReleaseCost, gasReleaseCost, repairTimeDays, consequencePeople, probabilityGeo, safeguardInternalProtection, safeguardExternalCoating } = risk;
           const { substance: currentSubstance, status: currentStatus } = lastLicenseChange;
           const { date: firstLicenseDate } = firstLicenseChange;
           const { flowCalculationDirection, type, material, piggable } = pipeline;
 
-          const { oil, water, gas } = (await totalPipelineFlowRawQuery({ idList: [id], flowCalculationDirection, ctx }))[0];
+          const { oil, water, gas } = (await pipelineFlow({ id, flowCalculationDirection, ctx })) || { oil: 0, water: 0, gas: 0 };
+
           const totalFluids = await totalFluidsCalc({ oil, water, gas });
 
           const costPerM3Released = currentSubstance === 'FreshWater' ? 0 : 25000 * water + 1000 * gas + 15000 * oil;
@@ -225,6 +233,12 @@ export const RiskQuery = extendType({
 
           const riskPotentialInternalWithSafeguards = await riskPotentialInternalWithSafeguardsCalc({ consequenceMax, probabilityInteriorWithSafeguards });
 
+          const safeguardCathodic = await safeguardCathodicCalc();
+
+          const probabilityExteriorWithSafeguards = await probabilityExteriorWithSafeguardsCalc({ probabilityExterior, safeguardCathodic, safeguardExternalCoating });
+
+          const riskPotentialExternalWithSafeguards = await riskPotentialExternalWithSafeguardsCalc({ consequenceMax, probabilityExteriorWithSafeguards });
+
           const result = await ctx.prisma.risk.update({
             where: { id },
             data: {
@@ -241,6 +255,9 @@ export const RiskQuery = extendType({
               safeguardChemicalInhibition,
               probabilityInteriorWithSafeguards,
               riskPotentialInternalWithSafeguards,
+              safeguardCathodic,
+              probabilityExteriorWithSafeguards,
+              riskPotentialExternalWithSafeguards,
             }
           });
           return result;
