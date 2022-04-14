@@ -77,18 +77,12 @@ query PigRunsByPipelineId($pipelineId: String!) {
   }
 }
 
-query SearchOptions {
-  searchOptions {
-    risk {
-      field
-      nullable
-      type
-    }
-    pipeline {
-      field
-      nullable
-      type
-    }
+query SearchNavigationOptions {
+  searchNavigationOptions {
+    table
+    field
+    nullable
+    type
   }
 }
 

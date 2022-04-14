@@ -1047,7 +1047,7 @@ export type Query = {
   salesPointOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   salesPointsByPipelineId?: Maybe<Array<Maybe<SalesPoint>>>;
   salesPointsGroupByPipelineId?: Maybe<SourceGroupBy>;
-  searchOptions: SearchNavigationObjectArray;
+  searchNavigationOptions: Array<SearchNavigationObject>;
   sideBar?: Maybe<Array<Maybe<SideBar>>>;
   userCount?: Maybe<Scalars['Int']>;
   validators?: Maybe<Validator>;
@@ -1267,12 +1267,8 @@ export type SatelliteUniqueInput = {
 export type SearchNavigationObject = {
   field: Scalars['String'];
   nullable: Scalars['Boolean'];
+  table: Scalars['String'];
   type: Scalars['String'];
-};
-
-export type SearchNavigationObjectArray = {
-  pipeline: Array<SearchNavigationObject>;
-  risk: Array<SearchNavigationObject>;
 };
 
 export type SideBar = {
@@ -1860,10 +1856,10 @@ export type PigRunsByPipelineIdQueryVariables = Exact<{
 
 export type PigRunsByPipelineIdQuery = { pigRunsByPipelineId?: Array<{ id: string, pigType?: PigTypeEnum | null | undefined, dateIn: string, dateOut?: string | null | undefined, isolationValveFunctionTest?: PigInspectionEnum | null | undefined, pigSenderReceiverInspection?: PigInspectionEnum | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, operator?: { email: string } | null | undefined, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
-export type SearchOptionsQueryVariables = Exact<{ [key: string]: never; }>;
+export type SearchNavigationOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SearchOptionsQuery = { searchOptions: { risk: Array<{ field: string, nullable: boolean, type: string }>, pipeline: Array<{ field: string, nullable: boolean, type: string }> } };
+export type SearchNavigationOptionsQuery = { searchNavigationOptions: Array<{ table: string, field: string, nullable: boolean, type: string }> };
 
 export type ValidatorsPigRunQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3544,49 +3540,43 @@ export function usePigRunsByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type PigRunsByPipelineIdQueryHookResult = ReturnType<typeof usePigRunsByPipelineIdQuery>;
 export type PigRunsByPipelineIdLazyQueryHookResult = ReturnType<typeof usePigRunsByPipelineIdLazyQuery>;
 export type PigRunsByPipelineIdQueryResult = Apollo.QueryResult<PigRunsByPipelineIdQuery, PigRunsByPipelineIdQueryVariables>;
-export const SearchOptionsDocument = gql`
-    query SearchOptions {
-  searchOptions {
-    risk {
-      field
-      nullable
-      type
-    }
-    pipeline {
-      field
-      nullable
-      type
-    }
+export const SearchNavigationOptionsDocument = gql`
+    query SearchNavigationOptions {
+  searchNavigationOptions {
+    table
+    field
+    nullable
+    type
   }
 }
     `;
 
 /**
- * __useSearchOptionsQuery__
+ * __useSearchNavigationOptionsQuery__
  *
- * To run a query within a React component, call `useSearchOptionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchOptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSearchNavigationOptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchNavigationOptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSearchOptionsQuery({
+ * const { data, loading, error } = useSearchNavigationOptionsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useSearchOptionsQuery(baseOptions?: Apollo.QueryHookOptions<SearchOptionsQuery, SearchOptionsQueryVariables>) {
+export function useSearchNavigationOptionsQuery(baseOptions?: Apollo.QueryHookOptions<SearchNavigationOptionsQuery, SearchNavigationOptionsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchOptionsQuery, SearchOptionsQueryVariables>(SearchOptionsDocument, options);
+        return Apollo.useQuery<SearchNavigationOptionsQuery, SearchNavigationOptionsQueryVariables>(SearchNavigationOptionsDocument, options);
       }
-export function useSearchOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchOptionsQuery, SearchOptionsQueryVariables>) {
+export function useSearchNavigationOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchNavigationOptionsQuery, SearchNavigationOptionsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchOptionsQuery, SearchOptionsQueryVariables>(SearchOptionsDocument, options);
+          return Apollo.useLazyQuery<SearchNavigationOptionsQuery, SearchNavigationOptionsQueryVariables>(SearchNavigationOptionsDocument, options);
         }
-export type SearchOptionsQueryHookResult = ReturnType<typeof useSearchOptionsQuery>;
-export type SearchOptionsLazyQueryHookResult = ReturnType<typeof useSearchOptionsLazyQuery>;
-export type SearchOptionsQueryResult = Apollo.QueryResult<SearchOptionsQuery, SearchOptionsQueryVariables>;
+export type SearchNavigationOptionsQueryHookResult = ReturnType<typeof useSearchNavigationOptionsQuery>;
+export type SearchNavigationOptionsLazyQueryHookResult = ReturnType<typeof useSearchNavigationOptionsLazyQuery>;
+export type SearchNavigationOptionsQueryResult = Apollo.QueryResult<SearchNavigationOptionsQuery, SearchNavigationOptionsQueryVariables>;
 export const ValidatorsPigRunDocument = gql`
     query ValidatorsPigRun {
   validators {

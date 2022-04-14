@@ -4,8 +4,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import {
-  PipelinesSearchInput,
-  useSearchOptionsLazyQuery,
+  useSearchNavigationOptionsLazyQuery,
 } from '../../graphql/generated/graphql';
 
 import { IOnNavigationAction } from './HierarchyNavigation';
@@ -20,11 +19,11 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
 
   const [search, setSearch] = useState(false);
 
-  const [searchTable, setSearchTable] = useState<PipelinesSearchInput['table']>('');
-  const [searchField, setSearchField] = useState<PipelinesSearchInput['field']>('');
-  const [searchValue, setSearchValue] = useState<PipelinesSearchInput['value']>('');
+  const [searchTable, setSearchTable] = useState('');
+  const [searchField, setSearchField] = useState('');
+  const [searchValue, setSearchValue] = useState('');
 
-  const [loadSearchOptions, { data }] = useSearchOptionsLazyQuery();
+  const [loadSearchOptions, { data }] = useSearchNavigationOptionsLazyQuery();
 
   const toggleSearch = () => {
     setSearchTable('');
@@ -35,7 +34,7 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
 
   }
 
-  const options = data?.searchOptions;
+  const options = data?.searchNavigationOptions;
 
 
   const handleChangeTable = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -76,17 +75,17 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
       {search && options && <form style={{ display: 'flex', flexDirection: 'column', border: '1px solid black' }} onSubmit={onSubmit}>
         <select value={searchTable} onChange={handleChangeTable}>
           <option></option>
-          {Object.keys(options).map((table, key) => {
+          {/* {options.filter((item, pos) => {
             const prettyTableName = prettifyColumnName(table)
             return (
               <option key={key} value={table}>
                 {prettyTableName}
               </option>
             );
-          })}
+          })} */}
         </select>
         {searchTable && options && <select value={searchField} onChange={handleChangeField}>
-          {options[searchTable as keyof typeof options].map(({ field, nullable, type }) => {
+          {options.filter(({table}) => table === 'risk').map(({ table, field, nullable, type }) => {
             const prettyField = prettifyColumnName(field)
             return (
               <option key={field} value={field}>{prettyField}</option>

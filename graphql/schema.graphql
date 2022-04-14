@@ -768,7 +768,7 @@ type Query {
   salesPointOptions(pipelineId: String!): [SourceOptions]
   salesPointsByPipelineId(pipelineId: String!): [SalesPoint]
   salesPointsGroupByPipelineId(pipelineId: String!): SourceGroupBy
-  searchOptions: SearchNavigationObjectArray!
+  searchNavigationOptions: [SearchNavigationObject!]!
   sideBar: [SideBar]
   userCount: Int
   validators: Validator
@@ -895,12 +895,8 @@ input SatelliteUniqueInput {
 type SearchNavigationObject {
   field: String!
   nullable: Boolean!
+  table: String!
   type: String!
-}
-
-type SearchNavigationObjectArray {
-  pipeline: [SearchNavigationObject!]!
-  risk: [SearchNavigationObject!]!
 }
 
 type SideBar {

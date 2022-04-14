@@ -3,36 +3,40 @@ import { RiskObjectMembers } from './Risk';
 import { PipelineObjectMembers } from './Pipeline';
 
 
-type ISearchNavigationObject = { field: string; nullable: boolean; type: string; };
+type ISearchNavigationObject = { table: string; field: string; nullable: boolean; type: string; };
 
 
 export const SearchNavigationObject = objectType({
   name: 'SearchNavigationObject',
   definition(t) {
+    t.nonNull.string('table')
     t.nonNull.string('field')
     t.nonNull.boolean('nullable')
     t.nonNull.string('type')
   }
 });
 
-export const SearchNavigationObjectArray = objectType({
-  name: 'SearchNavigationObjectArray',
-  definition(t) {
-    t.nonNull.list.nonNull.field('risk', { type: 'SearchNavigationObject' })
-    t.nonNull.list.nonNull.field('pipeline', { type: 'SearchNavigationObject' })
-  }
-});
+const searchNavigationObject = RiskObjectMembers
+  .map((obj) => {
+    const newObj = { table: 'risk', ...obj };
+    return newObj;
+  })
+  .concat(
+    PipelineObjectMembers
+      .map((obj) => {
+        const newObj = { table: 'pipeline', ...obj };
+        return newObj;
+      })
+  );
 
 
 export const SearchNavigationQuery = extendType({
   type: 'Query',
   definition: t => {
-    t.nonNull.field('searchOptions', {
-      type: 'SearchNavigationObjectArray',
+    t.nonNull.list.nonNull.field('searchNavigationOptions', {
+      type: 'SearchNavigationObject',
       resolve: () => {
-        const risk = RiskObjectMembers as ISearchNavigationObject[];
-        const pipeline = PipelineObjectMembers as ISearchNavigationObject[];
-        return { risk, pipeline }
+        return searchNavigationObject as ISearchNavigationObject[];
       }
     })
   }
