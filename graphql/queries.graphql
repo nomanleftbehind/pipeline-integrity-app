@@ -12,8 +12,8 @@ query UserCount {
   userCount
 }
 
-query PipelinesById($id: String, $table: String) {
-  pipelinesById(id: $id, table: $table) {
+query PipelinesById($navigationInput: NavigationInput!) {
+  pipelinesById(navigationInput: $navigationInput) {
     id
     license
     segment
@@ -74,6 +74,16 @@ query PigRunsByPipelineId($pipelineId: String!) {
     }
     updatedAt
     authorized
+  }
+}
+
+query SearchOptions {
+  searchOptions {
+    risk {
+      field
+      nullable
+      type
+    }
   }
 }
 

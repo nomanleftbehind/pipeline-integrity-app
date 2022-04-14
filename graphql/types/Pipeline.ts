@@ -418,55 +418,55 @@ export const resolvePipelineAuthorized = (user: IUser) => {
 export const PipelineQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.list.field('pipelinesById', {
-      type: 'Pipeline',
-      args: {
-        table: stringArg(),
-        id: stringArg(),
-      },
-      resolve: async (_parent, { id, table }, ctx: Context) => {
-        if (table === 'satellite') {
-          const result = await ctx.prisma.pipeline.findMany({
-            where: { satelliteId: id },
-            orderBy: [
-              { license: 'asc' },
-              { segment: 'asc' },
-            ]
-          });
-          return result;
-        } else if (table === 'facility' && id === 'no-facility') {
-          const result = await ctx.prisma.pipeline.findMany({
-            where: {
-              satellite: { facilityId: null }
-            },
-            orderBy: [
-              { license: 'asc' },
-              { segment: 'asc' },
-            ]
-          });
-          return result;
-        } else if (table === 'facility' && id) {
-          const result = await ctx.prisma.pipeline.findMany({
-            where: {
-              satellite: { facilityId: id }
-            },
-            orderBy: [
-              { license: 'asc' },
-              { segment: 'asc' },
-            ]
-          });
-          return result;
-        } else {
-          const result = await ctx.prisma.pipeline.findMany({
-            orderBy: [
-              { license: 'asc' },
-              { segment: 'asc' },
-            ]
-          });
-          return result;
-        }
-      }
-    })
+    // t.list.field('pipelinesById', {
+    //   type: 'Pipeline',
+    //   args: {
+    //     table: stringArg(),
+    //     id: stringArg(),
+    //   },
+    //   resolve: async (_parent, { id, table }, ctx: Context) => {
+    //     if (table === 'satellite') {
+    //       const result = await ctx.prisma.pipeline.findMany({
+    //         where: { satelliteId: id },
+    //         orderBy: [
+    //           { license: 'asc' },
+    //           { segment: 'asc' },
+    //         ]
+    //       });
+    //       return result;
+    //     } else if (table === 'facility' && id === 'no-facility') {
+    //       const result = await ctx.prisma.pipeline.findMany({
+    //         where: {
+    //           satellite: { facilityId: null }
+    //         },
+    //         orderBy: [
+    //           { license: 'asc' },
+    //           { segment: 'asc' },
+    //         ]
+    //       });
+    //       return result;
+    //     } else if (table === 'facility' && id) {
+    //       const result = await ctx.prisma.pipeline.findMany({
+    //         where: {
+    //           satellite: { facilityId: id }
+    //         },
+    //         orderBy: [
+    //           { license: 'asc' },
+    //           { segment: 'asc' },
+    //         ]
+    //       });
+    //       return result;
+    //     } else {
+    //       const result = await ctx.prisma.pipeline.findMany({
+    //         orderBy: [
+    //           { license: 'asc' },
+    //           { segment: 'asc' },
+    //         ]
+    //       });
+    //       return result;
+    //     }
+    //   }
+    // })
     t.field('connectedPipelinesByPipelineId', {
       type: 'PipelinesFlowAndSourceGroupBy',
       args: {
@@ -550,18 +550,122 @@ export const PipelineQuery = extendType({
         return null;
       }
     })
+    t.list.field('pipelinesById', {
+      type: 'Pipeline',
+      args: {
+        navigationInput: nonNull(arg({ type: 'NavigationInput' })),
+      },
+      resolve: async (_, { navigationInput: { click, search } }, ctx: Context) => {
+
+        if (click) {
+          const { id, table } = click;
+          if (table === 'satellite') {
+            const result = await ctx.prisma.pipeline.findMany({
+              where: { satelliteId: id },
+              orderBy: [
+                { license: 'asc' },
+                { segment: 'asc' },
+              ]
+            });
+            return result;
+          } else if (table === 'facility' && id === 'no-facility') {
+            const result = await ctx.prisma.pipeline.findMany({
+              where: {
+                satellite: { facilityId: null }
+              },
+              orderBy: [
+                { license: 'asc' },
+                { segment: 'asc' },
+              ]
+            });
+            return result;
+          } else if (table === 'facility' && id) {
+            const result = await ctx.prisma.pipeline.findMany({
+              where: {
+                satellite: { facilityId: id }
+              },
+              orderBy: [
+                { license: 'asc' },
+                { segment: 'asc' },
+              ]
+            });
+            return result;
+          } else {
+            const result = await ctx.prisma.pipeline.findMany({
+              orderBy: [
+                { license: 'asc' },
+                { segment: 'asc' },
+              ]
+            });
+            return result;
+          }
+        }
+
+        if (search) {
+          const { table, field, value } = search;
+          if (table === 'Risk') {
+            if (field === 'riskPotentialGeo') {
+              return await ctx.prisma.pipeline.findMany({
+                where: {
+                  risk: {
+                    riskPotentialGeo: Number(value),
+                  }
+                }
+              });
+            }
+            if (field === 'riskPotentialInternal') {
+              return await ctx.prisma.pipeline.findMany({
+                where: {
+                  risk: {
+                    riskPotentialInternal: Number(value),
+                  }
+                }
+              });
+            }
+            if (field === 'riskPotentialInternal') {
+              return await ctx.prisma.pipeline.findMany({
+                where: {
+                  risk: {
+                    riskPotentialExternal: Number(value),
+                  }
+                }
+              });
+            }
+          }
+        }
+
+        return null;
+      }
+    })
   },
 });
 
 
-export const PipelineUniqueInput = inputObjectType({
-  name: 'PipelineUniqueInput',
+export const NavigationInput = inputObjectType({
+  name: 'NavigationInput',
   definition(t) {
-    t.string('id')
-    t.string('license')
-    t.string('segment')
+    t.field('click', { type: 'PipelinesClickInput' })
+    t.field('search', { type: 'PipelinesSearchInput' })
   },
-})
+});
+
+export const PipelinesClickInput = inputObjectType({
+  name: 'PipelinesClickInput',
+  definition(t) {
+    t.nonNull.string('id')
+    t.nonNull.string('table')
+  },
+});
+
+export const PipelinesSearchInput = inputObjectType({
+  name: 'PipelinesSearchInput',
+  definition(t) {
+    t.nonNull.string('table')
+    t.nonNull.string('field')
+    t.nonNull.string('value')
+  },
+});
+
 
 export const PipelineCreateInput = inputObjectType({
   name: 'PipelineCreateInput',

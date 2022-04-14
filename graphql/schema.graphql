@@ -354,6 +354,11 @@ type Mutation {
   signup(userCreateInput: UserCreateInput!): AuthPayload
 }
 
+input NavigationInput {
+  click: PipelinesClickInput
+  search: PipelinesSearchInput
+}
+
 enum PigInspectionEnum {
   Failed
   Good
@@ -699,15 +704,20 @@ type PipelinePayload {
   pipeline: Pipeline
 }
 
-input PipelineUniqueInput {
-  id: String
-  license: String
-  segment: String
+input PipelinesClickInput {
+  id: String!
+  table: String!
 }
 
 type PipelinesFlowAndSourceGroupBy {
   pipelinesFlow: [PipelineFlow]
   sourceGroupBy: SourceGroupBy
+}
+
+input PipelinesSearchInput {
+  field: String!
+  table: String!
+  value: String!
 }
 
 type PressureTest {
@@ -750,7 +760,7 @@ type Query {
   pipelineBatchesByPipelineId(pipelineId: String!): [PipelineBatch]
   pipelineFlow(flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): PipelineFlow
   pipelineOptions(id: String!): [SourceOptions]
-  pipelinesById(id: String, table: String): [Pipeline]
+  pipelinesById(navigationInput: NavigationInput!): [Pipeline]
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
   pipelinesFlow(flowCalculationDirection: FlowCalculationDirectionEnum!, idList: [String]!): [PipelineFlow]
   pressureTestsByPipelineId(pipelineId: String!): [PressureTest]
@@ -758,6 +768,7 @@ type Query {
   salesPointOptions(pipelineId: String!): [SourceOptions]
   salesPointsByPipelineId(pipelineId: String!): [SalesPoint]
   salesPointsGroupByPipelineId(pipelineId: String!): SourceGroupBy
+  searchOptions: SearchNavigationObjects!
   sideBar: [SideBar]
   userCount: Int
   validators: Validator
@@ -879,6 +890,16 @@ type SatelliteSideBar {
 input SatelliteUniqueInput {
   id: String
   name: String
+}
+
+type SearchNavigationObject {
+  field: String!
+  nullable: Boolean!
+  type: String!
+}
+
+type SearchNavigationObjects {
+  risk: [SearchNavigationObject!]!
 }
 
 type SideBar {

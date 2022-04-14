@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import RecordEntry, { IRecord, IEditRecordFunction } from '../../fields/RecordEntry';
 import { IPipeline } from '../RenderPipeline';
 import SourceRow from './SourceRow';
@@ -18,7 +18,6 @@ import {
   ConnectedPipelinesByPipelineIdQuery,
   PipelineOptionsQuery,
 } from '../../../graphql/generated/graphql';
-
 
 
 
@@ -51,11 +50,6 @@ interface ISourcesDataProps {
 }
 
 export default function SourceData({ pipelineId, label, recordEntryProps, formId, data, dataGroupBy, loadOptions, dataOptions, connectSource, disconnectSource }: ISourcesDataProps) {
-
-  useEffect(() => {
-    console.log('well options', dataOptions);
-
-  }, [dataOptions])
 
   const [showOptionsForm, setShowOptionsForm] = useState(false);
 

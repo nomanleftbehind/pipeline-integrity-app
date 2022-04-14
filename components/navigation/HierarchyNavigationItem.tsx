@@ -1,15 +1,14 @@
 import { useState } from 'react';
-import FacilityIcon from './svg/facility';
-import SatelliteIcon from './svg/satellite';
+import FacilityIcon from '../svg/facility';
+import SatelliteIcon from '../svg/satellite';
+import { IOnNavigationAction } from './HierarchyNavigation'
 
 import List from '@mui/material/List';
 import Collapse from '@mui/material/Collapse';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
+
 import ListItemIcon from '@mui/material/ListItemIcon';
-import FolderIcon from '@mui/icons-material/Folder';
 import IconButton from '@mui/material/IconButton';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -23,7 +22,7 @@ interface ISidebarItemProps {
   open?: boolean;
 }
 
-function SidebarItem({ id, name, paddingLeft, onClick, onExpand, open }: ISidebarItemProps) {
+function HierarchyNavigationItem({ id, name, paddingLeft, onClick, onExpand, open }: ISidebarItemProps) {
 
   return (
     <ListItem
@@ -54,10 +53,10 @@ function SidebarItem({ id, name, paddingLeft, onClick, onExpand, open }: ISideba
 }
 
 
-interface ISidebarDropdownItemProps {
+interface IHierarchyNavigationDropdownItemProps {
   id?: string;
   name: string;
-  onSidebarClick: (id: string, table: string) => void;
+  onHierarchyItemClick: IOnNavigationAction;
   satellites?: {
     id: string;
     name: string;
@@ -65,7 +64,7 @@ interface ISidebarDropdownItemProps {
 }
 
 
-export default function SidebarDropdownItem({ id, name, onSidebarClick, satellites }: ISidebarDropdownItemProps) {
+export default function HierarchyNavigationDropdownItem({ id, name, onHierarchyItemClick, satellites }: IHierarchyNavigationDropdownItemProps) {
 
   const [open, setOpen] = useState(false);
 
@@ -75,10 +74,10 @@ export default function SidebarDropdownItem({ id, name, onSidebarClick, satellit
 
   return (
     <>
-      <SidebarItem
+      <HierarchyNavigationItem
         id={id}
         name={name}
-        onClick={(e) => onSidebarClick(e.currentTarget.value, 'facility')}
+        onClick={(e) => onHierarchyItemClick({ click: { id: e.currentTarget.value, table: 'facility' } })}
         onExpand={handleExpand}
         open={open}
       />
@@ -86,10 +85,10 @@ export default function SidebarDropdownItem({ id, name, onSidebarClick, satellit
         return satellite && (
           <Collapse in={open} timeout="auto" unmountOnExit key={satellite.id}>
             <List component="div" disablePadding>
-              <SidebarItem
+              <HierarchyNavigationItem
                 id={satellite.id}
                 name={satellite.name}
-                onClick={(e) => onSidebarClick(e.currentTarget.value, 'satellite')}
+                onClick={(e) => onHierarchyItemClick({ click: { id: e.currentTarget.value, table: 'satellite' } })}
                 paddingLeft={6}
               />
             </List>

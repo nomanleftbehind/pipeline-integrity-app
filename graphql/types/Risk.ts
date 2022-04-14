@@ -1,4 +1,8 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
+import { OutputDefinitionBlock } from 'nexus/dist/definitions/definitionBlocks';
+import type { GetGen } from 'nexus/dist/typegenTypeHelpers';
+import type { AllNexusOutputTypeDefs } from 'nexus/dist/definitions/wrapping';
+import type { NexusMetaType } from 'nexus/dist/definitions/nexusMeta';
 import { totalFluidsCalc } from './Well';
 import { pipelineFlow } from './PipelineFlow';
 import { databaseEnumToServerEnum } from './Pipeline';
@@ -23,6 +27,77 @@ import {
 } from './RiskCalcs';
 
 
+
+export const RiskObjectMembers: { field: string; nullable: boolean; type: GetGen<'allOutputTypes', string> | AllNexusOutputTypeDefs | NexusMetaType }[] = [
+  { field: 'id', nullable: false, type: 'String' },
+  { field: 'aerialReview', nullable: true, type: 'Boolean' },
+  { field: 'environmentProximityTo', nullable: true, type: 'EnvironmentProximityToEnum' },
+  { field: 'geotechnicalSlopeAngleS1', nullable: true, type: 'Int' },
+  { field: 'geotechnicalFacingS1', nullable: true, type: 'GeotechnicalFacingEnum' },
+  { field: 'geotechnicalHeightS1', nullable: true, type: 'Int' },
+  { field: 'geotechnicalSlopeAngleS2', nullable: true, type: 'Int' },
+  { field: 'geotechnicalFacingS2', nullable: true, type: 'GeotechnicalFacingEnum' },
+  { field: 'geotechnicalHeightS2', nullable: true, type: 'Int' },
+  { field: 'dateSlopeChecked', nullable: true, type: 'DateTime' },
+  { field: 'repairTimeDays', nullable: true, type: 'Int' },
+  { field: 'releaseTimeDays', nullable: true, type: 'Int' },
+  { field: 'costPerM3Released', nullable: true, type: 'Float' },
+  { field: 'consequenceEnviro', nullable: true, type: 'Int' },
+  { field: 'consequenceAsset', nullable: true, type: 'Int' },
+  { field: 'probabilityInterior', nullable: true, type: 'Int' },
+  { field: 'probabilityExterior', nullable: true, type: 'Int' },
+  { field: 'consequenceMax', nullable: true, type: 'Int' },
+  { field: 'riskPotentialGeo', nullable: true, type: 'Int' },
+  { field: 'riskPotentialInternal', nullable: true, type: 'Int' },
+  { field: 'riskPotentialExternal', nullable: true, type: 'Int' },
+  { field: 'oilReleaseCost', nullable: true, type: 'Float' },
+  { field: 'gasReleaseCost', nullable: true, type: 'Float' },
+  { field: 'consequencePeople', nullable: true, type: 'Int' },
+  { field: 'probabilityGeo', nullable: true, type: 'Float' },
+  { field: 'safeguardInternalProtection', nullable: true, type: 'Int' },
+  { field: 'safeguardPigging', nullable: true, type: 'Int' },
+  { field: 'safeguardChemicalInhibition', nullable: true, type: 'Int' },
+  { field: 'probabilityInteriorWithSafeguards', nullable: true, type: 'Int' },
+  { field: 'riskPotentialInternalWithSafeguards', nullable: true, type: 'Int' },
+  { field: 'safeguardExternalCoating', nullable: true, type: 'Int' },
+  { field: 'safeguardCathodic', nullable: true, type: 'Int' },
+  { field: 'probabilityExteriorWithSafeguards', nullable: true, type: 'Int' },
+  { field: 'riskPotentialExternalWithSafeguards', nullable: true, type: 'Int' },
+  { field: 'comment', nullable: true, type: 'String' },
+];
+
+export const SearchNavigationObject = objectType({
+  name: 'SearchNavigationObject',
+  definition(t) {
+    t.nonNull.string('field')
+    t.nonNull.boolean('nullable')
+    t.nonNull.string('type')
+  }
+});
+
+export const SearchNavigationObjects = objectType({
+  name: 'SearchNavigationObjects',
+  definition(t) {
+    t.nonNull.list.nonNull.field('risk', { type: 'SearchNavigationObject' })
+  }
+});
+
+
+export const RiskExtendObject = extendType({
+  type: 'Risk',
+  definition: t => {
+    for (const property of RiskObjectMembers) {
+      const { field, nullable, type } = property;
+      if (nullable) {
+        t.field(field, { type })
+      } else {
+        t.nonNull.field(field, { type })
+      }
+    }
+  }
+});
+
+
 export const Risk = objectType({
   name: 'Risk',
   sourceType: {
@@ -30,7 +105,7 @@ export const Risk = objectType({
     export: 'Risk',
   },
   definition(t) {
-    t.nonNull.string('id')
+    // t.nonNull.string('id')
     t.nonNull.field('pipeline', {
       type: 'Pipeline',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -40,40 +115,40 @@ export const Risk = objectType({
         return result!;
       }
     })
-    t.boolean('aerialReview')
-    t.field('environmentProximityTo', { type: 'EnvironmentProximityToEnum' })
-    t.int('geotechnicalSlopeAngleS1')
-    t.field('geotechnicalFacingS1', { type: 'GeotechnicalFacingEnum' })
-    t.int('geotechnicalHeightS1')
-    t.int('geotechnicalSlopeAngleS2')
-    t.field('geotechnicalFacingS2', { type: 'GeotechnicalFacingEnum' })
-    t.int('geotechnicalHeightS2')
-    t.field('dateSlopeChecked', { type: 'DateTime' })
-    t.int('repairTimeDays')
-    t.int('releaseTimeDays')
-    t.float('costPerM3Released')
-    t.int('consequenceEnviro')
-    t.int('consequenceAsset')
-    t.int('probabilityInterior')
-    t.int('probabilityExterior')
-    t.int('consequenceMax')
-    t.int('riskPotentialGeo')
-    t.int('riskPotentialInternal')
-    t.int('riskPotentialExternal')
-    t.float('oilReleaseCost')
-    t.float('gasReleaseCost')
-    t.int('consequencePeople')
-    t.float('probabilityGeo')
-    t.int('safeguardInternalProtection')
-    t.int('safeguardPigging')
-    t.int('safeguardChemicalInhibition')
-    t.int('probabilityInteriorWithSafeguards')
-    t.int('riskPotentialInternalWithSafeguards')
-    t.int('safeguardExternalCoating')
-    t.int('safeguardCathodic')
-    t.int('probabilityExteriorWithSafeguards')
-    t.int('riskPotentialExternalWithSafeguards')
-    t.string('comment')
+    // t.boolean('aerialReview')
+    // t.field('environmentProximityTo', { type: 'EnvironmentProximityToEnum' })
+    // t.int('geotechnicalSlopeAngleS1')
+    // t.field('geotechnicalFacingS1', { type: 'GeotechnicalFacingEnum' })
+    // t.int('geotechnicalHeightS1')
+    // t.int('geotechnicalSlopeAngleS2')
+    // t.field('geotechnicalFacingS2', { type: 'GeotechnicalFacingEnum' })
+    // t.int('geotechnicalHeightS2')
+    // t.field('dateSlopeChecked', { type: 'DateTime' })
+    // t.int('repairTimeDays')
+    // t.int('releaseTimeDays')
+    // t.float('costPerM3Released')
+    // t.int('consequenceEnviro')
+    // t.int('consequenceAsset')
+    // t.int('probabilityInterior')
+    // t.int('probabilityExterior')
+    // t.int('consequenceMax')
+    // t.int('riskPotentialGeo')
+    // t.int('riskPotentialInternal')
+    // t.int('riskPotentialExternal')
+    // t.float('oilReleaseCost')
+    // t.float('gasReleaseCost')
+    // t.int('consequencePeople')
+    // t.float('probabilityGeo')
+    // t.int('safeguardInternalProtection')
+    // t.int('safeguardPigging')
+    // t.int('safeguardChemicalInhibition')
+    // t.int('probabilityInteriorWithSafeguards')
+    // t.int('riskPotentialInternalWithSafeguards')
+    // t.int('safeguardExternalCoating')
+    // t.int('safeguardCathodic')
+    // t.int('probabilityExteriorWithSafeguards')
+    // t.int('riskPotentialExternalWithSafeguards')
+    // t.string('comment')
     t.nonNull.field('createdBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -266,6 +341,13 @@ export const RiskQuery = extendType({
           where: { id },
         });
         return result;
+      }
+    })
+    t.nonNull.field('searchOptions', {
+      type: 'SearchNavigationObjects',
+      resolve: () => {
+        const risk = RiskObjectMembers as { field: string; nullable: boolean; type: string; }[];
+        return { risk }
       }
     })
   }

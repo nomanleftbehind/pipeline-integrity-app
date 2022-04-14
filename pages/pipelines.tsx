@@ -3,10 +3,11 @@ import { prisma } from '../lib/prisma';
 import { getUser } from '../lib/user';
 
 import RenderPipeline from '../components/rows/RenderPipeline';
-import SideNavBar from '../components/SideNavBar';
+import HierarchyNavigation from '../components/navigation/HierarchyNavigation';
+import SearchNavigation from '../components/navigation/SearchNavigation';
 
 import { IGetServerSideProps } from './register';
-import { usePipelinesByIdLazyQuery, useValidatorsPipelineQuery } from '../graphql/generated/graphql';
+import { usePipelinesByIdLazyQuery, useValidatorsPipelineQuery, NavigationInput } from '../graphql/generated/graphql';
 
 export interface IHeader {
   license: string;
@@ -17,6 +18,7 @@ export interface IHeader {
   toFeature: string;
 }
 
+
 function PipelineDatabase() {
 
   const header: IHeader = { license: "", segment: "", from: "", fromFeature: "", to: "", toFeature: "" };
@@ -26,8 +28,13 @@ function PipelineDatabase() {
   const [pipelinesById, { data, loading, error }] = usePipelinesByIdLazyQuery();
   const { data: validatorsData } = useValidatorsPipelineQuery();
 
-  function handleSidebarClick(id: string, table: string) {
-    pipelinesById({ variables: { id, table } })
+  const handleNavigation = ({ click, search }: NavigationInput) => {
+    if (click) {
+      pipelinesById({ variables: { navigationInput: { click } } });
+    }
+    if (search) {
+      pipelinesById({ variables: { navigationInput: { search } } });
+    }
   }
 
   const handleFilterTextChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -59,10 +66,13 @@ function PipelineDatabase() {
 
   return (
     <div className="pipeline-database-wrapper">
-      <div className="pipeline-database-side-bar">
-        <div className="pipeline-database-side-bar-fixed">
-          <SideNavBar
-            onSidebarClick={handleSidebarClick}
+      <div className="pipeline-database-side-bar"/* style={{border: '1px solid green'}}*/>
+        <div className="pipeline-database-side-bar-fixed" /*style={{border: '1px solid red'}}*/>
+          <SearchNavigation
+            onSearchNavigation={handleNavigation}
+          />
+          <HierarchyNavigation
+            onHierarchyItemClick={handleNavigation}
           />
         </div>
       </div>
