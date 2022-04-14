@@ -5281,7 +5281,7 @@
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "PipelinesSearchInput",
+              "name": "PipelinesSearchNavigationInput",
               "ofType": null
             },
             "defaultValue": null,
@@ -9191,7 +9191,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "PipelinesSearchInput",
+        "name": "PipelinesSearchNavigationInput",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -10150,7 +10150,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "SearchNavigationObjects",
+                "name": "SearchNavigationObjectArray",
                 "ofType": null
               }
             },
@@ -11675,9 +11675,33 @@
       },
       {
         "kind": "OBJECT",
-        "name": "SearchNavigationObjects",
+        "name": "SearchNavigationObjectArray",
         "description": null,
         "fields": [
+          {
+            "name": "pipeline",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "SearchNavigationObject",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "risk",
             "description": null,

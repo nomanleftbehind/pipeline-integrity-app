@@ -1,10 +1,36 @@
 import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg, booleanArg } from 'nexus';
+import type { GetGen } from 'nexus/dist/typegenTypeHelpers';
+import type { AllNexusOutputTypeDefs } from 'nexus/dist/definitions/wrapping';
+import type { NexusMetaType } from 'nexus/dist/definitions/nexusMeta';
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
 import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
 import { totalPipelineFlowRawQuery } from './PipelineFlow';
 import { Prisma, User as IUser } from '@prisma/client';
 
+
+export const PipelineObjectMembers: { field: string; nullable: boolean; type: GetGen<'allOutputTypes', string> | AllNexusOutputTypeDefs | NexusMetaType }[] = [
+  { field: 'id', nullable: false, type: 'String' },
+  { field: 'license', nullable: false, type: 'String' },
+  { field: 'segment', nullable: false, type: 'String' },
+  { field: 'flowCalculationDirection', nullable: false, type: 'FlowCalculationDirectionEnum' },
+  { field: 'from', nullable: false, type: 'String' },
+  { field: 'to', nullable: false, type: 'String' },
+];
+
+export const PipelineExtendObject = extendType({
+  type: 'Pipeline',
+  definition: t => {
+    for (const property of PipelineObjectMembers) {
+      const { field, nullable, type } = property;
+      if (nullable) {
+        t.field(field, { type })
+      } else {
+        t.nonNull.field(field, { type })
+      }
+    }
+  }
+});
 
 
 export const Pipeline = objectType({
@@ -14,7 +40,7 @@ export const Pipeline = objectType({
     export: 'Pipeline',
   },
   definition(t) {
-    t.nonNull.string('id')
+    // t.nonNull.string('id')
     t.field('satellite', {
       type: 'Satellite',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -42,10 +68,10 @@ export const Pipeline = objectType({
         return result;
       },
     })
-    t.nonNull.string('license')
-    t.nonNull.string('segment')
-    t.nonNull.field('flowCalculationDirection', { type: 'FlowCalculationDirectionEnum' })
-    t.nonNull.string('from')
+    // t.nonNull.string('license')
+    // t.nonNull.string('segment')
+    // t.nonNull.field('flowCalculationDirection', { type: 'FlowCalculationDirectionEnum' })
+    // t.nonNull.string('from')
     t.field('fromFeature', {
       type: 'FromToFeatureEnum',
       resolve: ({ fromFeature }) => {
@@ -53,7 +79,7 @@ export const Pipeline = objectType({
         return result;
       }
     })
-    t.nonNull.string('to')
+    // t.nonNull.string('to')
     t.field('toFeature', {
       type: 'FromToFeatureEnum',
       resolve: ({ toFeature }) => {
@@ -418,55 +444,6 @@ export const resolvePipelineAuthorized = (user: IUser) => {
 export const PipelineQuery = extendType({
   type: 'Query',
   definition(t) {
-    // t.list.field('pipelinesById', {
-    //   type: 'Pipeline',
-    //   args: {
-    //     table: stringArg(),
-    //     id: stringArg(),
-    //   },
-    //   resolve: async (_parent, { id, table }, ctx: Context) => {
-    //     if (table === 'satellite') {
-    //       const result = await ctx.prisma.pipeline.findMany({
-    //         where: { satelliteId: id },
-    //         orderBy: [
-    //           { license: 'asc' },
-    //           { segment: 'asc' },
-    //         ]
-    //       });
-    //       return result;
-    //     } else if (table === 'facility' && id === 'no-facility') {
-    //       const result = await ctx.prisma.pipeline.findMany({
-    //         where: {
-    //           satellite: { facilityId: null }
-    //         },
-    //         orderBy: [
-    //           { license: 'asc' },
-    //           { segment: 'asc' },
-    //         ]
-    //       });
-    //       return result;
-    //     } else if (table === 'facility' && id) {
-    //       const result = await ctx.prisma.pipeline.findMany({
-    //         where: {
-    //           satellite: { facilityId: id }
-    //         },
-    //         orderBy: [
-    //           { license: 'asc' },
-    //           { segment: 'asc' },
-    //         ]
-    //       });
-    //       return result;
-    //     } else {
-    //       const result = await ctx.prisma.pipeline.findMany({
-    //         orderBy: [
-    //           { license: 'asc' },
-    //           { segment: 'asc' },
-    //         ]
-    //       });
-    //       return result;
-    //     }
-    //   }
-    // })
     t.field('connectedPipelinesByPipelineId', {
       type: 'PipelinesFlowAndSourceGroupBy',
       args: {
@@ -645,7 +622,7 @@ export const NavigationInput = inputObjectType({
   name: 'NavigationInput',
   definition(t) {
     t.field('click', { type: 'PipelinesClickInput' })
-    t.field('search', { type: 'PipelinesSearchInput' })
+    t.field('search', { type: 'PipelinesSearchNavigationInput' })
   },
 });
 
@@ -657,8 +634,8 @@ export const PipelinesClickInput = inputObjectType({
   },
 });
 
-export const PipelinesSearchInput = inputObjectType({
-  name: 'PipelinesSearchInput',
+export const PipelinesSearchNavigationInput = inputObjectType({
+  name: 'PipelinesSearchNavigationInput',
   definition(t) {
     t.nonNull.string('table')
     t.nonNull.string('field')

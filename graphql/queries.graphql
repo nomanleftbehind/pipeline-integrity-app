@@ -84,6 +84,11 @@ query SearchOptions {
       nullable
       type
     }
+    pipeline {
+      field
+      nullable
+      type
+    }
   }
 }
 

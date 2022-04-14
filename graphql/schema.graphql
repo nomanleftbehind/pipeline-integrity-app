@@ -356,7 +356,7 @@ type Mutation {
 
 input NavigationInput {
   click: PipelinesClickInput
-  search: PipelinesSearchInput
+  search: PipelinesSearchNavigationInput
 }
 
 enum PigInspectionEnum {
@@ -714,7 +714,7 @@ type PipelinesFlowAndSourceGroupBy {
   sourceGroupBy: SourceGroupBy
 }
 
-input PipelinesSearchInput {
+input PipelinesSearchNavigationInput {
   field: String!
   table: String!
   value: String!
@@ -768,7 +768,7 @@ type Query {
   salesPointOptions(pipelineId: String!): [SourceOptions]
   salesPointsByPipelineId(pipelineId: String!): [SalesPoint]
   salesPointsGroupByPipelineId(pipelineId: String!): SourceGroupBy
-  searchOptions: SearchNavigationObjects!
+  searchOptions: SearchNavigationObjectArray!
   sideBar: [SideBar]
   userCount: Int
   validators: Validator
@@ -898,7 +898,8 @@ type SearchNavigationObject {
   type: String!
 }
 
-type SearchNavigationObjects {
+type SearchNavigationObjectArray {
+  pipeline: [SearchNavigationObject!]!
   risk: [SearchNavigationObject!]!
 }
 

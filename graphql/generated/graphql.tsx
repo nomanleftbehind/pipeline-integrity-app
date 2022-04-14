@@ -638,7 +638,7 @@ export type MutationSignupArgs = {
 
 export type NavigationInput = {
   click?: Maybe<PipelinesClickInput>;
-  search?: Maybe<PipelinesSearchInput>;
+  search?: Maybe<PipelinesSearchNavigationInput>;
 };
 
 export enum PigInspectionEnum {
@@ -993,7 +993,7 @@ export type PipelinesFlowAndSourceGroupBy = {
   sourceGroupBy?: Maybe<SourceGroupBy>;
 };
 
-export type PipelinesSearchInput = {
+export type PipelinesSearchNavigationInput = {
   field: Scalars['String'];
   table: Scalars['String'];
   value: Scalars['String'];
@@ -1047,7 +1047,7 @@ export type Query = {
   salesPointOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   salesPointsByPipelineId?: Maybe<Array<Maybe<SalesPoint>>>;
   salesPointsGroupByPipelineId?: Maybe<SourceGroupBy>;
-  searchOptions: SearchNavigationObjects;
+  searchOptions: SearchNavigationObjectArray;
   sideBar?: Maybe<Array<Maybe<SideBar>>>;
   userCount?: Maybe<Scalars['Int']>;
   validators?: Maybe<Validator>;
@@ -1270,7 +1270,8 @@ export type SearchNavigationObject = {
   type: Scalars['String'];
 };
 
-export type SearchNavigationObjects = {
+export type SearchNavigationObjectArray = {
+  pipeline: Array<SearchNavigationObject>;
   risk: Array<SearchNavigationObject>;
 };
 
@@ -1862,7 +1863,7 @@ export type PigRunsByPipelineIdQuery = { pigRunsByPipelineId?: Array<{ id: strin
 export type SearchOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SearchOptionsQuery = { searchOptions: { risk: Array<{ field: string, nullable: boolean, type: string }> } };
+export type SearchOptionsQuery = { searchOptions: { risk: Array<{ field: string, nullable: boolean, type: string }>, pipeline: Array<{ field: string, nullable: boolean, type: string }> } };
 
 export type ValidatorsPigRunQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3547,6 +3548,11 @@ export const SearchOptionsDocument = gql`
     query SearchOptions {
   searchOptions {
     risk {
+      field
+      nullable
+      type
+    }
+    pipeline {
       field
       nullable
       type
