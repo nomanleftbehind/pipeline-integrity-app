@@ -1,5 +1,6 @@
 import { objectType, extendType } from 'nexus';
 import { UserRoleEnumMembers } from './User';
+import { serverEnumToDatabaseEnum } from './Pipeline';
 import {
 	FromToFeatureEnumMembers,
 	TypeEnumMembers,
@@ -14,6 +15,7 @@ import { PigTypeEnumMembers, PigInspectionEnumMembers } from './PigRun';
 import { LimitingSpecEnumMembers } from './PressureTest';
 import { EnvironmentProximityToEnumMembers, GeotechnicalFacingEnumMembers } from './Risk';
 import { SolubilityEnumMembers } from './BatchProduct';
+import { OperationEnumMembers } from './SearchNavigation';
 
 export const anyTextMatchPattern = "^[\\s\\S]*$";
 export const licenseMatchPattern = "^(AB|SK|BC)(\\d{5}|\\d{6})$";
@@ -170,6 +172,25 @@ export const SolubilityEnumObject = objectType({
 	}
 });
 
+export const OperationEnumObject = objectType({
+	name: 'OperationEnumObject',
+	definition(t) {
+		for (const iterator of Object.keys(OperationEnumMembers)) {
+			t.nonNull.field(iterator, {
+				type: 'OperationEnum',
+				resolve: ({ contains, endsWith, equals, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, not, startsWith }) => {
+					const contains2 = serverEnumToDatabaseEnum(OperationEnumMembers, contains);
+					return {
+						equals: serverEnumToDatabaseEnum(OperationEnumMembers, equals),
+						
+					}
+
+				}
+			})
+		}
+	}
+});
+
 export const Validator = objectType({
 	name: 'Validator',
 	definition(t) {
@@ -198,6 +219,7 @@ export const Validator = objectType({
 		t.nonNull.field('environmentProximityToEnum', { type: 'EnvironmentProximityToEnumObject' })
 		t.nonNull.field('geotechnicalFacingEnum', { type: 'GeotechnicalFacingEnumObject' })
 		t.nonNull.field('solubilityEnum', { type: 'SolubilityEnumObject' })
+		t.nonNull.field('operationEnum', { type: 'OperationEnumObject' })
 	}
 })
 
@@ -233,6 +255,18 @@ export const ValidatorQuery = extendType({
 					environmentProximityToEnum: EnvironmentProximityToEnumMembers,
 					geotechnicalFacingEnum: GeotechnicalFacingEnumMembers,
 					solubilityEnum: SolubilityEnumMembers,
+					operationEnum: {
+						gt: 'greaterThan',
+						contains: 'dasd',
+						endsWith: '',
+						equals: 'das',
+						gte: 'dwr',
+						lt: 'fdsfe',
+						lte: 'dsadw',
+						not: 'dadw',
+						startsWith: 'dwawg'
+
+					},
 				};
 			}
 		})

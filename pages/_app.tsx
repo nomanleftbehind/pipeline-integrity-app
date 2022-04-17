@@ -16,6 +16,7 @@ import '../styles/pipeline-batch.css';
 import '../styles/pressure-test.css';
 import '../styles/injection-point.css';
 import '../styles/risk.css';
+import '../styles/search-navigation.css';
 import '../styles/button-container.css';
 import Layout from '../components/layout';
 // import '../styles/styles-formik.css';

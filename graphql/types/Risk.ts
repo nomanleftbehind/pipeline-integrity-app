@@ -1,7 +1,4 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
-import type { GetGen } from 'nexus/dist/typegenTypeHelpers';
-import type { AllNexusOutputTypeDefs } from 'nexus/dist/definitions/wrapping';
-import type { NexusMetaType } from 'nexus/dist/definitions/nexusMeta';
 import { totalFluidsCalc } from './Well';
 import { pipelineFlow } from './PipelineFlow';
 import { databaseEnumToServerEnum } from './Pipeline';
@@ -24,10 +21,11 @@ import {
   probabilityExteriorWithSafeguardsCalc,
   riskPotentialExternalWithSafeguardsCalc,
 } from './RiskCalcs';
+import { ITableObject } from './SearchNavigation';
 
 
 
-export const RiskObjectMembers: { field: string; nullable: boolean; type: GetGen<'allOutputTypes', string> | AllNexusOutputTypeDefs | NexusMetaType }[] = [
+export const RiskObjectMembers: ITableObject[] = [
   { field: 'id', nullable: false, type: 'String' },
   { field: 'aerialReview', nullable: true, type: 'Boolean' },
   { field: 'environmentProximityTo', nullable: true, type: 'EnvironmentProximityToEnum' },

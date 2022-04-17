@@ -1,0 +1,17 @@
+.search-navigation-form {
+  display: grid;
+  grid-template-columns: 30px 20px 55px 120px 30px;
+  row-gap: 4px;
+  column-gap: 4px;
+  grid-auto-rows: 30px;
+  font-size: small;
+  text-align: center;
+  line-height: 27px;
+  /* transform: translate(-50%, -50%); */
+}
+
+.search-navigation-form > * {
+  border: red 1px solid;
+  /* font-size: small;
+  text-align: center; */
+}

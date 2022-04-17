@@ -241,6 +241,11 @@ type GradeEnumObject {
   GradeX52: String!
 }
 
+input HierarchyInput {
+  id: String!
+  table: TableEnum!
+}
+
 enum InternalProtectionEnum {
   Cement
   ExpandedPolyethylene
@@ -355,8 +360,32 @@ type Mutation {
 }
 
 input NavigationInput {
-  click: PipelinesClickInput
-  search: PipelinesSearchNavigationInput
+  hierarchy: HierarchyInput
+  search: SearchNavigationInput
+}
+
+enum OperationEnum {
+  contains
+  endsWith
+  equals
+  greaterThan
+  greaterThanOrEqual
+  lessThan
+  lessThanOrEqual
+  not
+  startsWith
+}
+
+type OperationEnumObject {
+  contains: OperationEnum!
+  endsWith: OperationEnum!
+  equals: OperationEnum!
+  greaterThan: OperationEnum!
+  greaterThanOrEqual: OperationEnum!
+  lessThan: OperationEnum!
+  lessThanOrEqual: OperationEnum!
+  not: OperationEnum!
+  startsWith: OperationEnum!
 }
 
 enum PigInspectionEnum {
@@ -704,20 +733,9 @@ type PipelinePayload {
   pipeline: Pipeline
 }
 
-input PipelinesClickInput {
-  id: String!
-  table: String!
-}
-
 type PipelinesFlowAndSourceGroupBy {
   pipelinesFlow: [PipelineFlow]
   sourceGroupBy: SourceGroupBy
-}
-
-input PipelinesSearchNavigationInput {
-  field: String!
-  table: String!
-  value: String!
 }
 
 type PressureTest {
@@ -892,10 +910,18 @@ input SatelliteUniqueInput {
   name: String
 }
 
+input SearchNavigationInput {
+  field: String!
+  operation: OperationEnum!
+  table: TableEnum!
+  type: String!
+  value: String!
+}
+
 type SearchNavigationObject {
   field: String!
   nullable: Boolean!
-  table: String!
+  table: TableEnum!
   type: String!
 }
 
@@ -979,6 +1005,14 @@ type SubstanceEnumObject {
   OilWellEffluent: String!
   SaltWater: String!
   SourNaturalGas: String!
+}
+
+enum TableEnum {
+  facility
+  pipeline
+  risk
+  satellite
+  well
 }
 
 enum TypeEnum {
@@ -1107,6 +1141,7 @@ type Validator {
   limitingSpecEnum: LimitingSpecEnumObject!
   materialEnum: MaterialEnumObject!
   mopMatchPattern: String!
+  operationEnum: OperationEnumObject!
   outsideDiameterMatchPattern: String!
   pigInspectionEnum: PigInspectionEnumObject!
   pigTypeEnum: PigTypeEnumObject!

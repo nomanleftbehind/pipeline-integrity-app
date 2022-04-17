@@ -13,6 +13,8 @@ import IconButton from '@mui/material/IconButton';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
+import { TableEnum } from '../../graphql/generated/graphql';
+
 interface ISidebarItemProps {
   id?: string;
   name: string;
@@ -77,7 +79,7 @@ export default function HierarchyNavigationDropdownItem({ id, name, onHierarchyI
       <HierarchyNavigationItem
         id={id}
         name={name}
-        onClick={(e) => onHierarchyItemClick({ click: { id: e.currentTarget.value, table: 'facility' } })}
+        onClick={(e) => onHierarchyItemClick({ hierarchy: { id: e.currentTarget.value, table: TableEnum.Facility } })}
         onExpand={handleExpand}
         open={open}
       />
@@ -88,7 +90,7 @@ export default function HierarchyNavigationDropdownItem({ id, name, onHierarchyI
               <HierarchyNavigationItem
                 id={satellite.id}
                 name={satellite.name}
-                onClick={(e) => onHierarchyItemClick({ click: { id: e.currentTarget.value, table: 'satellite' } })}
+                onClick={(e) => onHierarchyItemClick({ hierarchy: { id: e.currentTarget.value, table: TableEnum.Satellite } })}
                 paddingLeft={6}
               />
             </List>

@@ -28,9 +28,9 @@ function PipelineDatabase() {
   const [pipelinesById, { data, loading, error }] = usePipelinesByIdLazyQuery();
   const { data: validatorsData } = useValidatorsPipelineQuery();
 
-  const handleNavigation = ({ click, search }: NavigationInput) => {
-    if (click) {
-      pipelinesById({ variables: { navigationInput: { click } } });
+  const handleNavigation = ({ hierarchy, search }: NavigationInput) => {
+    if (hierarchy) {
+      pipelinesById({ variables: { navigationInput: { hierarchy } } });
     }
     if (search) {
       pipelinesById({ variables: { navigationInput: { search } } });

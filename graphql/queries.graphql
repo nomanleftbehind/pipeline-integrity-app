@@ -86,6 +86,22 @@ query SearchNavigationOptions {
   }
 }
 
+query OperationEnum {
+  validators {
+    operationEnum {
+      equals
+      not
+      greaterThan
+      greaterThanOrEqual
+      lessThan
+      lessThanOrEqual
+      contains
+      startsWith
+      endsWith
+    }
+  }
+}
+
 query ValidatorsPigRun {
   validators {
     pigTypeEnum {

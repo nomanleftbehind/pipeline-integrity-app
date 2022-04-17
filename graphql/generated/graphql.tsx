@@ -250,6 +250,11 @@ export type GradeEnumObject = {
   GradeX52: Scalars['String'];
 };
 
+export type HierarchyInput = {
+  id: Scalars['String'];
+  table: TableEnum;
+};
+
 export enum InternalProtectionEnum {
   Cement = 'Cement',
   ExpandedPolyethylene = 'ExpandedPolyethylene',
@@ -637,8 +642,32 @@ export type MutationSignupArgs = {
 };
 
 export type NavigationInput = {
-  click?: Maybe<PipelinesClickInput>;
-  search?: Maybe<PipelinesSearchNavigationInput>;
+  hierarchy?: Maybe<HierarchyInput>;
+  search?: Maybe<SearchNavigationInput>;
+};
+
+export enum OperationEnum {
+  Contains = 'contains',
+  EndsWith = 'endsWith',
+  Equals = 'equals',
+  GreaterThan = 'greaterThan',
+  GreaterThanOrEqual = 'greaterThanOrEqual',
+  LessThan = 'lessThan',
+  LessThanOrEqual = 'lessThanOrEqual',
+  Not = 'not',
+  StartsWith = 'startsWith'
+}
+
+export type OperationEnumObject = {
+  contains: Scalars['String'];
+  endsWith: Scalars['String'];
+  equals: Scalars['String'];
+  greaterThan: Scalars['String'];
+  greaterThanOrEqual: Scalars['String'];
+  lessThan: Scalars['String'];
+  lessThanOrEqual: Scalars['String'];
+  not: Scalars['String'];
+  startsWith: Scalars['String'];
 };
 
 export enum PigInspectionEnum {
@@ -983,20 +1012,9 @@ export type PipelinePayload = {
   pipeline?: Maybe<Pipeline>;
 };
 
-export type PipelinesClickInput = {
-  id: Scalars['String'];
-  table: Scalars['String'];
-};
-
 export type PipelinesFlowAndSourceGroupBy = {
   pipelinesFlow?: Maybe<Array<Maybe<PipelineFlow>>>;
   sourceGroupBy?: Maybe<SourceGroupBy>;
-};
-
-export type PipelinesSearchNavigationInput = {
-  field: Scalars['String'];
-  table: Scalars['String'];
-  value: Scalars['String'];
 };
 
 export type PressureTest = {
@@ -1264,10 +1282,18 @@ export type SatelliteUniqueInput = {
   name?: Maybe<Scalars['String']>;
 };
 
+export type SearchNavigationInput = {
+  field: Scalars['String'];
+  operation: OperationEnum;
+  table: TableEnum;
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
+
 export type SearchNavigationObject = {
   field: Scalars['String'];
   nullable: Scalars['Boolean'];
-  table: Scalars['String'];
+  table: TableEnum;
   type: Scalars['String'];
 };
 
@@ -1352,6 +1378,14 @@ export type SubstanceEnumObject = {
   SaltWater: Scalars['String'];
   SourNaturalGas: Scalars['String'];
 };
+
+export enum TableEnum {
+  Facility = 'facility',
+  Pipeline = 'pipeline',
+  Risk = 'risk',
+  Satellite = 'satellite',
+  Well = 'well'
+}
 
 export enum TypeEnum {
   Type5A = 'Type5A',
@@ -1479,6 +1513,7 @@ export type Validator = {
   limitingSpecEnum: LimitingSpecEnumObject;
   materialEnum: MaterialEnumObject;
   mopMatchPattern: Scalars['String'];
+  operationEnum: OperationEnumObject;
   outsideDiameterMatchPattern: Scalars['String'];
   pigInspectionEnum: PigInspectionEnumObject;
   pigTypeEnum: PigTypeEnumObject;
@@ -1859,7 +1894,12 @@ export type PigRunsByPipelineIdQuery = { pigRunsByPipelineId?: Array<{ id: strin
 export type SearchNavigationOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SearchNavigationOptionsQuery = { searchNavigationOptions: Array<{ table: string, field: string, nullable: boolean, type: string }> };
+export type SearchNavigationOptionsQuery = { searchNavigationOptions: Array<{ table: TableEnum, field: string, nullable: boolean, type: string }> };
+
+export type OperationEnumQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OperationEnumQuery = { validators?: { operationEnum: { equals: string, not: string, greaterThan: string, greaterThanOrEqual: string, lessThan: string, lessThanOrEqual: string, contains: string, startsWith: string, endsWith: string } } | null | undefined };
 
 export type ValidatorsPigRunQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3577,6 +3617,50 @@ export function useSearchNavigationOptionsLazyQuery(baseOptions?: Apollo.LazyQue
 export type SearchNavigationOptionsQueryHookResult = ReturnType<typeof useSearchNavigationOptionsQuery>;
 export type SearchNavigationOptionsLazyQueryHookResult = ReturnType<typeof useSearchNavigationOptionsLazyQuery>;
 export type SearchNavigationOptionsQueryResult = Apollo.QueryResult<SearchNavigationOptionsQuery, SearchNavigationOptionsQueryVariables>;
+export const OperationEnumDocument = gql`
+    query OperationEnum {
+  validators {
+    operationEnum {
+      equals
+      not
+      greaterThan
+      greaterThanOrEqual
+      lessThan
+      lessThanOrEqual
+      contains
+      startsWith
+      endsWith
+    }
+  }
+}
+    `;
+
+/**
+ * __useOperationEnumQuery__
+ *
+ * To run a query within a React component, call `useOperationEnumQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOperationEnumQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOperationEnumQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOperationEnumQuery(baseOptions?: Apollo.QueryHookOptions<OperationEnumQuery, OperationEnumQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OperationEnumQuery, OperationEnumQueryVariables>(OperationEnumDocument, options);
+      }
+export function useOperationEnumLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OperationEnumQuery, OperationEnumQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OperationEnumQuery, OperationEnumQueryVariables>(OperationEnumDocument, options);
+        }
+export type OperationEnumQueryHookResult = ReturnType<typeof useOperationEnumQuery>;
+export type OperationEnumLazyQueryHookResult = ReturnType<typeof useOperationEnumLazyQuery>;
+export type OperationEnumQueryResult = Apollo.QueryResult<OperationEnumQuery, OperationEnumQueryVariables>;
 export const ValidatorsPigRunDocument = gql`
     query ValidatorsPigRun {
   validators {

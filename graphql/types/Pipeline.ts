@@ -1,15 +1,13 @@
 import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg, booleanArg } from 'nexus';
-import type { GetGen } from 'nexus/dist/typegenTypeHelpers';
-import type { AllNexusOutputTypeDefs } from 'nexus/dist/definitions/wrapping';
-import type { NexusMetaType } from 'nexus/dist/definitions/nexusMeta';
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
 import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
 import { totalPipelineFlowRawQuery } from './PipelineFlow';
 import { Prisma, User as IUser } from '@prisma/client';
+import { ITableObject } from './SearchNavigation';
 
 
-export const PipelineObjectMembers: { field: string; nullable: boolean; type: GetGen<'allOutputTypes', string> | AllNexusOutputTypeDefs | NexusMetaType }[] = [
+export const PipelineObjectMembers: ITableObject[] = [
   { field: 'id', nullable: false, type: 'String' },
   { field: 'license', nullable: false, type: 'String' },
   { field: 'segment', nullable: false, type: 'String' },
@@ -532,10 +530,10 @@ export const PipelineQuery = extendType({
       args: {
         navigationInput: nonNull(arg({ type: 'NavigationInput' })),
       },
-      resolve: async (_, { navigationInput: { click, search } }, ctx: Context) => {
+      resolve: async (_, { navigationInput: { hierarchy, search } }, ctx: Context) => {
 
-        if (click) {
-          const { id, table } = click;
+        if (hierarchy) {
+          const { id, table } = hierarchy;
           if (table === 'satellite') {
             const result = await ctx.prisma.pipeline.findMany({
               where: { satelliteId: id },
@@ -579,35 +577,64 @@ export const PipelineQuery = extendType({
         }
 
         if (search) {
-          const { table, field, value } = search;
-          if (table === 'Risk') {
-            if (field === 'riskPotentialGeo') {
-              return await ctx.prisma.pipeline.findMany({
-                where: {
-                  risk: {
-                    riskPotentialGeo: Number(value),
-                  }
-                }
-              });
+          const { table, field, value, type, operation } = search;
+          const castValue = type === 'Int' ? parseInt(value) : type === 'Float' ? Number(value) : value //, 'Float'].includes(type) ? Number(value) : value;
+          // console.log(table, field, value, type,  castValue);
+          const valueIsNumeric = ['Int', 'Float'].includes(type);
+          const valueIsStringy = type === 'String' || type.includes('Enum');
+          const operationIsAllowed = (valueIsNumeric && ['equals', 'gt', 'gte', 'lt', 'lte', 'not'].includes(operation)) ||
+            (valueIsStringy && ['equals', 'contains', 'startsWith', 'endsWith', 'not'].includes(operation));
+
+          const a = ['equals', 'gt', 'gte', 'lt', 'lte', 'not']
+
+          if (table === 'pipeline') {
+            return await ctx.prisma.pipeline.findMany({
+              where: {
+                [field]: operationIsAllowed ? { [operation]: castValue } : undefined,
+              }
+            });
+          }
+
+          const b = await ctx.prisma.pipeline.findMany({
+            where: {
+              risk: {
+                comment: undefined
+              }
             }
-            if (field === 'riskPotentialInternal') {
-              return await ctx.prisma.pipeline.findMany({
-                where: {
-                  risk: {
-                    riskPotentialInternal: Number(value),
-                  }
+          });
+
+          if (table === 'risk') {
+            // if (field === 'riskPotentialGeo') {
+            return await ctx.prisma.pipeline.findMany({
+              where: {
+                [table]: {
+                  [field]: operationIsAllowed ? { [operation]: castValue } : undefined,
                 }
-              });
-            }
-            if (field === 'riskPotentialInternal') {
-              return await ctx.prisma.pipeline.findMany({
-                where: {
-                  risk: {
-                    riskPotentialExternal: Number(value),
-                  }
-                }
-              });
-            }
+              }
+            });
+
+
+            // }
+            // if (field === 'riskPotentialInternal') {
+            //   const a = await ctx.prisma.pipeline.findMany({
+            //     where: {
+            //       risk: {
+            //         riskPotentialInternal: parseInt(value),
+            //       }
+            //     }
+            //   });
+            //   console.log(table, field, value, type,  castValue, 'a:', JSON.stringify(a));
+            //   return a;
+            // }
+            // if (field === 'riskPotentialInternal') {
+            //   return await ctx.prisma.pipeline.findMany({
+            //     where: {
+            //       risk: {
+            //         riskPotentialExternal: Number(value),
+            //       }
+            //     }
+            //   });
+            // }
           }
         }
 
@@ -621,25 +648,27 @@ export const PipelineQuery = extendType({
 export const NavigationInput = inputObjectType({
   name: 'NavigationInput',
   definition(t) {
-    t.field('click', { type: 'PipelinesClickInput' })
-    t.field('search', { type: 'PipelinesSearchNavigationInput' })
+    t.field('hierarchy', { type: 'HierarchyInput' })
+    t.field('search', { type: 'SearchNavigationInput' })
   },
 });
 
-export const PipelinesClickInput = inputObjectType({
-  name: 'PipelinesClickInput',
+export const HierarchyInput = inputObjectType({
+  name: 'HierarchyInput',
   definition(t) {
     t.nonNull.string('id')
-    t.nonNull.string('table')
+    t.nonNull.field('table', { type: 'TableEnum' })
   },
 });
 
-export const PipelinesSearchNavigationInput = inputObjectType({
-  name: 'PipelinesSearchNavigationInput',
+export const SearchNavigationInput = inputObjectType({
+  name: 'SearchNavigationInput',
   definition(t) {
-    t.nonNull.string('table')
+    t.nonNull.field('table', { type: 'TableEnum' })
     t.nonNull.string('field')
     t.nonNull.string('value')
+    t.nonNull.string('type')
+    t.nonNull.field('operation', { type: 'OperationEnum' })
   },
 });
 
