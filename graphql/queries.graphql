@@ -91,10 +91,10 @@ query OperationEnum {
     operationEnum {
       equals
       not
-      greaterThan
-      greaterThanOrEqual
-      lessThan
-      lessThanOrEqual
+      gt
+      gte
+      lt
+      lte
       contains
       startsWith
       endsWith

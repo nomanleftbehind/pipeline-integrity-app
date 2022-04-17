@@ -14,6 +14,15 @@ export const PipelineObjectMembers: ITableObject[] = [
   { field: 'flowCalculationDirection', nullable: false, type: 'FlowCalculationDirectionEnum' },
   { field: 'from', nullable: false, type: 'String' },
   { field: 'to', nullable: false, type: 'String' },
+  { field: 'length', nullable: false, type: 'Float' },
+  { field: 'yieldStrength', nullable: true, type: 'Int' },
+  { field: 'outsideDiameter', nullable: true, type: 'Float' },
+  { field: 'wallThickness', nullable: true, type: 'Float' },
+  { field: 'mop', nullable: true, type: 'Int' },
+  { field: 'piggable', nullable: true, type: 'Boolean' },
+  { field: 'piggingFrequency', nullable: true, type: 'Int' },
+  { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedAt', nullable: false, type: 'DateTime' },
 ];
 
 export const PipelineExtendObject = extendType({
@@ -37,8 +46,7 @@ export const Pipeline = objectType({
     module: '@prisma/client',
     export: 'Pipeline',
   },
-  definition(t) {
-    // t.nonNull.string('id')
+  definition: t => {
     t.field('satellite', {
       type: 'Satellite',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -66,10 +74,6 @@ export const Pipeline = objectType({
         return result;
       },
     })
-    // t.nonNull.string('license')
-    // t.nonNull.string('segment')
-    // t.nonNull.field('flowCalculationDirection', { type: 'FlowCalculationDirectionEnum' })
-    // t.nonNull.string('from')
     t.field('fromFeature', {
       type: 'FromToFeatureEnum',
       resolve: ({ fromFeature }) => {
@@ -77,7 +81,6 @@ export const Pipeline = objectType({
         return result;
       }
     })
-    // t.nonNull.string('to')
     t.field('toFeature', {
       type: 'FromToFeatureEnum',
       resolve: ({ toFeature }) => {
@@ -121,7 +124,6 @@ export const Pipeline = objectType({
         return date || null;
       }
     })
-    t.nonNull.float('length')
     t.field('type', {
       type: 'TypeEnum',
       resolve: ({ type }) => {
@@ -136,9 +138,6 @@ export const Pipeline = objectType({
         return result;
       }
     })
-    t.int('yieldStrength')
-    t.float('outsideDiameter')
-    t.float('wallThickness')
     t.field('material', {
       type: 'MaterialEnum',
       resolve: ({ material }) => {
@@ -146,7 +145,6 @@ export const Pipeline = objectType({
         return result;
       }
     })
-    t.int('mop')
     t.field('internalProtection', {
       type: 'InternalProtectionEnum',
       resolve: ({ internalProtection }) => {
@@ -154,8 +152,6 @@ export const Pipeline = objectType({
         return result;
       }
     })
-    t.boolean('piggable')
-    t.int('piggingFrequency')
     t.field('batchFrequency', {
       type: 'BatchFrequencyEnum',
       resolve: ({ batchFrequency }) => {
@@ -172,7 +168,6 @@ export const Pipeline = objectType({
         return result!;
       },
     })
-    t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -182,7 +177,6 @@ export const Pipeline = objectType({
         return result!;
       },
     })
-    t.nonNull.field('updatedAt', { type: 'DateTime' })
     t.list.field('pressureTests', {
       type: 'PressureTest',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -578,28 +572,26 @@ export const PipelineQuery = extendType({
 
         if (search) {
           const { table, field, value, type, operation } = search;
-          const castValue = type === 'Int' ? parseInt(value) : type === 'Float' ? Number(value) : value //, 'Float'].includes(type) ? Number(value) : value;
-          // console.log(table, field, value, type,  castValue);
-          const valueIsNumeric = ['Int', 'Float'].includes(type);
-          const valueIsStringy = type === 'String' || type.includes('Enum');
-          const operationIsAllowed = (valueIsNumeric && ['equals', 'gt', 'gte', 'lt', 'lte', 'not'].includes(operation)) ||
-            (valueIsStringy && ['equals', 'contains', 'startsWith', 'endsWith', 'not'].includes(operation));
+          const castValue =
+            type === 'Int' ? parseInt(value) :
+              type === 'Float' ? Number(value) :
+                type === 'DateTime' ? new Date(value) :
+                  type === 'Boolean' ? Boolean(value) : value //, 'Float'].includes(type) ? Number(value) : value;
 
-          const a = ['equals', 'gt', 'gte', 'lt', 'lte', 'not']
+          console.log(table, field, value, type, operation, JSON.stringify(castValue));
+
 
           if (table === 'pipeline') {
             return await ctx.prisma.pipeline.findMany({
               where: {
-                [field]: operationIsAllowed ? { [operation]: castValue } : undefined,
+                [field]: { [operation]: castValue },
               }
             });
           }
 
           const b = await ctx.prisma.pipeline.findMany({
             where: {
-              risk: {
-                comment: undefined
-              }
+
             }
           });
 
@@ -608,7 +600,7 @@ export const PipelineQuery = extendType({
             return await ctx.prisma.pipeline.findMany({
               where: {
                 [table]: {
-                  [field]: operationIsAllowed ? { [operation]: castValue } : undefined,
+                  [field]: { [operation]: castValue },
                 }
               }
             });

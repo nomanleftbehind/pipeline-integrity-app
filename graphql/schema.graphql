@@ -380,10 +380,10 @@ type OperationEnumObject {
   contains: OperationEnum!
   endsWith: OperationEnum!
   equals: OperationEnum!
-  greaterThan: OperationEnum!
-  greaterThanOrEqual: OperationEnum!
-  lessThan: OperationEnum!
-  lessThanOrEqual: OperationEnum!
+  gt: OperationEnum!
+  gte: OperationEnum!
+  lt: OperationEnum!
+  lte: OperationEnum!
   not: OperationEnum!
   startsWith: OperationEnum!
 }
@@ -1011,8 +1011,10 @@ enum TableEnum {
   facility
   pipeline
   risk
+  salesPoints
   satellite
   well
+  wells
 }
 
 enum TypeEnum {

@@ -175,16 +175,11 @@ export const SolubilityEnumObject = objectType({
 export const OperationEnumObject = objectType({
 	name: 'OperationEnumObject',
 	definition(t) {
-		for (const iterator of Object.keys(OperationEnumMembers)) {
-			t.nonNull.field(iterator, {
+		for (const [key, value] of Object.entries(OperationEnumMembers)) {
+			t.nonNull.field(value, {
 				type: 'OperationEnum',
-				resolve: ({ contains, endsWith, equals, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, not, startsWith }) => {
-					const contains2 = serverEnumToDatabaseEnum(OperationEnumMembers, contains);
-					return {
-						equals: serverEnumToDatabaseEnum(OperationEnumMembers, equals),
-						
-					}
-
+				resolve: () => {
+					return OperationEnumMembers[key];
 				}
 			})
 		}
@@ -255,18 +250,7 @@ export const ValidatorQuery = extendType({
 					environmentProximityToEnum: EnvironmentProximityToEnumMembers,
 					geotechnicalFacingEnum: GeotechnicalFacingEnumMembers,
 					solubilityEnum: SolubilityEnumMembers,
-					operationEnum: {
-						gt: 'greaterThan',
-						contains: 'dasd',
-						endsWith: '',
-						equals: 'das',
-						gte: 'dwr',
-						lt: 'fdsfe',
-						lte: 'dsadw',
-						not: 'dadw',
-						startsWith: 'dwawg'
-
-					},
+					operationEnum: OperationEnumMembers
 				};
 			}
 		})

@@ -659,15 +659,15 @@ export enum OperationEnum {
 }
 
 export type OperationEnumObject = {
-  contains: Scalars['String'];
-  endsWith: Scalars['String'];
-  equals: Scalars['String'];
-  greaterThan: Scalars['String'];
-  greaterThanOrEqual: Scalars['String'];
-  lessThan: Scalars['String'];
-  lessThanOrEqual: Scalars['String'];
-  not: Scalars['String'];
-  startsWith: Scalars['String'];
+  contains: OperationEnum;
+  endsWith: OperationEnum;
+  equals: OperationEnum;
+  gt: OperationEnum;
+  gte: OperationEnum;
+  lt: OperationEnum;
+  lte: OperationEnum;
+  not: OperationEnum;
+  startsWith: OperationEnum;
 };
 
 export enum PigInspectionEnum {
@@ -1899,7 +1899,7 @@ export type SearchNavigationOptionsQuery = { searchNavigationOptions: Array<{ ta
 export type OperationEnumQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OperationEnumQuery = { validators?: { operationEnum: { equals: string, not: string, greaterThan: string, greaterThanOrEqual: string, lessThan: string, lessThanOrEqual: string, contains: string, startsWith: string, endsWith: string } } | null | undefined };
+export type OperationEnumQuery = { validators?: { operationEnum: { equals: OperationEnum, not: OperationEnum, gt: OperationEnum, gte: OperationEnum, lt: OperationEnum, lte: OperationEnum, contains: OperationEnum, startsWith: OperationEnum, endsWith: OperationEnum } } | null | undefined };
 
 export type ValidatorsPigRunQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3623,10 +3623,10 @@ export const OperationEnumDocument = gql`
     operationEnum {
       equals
       not
-      greaterThan
-      greaterThanOrEqual
-      lessThan
-      lessThanOrEqual
+      gt
+      gte
+      lt
+      lte
       contains
       startsWith
       endsWith

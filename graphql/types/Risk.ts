@@ -61,6 +61,8 @@ export const RiskObjectMembers: ITableObject[] = [
   { field: 'probabilityExteriorWithSafeguards', nullable: true, type: 'Int' },
   { field: 'riskPotentialExternalWithSafeguards', nullable: true, type: 'Int' },
   { field: 'comment', nullable: true, type: 'String' },
+  { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedAt', nullable: false, type: 'DateTime' },
 ];
 
 
@@ -104,7 +106,6 @@ export const Risk = objectType({
         return result!;
       },
     })
-    t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -114,7 +115,6 @@ export const Risk = objectType({
         return result!;
       },
     })
-    t.nonNull.field('updatedAt', { type: 'DateTime' })
     t.nonNull.boolean('authorized', {
       resolve: async (_, _args, ctx: Context) => {
         const user = ctx.user;

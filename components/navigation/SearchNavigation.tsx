@@ -79,14 +79,9 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
     })
   }
 
-  const a = dataOperationEnum?.validators && Object.entries(dataOperationEnum.validators.operationEnum).map(([aa, op]) => {
-    console.log(aa, op);
-    return op
-  })
-
   useEffect(() => {
-    console.log(searchTable, searchField, searchFieldType, searchValue, a);
-  }, [searchTable, searchField, searchFieldType, searchValue, a])
+    console.log(searchTable, searchField, searchFieldType, searchValue, searchOperation);
+  }, [searchTable, searchField, searchFieldType, searchValue, searchOperation])
 
 
   return (
@@ -121,17 +116,27 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
           })}
         </select>
       </>}
-      {/* {search && searchTable && dataOperationEnum?.validators && <>
+      {search && searchField && dataOperationEnum?.validators && <>
         <div style={{ gridRow: 3, gridColumn: '1/3' }}>Operation:</div>
         <select style={{ gridRow: 3, gridColumn: '3/6' }} value={searchOperation} onChange={handleChangeOperation}>
-          {Object.entries(dataOperationEnum.validators).filter(([_, op]) => op === OperationEnum.Contains).map(({ field }) => {
-            const prettyField = prettifyColumnName(field);
+          {Object.values(dataOperationEnum.validators.operationEnum).filter((operationDb) => {
+            if (['Int', 'Float', 'DateTime'].includes(searchFieldType)) {
+              return [OperationEnum.Equals, OperationEnum.GreaterThan, OperationEnum.GreaterThanOrEqual, OperationEnum.LessThan, OperationEnum.LessThanOrEqual, OperationEnum.Not].includes(operationDb);
+            }
+            if (searchFieldType === 'String' || searchFieldType.includes('Enum')) {
+              return [OperationEnum.Equals, OperationEnum.Contains, OperationEnum.StartsWith, OperationEnum.EndsWith, OperationEnum.Not].includes(operationDb);
+            }
+            if (searchFieldType === 'Boolean') {
+              return [OperationEnum.Equals, OperationEnum.Not].includes(operationDb);
+            }
+          }).map((operationDb) => {
+            const prettyOperation = prettifyColumnName(operationDb);
             return (
-              <option key={field} value={field}>{prettyField}</option>
+              <option key={operationDb} value={operationDb}>{prettyOperation}</option>
             );
           })}
         </select>
-      </>} */}
+      </>}
       {searchField && <>
         <div style={{ gridRow: 4, gridColumn: '1/3' }}>Value:</div>
         <input style={{ gridRow: 4, gridColumn: '3/5' }} type={['Int', 'Float'].includes(searchFieldType) ? 'number' : ['DateTime'].includes(searchFieldType) ? 'date' : 'text'} value={searchValue} onChange={handleChangeValue} />

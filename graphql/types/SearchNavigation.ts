@@ -19,6 +19,8 @@ export const TableEnumMembers = {
   well: 'well',
   facility: 'facility',
   satellite: 'satellite',
+  wells: 'wells',
+  salesPoints: 'salesPoints',
 }
 
 export const TableEnum = enumType({

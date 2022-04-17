@@ -5414,8 +5414,8 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "OperationEnum",
                 "ofType": null
               }
             },
@@ -5430,8 +5430,8 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "OperationEnum",
                 "ofType": null
               }
             },
@@ -5446,8 +5446,8 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "OperationEnum",
                 "ofType": null
               }
             },
@@ -5455,15 +5455,15 @@
             "deprecationReason": null
           },
           {
-            "name": "greaterThan",
+            "name": "gt",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "OperationEnum",
                 "ofType": null
               }
             },
@@ -5471,15 +5471,15 @@
             "deprecationReason": null
           },
           {
-            "name": "greaterThanOrEqual",
+            "name": "gte",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "OperationEnum",
                 "ofType": null
               }
             },
@@ -5487,15 +5487,15 @@
             "deprecationReason": null
           },
           {
-            "name": "lessThan",
+            "name": "lt",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "OperationEnum",
                 "ofType": null
               }
             },
@@ -5503,15 +5503,15 @@
             "deprecationReason": null
           },
           {
-            "name": "lessThanOrEqual",
+            "name": "lte",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "OperationEnum",
                 "ofType": null
               }
             },
@@ -5526,8 +5526,8 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "OperationEnum",
                 "ofType": null
               }
             },
@@ -5542,8 +5542,8 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "OperationEnum",
                 "ofType": null
               }
             },
