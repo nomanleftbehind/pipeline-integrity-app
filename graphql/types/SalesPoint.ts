@@ -5,6 +5,22 @@ import {
   gasAssociatedLiquidsCalc,
   totalFluidsCalc,
 } from './Well';
+import { ITableObject } from './SearchNavigation';
+
+export const SalesPointObjectFields: ITableObject[] = [
+  { field: 'id', nullable: false, type: 'String' },
+  { field: 'name', nullable: false, type: 'String' },
+  { field: 'oil', nullable: false, type: 'Float' },
+  { field: 'water', nullable: false, type: 'Float' },
+  { field: 'gas', nullable: false, type: 'Float' },
+  { field: 'firstProduction', nullable: true, type: 'DateTime' },
+  { field: 'lastProduction', nullable: true, type: 'DateTime' },
+  { field: 'firstInjection', nullable: true, type: 'DateTime' },
+  { field: 'lastInjection', nullable: true, type: 'DateTime' },
+  { field: 'fdcRecId', nullable: true, type: 'String' },
+  { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedAt', nullable: false, type: 'DateTime' },
+];
 
 export const SalesPoint = objectType({
   name: 'SalesPoint',
@@ -12,23 +28,24 @@ export const SalesPoint = objectType({
     module: '@prisma/client',
     export: 'SalesPoint',
   },
+  definition: t => {
+    for (const { field, nullable, type } of SalesPointObjectFields) {
+      const nullability = nullable ? 'nullable' : 'nonNull';
+
+      t[nullability].field(field, { type })
+    }
+  }
+});
+
+export const SalesPointExtendObject = extendType({
+  type: 'SalesPoint',
   definition(t) {
-    t.nonNull.string('id')
-    t.nonNull.string('name')
-    t.nonNull.float('oil')
-    t.nonNull.float('water')
-    t.nonNull.float('gas')
     t.nonNull.float('gasAssociatedLiquids', {
       resolve: async ({ gas }) => await gasAssociatedLiquidsCalc(gas)
     })
     t.nonNull.float('totalFluids', {
       resolve: async ({ oil, water, gas }) => await totalFluidsCalc({ oil, water, gas })
     })
-    t.field('firstProduction', { type: 'DateTime' })
-    t.field('lastProduction', { type: 'DateTime' })
-    t.field('firstInjection', { type: 'DateTime' })
-    t.field('lastInjection', { type: 'DateTime' })
-    t.string('fdcRecId')
     t.nonNull.field('createdBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -38,7 +55,6 @@ export const SalesPoint = objectType({
         return result!
       },
     })
-    t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -48,7 +64,6 @@ export const SalesPoint = objectType({
         return result!
       },
     })
-    t.nonNull.field('updatedAt', { type: 'DateTime' })
     t.field('pipeline', {
       type: 'Pipeline',
       resolve: ({ id }, _args, ctx: Context) => {

@@ -2,7 +2,28 @@ import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg } f
 import { Context } from '../context';
 import { User as IUser, PipelineBatch as IPipelineBatch } from '@prisma/client';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
+import { ITableObject } from './SearchNavigation';
 
+
+export const PipelineBatchObjectFields: ITableObject[] = [
+  { field: 'id', nullable: false, type: 'String' },
+  { field: 'date', nullable: false, type: 'DateTime' },
+  { field: 'cost', nullable: true, type: 'Float' },
+  { field: 'chemicalVolume', nullable: true, type: 'Float' },
+  { field: 'diluentVolume', nullable: true, type: 'Float' },
+  { field: 'comment', nullable: true, type: 'String' },
+  { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedAt', nullable: false, type: 'DateTime' },
+];
+
+// t.nonNull.string('id')
+// t.nonNull.field('date', { type: 'DateTime' })
+// t.float('cost')
+// t.float('chemicalVolume')
+// t.float('diluentVolume')
+// t.string('comment')
+// t.nonNull.field('createdAt', { type: 'DateTime' })
+// t.nonNull.field('updatedAt', { type: 'DateTime' })
 
 export const PipelineBatch = objectType({
   name: 'PipelineBatch',
@@ -10,8 +31,21 @@ export const PipelineBatch = objectType({
     module: '@prisma/client',
     export: 'PipelineBatch',
   },
-  definition(t) {
-    t.nonNull.string('id')
+  definition: t => {
+    for (const { field, nullable, type } of PipelineBatchObjectFields) {
+      const nullability = nullable ? 'nullable' : 'nonNull';
+
+      t[nullability].field(field, { type })
+    }
+  }
+});
+
+
+
+
+export const PipelineBatchExtendObject = extendType({
+  type: 'PipelineBatch',
+  definition: t => {
     t.nonNull.field('pipeline', {
       type: 'Pipeline',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -21,7 +55,6 @@ export const PipelineBatch = objectType({
         return result!
       },
     })
-    t.nonNull.field('date', { type: 'DateTime' })
     t.nonNull.field('product', {
       type: 'BatchProduct',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -31,10 +64,6 @@ export const PipelineBatch = objectType({
         return result!
       },
     })
-    t.float('cost')
-    t.float('chemicalVolume')
-    t.float('diluentVolume')
-    t.string('comment')
     t.nonNull.field('createdBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -44,7 +73,6 @@ export const PipelineBatch = objectType({
         return result!
       },
     })
-    t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -54,7 +82,6 @@ export const PipelineBatch = objectType({
         return result!
       },
     })
-    t.nonNull.field('updatedAt', { type: 'DateTime' })
     t.nonNull.boolean('authorized', {
       resolve: async ({ createdById }, _args, ctx: Context) => {
         const user = ctx.user;

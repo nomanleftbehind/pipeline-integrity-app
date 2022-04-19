@@ -9,7 +9,7 @@ type HeaderProps = {
   filterText: IHeader;
 }
 
-export const prettifyColumnName = (columnName: string) => columnName
+export const prettifyColumnName = (columnName: string) => columnName === 'id' ? 'ID' : columnName
   .split(/(?=[A-Z])/)
   .map(word => word.charAt(0).toUpperCase() + word.slice(1))
   .join(' ');

@@ -2,6 +2,7 @@ import { enumType, objectType, stringArg, extendType, nonNull, arg, intArg, floa
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 import { Context } from '../context';
 import { User as IUser, PressureTest as IPressureTest } from '@prisma/client';
+import { ITableObject } from './SearchNavigation';
 import {
   requiredWTForMopCalc,
   mopTestPressureCalc,
@@ -13,14 +14,37 @@ import {
 } from './PressureTestCalcs';
 
 
+export const PressureTestObjectFields: ITableObject[] = [
+  { field: 'id', nullable: false, type: 'String' },
+  { field: 'infoSentOutDate', nullable: true, type: 'DateTime' },
+  { field: 'ddsDate', nullable: true, type: 'DateTime' },
+  { field: 'pressureTestDate', nullable: false, type: 'DateTime' },
+  { field: 'pressureTestReceivedDate', nullable: true, type: 'DateTime' },
+  { field: 'integritySheetUpdated', nullable: true, type: 'DateTime' },
+  { field: 'comment', nullable: true, type: 'String' },
+  { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedAt', nullable: false, type: 'DateTime' },
+];
+
+
 export const PressureTest = objectType({
   name: 'PressureTest',
   sourceType: {
     module: '@prisma/client',
     export: 'PressureTest',
   },
-  definition(t) {
-    t.nonNull.string('id')
+  definition: t => {
+    for (const { field, nullable, type } of PressureTestObjectFields) {
+      const nullability = nullable ? 'nullable' : 'nonNull';
+
+      t[nullability].field(field, { type })
+    }
+  }
+});
+
+export const PressureTestExtendObject = extendType({
+  type: 'PressureTest',
+  definition: t => {
     t.nonNull.field('pipeline', {
       type: 'Pipeline',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -58,12 +82,6 @@ export const PressureTest = objectType({
     t.float('waterForPigging', {
       resolve: async ({ pipelineId }, _args, ctx: Context) => await waterForPiggingCalc({ pipelineId, ctx })
     })
-    t.field('infoSentOutDate', { type: 'DateTime' })
-    t.field('ddsDate', { type: 'DateTime' })
-    t.nonNull.field('pressureTestDate', { type: 'DateTime' })
-    t.field('pressureTestReceivedDate', { type: 'DateTime' })
-    t.field('integritySheetUpdated', { type: 'DateTime' })
-    t.string('comment')
     t.nonNull.field('createdBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -73,7 +91,6 @@ export const PressureTest = objectType({
         return result!
       },
     })
-    t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -83,7 +100,6 @@ export const PressureTest = objectType({
         return result!
       },
     })
-    t.nonNull.field('updatedAt', { type: 'DateTime' })
     t.nonNull.boolean('authorized', {
       resolve: async ({ createdById }, _args, ctx: Context) => {
         const user = ctx.user;

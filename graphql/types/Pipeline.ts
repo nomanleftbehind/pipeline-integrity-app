@@ -7,13 +7,23 @@ import { Prisma, User as IUser } from '@prisma/client';
 import { ITableObject } from './SearchNavigation';
 
 
-export const PipelineObjectMembers: ITableObject[] = [
+export const PipelineObjectFields: ITableObject[] = [
   { field: 'id', nullable: false, type: 'String' },
   { field: 'license', nullable: false, type: 'String' },
   { field: 'segment', nullable: false, type: 'String' },
   { field: 'flowCalculationDirection', nullable: false, type: 'FlowCalculationDirectionEnum' },
   { field: 'from', nullable: false, type: 'String' },
+  { field: 'fromFeature', nullable: true, type: 'FromToFeatureEnum', },
   { field: 'to', nullable: false, type: 'String' },
+  { field: 'toFeature', nullable: true, type: 'FromToFeatureEnum', },
+  { field: 'type', nullable: true, type: 'TypeEnum', },
+  { field: 'grade', nullable: true, type: 'GradeEnum', },
+  { field: 'material', nullable: true, type: 'MaterialEnum', },
+  { field: 'internalProtection', nullable: true, type: 'InternalProtectionEnum', },
+  { field: 'batchFrequency', nullable: true, type: 'BatchFrequencyEnum', },
+  { field: 'currentStatus', nullable: true, type: 'StatusEnum', },
+  { field: 'currentSubstance', nullable: true, type: 'SubstanceEnum', },
+  { field: 'firstLicenseDate', nullable: true, type: 'DateTime' },
   { field: 'length', nullable: false, type: 'Float' },
   { field: 'yieldStrength', nullable: true, type: 'Int' },
   { field: 'outsideDiameter', nullable: true, type: 'Float' },
@@ -25,19 +35,6 @@ export const PipelineObjectMembers: ITableObject[] = [
   { field: 'updatedAt', nullable: false, type: 'DateTime' },
 ];
 
-export const PipelineExtendObject = extendType({
-  type: 'Pipeline',
-  definition: t => {
-    for (const property of PipelineObjectMembers) {
-      const { field, nullable, type } = property;
-      if (nullable) {
-        t.field(field, { type })
-      } else {
-        t.nonNull.field(field, { type })
-      }
-    }
-  }
-});
 
 
 export const Pipeline = objectType({
@@ -46,6 +43,87 @@ export const Pipeline = objectType({
     module: '@prisma/client',
     export: 'Pipeline',
   },
+  definition: t => {
+    for (const { field, nullable, type } of PipelineObjectFields) {
+      const nullability = nullable ? 'nullable' : 'nonNull';
+
+      t[nullability].field(field, {
+        type,
+        resolve:
+          field === 'fromFeature' ?
+            ({ fromFeature }) => {
+              console.log('resolve object:', fromFeature);
+              const result = fromFeature && serverEnumToDatabaseEnum(FromToFeatureEnumMembers, fromFeature);
+              return result;
+            } :
+            field === 'toFeature' ?
+              ({ toFeature }) => {
+                const result = toFeature && serverEnumToDatabaseEnum(FromToFeatureEnumMembers, toFeature);
+                return result;
+              } :
+              field === 'currentStatus' ?
+                async ({ id }, _args, ctx: Context) => {
+                  const { status } = await ctx.prisma.licenseChange.findFirst({
+                    where: { pipelineId: id },
+                    orderBy: { date: 'desc' },
+                    select: { status: true },
+                  }) || {};
+                  const result = status && serverEnumToDatabaseEnum(StatusEnumMembers, status) || null;
+                  return result;
+                } :
+                field === 'currentSubstance' ?
+                  async ({ id }, _args, ctx: Context) => {
+                    const { substance } = await ctx.prisma.licenseChange.findFirst({
+                      where: { pipelineId: id },
+                      orderBy: { date: 'desc' },
+                      select: { substance: true },
+                    }) || {};
+                    const result = substance && serverEnumToDatabaseEnum(SubstanceEnumMembers, substance) || null;
+                    return result;
+                  } :
+                  field === 'firstLicenseDate' ?
+                    async ({ id }, _args, ctx: Context) => {
+                      const { date } = await ctx.prisma.licenseChange.findFirst({
+                        where: { pipelineId: id },
+                        orderBy: { date: 'asc' },
+                        select: { date: true },
+                      }) || {};
+                      return date || null;
+                    } :
+                    field === 'type' ?
+                      ({ type }) => {
+                        const result = type && serverEnumToDatabaseEnum(TypeEnumMembers, type);
+                        return result;
+                      } :
+                      field === 'grade' ?
+                        ({ grade }) => {
+                          const result = grade && serverEnumToDatabaseEnum(GradeEnumMembers, grade);
+                          return result;
+                        } :
+                        field === 'material' ?
+                          ({ material }) => {
+                            const result = material && serverEnumToDatabaseEnum(MaterialEnumMembers, material);
+                            return result;
+                          } :
+                          field === 'internalProtection' ?
+                            ({ internalProtection }) => {
+                              const result = internalProtection && serverEnumToDatabaseEnum(InternalProtectionEnumMembers, internalProtection);
+                              return result;
+                            } :
+                            field === 'batchFrequency' ?
+                              ({ batchFrequency }) => {
+                                const result = batchFrequency && serverEnumToDatabaseEnum(BatchFrequencyEnumMembers, batchFrequency);
+                                return result;
+                              } :
+                              undefined,
+      });
+    }
+  }
+});
+
+
+export const PipelineExtendObject = extendType({
+  type: 'Pipeline',
   definition: t => {
     t.field('satellite', {
       type: 'Satellite',
@@ -73,91 +151,6 @@ export const Pipeline = objectType({
         }).salesPoints();
         return result;
       },
-    })
-    t.field('fromFeature', {
-      type: 'FromToFeatureEnum',
-      resolve: ({ fromFeature }) => {
-        const result = fromFeature && serverEnumToDatabaseEnum(FromToFeatureEnumMembers, fromFeature);
-        return result;
-      }
-    })
-    t.field('toFeature', {
-      type: 'FromToFeatureEnum',
-      resolve: ({ toFeature }) => {
-        const result = toFeature && serverEnumToDatabaseEnum(FromToFeatureEnumMembers, toFeature);
-        return result;
-      }
-    })
-    t.field('currentStatus', {
-      type: 'StatusEnum',
-      resolve: async ({ id }, _args, ctx: Context) => {
-        const { status } = await ctx.prisma.licenseChange.findFirst({
-          where: { pipelineId: id },
-          orderBy: { date: 'desc' },
-          select: { status: true },
-        }) || {};
-        const result = status && serverEnumToDatabaseEnum(StatusEnumMembers, status) || null;
-        return result;
-      }
-    })
-    t.field('currentSubstance', {
-      type: 'SubstanceEnum',
-      resolve: async ({ id }, _args, ctx: Context) => {
-        const { substance } = await ctx.prisma.licenseChange.findFirst({
-          where: { pipelineId: id },
-          orderBy: { date: 'desc' },
-          select: { substance: true },
-        }) || {};
-
-        const result = substance && serverEnumToDatabaseEnum(SubstanceEnumMembers, substance) || null;
-        return result;
-      }
-    })
-    t.field('firstLicenseDate', {
-      type: 'DateTime',
-      resolve: async ({ id }, _args, ctx: Context) => {
-        const { date } = await ctx.prisma.licenseChange.findFirst({
-          where: { pipelineId: id },
-          orderBy: { date: 'asc' },
-          select: { date: true },
-        }) || {};
-        return date || null;
-      }
-    })
-    t.field('type', {
-      type: 'TypeEnum',
-      resolve: ({ type }) => {
-        const result = type && serverEnumToDatabaseEnum(TypeEnumMembers, type);
-        return result;
-      }
-    })
-    t.field('grade', {
-      type: 'GradeEnum',
-      resolve: ({ grade }) => {
-        const result = grade && serverEnumToDatabaseEnum(GradeEnumMembers, grade);
-        return result;
-      }
-    })
-    t.field('material', {
-      type: 'MaterialEnum',
-      resolve: ({ material }) => {
-        const result = material && serverEnumToDatabaseEnum(MaterialEnumMembers, material);
-        return result;
-      }
-    })
-    t.field('internalProtection', {
-      type: 'InternalProtectionEnum',
-      resolve: ({ internalProtection }) => {
-        const result = internalProtection && serverEnumToDatabaseEnum(InternalProtectionEnumMembers, internalProtection);
-        return result;
-      }
-    })
-    t.field('batchFrequency', {
-      type: 'BatchFrequencyEnum',
-      resolve: ({ batchFrequency }) => {
-        const result = batchFrequency && serverEnumToDatabaseEnum(BatchFrequencyEnumMembers, batchFrequency);
-        return result;
-      }
     })
     t.nonNull.field('createdBy', {
       type: 'User',
@@ -591,12 +584,13 @@ export const PipelineQuery = extendType({
 
           const b = await ctx.prisma.pipeline.findMany({
             where: {
+              pipelineBatches: {
 
+              }
             }
           });
 
           if (table === 'risk') {
-            // if (field === 'riskPotentialGeo') {
             return await ctx.prisma.pipeline.findMany({
               where: {
                 [table]: {
@@ -604,29 +598,17 @@ export const PipelineQuery = extendType({
                 }
               }
             });
-
-
-            // }
-            // if (field === 'riskPotentialInternal') {
-            //   const a = await ctx.prisma.pipeline.findMany({
-            //     where: {
-            //       risk: {
-            //         riskPotentialInternal: parseInt(value),
-            //       }
-            //     }
-            //   });
-            //   console.log(table, field, value, type,  castValue, 'a:', JSON.stringify(a));
-            //   return a;
-            // }
-            // if (field === 'riskPotentialInternal') {
-            //   return await ctx.prisma.pipeline.findMany({
-            //     where: {
-            //       risk: {
-            //         riskPotentialExternal: Number(value),
-            //       }
-            //     }
-            //   });
-            // }
+          }
+          if (table === 'wells' || table === 'licenseChanges' || table === 'salesPoints' || table === 'pressureTests' || table === 'pigRuns' || table === 'pipelineBatches') {
+            return await ctx.prisma.pipeline.findMany({
+              where: {
+                [table]: {
+                  some: {
+                    [field]: { [operation]: castValue },
+                  }
+                }
+              }
+            });
           }
         }
 

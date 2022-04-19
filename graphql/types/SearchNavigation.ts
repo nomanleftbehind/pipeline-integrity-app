@@ -1,13 +1,25 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
-import { RiskObjectMembers } from './Risk';
-import { PipelineObjectMembers } from './Pipeline';
+import { PipelineObjectFields } from './Pipeline';
+import { RiskObjectFields } from './Risk';
+import { WellObjectFields } from './Well';
+import { SalesPointObjectFields } from './SalesPoint';
+import { LicenseChangeObjectFields } from './LicenseChange';
+import { PressureTestObjectFields } from './PressureTest';
+import { PigRunObjectFields } from './PigRun';
+import { PipelineBatchObjectFields } from './PipelineBatch';
 import type { GetGen } from 'nexus/dist/typegenTypeHelpers';
 import type { AllNexusOutputTypeDefs } from 'nexus/dist/definitions/wrapping';
 import type { NexusMetaType } from 'nexus/dist/definitions/nexusMeta';
 import { NexusGenEnums } from 'nexus-typegen';
 
 
-export type ITableObject = { field: string; nullable: boolean; type: GetGen<'allOutputTypes', string> | AllNexusOutputTypeDefs | NexusMetaType };
+export type ITableObject = {
+  field: string;
+  nullable: boolean;
+  type: GetGen<'allOutputTypes', string> | AllNexusOutputTypeDefs | NexusMetaType;
+};
+
+
 type ITableObjectExtend = ITableObject & { table: NexusGenEnums['TableEnum'] }
 type ISearchNavigationObject = { table: NexusGenEnums['TableEnum']; field: string; nullable: boolean; type: string; };
 
@@ -16,11 +28,14 @@ type ISearchNavigationObject = { table: NexusGenEnums['TableEnum']; field: strin
 export const TableEnumMembers = {
   pipeline: 'pipeline',
   risk: 'risk',
-  well: 'well',
   facility: 'facility',
   satellite: 'satellite',
   wells: 'wells',
   salesPoints: 'salesPoints',
+  licenseChanges: 'licenseChanges',
+  pressureTests: 'pressureTests',
+  pigRuns: 'pigRuns',
+  pipelineBatches: 'pipelineBatches',
 }
 
 export const TableEnum = enumType({
@@ -55,17 +70,63 @@ export const SearchNavigationObject = objectType({
   }
 });
 
-const searchNavigationObject = RiskObjectMembers
+const searchNavigationObjectPipeline = PipelineObjectFields
+  .map((obj) => {
+    const newObj: ITableObjectExtend = { table: 'pipeline', ...obj };
+    return newObj;
+  });
+
+const searchNavigationObjectRisk = RiskObjectFields
   .map((obj) => {
     const newObj: ITableObjectExtend = { table: 'risk', ...obj };
     return newObj;
-  })
+  });
+
+const searchNavigationObjectWell = WellObjectFields
+  .map((obj) => {
+    const newObj: ITableObjectExtend = { table: 'wells', ...obj };
+    return newObj;
+  });
+
+const searchNavigationObjectSalesPoint = SalesPointObjectFields
+  .map((obj) => {
+    const newObj: ITableObjectExtend = { table: 'salesPoints', ...obj };
+    return newObj;
+  });
+
+const searchNavigationObjectLicenseChange = LicenseChangeObjectFields
+  .map((obj) => {
+    const newObj: ITableObjectExtend = { table: 'licenseChanges', ...obj };
+    return newObj;
+  });
+
+const searchNavigationObjectPressureTest = PressureTestObjectFields
+  .map((obj) => {
+    const newObj: ITableObjectExtend = { table: 'pressureTests', ...obj };
+    return newObj;
+  });
+
+const searchNavigationObjectPigRun = PigRunObjectFields
+  .map((obj) => {
+    const newObj: ITableObjectExtend = { table: 'pigRuns', ...obj };
+    return newObj;
+  });
+
+const searchNavigationObjectPipelineBatch = PipelineBatchObjectFields
+  .map((obj) => {
+    const newObj: ITableObjectExtend = { table: 'pipelineBatches', ...obj };
+    return newObj;
+  });
+
+const searchNavigationObject = searchNavigationObjectPipeline
   .concat(
-    PipelineObjectMembers
-      .map((obj) => {
-        const newObj: ITableObjectExtend = { table: 'pipeline', ...obj };
-        return newObj;
-      })
+    searchNavigationObjectRisk,
+    searchNavigationObjectWell,
+    searchNavigationObjectSalesPoint,
+    searchNavigationObjectLicenseChange,
+    searchNavigationObjectPressureTest,
+    searchNavigationObjectPigRun,
+    searchNavigationObjectPipelineBatch,
   );
 
 

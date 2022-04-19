@@ -22,7 +22,7 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
 
   const [search, setSearch] = useState(false);
 
-  const [searchTable, setSearchTable] = useState<TableEnum>(TableEnum.Risk);
+  const [searchTable, setSearchTable] = useState<TableEnum>(TableEnum.Pipeline);
   const [searchField, setSearchField] = useState('');
   const [searchFieldType, setSearchFieldType] = useState('');
   const [searchOperation, setSearchOperation] = useState<OperationEnum>(OperationEnum.Equals);
@@ -32,7 +32,7 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
   const [loadOperationEnum, { data: dataOperationEnum }] = useOperationEnumLazyQuery();
 
   const toggleSearch = () => {
-    setSearchTable(TableEnum.Risk);
+    setSearchTable(TableEnum.Pipeline);
     setSearchField('');
     setSearchFieldType('');
     setSearchOperation(OperationEnum.Equals);
@@ -123,10 +123,10 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
             if (['Int', 'Float', 'DateTime'].includes(searchFieldType)) {
               return [OperationEnum.Equals, OperationEnum.GreaterThan, OperationEnum.GreaterThanOrEqual, OperationEnum.LessThan, OperationEnum.LessThanOrEqual, OperationEnum.Not].includes(operationDb);
             }
-            if (searchFieldType === 'String' || searchFieldType.includes('Enum')) {
+            if (searchFieldType === 'String') {
               return [OperationEnum.Equals, OperationEnum.Contains, OperationEnum.StartsWith, OperationEnum.EndsWith, OperationEnum.Not].includes(operationDb);
             }
-            if (searchFieldType === 'Boolean') {
+            if (searchFieldType === 'Boolean' || searchFieldType.includes('Enum')) {
               return [OperationEnum.Equals, OperationEnum.Not].includes(operationDb);
             }
           }).map((operationDb) => {

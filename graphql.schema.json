@@ -12727,6 +12727,12 @@
             "deprecationReason": null
           },
           {
+            "name": "licenseChanges",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "pipeline",
             "description": null,
             "isDeprecated": false,
@@ -12739,13 +12745,19 @@
             "deprecationReason": null
           },
           {
+            "name": "salesPoints",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "satellite",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "well",
+            "name": "wells",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

@@ -1009,11 +1009,14 @@ type SubstanceEnumObject {
 
 enum TableEnum {
   facility
+  licenseChanges
+  pigRuns
   pipeline
+  pipelineBatches
+  pressureTests
   risk
   salesPoints
   satellite
-  well
   wells
 }
 

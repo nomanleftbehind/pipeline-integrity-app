@@ -2,7 +2,18 @@ import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus
 import { databaseEnumToServerEnum, serverEnumToDatabaseEnum } from './Pipeline';
 import { Context } from '../context';
 import { User as IUser, LicenseChange as ILicenseChange } from '@prisma/client';
+import { ITableObject } from './SearchNavigation';
 
+export const LicenseChangeObjectFields: ITableObject[] = [
+  { field: 'id', nullable: false, type: 'String' },
+  { field: 'status', nullable: false, type: 'StatusEnum' },
+  { field: 'substance', nullable: false, type: 'SubstanceEnum' },
+  { field: 'date', nullable: false, type: 'DateTime', },
+  { field: 'comment', nullable: true, type: 'String' },
+  { field: 'linkToDocumentation', nullable: true, type: 'String', },
+  { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedAt', nullable: false, type: 'DateTime' },
+];
 
 export const LicenseChange = objectType({
   name: 'LicenseChange',
@@ -10,8 +21,32 @@ export const LicenseChange = objectType({
     module: '@prisma/client',
     export: 'LicenseChange',
   },
+  definition: t => {
+    for (const { field, nullable, type } of LicenseChangeObjectFields) {
+      const nullability = nullable ? 'nullable' : 'nonNull';
+
+      t[nullability].field(field, {
+        type,
+        resolve:
+          field === 'status' ?
+            ({ status }) => {
+              const result = serverEnumToDatabaseEnum(StatusEnumMembers, status);
+              return result;
+            } :
+            field === 'substance' ?
+              ({ substance }) => {
+                const result = serverEnumToDatabaseEnum(SubstanceEnumMembers, substance);
+                return result;
+              } :
+              undefined,
+      })
+    }
+  }
+})
+
+export const LicenseChangeExtendObject = extendType({
+  type: 'LicenseChange',
   definition(t) {
-    t.nonNull.string('id')
     t.nonNull.field('pipeline', {
       type: 'Pipeline',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -21,23 +56,6 @@ export const LicenseChange = objectType({
         return result!
       },
     })
-    t.nonNull.field('status', {
-      type: 'StatusEnum',
-      resolve: ({ status }) => {
-        const result = serverEnumToDatabaseEnum(StatusEnumMembers, status);
-        return result;
-      }
-    })
-    t.nonNull.field('substance', {
-      type: 'SubstanceEnum',
-      resolve: ({ substance }) => {
-        const result = serverEnumToDatabaseEnum(SubstanceEnumMembers, substance);
-        return result;
-      }
-    })
-    t.nonNull.field('date', { type: 'DateTime' })
-    t.string('comment')
-    t.string('linkToDocumentation')
     t.nonNull.field('createdBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -47,7 +65,6 @@ export const LicenseChange = objectType({
         return result!
       },
     })
-    t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -57,7 +74,6 @@ export const LicenseChange = objectType({
         return result!
       },
     })
-    t.nonNull.field('updatedAt', { type: 'DateTime' })
     t.nonNull.boolean('authorized', {
       resolve: async ({ createdById }, _args, ctx: Context) => {
         const user = ctx.user;
@@ -108,7 +124,7 @@ export const SubstanceEnumMembers = {
   OilWellEffluent: "Oil Well Effluent",
   LVPProducts: "LVP Products",
   FuelGas: "Fuel Gas",
-  SourNaturalGas: "Sour Natural Gas"
+  SourNaturalGas: "Sour Natural Gas",
 }
 
 export const SubstanceEnum = enumType({

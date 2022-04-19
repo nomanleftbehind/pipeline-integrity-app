@@ -2,6 +2,21 @@ import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus
 import { Context } from '../context';
 import { User as IUser, PigRun as IPigRun } from '@prisma/client';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
+import { ITableObject } from './SearchNavigation';
+
+
+export const PigRunObjectFields: ITableObject[] = [
+	{ field: 'id', nullable: false, type: 'String' },
+	{ field: 'pigType', nullable: true, type: 'PigTypeEnum' },
+	{ field: 'dateIn', nullable: false, type: 'DateTime' },
+	{ field: 'dateOut', nullable: true, type: 'DateTime' },
+	{ field: 'isolationValveFunctionTest', nullable: true, type: 'PigInspectionEnum' },
+	{ field: 'pigSenderReceiverInspection', nullable: true, type: 'PigInspectionEnum' },
+	{ field: 'comment', nullable: true, type: 'String' },
+	{ field: 'createdAt', nullable: false, type: 'DateTime' },
+	{ field: 'updatedAt', nullable: false, type: 'DateTime' },
+];
+
 
 
 export const PigRun = objectType({
@@ -10,8 +25,28 @@ export const PigRun = objectType({
 		module: '@prisma/client',
 		export: 'PigRun',
 	},
-	definition(t) {
-		t.nonNull.string('id')
+	definition: t => {
+		for (const { field, nullable, type } of PigRunObjectFields) {
+			const nullability = nullable ? 'nullable' : 'nonNull';
+
+			t[nullability].field(field, {
+				type,
+				resolve:
+					field === 'pigType' ?
+						async ({ pigType }) => {
+							const result = pigType && serverEnumToDatabaseEnum(PigTypeEnumMembers, pigType);
+							return result;
+						} :
+						undefined,
+			})
+		}
+	}
+});
+
+
+export const PigRunExtendObject = extendType({
+	type: 'PigRun',
+	definition: t => {
 		t.nonNull.field('pipeline', {
 			type: 'Pipeline',
 			resolve: async ({ id }, _args, ctx: Context) => {
@@ -21,18 +56,6 @@ export const PigRun = objectType({
 				return result!
 			},
 		})
-		t.field('pigType', {
-			type: 'PigTypeEnum',
-			resolve: async ({ pigType }) => {
-				const result = pigType && serverEnumToDatabaseEnum(PigTypeEnumMembers, pigType);
-				return result;
-			}
-		})
-		t.nonNull.field('dateIn', { type: 'DateTime' })
-		t.field('dateOut', { type: 'DateTime' })
-		t.field('isolationValveFunctionTest', { type: 'PigInspectionEnum' })
-		t.field('pigSenderReceiverInspection', { type: 'PigInspectionEnum' })
-		t.string('comment')
 		t.field('operator', {
 			type: 'User',
 			resolve: async ({ id }, _args, ctx: Context) => {
@@ -51,7 +74,6 @@ export const PigRun = objectType({
 				return result!
 			},
 		})
-		t.nonNull.field('createdAt', { type: 'DateTime' })
 		t.nonNull.field('updatedBy', {
 			type: 'User',
 			resolve: async ({ id }, _args, ctx: Context) => {
@@ -61,7 +83,7 @@ export const PigRun = objectType({
 				return result!
 			},
 		})
-		t.nonNull.field('updatedAt', { type: 'DateTime' })
+
 		t.nonNull.boolean('authorized', {
 			resolve: async ({ createdById }, _args, ctx: Context) => {
 				const user = ctx.user;

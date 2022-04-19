@@ -1,7 +1,40 @@
 import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
 import { User as IUser } from '@prisma/client';
-import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
+import { ITableObject } from './SearchNavigation';
+
+
+
+export const WellObjectFields: ITableObject[] = [
+  { field: 'id', nullable: false, type: 'String' },
+  { field: 'name', nullable: false, type: 'String' },
+  { field: 'oil', nullable: false, type: 'Float' },
+  { field: 'water', nullable: false, type: 'Float' },
+  { field: 'gas', nullable: false, type: 'Float' },
+  { field: 'firstProduction', nullable: true, type: 'DateTime' },
+  { field: 'lastProduction', nullable: true, type: 'DateTime' },
+  { field: 'firstInjection', nullable: true, type: 'DateTime' },
+  { field: 'lastInjection', nullable: true, type: 'DateTime' },
+  { field: 'fdcRecId', nullable: true, type: 'String' },
+  { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedAt', nullable: false, type: 'DateTime' },
+];
+
+export const Well = objectType({
+  name: 'Well',
+  sourceType: {
+    module: '@prisma/client',
+    export: 'Well',
+  },
+  definition: t => {
+    for (const { field, nullable, type } of WellObjectFields) {
+      const nullability = nullable ? 'nullable' : 'nonNull';
+
+      t[nullability].field(field, { type })
+    }
+  }
+});
+
 
 
 export const gasAssociatedLiquidsCalc = async (gas: number) => {
@@ -18,29 +51,15 @@ export const totalFluidsCalc = async ({ oil, water, gas }: ItotalFluidsCalcArgs)
   return oil + water + await gasAssociatedLiquidsCalc(gas);
 }
 
-export const Well = objectType({
-  name: 'Well',
-  sourceType: {
-    module: '@prisma/client',
-    export: 'Well',
-  },
+export const WellExtendObject = extendType({
+  type: 'Well',
   definition(t) {
-    t.nonNull.string('id')
-    t.nonNull.string('name')
-    t.nonNull.float('oil')
-    t.nonNull.float('water')
-    t.nonNull.float('gas')
     t.nonNull.float('gasAssociatedLiquids', {
       resolve: async ({ gas }) => await gasAssociatedLiquidsCalc(gas)
     })
     t.nonNull.float('totalFluids', {
       resolve: async ({ oil, water, gas }) => await totalFluidsCalc({ oil, water, gas })
     })
-    t.field('firstProduction', { type: 'DateTime' })
-    t.field('lastProduction', { type: 'DateTime' })
-    t.field('firstInjection', { type: 'DateTime' })
-    t.field('lastInjection', { type: 'DateTime' })
-    t.string('fdcRecId')
     t.list.field('wellBatches', {
       type: 'WellBatch',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -59,7 +78,6 @@ export const Well = objectType({
         return result!
       },
     })
-    t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -69,7 +87,6 @@ export const Well = objectType({
         return result!
       },
     })
-    t.nonNull.field('updatedAt', { type: 'DateTime' })
     t.field('pipeline', {
       type: 'Pipeline',
       resolve: ({ id }, _args, ctx: Context) => {
@@ -202,7 +219,7 @@ export const WellQuery = extendType({
         pipelineId: nonNull(stringArg()),
       },
       resolve: async (_, { pipelineId }, ctx: Context) => {
-        
+
         const total = await ctx.prisma.well.groupBy({
           by: ['pipelineId'],
           _sum: { oil: true, water: true, gas: true },

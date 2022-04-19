@@ -25,7 +25,7 @@ import { ITableObject } from './SearchNavigation';
 
 
 
-export const RiskObjectMembers: ITableObject[] = [
+export const RiskObjectFields: ITableObject[] = [
   { field: 'id', nullable: false, type: 'String' },
   { field: 'aerialReview', nullable: true, type: 'Boolean' },
   { field: 'environmentProximityTo', nullable: true, type: 'EnvironmentProximityToEnum' },
@@ -66,27 +66,24 @@ export const RiskObjectMembers: ITableObject[] = [
 ];
 
 
-export const RiskExtendObject = extendType({
-  type: 'Risk',
-  definition: t => {
-    for (const property of RiskObjectMembers) {
-      const { field, nullable, type } = property;
-      if (nullable) {
-        t.field(field, { type })
-      } else {
-        t.nonNull.field(field, { type })
-      }
-    }
-  }
-});
-
-
 export const Risk = objectType({
   name: 'Risk',
   sourceType: {
     module: '@prisma/client',
     export: 'Risk',
   },
+  definition: t => {
+    for (const { field, nullable, type } of RiskObjectFields) {
+      const nullability = nullable ? 'nullable' : 'nonNull';
+
+      t[nullability].field(field, { type })
+    }
+  }
+});
+
+
+export const RiskExtendObject = extendType({
+  type: 'Risk',
   definition(t) {
     t.nonNull.field('pipeline', {
       type: 'Pipeline',
