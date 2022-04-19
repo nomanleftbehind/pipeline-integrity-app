@@ -10,18 +10,25 @@ import { PipelineBatchObjectFields } from './PipelineBatch';
 import type { GetGen } from 'nexus/dist/typegenTypeHelpers';
 import type { AllNexusOutputTypeDefs } from 'nexus/dist/definitions/wrapping';
 import type { NexusMetaType } from 'nexus/dist/definitions/nexusMeta';
-import { NexusGenEnums } from 'nexus-typegen';
+import { NexusGenEnums, NexusGenObjects } from 'nexus-typegen';
 
 
-export type ITableObject = {
-  field: string;
-  nullable: boolean;
+
+
+export interface ITableConstructObject extends Omit<NexusGenObjects['SearchNavigationObject'], 'type' | 'table'> {
   type: GetGen<'allOutputTypes', string> | AllNexusOutputTypeDefs | NexusMetaType;
-};
+}
+
+interface ITableObjectExtend extends Omit<NexusGenObjects['SearchNavigationObject'], 'type'> {
+  type: GetGen<'allOutputTypes', string> | AllNexusOutputTypeDefs | NexusMetaType;
+}
 
 
-type ITableObjectExtend = ITableObject & { table: NexusGenEnums['TableEnum'] }
-type ISearchNavigationObject = { table: NexusGenEnums['TableEnum']; field: string; nullable: boolean; type: string; };
+// interface ITableObjectExtend extends ITableObject {
+//   table: NexusGenEnums['TableEnum']
+// }
+// type ISearchNavigationObject = { table: NexusGenEnums['TableEnum']; field: string; nullable: boolean; type: string; };
+
 
 
 
@@ -60,6 +67,15 @@ export const OperationEnum = enumType({
   members: OperationEnumMembers,
 });
 
+
+export const EnumObject = objectType({
+  name: 'EnumObject',
+  definition(t) {
+    t.nonNull.string('serverEnum')
+    t.nonNull.string('databaseEnum')
+  }
+});
+
 export const SearchNavigationObject = objectType({
   name: 'SearchNavigationObject',
   definition(t) {
@@ -67,6 +83,7 @@ export const SearchNavigationObject = objectType({
     t.nonNull.string('field')
     t.nonNull.boolean('nullable')
     t.nonNull.string('type')
+    t.list.nonNull.field('enumObjectArray', { type: 'EnumObject' })
   }
 });
 
@@ -136,7 +153,7 @@ export const SearchNavigationQuery = extendType({
     t.nonNull.list.nonNull.field('searchNavigationOptions', {
       type: 'SearchNavigationObject',
       resolve: () => {
-        return searchNavigationObject as ISearchNavigationObject[];
+        return searchNavigationObject as NexusGenObjects['SearchNavigationObject'][];
       }
     })
   }

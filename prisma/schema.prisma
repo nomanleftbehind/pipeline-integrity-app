@@ -179,6 +179,15 @@ model PressureTest {
   updatedBy                User              @relation("pressureTestUpdatedBy", fields: [updatedById], references: [id])
   updatedById              String
   updatedAt                DateTime          @updatedAt
+
+  // calculated fields
+  requiredWTForMop               Float?
+  mopTestPressure                Float?
+  maxPressureOfLimitingSpec      Float?
+  pressureTestPressure           Float?
+  requiredWTForTestPressure      Float?
+  pressureTestCorrosionAllowance Float?
+  waterForPigging                Float?
 }
 
 model Risk {
@@ -198,7 +207,7 @@ model Risk {
   oilReleaseCost                      Float?
   gasReleaseCost                      Float?
   consequencePeople                   Int?
-  probabilityGeo                      Float?
+  probabilityGeo                      Float? // FIXME - Convert to Int
   safeguardInternalProtection         Int?
   safeguardExternalCoating            Int?
   comment                             String?

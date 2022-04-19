@@ -2,10 +2,10 @@ import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus
 import { Context } from '../context';
 import { User as IUser, PigRun as IPigRun } from '@prisma/client';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
-import { ITableObject } from './SearchNavigation';
+import { ITableConstructObject } from './SearchNavigation';
 
 
-export const PigRunObjectFields: ITableObject[] = [
+export const PigRunObjectFields: ITableConstructObject[] = [
 	{ field: 'id', nullable: false, type: 'String' },
 	{ field: 'pigType', nullable: true, type: 'PigTypeEnum' },
 	{ field: 'dateIn', nullable: false, type: 'DateTime' },

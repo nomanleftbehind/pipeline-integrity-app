@@ -1,11 +1,11 @@
 import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
 import { User as IUser } from '@prisma/client';
-import { ITableObject } from './SearchNavigation';
+import { ITableConstructObject } from './SearchNavigation';
 
 
 
-export const WellObjectFields: ITableObject[] = [
+export const WellObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
   { field: 'name', nullable: false, type: 'String' },
   { field: 'oil', nullable: false, type: 'Float' },

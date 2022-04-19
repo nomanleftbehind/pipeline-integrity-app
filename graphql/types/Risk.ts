@@ -1,4 +1,5 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
+import { NexusGenObjects } from 'nexus-typegen';
 import { totalFluidsCalc } from './Well';
 import { pipelineFlow } from './PipelineFlow';
 import { databaseEnumToServerEnum } from './Pipeline';
@@ -21,19 +22,69 @@ import {
   probabilityExteriorWithSafeguardsCalc,
   riskPotentialExternalWithSafeguardsCalc,
 } from './RiskCalcs';
-import { ITableObject } from './SearchNavigation';
+import { ITableConstructObject } from './SearchNavigation';
+
+
+export const EnvironmentProximityToEnumMembers = {
+  WB1: 'WB1',
+  WB3: 'WB3',
+  WB4: 'WB4',
+  WB5: 'WB5',
+  WC1: 'WC1',
+  WC2: 'WC2',
+  WC3: 'WC3',
+  WC4: 'WC4',
+}
+
+export const EnvironmentProximityToEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'EnvironmentProximityToEnum',
+  },
+  name: 'EnvironmentProximityToEnum',
+  members: EnvironmentProximityToEnumMembers
+});
+
+const EnvironmentProximityToEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(EnvironmentProximityToEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
+});
+
+
+export const GeotechnicalFacingEnumMembers = {
+  N: 'N',
+  NE: 'NE',
+  E: 'E',
+  SE: 'SE',
+  S: 'S',
+  SW: 'SW',
+  W: 'W',
+  NW: 'NW',
+}
+
+export const GeotechnicalFacingEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'GeotechnicalFacingEnum',
+  },
+  name: 'GeotechnicalFacingEnum',
+  members: GeotechnicalFacingEnumMembers
+});
+
+const GeotechnicalFacingEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(GeotechnicalFacingEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
+});
 
 
 
-export const RiskObjectFields: ITableObject[] = [
+export const RiskObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
   { field: 'aerialReview', nullable: true, type: 'Boolean' },
-  { field: 'environmentProximityTo', nullable: true, type: 'EnvironmentProximityToEnum' },
+  { field: 'environmentProximityTo', nullable: true, type: 'EnvironmentProximityToEnum', enumObjectArray: EnvironmentProximityToEnumArray },
   { field: 'geotechnicalSlopeAngleS1', nullable: true, type: 'Int' },
-  { field: 'geotechnicalFacingS1', nullable: true, type: 'GeotechnicalFacingEnum' },
+  { field: 'geotechnicalFacingS1', nullable: true, type: 'GeotechnicalFacingEnum', enumObjectArray: GeotechnicalFacingEnumArray },
   { field: 'geotechnicalHeightS1', nullable: true, type: 'Int' },
   { field: 'geotechnicalSlopeAngleS2', nullable: true, type: 'Int' },
-  { field: 'geotechnicalFacingS2', nullable: true, type: 'GeotechnicalFacingEnum' },
+  { field: 'geotechnicalFacingS2', nullable: true, type: 'GeotechnicalFacingEnum', enumObjectArray: GeotechnicalFacingEnumArray },
   { field: 'geotechnicalHeightS2', nullable: true, type: 'Int' },
   { field: 'dateSlopeChecked', nullable: true, type: 'DateTime' },
   { field: 'repairTimeDays', nullable: true, type: 'Int' },
@@ -126,45 +177,7 @@ const resolveRiskAuthorized = (user: IUser) => {
   return role === 'ADMIN' || role === 'ENGINEER';
 }
 
-export const EnvironmentProximityToEnumMembers = {
-  WB1: 'WB1',
-  WB3: 'WB3',
-  WB4: 'WB4',
-  WB5: 'WB5',
-  WC1: 'WC1',
-  WC2: 'WC2',
-  WC3: 'WC3',
-  WC4: 'WC4',
-}
 
-export const EnvironmentProximityToEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'EnvironmentProximityToEnum',
-  },
-  name: 'EnvironmentProximityToEnum',
-  members: EnvironmentProximityToEnumMembers
-});
-
-export const GeotechnicalFacingEnumMembers = {
-  N: 'N',
-  NE: 'NE',
-  E: 'E',
-  SE: 'SE',
-  S: 'S',
-  SW: 'SW',
-  W: 'W',
-  NW: 'NW',
-}
-
-export const GeotechnicalFacingEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'GeotechnicalFacingEnum',
-  },
-  name: 'GeotechnicalFacingEnum',
-  members: GeotechnicalFacingEnumMembers
-});
 
 export const RiskQuery = extendType({
   type: 'Query',
@@ -216,6 +229,7 @@ export const RiskQuery = extendType({
         });
 
         if (risk && lastLicenseChange && firstLicenseChange && pipeline) {
+
           const { environmentProximityTo, oilReleaseCost, gasReleaseCost, repairTimeDays, consequencePeople, probabilityGeo, safeguardInternalProtection, safeguardExternalCoating } = risk;
           const { substance: currentSubstance, status: currentStatus } = lastLicenseChange;
           const { date: firstLicenseDate } = firstLicenseChange;
@@ -278,6 +292,7 @@ export const RiskQuery = extendType({
               riskPotentialExternalWithSafeguards,
             }
           });
+
           return result;
         }
         const result = await ctx.prisma.risk.findUnique({

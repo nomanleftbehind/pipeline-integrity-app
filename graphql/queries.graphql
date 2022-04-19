@@ -83,6 +83,10 @@ query SearchNavigationOptions {
     field
     nullable
     type
+    enumObjectArray {
+      serverEnum
+      databaseEnum
+    }
   }
 }
 

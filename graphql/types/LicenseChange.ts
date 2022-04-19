@@ -1,13 +1,68 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
+import { NexusGenObjects } from 'nexus-typegen';
 import { databaseEnumToServerEnum, serverEnumToDatabaseEnum } from './Pipeline';
 import { Context } from '../context';
 import { User as IUser, LicenseChange as ILicenseChange } from '@prisma/client';
-import { ITableObject } from './SearchNavigation';
+import { ITableConstructObject } from './SearchNavigation';
 
-export const LicenseChangeObjectFields: ITableObject[] = [
+
+
+
+export const StatusEnumMembers = {
+  Operating: "Operating",
+  Discontinued: "Discontinued",
+  Abandoned: "Abandoned",
+  Removed: "Removed",
+  ToBeConstructed: "To Be Constructed",
+  Active: "Active",
+  Cancelled: "Cancelled",
+  New: "New",
+  NotConstructed: "Not Constructed"
+}
+
+export const StatusEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'StatusEnum',
+  },
+  name: 'StatusEnum',
+  members: StatusEnumMembers
+});
+
+export const StatusEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(StatusEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
+});
+
+
+export const SubstanceEnumMembers = {
+  NaturalGas: "Natural Gas",
+  FreshWater: "Fresh Water",
+  SaltWater: "Salt Water",
+  CrudeOil: "Crude Oil",
+  OilWellEffluent: "Oil Well Effluent",
+  LVPProducts: "LVP Products",
+  FuelGas: "Fuel Gas",
+  SourNaturalGas: "Sour Natural Gas",
+}
+
+export const SubstanceEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'SubstanceEnum',
+  },
+  name: 'SubstanceEnum',
+  members: SubstanceEnumMembers
+});
+
+export const SubstanceEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(SubstanceEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
+});
+
+
+export const LicenseChangeObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
-  { field: 'status', nullable: false, type: 'StatusEnum' },
-  { field: 'substance', nullable: false, type: 'SubstanceEnum' },
+  { field: 'status', nullable: false, type: 'StatusEnum', enumObjectArray: StatusEnumArray },
+  { field: 'substance', nullable: false, type: 'SubstanceEnum', enumObjectArray: SubstanceEnumArray },
   { field: 'date', nullable: false, type: 'DateTime', },
   { field: 'comment', nullable: true, type: 'String' },
   { field: 'linkToDocumentation', nullable: true, type: 'String', },
@@ -94,47 +149,6 @@ const resolveLicenseChangeAuthorized = ({ user, createdById }: IresolveLicenseCh
 }
 
 
-export const StatusEnumMembers = {
-  Operating: "Operating",
-  Discontinued: "Discontinued",
-  Abandoned: "Abandoned",
-  Removed: "Removed",
-  ToBeConstructed: "To Be Constructed",
-  Active: "Active",
-  Cancelled: "Cancelled",
-  New: "New",
-  NotConstructed: "Not Constructed"
-}
-
-export const StatusEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'StatusEnum',
-  },
-  name: 'StatusEnum',
-  members: StatusEnumMembers
-});
-
-
-export const SubstanceEnumMembers = {
-  NaturalGas: "Natural Gas",
-  FreshWater: "Fresh Water",
-  SaltWater: "Salt Water",
-  CrudeOil: "Crude Oil",
-  OilWellEffluent: "Oil Well Effluent",
-  LVPProducts: "LVP Products",
-  FuelGas: "Fuel Gas",
-  SourNaturalGas: "Sour Natural Gas",
-}
-
-export const SubstanceEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'SubstanceEnum',
-  },
-  name: 'SubstanceEnum',
-  members: SubstanceEnumMembers
-});
 
 
 export const LicenseChangeQuery = extendType({

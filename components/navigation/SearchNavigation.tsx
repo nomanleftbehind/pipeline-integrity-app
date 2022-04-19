@@ -8,6 +8,7 @@ import {
   useOperationEnumLazyQuery,
   TableEnum,
   OperationEnum,
+  EnumObject,
 } from '../../graphql/generated/graphql';
 
 import { IOnNavigationAction } from './HierarchyNavigation';
@@ -25,11 +26,13 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
   const [searchTable, setSearchTable] = useState<TableEnum>(TableEnum.Pipeline);
   const [searchField, setSearchField] = useState('');
   const [searchFieldType, setSearchFieldType] = useState('');
+  const [searchEnumObjectArray, setSearchEnumObjectArray] = useState<EnumObject[]>([]);
   const [searchOperation, setSearchOperation] = useState<OperationEnum>(OperationEnum.Equals);
   const [searchValue, setSearchValue] = useState('');
 
   const [loadSearchOptions, { data }] = useSearchNavigationOptionsLazyQuery();
   const [loadOperationEnum, { data: dataOperationEnum }] = useOperationEnumLazyQuery();
+
 
   const toggleSearch = () => {
     setSearchTable(TableEnum.Pipeline);
@@ -54,15 +57,16 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
     loadOperationEnum();
     setSearchField(e.target.value);
     setSearchValue('');
-    const { type } = options?.find(({ table, field }) => table === searchTable && field === e.target.value) || {};
+    const { type, enumObjectArray } = options?.find(({ table, field }) => table === searchTable && field === e.target.value) || {};
     setSearchFieldType(type || '');
+    setSearchEnumObjectArray(enumObjectArray || []);
   }
 
   const handleChangeOperation = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSearchOperation(e.target.value as OperationEnum);
   }
 
-  const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setSearchValue(e.target.value);
   }
 
@@ -126,7 +130,7 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
             if (searchFieldType === 'String') {
               return [OperationEnum.Equals, OperationEnum.Contains, OperationEnum.StartsWith, OperationEnum.EndsWith, OperationEnum.Not].includes(operationDb);
             }
-            if (searchFieldType === 'Boolean' || searchFieldType.includes('Enum')) {
+            if (searchFieldType === 'Boolean' || searchEnumObjectArray.length > 0) {
               return [OperationEnum.Equals, OperationEnum.Not].includes(operationDb);
             }
           }).map((operationDb) => {
@@ -139,7 +143,16 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
       </>}
       {searchField && <>
         <div style={{ gridRow: 4, gridColumn: '1/3' }}>Value:</div>
-        <input style={{ gridRow: 4, gridColumn: '3/5' }} type={['Int', 'Float'].includes(searchFieldType) ? 'number' : ['DateTime'].includes(searchFieldType) ? 'date' : 'text'} value={searchValue} onChange={handleChangeValue} />
+        {searchEnumObjectArray.length > 0 ?
+          <select style={{ gridRow: 4, gridColumn: '3/5' }} value={searchValue} onChange={handleChangeValue}>
+            {searchEnumObjectArray.map(({ serverEnum, databaseEnum }) => {
+              return (
+                <option key={serverEnum} value={serverEnum}>{databaseEnum}</option>
+              )
+            })}
+          </select> :
+          <input style={{ gridRow: 4, gridColumn: '3/5' }} type={['Int', 'Float'].includes(searchFieldType) ? 'number' : ['DateTime'].includes(searchFieldType) ? 'date' : 'text'} value={searchValue} onChange={handleChangeValue} />
+        }
       </>}
       {searchField && <div style={{ gridRow: 4, gridColumn: 5 }}>
         <IconButton aria-label='disconnect row' size='small' type='submit'><SearchIcon /></IconButton>

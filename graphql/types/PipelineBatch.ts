@@ -2,10 +2,10 @@ import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg } f
 import { Context } from '../context';
 import { User as IUser, PipelineBatch as IPipelineBatch } from '@prisma/client';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
-import { ITableObject } from './SearchNavigation';
+import { ITableConstructObject } from './SearchNavigation';
 
 
-export const PipelineBatchObjectFields: ITableObject[] = [
+export const PipelineBatchObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
   { field: 'date', nullable: false, type: 'DateTime' },
   { field: 'cost', nullable: true, type: 'Float' },

@@ -55,6 +55,11 @@ export type BatchProduct = {
   wellBatches?: Maybe<Array<Maybe<WellBatch>>>;
 };
 
+export type EnumObject = {
+  databaseEnum: Scalars['String'];
+  serverEnum: Scalars['String'];
+};
+
 export enum EnvironmentProximityToEnum {
   Wb1 = 'WB1',
   Wb3 = 'WB3',
@@ -1291,6 +1296,7 @@ export type SearchNavigationInput = {
 };
 
 export type SearchNavigationObject = {
+  enumObjectArray?: Maybe<Array<EnumObject>>;
   field: Scalars['String'];
   nullable: Scalars['Boolean'];
   table: TableEnum;
@@ -1382,7 +1388,10 @@ export type SubstanceEnumObject = {
 export enum TableEnum {
   Facility = 'facility',
   LicenseChanges = 'licenseChanges',
+  PigRuns = 'pigRuns',
   Pipeline = 'pipeline',
+  PipelineBatches = 'pipelineBatches',
+  PressureTests = 'pressureTests',
   Risk = 'risk',
   SalesPoints = 'salesPoints',
   Satellite = 'satellite',
@@ -1896,7 +1905,7 @@ export type PigRunsByPipelineIdQuery = { pigRunsByPipelineId?: Array<{ id: strin
 export type SearchNavigationOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SearchNavigationOptionsQuery = { searchNavigationOptions: Array<{ table: TableEnum, field: string, nullable: boolean, type: string }> };
+export type SearchNavigationOptionsQuery = { searchNavigationOptions: Array<{ table: TableEnum, field: string, nullable: boolean, type: string, enumObjectArray?: Array<{ serverEnum: string, databaseEnum: string }> | null | undefined }> };
 
 export type OperationEnumQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3589,6 +3598,10 @@ export const SearchNavigationOptionsDocument = gql`
     field
     nullable
     type
+    enumObjectArray {
+      serverEnum
+      databaseEnum
+    }
   }
 }
     `;

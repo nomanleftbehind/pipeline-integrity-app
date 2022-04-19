@@ -46,6 +46,11 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
+type EnumObject {
+  databaseEnum: String!
+  serverEnum: String!
+}
+
 enum EnvironmentProximityToEnum {
   WB1
   WB3
@@ -919,6 +924,7 @@ input SearchNavigationInput {
 }
 
 type SearchNavigationObject {
+  enumObjectArray: [EnumObject!]
   field: String!
   nullable: Boolean!
   table: TableEnum!

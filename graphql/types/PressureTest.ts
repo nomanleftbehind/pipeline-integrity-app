@@ -1,8 +1,9 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, intArg, floatArg } from 'nexus';
+import { NexusGenObjects } from 'nexus-typegen';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 import { Context } from '../context';
 import { User as IUser, PressureTest as IPressureTest } from '@prisma/client';
-import { ITableObject } from './SearchNavigation';
+import { ITableConstructObject } from './SearchNavigation';
 import {
   requiredWTForMopCalc,
   mopTestPressureCalc,
@@ -14,17 +15,46 @@ import {
 } from './PressureTestCalcs';
 
 
-export const PressureTestObjectFields: ITableObject[] = [
+
+export const LimitingSpecEnumMembers = {
+  ANSI150: 'ANSI 150',
+  ANSI300: 'ANSI 300',
+  ANSI600: 'ANSI 600'
+}
+
+export const LimitingSpecEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'LimitingSpecEnum',
+  },
+  name: 'LimitingSpecEnum',
+  members: LimitingSpecEnumMembers
+});
+
+export const LimitingSpecEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(LimitingSpecEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
+});
+
+export const PressureTestObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
+  { field: 'limitingSpec', nullable: true, type: 'LimitingSpecEnum', enumObjectArray: LimitingSpecEnumArray },
   { field: 'infoSentOutDate', nullable: true, type: 'DateTime' },
   { field: 'ddsDate', nullable: true, type: 'DateTime' },
   { field: 'pressureTestDate', nullable: false, type: 'DateTime' },
   { field: 'pressureTestReceivedDate', nullable: true, type: 'DateTime' },
   { field: 'integritySheetUpdated', nullable: true, type: 'DateTime' },
   { field: 'comment', nullable: true, type: 'String' },
+  { field: 'requiredWTForMop', nullable: true, type: 'Float' },
+  { field: 'mopTestPressure', nullable: true, type: 'Float' },
+  { field: 'maxPressureOfLimitingSpec', nullable: true, type: 'Float' },
+  { field: 'pressureTestPressure', nullable: true, type: 'Float' },
+  { field: 'requiredWTForTestPressure', nullable: true, type: 'Float' },
+  { field: 'pressureTestCorrosionAllowance', nullable: true, type: 'Float' },
+  { field: 'waterForPigging', nullable: true, type: 'Float' },
   { field: 'createdAt', nullable: false, type: 'DateTime' },
   { field: 'updatedAt', nullable: false, type: 'DateTime' },
 ];
+
 
 
 export const PressureTest = objectType({
@@ -37,7 +67,16 @@ export const PressureTest = objectType({
     for (const { field, nullable, type } of PressureTestObjectFields) {
       const nullability = nullable ? 'nullable' : 'nonNull';
 
-      t[nullability].field(field, { type })
+      t[nullability].field(field, {
+        type,
+        resolve:
+          field === 'limitingSpec' ?
+            ({ limitingSpec }) => {
+              const result = limitingSpec && serverEnumToDatabaseEnum(LimitingSpecEnumMembers, limitingSpec);
+              return result;
+            } :
+            undefined,
+      })
     }
   }
 });
@@ -53,34 +92,6 @@ export const PressureTestExtendObject = extendType({
         }).pipeline();
         return result!
       },
-    })
-    t.float('requiredWTForMop', {
-      resolve: async ({ pipelineId }, _args, ctx: Context) => await requiredWTForMopCalc({ pipelineId, ctx })
-    })
-    t.float('mopTestPressure', {
-      resolve: async ({ pipelineId }, _args, ctx: Context) => await mopTestPressureCalc({ pipelineId, ctx })
-    })
-    t.field('limitingSpec', {
-      type: 'LimitingSpecEnum',
-      resolve: ({ limitingSpec }) => {
-        const result = limitingSpec && serverEnumToDatabaseEnum(LimitingSpecEnumMembers, limitingSpec);
-        return result;
-      }
-    })
-    t.float('maxPressureOfLimitingSpec', {
-      resolve: async ({ limitingSpec }) => await maxPressureOfLimitingSpecCalc({ limitingSpec })
-    })
-    t.float('pressureTestPressure', {
-      resolve: async ({ pipelineId, limitingSpec }, _args, ctx: Context) => await pressureTestPressureCalc({ pipelineId, ctx, limitingSpec })
-    })
-    t.float('requiredWTForTestPressure', {
-      resolve: async ({ pipelineId, limitingSpec }, _args, ctx: Context) => await requiredWTForTestPressureCalc({ pipelineId, limitingSpec, ctx })
-    })
-    t.float('pressureTestCorrosionAllowance', {
-      resolve: async ({ pipelineId, limitingSpec }, _args, ctx: Context) => await pressureTestCorrosionAllowanceCalc({ pipelineId, limitingSpec, ctx })
-    })
-    t.float('waterForPigging', {
-      resolve: async ({ pipelineId }, _args, ctx: Context) => await waterForPiggingCalc({ pipelineId, ctx })
     })
     t.nonNull.field('createdBy', {
       type: 'User',
@@ -129,6 +140,52 @@ export const PressureTestQuery = extendType({
         pipelineId: nonNull(stringArg()),
       },
       resolve: async (_, { pipelineId }, ctx: Context) => {
+
+
+        const pipeline = await ctx.prisma.pipeline.findUnique({
+          where: { id: pipelineId },
+          select: { mop: true, outsideDiameter: true, yieldStrength: true, wallThickness: true, length: true }
+        });
+
+        const pipelinePressureTests = await ctx.prisma.pressureTest.findMany({
+          where: { pipelineId },
+          select: { id: true, limitingSpec: true }
+        });
+
+        if (pipeline && pipelinePressureTests.length > 0) {
+          const { mop, outsideDiameter, yieldStrength, wallThickness, length } = pipeline;
+          const requiredWTForMop = await requiredWTForMopCalc({ mop, outsideDiameter, yieldStrength });
+          const mopTestPressure = await mopTestPressureCalc({ outsideDiameter, requiredWTForMop, yieldStrength });
+          const waterForPigging = await waterForPiggingCalc({ length, outsideDiameter, wallThickness });
+          
+          for (const { id, limitingSpec } of pipelinePressureTests) {
+            const maxPressureOfLimitingSpec = await maxPressureOfLimitingSpecCalc({ limitingSpec });
+            
+            const pressureTestPressure = await pressureTestPressureCalc({ mopTestPressure, maxPressureOfLimitingSpec });
+            
+            const requiredWTForTestPressure = await requiredWTForTestPressureCalc({ pressureTestPressure, outsideDiameter, yieldStrength });
+            
+            const pressureTestCorrosionAllowance = await pressureTestCorrosionAllowanceCalc({ requiredWTForMop, requiredWTForTestPressure });
+            console.log(
+              maxPressureOfLimitingSpec,
+);
+
+            await ctx.prisma.pressureTest.update({
+              where: { id },
+              data: {
+                // requiredWTForMop,
+                // mopTestPressure,
+                // maxPressureOfLimitingSpec,
+                pressureTestPressure: 0,
+                // requiredWTForTestPressure,
+                // pressureTestCorrosionAllowance,
+                // waterForPigging,
+              }
+            });
+            // do not return here as you are inside the loop;
+
+          }
+        }
         const result = await ctx.prisma.pressureTest.findMany({
           where: { pipelineId },
           orderBy: { pressureTestDate: 'desc' },
@@ -304,18 +361,3 @@ export const PressureTestMutation = extendType({
   }
 })
 
-
-export const LimitingSpecEnumMembers = {
-  ANSI150: 'ANSI 150',
-  ANSI300: 'ANSI 300',
-  ANSI600: 'ANSI 600'
-}
-
-export const LimitingSpecEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'LimitingSpecEnum',
-  },
-  name: 'LimitingSpecEnum',
-  members: LimitingSpecEnumMembers
-});

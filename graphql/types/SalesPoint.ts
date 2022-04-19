@@ -5,9 +5,9 @@ import {
   gasAssociatedLiquidsCalc,
   totalFluidsCalc,
 } from './Well';
-import { ITableObject } from './SearchNavigation';
+import { ITableConstructObject } from './SearchNavigation';
 
-export const SalesPointObjectFields: ITableObject[] = [
+export const SalesPointObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
   { field: 'name', nullable: false, type: 'String' },
   { field: 'oil', nullable: false, type: 'Float' },

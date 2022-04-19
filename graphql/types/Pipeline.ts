@@ -1,28 +1,246 @@
 import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg, booleanArg } from 'nexus';
+import { NexusGenObjects } from 'nexus-typegen';
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
-import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
+import { StatusEnumMembers, SubstanceEnumMembers, StatusEnumArray, SubstanceEnumArray } from './LicenseChange';
 import { totalPipelineFlowRawQuery } from './PipelineFlow';
 import { Prisma, User as IUser } from '@prisma/client';
-import { ITableObject } from './SearchNavigation';
+import { ITableConstructObject } from './SearchNavigation';
 
 
-export const PipelineObjectFields: ITableObject[] = [
+
+
+export const FromToFeatureEnumMembers = {
+  BlindEnd: "Blind end",
+  Battery: "Battery",
+  Pipeline: "Pipeline",
+  Satellite: "Satellite",
+  StorageTank: "Storage tank",
+  InjectionPlant: "Injection plant",
+  Well: "Well",
+  CompressorStation: "Compressor station",
+  MeterStation: "Meter station",
+  PumpStation: "Pump station",
+  GasProcessingPlant: "Gas processing plant",
+  UndergroundCapOrTieIn: "Underground cap or tie-in",
+  Header: "Header"
+}
+
+export const FromToFeatureEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'FromToFeatureEnum',
+  },
+  name: 'FromToFeatureEnum',
+  members: FromToFeatureEnumMembers
+});
+
+const FromToFeatureEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(FromToFeatureEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
+});
+
+export const TypeEnumMembers = {
+  Type515: "515",
+  Type2306: "2306",
+  Type3406: "3406",
+  Type3408: "3408",
+  Type6063: "6063",
+  Type6351: "6351",
+  Type5A: "5A",
+  Type5L: "5L",
+  Type5LX: "5LX",
+  TypeA106: "A106",
+  TypeA120: "A120",
+  TypeA53: "A53",
+  TypeAMERON: "AMERON",
+  TypeB515: "B515",
+  TypeB51S: "B51S",
+  TypeB5IS: "B5IS",
+  TypeCENTRON: "CENTRON",
+  TypeCIBA: "CIBA",
+  TypeFSLP: "FSLP",
+  TypeREDTHR: "REDTHR",
+  TypeSMITH: "SMITH",
+  TypeSTAR: "STAR",
+  TypeTBS: "TBS",
+  TypeWSLP: "WSLP",
+  TypeZ2451: "Z245.1",
+  TypeZ2453: "Z245.3",
+}
+
+export const TypeEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'TypeEnum',
+  },
+  name: 'TypeEnum',
+  members: TypeEnumMembers
+});
+
+const TypeEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(TypeEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
+});
+
+export const GradeEnumMembers = {
+  GradeA: "A",
+  Grade3592: "3592",
+  GradeB: "B",
+  GradeX42: "X42",
+  GradeBW1: "BW1",
+  Grade2500: "2500",
+  Grade3591: "3591",
+  Grade2901: "2901",
+  GradeT4: "T4",
+  Grade300: "300",
+  Grade3593: "3593",
+  Grade11: "11",
+  GradeJ55: "J55",
+  Grade2250: "2250",
+  GradeX52: "X52",
+  Grade2750: "2750",
+  Grade2902: "2902",
+  Grade25: "25",
+  Grade241: "241",
+  Grade2413: "2413",
+  Grade2411: "2411",
+  Grade155: "155",
+  Grade150: "150",
+  Grade1000: "1000",
+  Grade800: "800",
+  GradeT1A: "T1A",
+  Grade2010: "2010",
+  GradeT4A: "T4A",
+  Grade1250: "1250",
+  Grade17: "17",
+  Grade900: "900",
+  GradeT1B: "T1B",
+  Grade810: "810",
+  Grade35: "35",
+  Grade5: "5",
+  Grade9: "9",
+  Grade200: "200",
+  Grade1200: "1200",
+  Grade1103: "11.03",
+}
+
+export const GradeEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'GradeEnum',
+  },
+  name: 'GradeEnum',
+  members: GradeEnumMembers
+});
+
+const GradeEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(GradeEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
+});
+
+export const MaterialEnumMembers = {
+  Steel: "Steel",
+  PolyvinylChloride: "Polyvinyl Chloride",
+  Composite: "Composite",
+  Fiberglass: "Fiberglass",
+  Aluminum: "Aluminum",
+  Polyethylene: "Polyethylene",
+  CelluloseAcetateButyrate: "Cellulose Acetate Butyrate",
+  Unknown: "Unknown",
+  AsbestosCement: "Asbestos Cement"
+}
+
+export const MaterialEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'MaterialEnum',
+  },
+  name: 'MaterialEnum',
+  members: MaterialEnumMembers
+});
+
+const MaterialEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(MaterialEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
+});
+
+export const InternalProtectionEnumMembers = {
+  Uncoated: "Uncoated",
+  FreeStandingSlipLined: "Free Standing (Slip Lined)",
+  Unknown: "Unknown",
+  Cement: "Cement",
+  ExpandedPolyethylene: "Expanded Polyethylene",
+  ThinFilm: "Thin Film",
+}
+
+export const InternalProtectionEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'InternalProtectionEnum',
+  },
+  name: 'InternalProtectionEnum',
+  members: InternalProtectionEnumMembers
+});
+
+const InternalProtectionEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(InternalProtectionEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
+});
+
+export const BatchFrequencyEnumMembers = {
+  Continuous: 'Continuous',
+  Quarterly: 'Quarterly',
+  Bimonthly: 'Bimonthly',
+  Monthly: 'Monthly',
+  Annually: 'Annually',
+  Weekly: 'Weekly',
+  Specialized: 'Specialized'
+}
+
+export const BatchFrequencyEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'BatchFrequencyEnum',
+  },
+  name: 'BatchFrequencyEnum',
+  members: BatchFrequencyEnumMembers
+});
+
+const BatchFrequencyEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(BatchFrequencyEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
+});
+
+export const FlowCalculationDirectionEnumMembers = {
+  Upstream: 'Upstream',
+  Downstream: 'Downstream',
+}
+
+export const FlowCalculationDirectionEnum = enumType({
+  sourceType: {
+    module: '@prisma/client',
+    export: 'FlowCalculationDirectionEnum',
+  },
+  name: 'FlowCalculationDirectionEnum',
+  members: FlowCalculationDirectionEnumMembers
+});
+
+const FlowCalculationDirectionEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(FlowCalculationDirectionEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
+});
+
+
+export const PipelineObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
   { field: 'license', nullable: false, type: 'String' },
   { field: 'segment', nullable: false, type: 'String' },
-  { field: 'flowCalculationDirection', nullable: false, type: 'FlowCalculationDirectionEnum' },
+  { field: 'flowCalculationDirection', nullable: false, type: 'FlowCalculationDirectionEnum', enumObjectArray: FlowCalculationDirectionEnumArray },
   { field: 'from', nullable: false, type: 'String' },
-  { field: 'fromFeature', nullable: true, type: 'FromToFeatureEnum', },
+  { field: 'fromFeature', nullable: true, type: 'FromToFeatureEnum', enumObjectArray: FromToFeatureEnumArray },
   { field: 'to', nullable: false, type: 'String' },
-  { field: 'toFeature', nullable: true, type: 'FromToFeatureEnum', },
-  { field: 'type', nullable: true, type: 'TypeEnum', },
-  { field: 'grade', nullable: true, type: 'GradeEnum', },
-  { field: 'material', nullable: true, type: 'MaterialEnum', },
-  { field: 'internalProtection', nullable: true, type: 'InternalProtectionEnum', },
-  { field: 'batchFrequency', nullable: true, type: 'BatchFrequencyEnum', },
-  { field: 'currentStatus', nullable: true, type: 'StatusEnum', },
-  { field: 'currentSubstance', nullable: true, type: 'SubstanceEnum', },
+  { field: 'toFeature', nullable: true, type: 'FromToFeatureEnum', enumObjectArray: FromToFeatureEnumArray },
+  { field: 'type', nullable: true, type: 'TypeEnum', enumObjectArray: TypeEnumArray },
+  { field: 'grade', nullable: true, type: 'GradeEnum', enumObjectArray: GradeEnumArray },
+  { field: 'material', nullable: true, type: 'MaterialEnum', enumObjectArray: MaterialEnumArray },
+  { field: 'internalProtection', nullable: true, type: 'InternalProtectionEnum', enumObjectArray: InternalProtectionEnumArray },
+  { field: 'batchFrequency', nullable: true, type: 'BatchFrequencyEnum', enumObjectArray: BatchFrequencyEnumArray },
+  { field: 'currentStatus', nullable: true, type: 'StatusEnum', enumObjectArray: StatusEnumArray },
+  { field: 'currentSubstance', nullable: true, type: 'SubstanceEnum', enumObjectArray: SubstanceEnumArray },
   { field: 'firstLicenseDate', nullable: true, type: 'DateTime' },
   { field: 'length', nullable: false, type: 'Float' },
   { field: 'yieldStrength', nullable: true, type: 'Int' },
@@ -52,7 +270,6 @@ export const Pipeline = objectType({
         resolve:
           field === 'fromFeature' ?
             ({ fromFeature }) => {
-              console.log('resolve object:', fromFeature);
               const result = fromFeature && serverEnumToDatabaseEnum(FromToFeatureEnumMembers, fromFeature);
               return result;
             } :
@@ -233,192 +450,6 @@ export const PipelineExtendObject = extendType({
 
 
 
-export const FromToFeatureEnumMembers = {
-  BlindEnd: "Blind end",
-  Battery: "Battery",
-  Pipeline: "Pipeline",
-  Satellite: "Satellite",
-  StorageTank: "Storage tank",
-  InjectionPlant: "Injection plant",
-  Well: "Well",
-  CompressorStation: "Compressor station",
-  MeterStation: "Meter station",
-  PumpStation: "Pump station",
-  GasProcessingPlant: "Gas processing plant",
-  UndergroundCapOrTieIn: "Underground cap or tie-in",
-  Header: "Header"
-}
-
-export const FromToFeatureEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'FromToFeatureEnum',
-  },
-  name: 'FromToFeatureEnum',
-  members: FromToFeatureEnumMembers
-});
-
-export const TypeEnumMembers = {
-  Type515: "515",
-  Type2306: "2306",
-  Type3406: "3406",
-  Type3408: "3408",
-  Type6063: "6063",
-  Type6351: "6351",
-  Type5A: "5A",
-  Type5L: "5L",
-  Type5LX: "5LX",
-  TypeA106: "A106",
-  TypeA120: "A120",
-  TypeA53: "A53",
-  TypeAMERON: "AMERON",
-  TypeB515: "B515",
-  TypeB51S: "B51S",
-  TypeB5IS: "B5IS",
-  TypeCENTRON: "CENTRON",
-  TypeCIBA: "CIBA",
-  TypeFSLP: "FSLP",
-  TypeREDTHR: "REDTHR",
-  TypeSMITH: "SMITH",
-  TypeSTAR: "STAR",
-  TypeTBS: "TBS",
-  TypeWSLP: "WSLP",
-  TypeZ2451: "Z245.1",
-  TypeZ2453: "Z245.3",
-}
-
-export const TypeEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'TypeEnum',
-  },
-  name: 'TypeEnum',
-  members: TypeEnumMembers
-});
-
-export const GradeEnumMembers = {
-  GradeA: "A",
-  Grade3592: "3592",
-  GradeB: "B",
-  GradeX42: "X42",
-  GradeBW1: "BW1",
-  Grade2500: "2500",
-  Grade3591: "3591",
-  Grade2901: "2901",
-  GradeT4: "T4",
-  Grade300: "300",
-  Grade3593: "3593",
-  Grade11: "11",
-  GradeJ55: "J55",
-  Grade2250: "2250",
-  GradeX52: "X52",
-  Grade2750: "2750",
-  Grade2902: "2902",
-  Grade25: "25",
-  Grade241: "241",
-  Grade2413: "2413",
-  Grade2411: "2411",
-  Grade155: "155",
-  Grade150: "150",
-  Grade1000: "1000",
-  Grade800: "800",
-  GradeT1A: "T1A",
-  Grade2010: "2010",
-  GradeT4A: "T4A",
-  Grade1250: "1250",
-  Grade17: "17",
-  Grade900: "900",
-  GradeT1B: "T1B",
-  Grade810: "810",
-  Grade35: "35",
-  Grade5: "5",
-  Grade9: "9",
-  Grade200: "200",
-  Grade1200: "1200",
-  Grade1103: "11.03",
-}
-
-export const GradeEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'GradeEnum',
-  },
-  name: 'GradeEnum',
-  members: GradeEnumMembers
-});
-
-export const MaterialEnumMembers = {
-  Steel: "Steel",
-  PolyvinylChloride: "Polyvinyl Chloride",
-  Composite: "Composite",
-  Fiberglass: "Fiberglass",
-  Aluminum: "Aluminum",
-  Polyethylene: "Polyethylene",
-  CelluloseAcetateButyrate: "Cellulose Acetate Butyrate",
-  Unknown: "Unknown",
-  AsbestosCement: "Asbestos Cement"
-}
-
-export const MaterialEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'MaterialEnum',
-  },
-  name: 'MaterialEnum',
-  members: MaterialEnumMembers
-});
-
-export const InternalProtectionEnumMembers = {
-  Uncoated: "Uncoated",
-  FreeStandingSlipLined: "Free Standing (Slip Lined)",
-  Unknown: "Unknown",
-  Cement: "Cement",
-  ExpandedPolyethylene: "Expanded Polyethylene",
-  ThinFilm: "Thin Film",
-}
-
-export const InternalProtectionEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'InternalProtectionEnum',
-  },
-  name: 'InternalProtectionEnum',
-  members: InternalProtectionEnumMembers
-});
-
-export const BatchFrequencyEnumMembers = {
-  Continuous: 'Continuous',
-  Quarterly: 'Quarterly',
-  Bimonthly: 'Bimonthly',
-  Monthly: 'Monthly',
-  Annually: 'Annually',
-  Weekly: 'Weekly',
-  Specialized: 'Specialized'
-}
-
-export const BatchFrequencyEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'BatchFrequencyEnum',
-  },
-  name: 'BatchFrequencyEnum',
-  members: BatchFrequencyEnumMembers
-});
-
-export const FlowCalculationDirectionEnumMembers = {
-  Upstream: 'Upstream',
-  Downstream: 'Downstream',
-}
-
-export const FlowCalculationDirectionEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'FlowCalculationDirectionEnum',
-  },
-  name: 'FlowCalculationDirectionEnum',
-  members: FlowCalculationDirectionEnumMembers
-});
-
 
 export const resolvePipelineAuthorized = (user: IUser) => {
   const { role } = user;
@@ -584,7 +615,7 @@ export const PipelineQuery = extendType({
 
           const b = await ctx.prisma.pipeline.findMany({
             where: {
-              pipelineBatches: {
+              wells: {
 
               }
             }
