@@ -1,7 +1,6 @@
-import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
+import { objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
 import { User as IUser, PipelineBatch as IPipelineBatch } from '@prisma/client';
-import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 import { ITableConstructObject } from './SearchNavigation';
 
 
@@ -16,14 +15,6 @@ export const PipelineBatchObjectFields: ITableConstructObject[] = [
   { field: 'updatedAt', nullable: false, type: 'DateTime' },
 ];
 
-// t.nonNull.string('id')
-// t.nonNull.field('date', { type: 'DateTime' })
-// t.float('cost')
-// t.float('chemicalVolume')
-// t.float('diluentVolume')
-// t.string('comment')
-// t.nonNull.field('createdAt', { type: 'DateTime' })
-// t.nonNull.field('updatedAt', { type: 'DateTime' })
 
 export const PipelineBatch = objectType({
   name: 'PipelineBatch',

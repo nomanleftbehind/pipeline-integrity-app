@@ -157,33 +157,29 @@ export const PressureTestQuery = extendType({
           const requiredWTForMop = await requiredWTForMopCalc({ mop, outsideDiameter, yieldStrength });
           const mopTestPressure = await mopTestPressureCalc({ outsideDiameter, requiredWTForMop, yieldStrength });
           const waterForPigging = await waterForPiggingCalc({ length, outsideDiameter, wallThickness });
-          
+
           for (const { id, limitingSpec } of pipelinePressureTests) {
             const maxPressureOfLimitingSpec = await maxPressureOfLimitingSpecCalc({ limitingSpec });
-            
+
             const pressureTestPressure = await pressureTestPressureCalc({ mopTestPressure, maxPressureOfLimitingSpec });
-            
+
             const requiredWTForTestPressure = await requiredWTForTestPressureCalc({ pressureTestPressure, outsideDiameter, yieldStrength });
-            
+
             const pressureTestCorrosionAllowance = await pressureTestCorrosionAllowanceCalc({ requiredWTForMop, requiredWTForTestPressure });
-            console.log(
-              maxPressureOfLimitingSpec,
-);
 
             await ctx.prisma.pressureTest.update({
               where: { id },
               data: {
-                // requiredWTForMop,
-                // mopTestPressure,
-                // maxPressureOfLimitingSpec,
-                pressureTestPressure: 0,
-                // requiredWTForTestPressure,
-                // pressureTestCorrosionAllowance,
-                // waterForPigging,
+                requiredWTForMop,
+                mopTestPressure,
+                maxPressureOfLimitingSpec,
+                pressureTestPressure,
+                requiredWTForTestPressure,
+                pressureTestCorrosionAllowance,
+                waterForPigging,
               }
             });
             // do not return here as you are inside the loop;
-
           }
         }
         const result = await ctx.prisma.pressureTest.findMany({
