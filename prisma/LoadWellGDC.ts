@@ -1,6 +1,9 @@
 import oracledb from 'oracledb';
+import { Well as IWell } from '@prisma/client';
 import * as dotenv from 'dotenv';
 dotenv.config();
+
+type IWellGDC = Pick<IWell, 'name' | 'firstProduction' | 'lastProduction' | 'firstInjection' | 'lastInjection'>;
 
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
@@ -10,22 +13,15 @@ const connectionAttributes = {
   connectString: process.env['gdc_db_connect_string'],
 }
 
-console.log(connectionAttributes);
 
-
-async function run() {
+export const loadWellGDC = async (wellNameArg1: string, wellNameArg2: string) => {
 
   let connectionGDC;
 
-  let resultGDC;
-
   try {
-
     connectionGDC = await oracledb.getConnection(connectionAttributes);
 
-    console.log("Successfully connected to Oracle Database");
-
-    const result = await connectionGDC.execute(
+    const result = await connectionGDC.execute<IWellGDC>(
       `SELECT
 
       w.gsl_uwid "name",
@@ -35,11 +31,12 @@ async function run() {
       pd.last_injection_date "lastInjection"
       
       FROM well w
-      INNER JOIN pden pd on pd.gsl_uwi = w.gsl_uwi AND (w.gsl_uwid IN ('102/16-11-048-04W5/00') OR w.gsl_uwid IN ('102/16-12-049-07W5/00','102/16-17-048-06W5/00'))`
+      LEFT OUTER JOIN pden pd on pd.gsl_uwi = w.gsl_uwi
+      
+      WHERE w.gsl_uwid IN ('${wellNameArg1}') OR w.gsl_uwid IN ('${wellNameArg2}')`
     );
 
-    resultGDC = result.rows
-
+    return result.rows
 
   } catch (err) {
     console.error(err);
@@ -52,7 +49,4 @@ async function run() {
       }
     }
   }
-  console.log(resultGDC);
 }
-
-run();
