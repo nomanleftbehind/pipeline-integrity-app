@@ -89,6 +89,7 @@ model Pipeline {
   salesPoints              SalesPoint[]
   pigRuns                  PigRun[]
   risk                     Risk?
+  chemical                 Chemical?
   license                  String
   segment                  String
   from                     String
@@ -236,6 +237,25 @@ model Risk {
   safeguardCathodic                   Int?
   probabilityExteriorWithSafeguards   Int?
   riskPotentialExternalWithSafeguards Int?
+}
+
+model Chemical {
+  pipeline              Pipeline  @relation(fields: [id], references: [id])
+  id                    String    @id
+  baseLineFluidAnalysis DateTime?
+  scaling               Boolean?
+  bacteria              Boolean?
+  co2                   Boolean?
+  o2                    Boolean?
+  h2s                   Boolean
+  continuousInjection   Boolean?
+  injectionRate         Float?
+  downholeBatch         Boolean?
+  inhibPipelineBatch    Boolean?
+  bacteriaTreatment     Boolean?
+  scaleTreatment        Boolean?
+  applicationSchedule   Int?
+
 }
 
 model Well {

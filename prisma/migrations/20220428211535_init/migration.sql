@@ -165,6 +165,13 @@ CREATE TABLE "PressureTest" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedById" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "requiredWTForMop" DOUBLE PRECISION,
+    "mopTestPressure" DOUBLE PRECISION,
+    "maxPressureOfLimitingSpec" DOUBLE PRECISION,
+    "pressureTestPressure" DOUBLE PRECISION,
+    "requiredWTForTestPressure" DOUBLE PRECISION,
+    "pressureTestCorrosionAllowance" DOUBLE PRECISION,
+    "waterForPigging" DOUBLE PRECISION,
 
     CONSTRAINT "PressureTest_pkey" PRIMARY KEY ("id")
 );
@@ -194,6 +201,22 @@ CREATE TABLE "Risk" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedById" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "costPerM3Released" DOUBLE PRECISION,
+    "consequenceEnviro" INTEGER,
+    "consequenceAsset" INTEGER,
+    "consequenceMax" INTEGER,
+    "probabilityInterior" INTEGER,
+    "probabilityExterior" INTEGER,
+    "riskPotentialGeo" INTEGER,
+    "riskPotentialInternal" INTEGER,
+    "riskPotentialExternal" INTEGER,
+    "safeguardPigging" INTEGER,
+    "safeguardChemicalInhibition" INTEGER,
+    "probabilityInteriorWithSafeguards" INTEGER,
+    "riskPotentialInternalWithSafeguards" INTEGER,
+    "safeguardCathodic" INTEGER,
+    "probabilityExteriorWithSafeguards" INTEGER,
+    "riskPotentialExternalWithSafeguards" INTEGER,
 
     CONSTRAINT "Risk_pkey" PRIMARY KEY ("id")
 );
@@ -445,7 +468,7 @@ ALTER TABLE "BatchProduct" ADD CONSTRAINT "BatchProduct_createdById_fkey" FOREIG
 ALTER TABLE "BatchProduct" ADD CONSTRAINT "BatchProduct_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_PipelineFollows" ADD FOREIGN KEY ("A") REFERENCES "Pipeline"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_PipelineFollows" ADD CONSTRAINT "_PipelineFollows_A_fkey" FOREIGN KEY ("A") REFERENCES "Pipeline"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_PipelineFollows" ADD FOREIGN KEY ("B") REFERENCES "Pipeline"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_PipelineFollows" ADD CONSTRAINT "_PipelineFollows_B_fkey" FOREIGN KEY ("B") REFERENCES "Pipeline"("id") ON DELETE CASCADE ON UPDATE CASCADE;
