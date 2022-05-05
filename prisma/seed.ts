@@ -24,6 +24,7 @@ import {
   pigRunData9,
   pigRunData10,
   pigRunData11,
+  pigRunData12,
 } from './SeedPigRunData';
 
 import {
@@ -52,6 +53,12 @@ import {
   licenseChangeData2,
   licenseChangeData3,
 } from './SeedLicenseChangeData';
+
+import { chemicalSupplierData } from './SeedChemicalSupplierData';
+import {
+  chemicalData1,
+  chemicalData2,
+} from './SeedChemicalData';
 
 const prisma = new PrismaClient(/*{
   log: [
@@ -251,6 +258,13 @@ async function main() {
     console.log(`Created pig run with id: ${pigRun.id}`)
   }
 
+  for (const u of pigRunData12) {
+    const pigRun = await prisma.pigRun.create({
+      data: u,
+    })
+    console.log(`Created pig run with id: ${pigRun.id}`)
+  }
+
   for (const u of pipelineBatchData1) {
     const pipelineBatch = await prisma.pipelineBatch.create({
       data: u,
@@ -319,6 +333,27 @@ async function main() {
       data: u,
     })
     console.log(`Created risk with id: ${risk.id}`)
+  }
+  
+  for (const u of chemicalSupplierData) {
+    const chemicalSupplier = await prisma.chemicalSupplier.create({
+      data: u,
+    })
+    console.log(`Created chemical supplier with id: ${chemicalSupplier.id}`)
+  }
+
+  for (const u of chemicalData1) {
+    const chemical = await prisma.chemical.create({
+      data: u,
+    })
+    console.log(`Created chemical with id: ${chemical.id}`)
+  }
+
+  for (const u of chemicalData2) {
+    const chemical = await prisma.chemical.create({
+      data: u,
+    })
+    console.log(`Created chemical with id: ${chemical.id}`)
   }
 
   console.log(`Seeding finished.`)

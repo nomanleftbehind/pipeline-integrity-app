@@ -8,37 +8,41 @@ datasource db {
 }
 
 model User {
-  id                       String          @id @default(uuid())
-  email                    String          @unique
-  password                 String
-  firstName                String
-  lastName                 String
-  role                     UserRoleEnum    @default(OPERATOR)
-  facilitiesCreatedBy      Facility[]      @relation("facilityCreatedBy")
-  facilitiesUpdatedBy      Facility[]      @relation("facilityUpdatedBy")
-  satellitesCreatedBy      Satellite[]     @relation("satelliteCreatedBy")
-  satellitesUpdatedBy      Satellite[]     @relation("satelliteUpdatedBy")
-  pipelinesCreatedBy       Pipeline[]      @relation("pipelineCreatedBy")
-  pipelinesUpdatedBy       Pipeline[]      @relation("pipelineUpdatedBy")
-  licenseChangesCreatedBy  LicenseChange[] @relation("licenseChangeCreatedBy")
-  licenseChangesUpdatedBy  LicenseChange[] @relation("licenseChangeUpdatedBy")
-  wellsCreatedBy           Well[]          @relation("wellCreatedBy")
-  wellsUpdatedBy           Well[]          @relation("wellUpdatedBy")
-  salesPointsCreatedBy     SalesPoint[]    @relation("salesPointCreatedBy")
-  salesPointsUpdatedBy     SalesPoint[]    @relation("salesPointUpdatedBy")
-  pigRunsOperator          PigRun[]        @relation("pigRunOperator")
-  pigRunsCreatedBy         PigRun[]        @relation("pigRunCreatedBy")
-  pigRunsUpdatedBy         PigRun[]        @relation("pigRunUpdatedBy")
-  pressureTestsCreatedBy   PressureTest[]  @relation("pressureTestCreatedBy")
-  pressureTestsUpdatedBy   PressureTest[]  @relation("pressureTestUpdatedBy")
-  pipelineBatchesCreatedBy PipelineBatch[] @relation("pipelineBatchCreatedBy")
-  pipelineBatchesUpdatedBy PipelineBatch[] @relation("pipelineBatchUpdatedBy")
-  wellBatchesCreatedBy     WellBatch[]     @relation("wellBatchCreatedBy")
-  wellBatchesUpdatedBy     WellBatch[]     @relation("wellBatchUpdatedBy")
-  batchProductsCreatedBy   BatchProduct[]  @relation("batchProductCreatedBy")
-  batchProductsUpdatedBy   BatchProduct[]  @relation("batchProductUpdatedBy")
-  risksCreatedBy           Risk[]          @relation("riskCreatedBy")
-  risksUpdatedBy           Risk[]          @relation("riskUpdatedBy")
+  id                         String             @id @default(uuid())
+  email                      String             @unique
+  password                   String
+  firstName                  String
+  lastName                   String
+  role                       UserRoleEnum       @default(OPERATOR)
+  facilitiesCreatedBy        Facility[]         @relation("facilityCreatedBy")
+  facilitiesUpdatedBy        Facility[]         @relation("facilityUpdatedBy")
+  satellitesCreatedBy        Satellite[]        @relation("satelliteCreatedBy")
+  satellitesUpdatedBy        Satellite[]        @relation("satelliteUpdatedBy")
+  pipelinesCreatedBy         Pipeline[]         @relation("pipelineCreatedBy")
+  pipelinesUpdatedBy         Pipeline[]         @relation("pipelineUpdatedBy")
+  licenseChangesCreatedBy    LicenseChange[]    @relation("licenseChangeCreatedBy")
+  licenseChangesUpdatedBy    LicenseChange[]    @relation("licenseChangeUpdatedBy")
+  wellsCreatedBy             Well[]             @relation("wellCreatedBy")
+  wellsUpdatedBy             Well[]             @relation("wellUpdatedBy")
+  salesPointsCreatedBy       SalesPoint[]       @relation("salesPointCreatedBy")
+  salesPointsUpdatedBy       SalesPoint[]       @relation("salesPointUpdatedBy")
+  pigRunsOperator            PigRun[]           @relation("pigRunOperator")
+  pigRunsCreatedBy           PigRun[]           @relation("pigRunCreatedBy")
+  pigRunsUpdatedBy           PigRun[]           @relation("pigRunUpdatedBy")
+  pressureTestsCreatedBy     PressureTest[]     @relation("pressureTestCreatedBy")
+  pressureTestsUpdatedBy     PressureTest[]     @relation("pressureTestUpdatedBy")
+  pipelineBatchesCreatedBy   PipelineBatch[]    @relation("pipelineBatchCreatedBy")
+  pipelineBatchesUpdatedBy   PipelineBatch[]    @relation("pipelineBatchUpdatedBy")
+  wellBatchesCreatedBy       WellBatch[]        @relation("wellBatchCreatedBy")
+  wellBatchesUpdatedBy       WellBatch[]        @relation("wellBatchUpdatedBy")
+  batchProductsCreatedBy     BatchProduct[]     @relation("batchProductCreatedBy")
+  batchProductsUpdatedBy     BatchProduct[]     @relation("batchProductUpdatedBy")
+  risksCreatedBy             Risk[]             @relation("riskCreatedBy")
+  risksUpdatedBy             Risk[]             @relation("riskUpdatedBy")
+  chemicalsCreatedBy         Chemical[]         @relation("chemicalCreatedBy")
+  chemicalsUpdatedBy         Chemical[]         @relation("chemicalUpdatedBy")
+  chemicalSuppliersCreatedBy ChemicalSupplier[] @relation("chemicalSupplierCreatedBy")
+  chemicalSuppliersUpdatedBy ChemicalSupplier[] @relation("chemicalSupplierUpdatedBy")
 }
 
 enum UserRoleEnum {
@@ -108,7 +112,6 @@ model Pipeline {
   internalProtection       InternalProtectionEnum?
   piggable                 Boolean?
   piggingFrequency         Int?
-  batchFrequency           BatchFrequencyEnum?
   flowCalculationDirection FlowCalculationDirectionEnum
   upstream                 Pipeline[]                   @relation("PipelineFollows", references: [id])
   downstream               Pipeline[]                   @relation("PipelineFollows", references: [id])
@@ -208,7 +211,7 @@ model Risk {
   oilReleaseCost                      Float?
   gasReleaseCost                      Float?
   consequencePeople                   Int?
-  probabilityGeo                      Float? // FIXME - Convert to Int
+  probabilityGeo                      Int?
   safeguardInternalProtection         Int?
   safeguardExternalCoating            Int?
   comment                             String?
@@ -240,21 +243,44 @@ model Risk {
 }
 
 model Chemical {
-  pipeline              Pipeline  @relation(fields: [id], references: [id])
-  id                    String    @id
-  baseLineFluidAnalysis DateTime?
-  scaling               Boolean?
-  bacteria              Boolean?
-  co2                   Boolean?
-  o2                    Boolean?
-  h2s                   Boolean
-  continuousInjection   Boolean?
-  injectionRate         Float?
-  downholeBatch         Boolean?
-  inhibPipelineBatch    Boolean?
-  bacteriaTreatment     Boolean?
-  scaleTreatment        Boolean?
-  applicationSchedule   Int?
+  pipeline                  Pipeline          @relation(fields: [id], references: [id])
+  id                        String            @id
+  chemicalSupplier          ChemicalSupplier? @relation(fields: [chemicalSupplierId], references: [id])
+  chemicalSupplierId        String?
+  baselineFluidAnalysisDate DateTime?
+  scaling                   Boolean?
+  bacteria                  Boolean?
+  co2                       Boolean?
+  o2                        Boolean?
+  h2s                       Boolean?
+  continuousInjection       Boolean?
+  injectionRate             Float?
+  downholeBatch             Boolean?
+  inhibitorPipelineBatch    Boolean?
+  bacteriaTreatment         Boolean?
+  scaleTreatment            Boolean?
+  batchFrequency            Int?
+  comment                   String?
+  createdBy                 User              @relation("chemicalCreatedBy", fields: [createdById], references: [id])
+  createdById               String
+  createdAt                 DateTime          @default(now())
+  updatedBy                 User              @relation("chemicalUpdatedBy", fields: [updatedById], references: [id])
+  updatedById               String
+  updatedAt                 DateTime          @updatedAt
+
+}
+
+model ChemicalSupplier {
+  id          String     @id @default(uuid())
+  chemicals   Chemical[]
+  name        String     @unique
+  description String?
+  createdBy   User       @relation("chemicalSupplierCreatedBy", fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime   @default(now())
+  updatedBy   User       @relation("chemicalSupplierUpdatedBy", fields: [updatedById], references: [id])
+  updatedById String
+  updatedAt   DateTime   @updatedAt
 
 }
 
@@ -380,17 +406,17 @@ enum SolubilityEnum {
   @@map("solubility")
 }
 
-enum BatchFrequencyEnum {
-  Continuous
-  Quarterly
-  Bimonthly
-  Monthly
-  Annually
-  Weekly
-  Specialized
+// enum BatchFrequencyEnum {
+//   Continuous
+//   Quarterly
+//   Bimonthly
+//   Monthly
+//   Annually
+//   Weekly
+//   Specialized
 
-  @@map("batch_frequency")
-}
+//   @@map("batch_frequency")
+// }
 
 enum FromToFeatureEnum {
   BlindEnd               @map("Blind end")
@@ -545,7 +571,7 @@ enum PigTypeEnum {
   Foam                     @map("Foam")
   Shutin                   @map("Shut in")
   RedStubby                @map("Red Stubby")
-  PigType3inredstubby      @map("3in red stubby")
+  Redscraper               @map("Red scraper")
   PigType3inGSCR           @map("3in GSCR")
   PigType2inGSCR           @map("2in GSCR")
   NoSender                 @map("No Sender")
@@ -567,6 +593,7 @@ enum PigTypeEnum {
   ScraperP204              @map("Scraper P204")
   ScraperP208              @map("Scraper P208")
   PigType3inArgus          @map("3in Argus")
+  PigType2inpurple         @map("2in purple")
   Ball                     @map("Ball")
   Black3inBall             @map("Black 3in Ball")
   PigType3inWhite          @map("3in White")
@@ -606,16 +633,13 @@ enum PigTypeEnum {
   redball                  @map("red ball")
   PigType2inStubby         @map("2in Stubby")
   PigType1inStubby         @map("1in Stubby")
-  PigType3BrownRibbed      @map("#3 Brown Ribbed")
-  PigType3GreenRibbed      @map("#3 Green Ribbed")
-  PigType3BlueRibbed       @map("#3 Blue Ribbed")
-  PigType3inBlueRibbed     @map("3in Blue Ribbed")
+  PigType3inBrownRibbed    @map("3in Brown Ribbed")
   PigType3inGreenRibbed    @map("3in Green Ribbed")
+  PigType3inBlueRibbed     @map("3in Blue Ribbed")
   BlueRibbed               @map("Blue Ribbed")
-  PigType3BluRibbed        @map("#3 Blu Ribbed")
   M_D_Foamy                @map("M.D. Foamy")
   PigType6inGreenRibbed    @map("6in Green Ribbed")
-  Red3scraper              @map("Red 3 scraper")
+  BlueinScraper            @map("Blue #in Scraper")
   Red4inscraper            @map("Red 4in scraper")
   Blue3inscraper           @map("Blue 3in scraper")
   PigType4inBlueDisc       @map("4inBlue Disc")
@@ -627,7 +651,9 @@ enum PigTypeEnum {
   PigType4inFoam           @map("4in Foam")
   PigType3inredscrape      @map("3in red scrape")
   GSCR                     @map("GSCR")
+  PigType4GreenStubby      @map("4 Green Stubby")
   PigType4_GreenRibbed     @map("4: Green Ribbed")
+  PigType4Green            @map("#4 Green")
   PigType3inpurplescraper  @map("3in purple scraper")
   PigType6ingreenscraper   @map("6in green scraper")
   Purple3inDisc            @map("Purple 3in Disc")
