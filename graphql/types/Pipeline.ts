@@ -183,29 +183,6 @@ const InternalProtectionEnumArray: NexusGenObjects['EnumObject'][] = Object.entr
   return { serverEnum, databaseEnum }
 });
 
-export const BatchFrequencyEnumMembers = {
-  Continuous: 'Continuous',
-  Quarterly: 'Quarterly',
-  Bimonthly: 'Bimonthly',
-  Monthly: 'Monthly',
-  Annually: 'Annually',
-  Weekly: 'Weekly',
-  Specialized: 'Specialized'
-}
-
-export const BatchFrequencyEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'BatchFrequencyEnum',
-  },
-  name: 'BatchFrequencyEnum',
-  members: BatchFrequencyEnumMembers
-});
-
-const BatchFrequencyEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(BatchFrequencyEnumMembers).map(([serverEnum, databaseEnum]) => {
-  return { serverEnum, databaseEnum }
-});
-
 export const FlowCalculationDirectionEnumMembers = {
   Upstream: 'Upstream',
   Downstream: 'Downstream',
@@ -238,7 +215,6 @@ export const PipelineObjectFields: ITableConstructObject[] = [
   { field: 'grade', nullable: true, type: 'GradeEnum', enumObjectArray: GradeEnumArray },
   { field: 'material', nullable: true, type: 'MaterialEnum', enumObjectArray: MaterialEnumArray },
   { field: 'internalProtection', nullable: true, type: 'InternalProtectionEnum', enumObjectArray: InternalProtectionEnumArray },
-  { field: 'batchFrequency', nullable: true, type: 'BatchFrequencyEnum', enumObjectArray: BatchFrequencyEnumArray },
   { field: 'currentStatus', nullable: true, type: 'StatusEnum', enumObjectArray: StatusEnumArray },
   { field: 'currentSubstance', nullable: true, type: 'SubstanceEnum', enumObjectArray: SubstanceEnumArray },
   { field: 'firstLicenseDate', nullable: true, type: 'DateTime' },
@@ -327,11 +303,6 @@ export const Pipeline = objectType({
                               const result = internalProtection && serverEnumToDatabaseEnum(InternalProtectionEnumMembers, internalProtection);
                               return result;
                             } :
-                            field === 'batchFrequency' ?
-                              ({ batchFrequency }) => {
-                                const result = batchFrequency && serverEnumToDatabaseEnum(BatchFrequencyEnumMembers, batchFrequency);
-                                return result;
-                              } :
                               undefined,
       });
     }
@@ -756,7 +727,6 @@ export const PipelineMutation = extendType({
         internalProtection: arg({ type: 'InternalProtectionEnum' }),
         piggable: booleanArg(),
         piggingFrequency: intArg(),
-        batchFrequency: arg({ type: 'BatchFrequencyEnum' }),
       },
       resolve: async (_, args, ctx: Context) => {
         const user = ctx.user;
@@ -860,7 +830,6 @@ export const PipelineMutation = extendType({
                 internalProtection: databaseEnumToServerEnum(InternalProtectionEnumMembers, args.internalProtection),
                 piggable: args.piggable,
                 piggingFrequency: args.piggingFrequency,
-                batchFrequency: databaseEnumToServerEnum(BatchFrequencyEnumMembers, args.batchFrequency),
                 updatedById: userId,
               },
             });

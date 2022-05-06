@@ -36,7 +36,6 @@ query PipelinesById($navigationInput: NavigationInput!) {
     internalProtection
     piggable
     piggingFrequency
-    batchFrequency
     createdBy {
       id
       email
@@ -122,7 +121,7 @@ query ValidatorsPigRun {
       Foam
       Shutin
       RedStubby
-      PigType3inredstubby
+      Redscraper
       PigType3inGSCR
       PigType2inGSCR
       NoSender
@@ -144,6 +143,7 @@ query ValidatorsPigRun {
       ScraperP204
       ScraperP208
       PigType3inArgus
+      PigType2inpurple
       Ball
       Black3inBall
       PigType3inWhite
@@ -183,16 +183,13 @@ query ValidatorsPigRun {
       redball
       PigType2inStubby
       PigType1inStubby
-      PigType3BrownRibbed
-      PigType3GreenRibbed
-      PigType3BlueRibbed
-      PigType3inBlueRibbed
+      PigType3inBrownRibbed
       PigType3inGreenRibbed
+      PigType3inBlueRibbed
       BlueRibbed
-      PigType3BluRibbed
       M_D_Foamy
       PigType6inGreenRibbed
-      Red3scraper
+      BlueinScraper
       Red4inscraper
       Blue3inscraper
       PigType4inBlueDisc
@@ -204,7 +201,9 @@ query ValidatorsPigRun {
       PigType4inFoam
       PigType3inredscrape
       GSCR
+      PigType4GreenStubby
       PigType4_GreenRibbed
+      PigType4Green
       PigType3inpurplescraper
       PigType6ingreenscraper
       Purple3inDisc
@@ -406,11 +405,6 @@ query getValidators {
       Unknown
       AsbestosCement
     }
-    batchFrequencyEnum {
-      Quarterly
-      Annually
-      Specialized
-    }
     mopMatchPattern
     internalProtectionEnum {
       Uncoated
@@ -434,7 +428,7 @@ query getValidators {
       Foam
       Shutin
       RedStubby
-      PigType3inredstubby
+      Redscraper
       PigType3inGSCR
       PigType2inGSCR
       NoSender
@@ -456,6 +450,7 @@ query getValidators {
       ScraperP204
       ScraperP208
       PigType3inArgus
+      PigType2inpurple
       Ball
       Black3inBall
       PigType3inWhite
@@ -495,16 +490,13 @@ query getValidators {
       redball
       PigType2inStubby
       PigType1inStubby
-      PigType3BrownRibbed
-      PigType3GreenRibbed
-      PigType3BlueRibbed
-      PigType3inBlueRibbed
+      PigType3inBrownRibbed
       PigType3inGreenRibbed
+      PigType3inBlueRibbed
       BlueRibbed
-      PigType3BluRibbed
       M_D_Foamy
       PigType6inGreenRibbed
-      Red3scraper
+      BlueinScraper
       Red4inscraper
       Blue3inscraper
       PigType4inBlueDisc
@@ -516,7 +508,9 @@ query getValidators {
       PigType4inFoam
       PigType3inredscrape
       GSCR
+      PigType4GreenStubby
       PigType4_GreenRibbed
+      PigType4Green
       PigType3inpurplescraper
       PigType6ingreenscraper
       Purple3inDisc

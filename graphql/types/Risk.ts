@@ -188,7 +188,7 @@ export const RiskQuery = extendType({
         id: nonNull(stringArg()),
       },
       resolve: async (_parent, { id }, ctx: Context) => {
-
+        
         const risk = await ctx.prisma.risk.findUnique({
           where: { id },
           select: {
@@ -234,7 +234,7 @@ export const RiskQuery = extendType({
           const { substance: currentSubstance, status: currentStatus } = lastLicenseChange;
           const { date: firstLicenseDate } = firstLicenseChange;
           const { flowCalculationDirection, type, material, piggable } = pipeline;
-
+          console.log('got here');
           const { oil, water, gas } = (await pipelineFlow({ id, flowCalculationDirection, ctx })) || { oil: 0, water: 0, gas: 0 };
 
           const totalFluids = await totalFluidsCalc({ oil, water, gas });

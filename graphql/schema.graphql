@@ -7,26 +7,6 @@ type AuthPayload {
   user: User
 }
 
-enum BatchFrequencyEnum {
-  Annually
-  Bimonthly
-  Continuous
-  Monthly
-  Quarterly
-  Specialized
-  Weekly
-}
-
-type BatchFrequencyEnumObject {
-  Annually: String!
-  Bimonthly: String!
-  Continuous: String!
-  Monthly: String!
-  Quarterly: String!
-  Specialized: String!
-  Weekly: String!
-}
-
 type BatchProduct {
   cost: Float
   createdAt: DateTime!
@@ -351,10 +331,10 @@ type Mutation {
   editFacility(id: String!, name: String): Facility
   editLicenseChange(comment: String, date: DateTime, id: String!, linkToDocumentation: String, status: StatusEnum, substance: SubstanceEnum): LicenseChangePayload
   editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigType: PigTypeEnum): PigRunPayload
-  editPipeline(batchFrequency: BatchFrequencyEnum, flowCalculationDirection: FlowCalculationDirectionEnum, from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float, yieldStrength: Int): PipelinePayload
+  editPipeline(flowCalculationDirection: FlowCalculationDirectionEnum, from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float, yieldStrength: Int): PipelinePayload
   editPipelineBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, product: String): PipelineBatchPayload
   editPressureTest(comment: String, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pressureTestDate: DateTime, pressureTestReceivedDate: DateTime): PressureTestPayload
-  editRisk(aerialReview: Boolean, comment: String, consequencePeople: Int, dateSlopeChecked: DateTime, environmentProximityTo: EnvironmentProximityToEnum, gasReleaseCost: Float, geotechnicalFacingS1: GeotechnicalFacingEnum, geotechnicalFacingS2: GeotechnicalFacingEnum, geotechnicalHeightS1: Int, geotechnicalHeightS2: Int, geotechnicalSlopeAngleS1: Int, geotechnicalSlopeAngleS2: Int, id: String!, oilReleaseCost: Float, probabilityGeo: Float, releaseTimeDays: Int, repairTimeDays: Int, safeguardExternalCoating: Int, safeguardInternalProtection: Int): RiskPayload
+  editRisk(aerialReview: Boolean, comment: String, consequencePeople: Int, dateSlopeChecked: DateTime, environmentProximityTo: EnvironmentProximityToEnum, gasReleaseCost: Float, geotechnicalFacingS1: GeotechnicalFacingEnum, geotechnicalFacingS2: GeotechnicalFacingEnum, geotechnicalHeightS1: Int, geotechnicalHeightS2: Int, geotechnicalSlopeAngleS1: Int, geotechnicalSlopeAngleS2: Int, id: String!, oilReleaseCost: Float, probabilityGeo: Int, releaseTimeDays: Int, repairTimeDays: Int, safeguardExternalCoating: Int, safeguardInternalProtection: Int): RiskPayload
   editSalesPoint(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, name: String, oil: Float, pipelineId: String, water: Float): SalesPointPayload
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
   editWell(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, name: String, oil: Float, pipelineId: String, water: Float): WellPayload
@@ -430,6 +410,7 @@ enum PigTypeEnum {
   Black3inBall
   Blue3inscraper
   BlueRibbed
+  BlueinScraper
   Foam
   GSCR
   Highline
@@ -444,16 +425,14 @@ enum PigTypeEnum {
   PigType2inPurpleDisc
   PigType2inStubby
   PigType2ingscr
+  PigType2inpurple
   PigType2purple2disc
   PigType3
-  PigType3BluRibbed
-  PigType3BlueRibbed
-  PigType3BrownRibbed
-  PigType3GreenRibbed
   PigType3_scrapper
   PigType3in
   PigType3inArgus
   PigType3inBlueRibbed
+  PigType3inBrownRibbed
   PigType3inGSCR
   PigType3inGreenDisc
   PigType3inGreenRibbed
@@ -469,11 +448,12 @@ enum PigTypeEnum {
   PigType3inpurpledisc
   PigType3inpurplescraper
   PigType3inredscrape
-  PigType3inredstubby
   PigType3inscapper
   PigType3inscr
   PigType3inscraper
   PigType3inscrapper
+  PigType4Green
+  PigType4GreenStubby
   PigType4_GreenRibbed
   PigType4gree2disc
   PigType4green2disc
@@ -496,9 +476,9 @@ enum PigTypeEnum {
   PigType8inFoam
   Purple3inDisc
   Red3inscraper
-  Red3scraper
   Red4inscraper
   RedStubby
+  Redscraper
   SIMAY2018
   ScaperP314
   ScaperPP309
@@ -532,6 +512,7 @@ type PigTypeEnumObject {
   Black3inBall: String!
   Blue3inscraper: String!
   BlueRibbed: String!
+  BlueinScraper: String!
   Foam: String!
   GSCR: String!
   Highline: String!
@@ -546,16 +527,14 @@ type PigTypeEnumObject {
   PigType2inPurpleDisc: String!
   PigType2inStubby: String!
   PigType2ingscr: String!
+  PigType2inpurple: String!
   PigType2purple2disc: String!
   PigType3: String!
-  PigType3BluRibbed: String!
-  PigType3BlueRibbed: String!
-  PigType3BrownRibbed: String!
-  PigType3GreenRibbed: String!
   PigType3_scrapper: String!
   PigType3in: String!
   PigType3inArgus: String!
   PigType3inBlueRibbed: String!
+  PigType3inBrownRibbed: String!
   PigType3inGSCR: String!
   PigType3inGreenDisc: String!
   PigType3inGreenRibbed: String!
@@ -571,11 +550,12 @@ type PigTypeEnumObject {
   PigType3inpurpledisc: String!
   PigType3inpurplescraper: String!
   PigType3inredscrape: String!
-  PigType3inredstubby: String!
   PigType3inscapper: String!
   PigType3inscr: String!
   PigType3inscraper: String!
   PigType3inscrapper: String!
+  PigType4Green: String!
+  PigType4GreenStubby: String!
   PigType4_GreenRibbed: String!
   PigType4gree2disc: String!
   PigType4green2disc: String!
@@ -598,9 +578,9 @@ type PigTypeEnumObject {
   PigType8inFoam: String!
   Purple3inDisc: String!
   Red3inscraper: String!
-  Red3scraper: String!
   Red4inscraper: String!
   RedStubby: String!
+  Redscraper: String!
   SIMAY2018: String!
   ScaperP314: String!
   ScaperPP309: String!
@@ -631,7 +611,6 @@ type PigTypeEnumObject {
 
 type Pipeline {
   authorized: Boolean!
-  batchFrequency: BatchFrequencyEnum
   createdAt: DateTime!
   createdBy: User!
   currentStatus: StatusEnum
@@ -826,7 +805,7 @@ type Risk {
   pipeline: Pipeline!
   probabilityExterior: Int
   probabilityExteriorWithSafeguards: Int
-  probabilityGeo: Float
+  probabilityGeo: Int
   probabilityInterior: Int
   probabilityInteriorWithSafeguards: Int
   releaseTimeDays: Int
@@ -1139,7 +1118,6 @@ input UserUniqueInput {
 
 type Validator {
   anyTextMatchPattern: String!
-  batchFrequencyEnum: BatchFrequencyEnumObject!
   environmentProximityToEnum: EnvironmentProximityToEnumObject!
   flowCalculationDirectionEnum: FlowCalculationDirectionEnumObject!
   fromToFeatureEnum: FromToFeatureEnumObject!

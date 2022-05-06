@@ -8,7 +8,6 @@ import {
 	MaterialEnumMembers,
 	InternalProtectionEnumMembers,
 	FlowCalculationDirectionEnumMembers,
-	BatchFrequencyEnumMembers,
 } from './Pipeline';
 import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
 import { PigTypeEnumMembers, PigInspectionEnumMembers } from './PigRun';
@@ -100,14 +99,6 @@ export const InternalProtectionEnumObject = objectType({
 	}
 });
 
-export const BatchFrequencyEnumObject = objectType({
-	name: 'BatchFrequencyEnumObject',
-	definition(t) {
-		for (const iterator of Object.keys(BatchFrequencyEnumMembers)) {
-			t.nonNull.string(iterator)
-		}
-	}
-});
 
 export const FlowCalculationDirectionEnumObject = objectType({
 	name: 'FlowCalculationDirectionEnumObject',
@@ -206,7 +197,6 @@ export const Validator = objectType({
 		t.nonNull.field('materialEnum', { type: 'MaterialEnumObject' })
 		t.nonNull.string('mopMatchPattern')
 		t.nonNull.field('internalProtectionEnum', { type: 'InternalProtectionEnumObject' })
-		t.nonNull.field('batchFrequencyEnum', { type: 'BatchFrequencyEnumObject' })
 		t.nonNull.field('flowCalculationDirectionEnum', { type: 'FlowCalculationDirectionEnumObject' })
 		t.nonNull.field('pigTypeEnum', { type: 'PigTypeEnumObject' })
 		t.nonNull.field('pigInspectionEnum', { type: 'PigInspectionEnumObject' })
@@ -242,7 +232,6 @@ export const ValidatorQuery = extendType({
 					materialEnum: MaterialEnumMembers,
 					mopMatchPattern,
 					internalProtectionEnum: InternalProtectionEnumMembers,
-					batchFrequencyEnum: BatchFrequencyEnumMembers,
 					flowCalculationDirectionEnum: FlowCalculationDirectionEnumMembers,
 					pigTypeEnum: PigTypeEnumMembers,
 					pigInspectionEnum: PigInspectionEnumMembers,
