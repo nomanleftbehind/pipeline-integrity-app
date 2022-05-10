@@ -406,17 +406,6 @@ enum SolubilityEnum {
   @@map("solubility")
 }
 
-// enum BatchFrequencyEnum {
-//   Continuous
-//   Quarterly
-//   Bimonthly
-//   Monthly
-//   Annually
-//   Weekly
-//   Specialized
-
-//   @@map("batch_frequency")
-// }
 
 enum FromToFeatureEnum {
   BlindEnd               @map("Blind end")

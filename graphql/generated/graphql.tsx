@@ -35,6 +35,48 @@ export type BatchProduct = {
   wellBatches?: Maybe<Array<Maybe<WellBatch>>>;
 };
 
+export type Chemical = {
+  authorized: Scalars['Boolean'];
+  bacteria?: Maybe<Scalars['Boolean']>;
+  bacteriaTreatment?: Maybe<Scalars['Boolean']>;
+  baselineFluidAnalysisDate?: Maybe<Scalars['DateTime']>;
+  batchFrequency?: Maybe<Scalars['Int']>;
+  chemicalSupplier?: Maybe<ChemicalSupplier>;
+  co2?: Maybe<Scalars['Boolean']>;
+  comment?: Maybe<Scalars['String']>;
+  continuousInjection?: Maybe<Scalars['Boolean']>;
+  createdAt: Scalars['DateTime'];
+  createdBy: User;
+  downholeBatch?: Maybe<Scalars['Boolean']>;
+  h2s?: Maybe<Scalars['Boolean']>;
+  id: Scalars['String'];
+  inhibitorPipelineBatch?: Maybe<Scalars['Boolean']>;
+  injectionRate?: Maybe<Scalars['Float']>;
+  o2?: Maybe<Scalars['Boolean']>;
+  pipeline: Pipeline;
+  scaleTreatment?: Maybe<Scalars['Boolean']>;
+  scaling?: Maybe<Scalars['Boolean']>;
+  updatedAt: Scalars['DateTime'];
+  updatedBy: User;
+};
+
+export type ChemicalPayload = {
+  chemical?: Maybe<Chemical>;
+  error?: Maybe<FieldError>;
+};
+
+export type ChemicalSupplier = {
+  authorized: Scalars['Boolean'];
+  chemicals?: Maybe<Array<Maybe<Chemical>>>;
+  createdAt: Scalars['DateTime'];
+  createdBy: User;
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  updatedBy: User;
+};
+
 export type EnumObject = {
   databaseEnum: Scalars['String'];
   serverEnum: Scalars['String'];
@@ -315,6 +357,7 @@ export type MaterialEnumObject = {
 };
 
 export type Mutation = {
+  addChemical?: Maybe<ChemicalPayload>;
   addLicenseChange?: Maybe<LicenseChangePayload>;
   addPigRun?: Maybe<PigRunPayload>;
   addPipelineBatch?: Maybe<PipelineBatchPayload>;
@@ -325,6 +368,7 @@ export type Mutation = {
   connectSalesPoint?: Maybe<SalesPointPayload>;
   connectWell?: Maybe<WellPayload>;
   createFacility?: Maybe<Facility>;
+  deleteChemical?: Maybe<ChemicalPayload>;
   deleteLicenseChange?: Maybe<LicenseChangePayload>;
   deletePigRun?: Maybe<PigRunPayload>;
   deletePipeline?: Maybe<PipelinePayload>;
@@ -337,6 +381,7 @@ export type Mutation = {
   disconnectSalesPoint?: Maybe<SalesPointPayload>;
   disconnectWell?: Maybe<WellPayload>;
   duplicatePipeline?: Maybe<PipelinePayload>;
+  editChemical?: Maybe<ChemicalPayload>;
   editFacility?: Maybe<Facility>;
   editLicenseChange?: Maybe<LicenseChangePayload>;
   editPigRun?: Maybe<PigRunPayload>;
@@ -351,6 +396,11 @@ export type Mutation = {
   login?: Maybe<AuthPayload>;
   logout?: Maybe<Scalars['Boolean']>;
   signup?: Maybe<AuthPayload>;
+};
+
+
+export type MutationAddChemicalArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -404,6 +454,11 @@ export type MutationConnectWellArgs = {
 
 export type MutationCreateFacilityArgs = {
   data: FacilityCreateInput;
+};
+
+
+export type MutationDeleteChemicalArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -465,6 +520,25 @@ export type MutationDisconnectWellArgs = {
 
 export type MutationDuplicatePipelineArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationEditChemicalArgs = {
+  bacteria?: Maybe<Scalars['Boolean']>;
+  bacteriaTreatment?: Maybe<Scalars['Boolean']>;
+  baselineFluidAnalysisDate?: Maybe<Scalars['DateTime']>;
+  batchFrequency?: Maybe<Scalars['Int']>;
+  co2?: Maybe<Scalars['Boolean']>;
+  comment?: Maybe<Scalars['String']>;
+  continuousInjection?: Maybe<Scalars['Boolean']>;
+  downholeBatch?: Maybe<Scalars['Boolean']>;
+  h2s?: Maybe<Scalars['Boolean']>;
+  id: Scalars['String'];
+  inhibitorPipelineBatch?: Maybe<Scalars['Boolean']>;
+  injectionRate?: Maybe<Scalars['Float']>;
+  o2?: Maybe<Scalars['Boolean']>;
+  scaleTreatment?: Maybe<Scalars['Boolean']>;
+  scaling?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1033,6 +1107,7 @@ export type Query = {
   allFacilities?: Maybe<Array<Maybe<Facility>>>;
   allSatellites?: Maybe<Array<Maybe<Satellite>>>;
   allUsers?: Maybe<Array<Maybe<User>>>;
+  chemicalById?: Maybe<Chemical>;
   connectedPipelinesByPipelineId?: Maybe<PipelinesFlowAndSourceGroupBy>;
   licenseChangesByPipelineId?: Maybe<Array<Maybe<LicenseChange>>>;
   me?: Maybe<User>;
@@ -1056,6 +1131,11 @@ export type Query = {
   wellOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   wellsByPipelineId?: Maybe<Array<Maybe<Well>>>;
   wellsGroupByPipelineId?: Maybe<SourceGroupBy>;
+};
+
+
+export type QueryChemicalByIdArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -1364,6 +1444,7 @@ export type SubstanceEnumObject = {
 };
 
 export enum TableEnum {
+  Chemical = 'chemical',
   Facility = 'facility',
   LicenseChanges = 'licenseChanges',
   PigRuns = 'pigRuns',
@@ -1855,6 +1936,41 @@ export type DeleteRiskMutationVariables = Exact<{
 
 export type DeleteRiskMutation = { deleteRisk?: { risk?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
+export type EditChemicalMutationVariables = Exact<{
+  id: Scalars['String'];
+  baselineFluidAnalysisDate?: Maybe<Scalars['DateTime']>;
+  scaling?: Maybe<Scalars['Boolean']>;
+  bacteria?: Maybe<Scalars['Boolean']>;
+  co2?: Maybe<Scalars['Boolean']>;
+  o2?: Maybe<Scalars['Boolean']>;
+  h2S?: Maybe<Scalars['Boolean']>;
+  continuousInjection?: Maybe<Scalars['Boolean']>;
+  injectionRate?: Maybe<Scalars['Float']>;
+  downholeBatch?: Maybe<Scalars['Boolean']>;
+  inhibitorPipelineBatch?: Maybe<Scalars['Boolean']>;
+  bacteriaTreatment?: Maybe<Scalars['Boolean']>;
+  scaleTreatment?: Maybe<Scalars['Boolean']>;
+  batchFrequency?: Maybe<Scalars['Int']>;
+  comment?: Maybe<Scalars['String']>;
+}>;
+
+
+export type EditChemicalMutation = { editChemical?: { chemical?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type AddChemicalMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type AddChemicalMutation = { addChemical?: { chemical?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type DeleteChemicalMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteChemicalMutation = { deleteChemical?: { chemical?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -2038,6 +2154,13 @@ export type RiskByIdQueryVariables = Exact<{
 
 
 export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, consequenceEnviro?: number | null | undefined, consequenceAsset?: number | null | undefined, probabilityInterior?: number | null | undefined, probabilityExterior?: number | null | undefined, consequenceMax?: number | null | undefined, riskPotentialGeo?: number | null | undefined, riskPotentialInternal?: number | null | undefined, riskPotentialExternal?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, consequencePeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: number | null | undefined, safeguardPigging?: number | null | undefined, safeguardChemicalInhibition?: number | null | undefined, probabilityInteriorWithSafeguards?: number | null | undefined, riskPotentialInternalWithSafeguards?: number | null | undefined, safeguardExternalCoating?: number | null | undefined, safeguardCathodic?: number | null | undefined, probabilityExteriorWithSafeguards?: number | null | undefined, riskPotentialExternalWithSafeguards?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
+
+export type ChemicalByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type ChemicalByIdQuery = { chemicalById?: { id: string, baselineFluidAnalysisDate?: string | null | undefined, scaling?: boolean | null | undefined, bacteria?: boolean | null | undefined, co2?: boolean | null | undefined, o2?: boolean | null | undefined, h2s?: boolean | null | undefined, continuousInjection?: boolean | null | undefined, injectionRate?: number | null | undefined, downholeBatch?: boolean | null | undefined, inhibitorPipelineBatch?: boolean | null | undefined, bacteriaTreatment?: boolean | null | undefined, scaleTreatment?: boolean | null | undefined, batchFrequency?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, chemicalSupplier?: { name: string } | null | undefined, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
 
 export type PipelinesFlowQueryVariables = Exact<{
   idList: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
@@ -3375,6 +3498,153 @@ export function useDeleteRiskMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteRiskMutationHookResult = ReturnType<typeof useDeleteRiskMutation>;
 export type DeleteRiskMutationResult = Apollo.MutationResult<DeleteRiskMutation>;
 export type DeleteRiskMutationOptions = Apollo.BaseMutationOptions<DeleteRiskMutation, DeleteRiskMutationVariables>;
+export const EditChemicalDocument = gql`
+    mutation EditChemical($id: String!, $baselineFluidAnalysisDate: DateTime, $scaling: Boolean, $bacteria: Boolean, $co2: Boolean, $o2: Boolean, $h2S: Boolean, $continuousInjection: Boolean, $injectionRate: Float, $downholeBatch: Boolean, $inhibitorPipelineBatch: Boolean, $bacteriaTreatment: Boolean, $scaleTreatment: Boolean, $batchFrequency: Int, $comment: String) {
+  editChemical(
+    id: $id
+    baselineFluidAnalysisDate: $baselineFluidAnalysisDate
+    scaling: $scaling
+    bacteria: $bacteria
+    co2: $co2
+    o2: $o2
+    h2s: $h2S
+    continuousInjection: $continuousInjection
+    injectionRate: $injectionRate
+    downholeBatch: $downholeBatch
+    inhibitorPipelineBatch: $inhibitorPipelineBatch
+    bacteriaTreatment: $bacteriaTreatment
+    scaleTreatment: $scaleTreatment
+    batchFrequency: $batchFrequency
+    comment: $comment
+  ) {
+    chemical {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type EditChemicalMutationFn = Apollo.MutationFunction<EditChemicalMutation, EditChemicalMutationVariables>;
+
+/**
+ * __useEditChemicalMutation__
+ *
+ * To run a mutation, you first call `useEditChemicalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditChemicalMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editChemicalMutation, { data, loading, error }] = useEditChemicalMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      baselineFluidAnalysisDate: // value for 'baselineFluidAnalysisDate'
+ *      scaling: // value for 'scaling'
+ *      bacteria: // value for 'bacteria'
+ *      co2: // value for 'co2'
+ *      o2: // value for 'o2'
+ *      h2S: // value for 'h2S'
+ *      continuousInjection: // value for 'continuousInjection'
+ *      injectionRate: // value for 'injectionRate'
+ *      downholeBatch: // value for 'downholeBatch'
+ *      inhibitorPipelineBatch: // value for 'inhibitorPipelineBatch'
+ *      bacteriaTreatment: // value for 'bacteriaTreatment'
+ *      scaleTreatment: // value for 'scaleTreatment'
+ *      batchFrequency: // value for 'batchFrequency'
+ *      comment: // value for 'comment'
+ *   },
+ * });
+ */
+export function useEditChemicalMutation(baseOptions?: Apollo.MutationHookOptions<EditChemicalMutation, EditChemicalMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditChemicalMutation, EditChemicalMutationVariables>(EditChemicalDocument, options);
+      }
+export type EditChemicalMutationHookResult = ReturnType<typeof useEditChemicalMutation>;
+export type EditChemicalMutationResult = Apollo.MutationResult<EditChemicalMutation>;
+export type EditChemicalMutationOptions = Apollo.BaseMutationOptions<EditChemicalMutation, EditChemicalMutationVariables>;
+export const AddChemicalDocument = gql`
+    mutation AddChemical($id: String!) {
+  addChemical(id: $id) {
+    chemical {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type AddChemicalMutationFn = Apollo.MutationFunction<AddChemicalMutation, AddChemicalMutationVariables>;
+
+/**
+ * __useAddChemicalMutation__
+ *
+ * To run a mutation, you first call `useAddChemicalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddChemicalMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addChemicalMutation, { data, loading, error }] = useAddChemicalMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAddChemicalMutation(baseOptions?: Apollo.MutationHookOptions<AddChemicalMutation, AddChemicalMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddChemicalMutation, AddChemicalMutationVariables>(AddChemicalDocument, options);
+      }
+export type AddChemicalMutationHookResult = ReturnType<typeof useAddChemicalMutation>;
+export type AddChemicalMutationResult = Apollo.MutationResult<AddChemicalMutation>;
+export type AddChemicalMutationOptions = Apollo.BaseMutationOptions<AddChemicalMutation, AddChemicalMutationVariables>;
+export const DeleteChemicalDocument = gql`
+    mutation DeleteChemical($id: String!) {
+  deleteChemical(id: $id) {
+    chemical {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type DeleteChemicalMutationFn = Apollo.MutationFunction<DeleteChemicalMutation, DeleteChemicalMutationVariables>;
+
+/**
+ * __useDeleteChemicalMutation__
+ *
+ * To run a mutation, you first call `useDeleteChemicalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteChemicalMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteChemicalMutation, { data, loading, error }] = useDeleteChemicalMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteChemicalMutation(baseOptions?: Apollo.MutationHookOptions<DeleteChemicalMutation, DeleteChemicalMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteChemicalMutation, DeleteChemicalMutationVariables>(DeleteChemicalDocument, options);
+      }
+export type DeleteChemicalMutationHookResult = ReturnType<typeof useDeleteChemicalMutation>;
+export type DeleteChemicalMutationResult = Apollo.MutationResult<DeleteChemicalMutation>;
+export type DeleteChemicalMutationOptions = Apollo.BaseMutationOptions<DeleteChemicalMutation, DeleteChemicalMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -5330,6 +5600,69 @@ export function useRiskByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<R
 export type RiskByIdQueryHookResult = ReturnType<typeof useRiskByIdQuery>;
 export type RiskByIdLazyQueryHookResult = ReturnType<typeof useRiskByIdLazyQuery>;
 export type RiskByIdQueryResult = Apollo.QueryResult<RiskByIdQuery, RiskByIdQueryVariables>;
+export const ChemicalByIdDocument = gql`
+    query ChemicalById($id: String!) {
+  chemicalById(id: $id) {
+    id
+    baselineFluidAnalysisDate
+    scaling
+    bacteria
+    co2
+    o2
+    h2s
+    continuousInjection
+    injectionRate
+    downholeBatch
+    inhibitorPipelineBatch
+    bacteriaTreatment
+    scaleTreatment
+    batchFrequency
+    comment
+    createdAt
+    updatedAt
+    authorized
+    chemicalSupplier {
+      name
+    }
+    createdBy {
+      id
+      email
+    }
+    updatedBy {
+      id
+      email
+    }
+  }
+}
+    `;
+
+/**
+ * __useChemicalByIdQuery__
+ *
+ * To run a query within a React component, call `useChemicalByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChemicalByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChemicalByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useChemicalByIdQuery(baseOptions: Apollo.QueryHookOptions<ChemicalByIdQuery, ChemicalByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ChemicalByIdQuery, ChemicalByIdQueryVariables>(ChemicalByIdDocument, options);
+      }
+export function useChemicalByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChemicalByIdQuery, ChemicalByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ChemicalByIdQuery, ChemicalByIdQueryVariables>(ChemicalByIdDocument, options);
+        }
+export type ChemicalByIdQueryHookResult = ReturnType<typeof useChemicalByIdQuery>;
+export type ChemicalByIdLazyQueryHookResult = ReturnType<typeof useChemicalByIdLazyQuery>;
+export type ChemicalByIdQueryResult = Apollo.QueryResult<ChemicalByIdQuery, ChemicalByIdQueryVariables>;
 export const PipelinesFlowDocument = gql`
     query PipelinesFlow($idList: [String]!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
   pipelinesFlow(

@@ -357,3 +357,39 @@ mutation DeleteRisk($id: String!) {
     }
   }
 }
+
+mutation EditChemical($id: String!, $baselineFluidAnalysisDate: DateTime, $scaling: Boolean, $bacteria: Boolean, $co2: Boolean, $o2: Boolean, $h2S: Boolean, $continuousInjection: Boolean, $injectionRate: Float, $downholeBatch: Boolean, $inhibitorPipelineBatch: Boolean, $bacteriaTreatment: Boolean, $scaleTreatment: Boolean, $batchFrequency: Int, $comment: String) {
+  editChemical(id: $id, baselineFluidAnalysisDate: $baselineFluidAnalysisDate, scaling: $scaling, bacteria: $bacteria, co2: $co2, o2: $o2, h2s: $h2S, continuousInjection: $continuousInjection, injectionRate: $injectionRate, downholeBatch: $downholeBatch, inhibitorPipelineBatch: $inhibitorPipelineBatch, bacteriaTreatment: $bacteriaTreatment, scaleTreatment: $scaleTreatment, batchFrequency: $batchFrequency, comment: $comment) {
+    chemical {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
+mutation AddChemical($id: String!) {
+  addChemical(id: $id) {
+    chemical {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
+mutation DeleteChemical($id: String!) {
+  deleteChemical(id: $id) {
+    chemical {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}

@@ -299,7 +299,8 @@ export default function Risk({ id, license, segment, flowCalculationDirection, c
           </IconButton>}
       </div>
       {renderRisk()}
-    </div>);
+    </div>
+  );
 }
 
 

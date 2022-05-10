@@ -6,6 +6,7 @@ import PressureTests from './PressureTests';
 import PigRuns from './PigRuns';
 import PipelineBatches from './PipelineBatches';
 import Risk from './Risk';
+import Chemical from './Chemical';
 import { IEditRecordFunction } from '../fields/RecordEntry';
 import { IPipeline } from './RenderPipeline';
 import Collapse from '@mui/material/Collapse';
@@ -22,7 +23,7 @@ export interface IPipelineDataProps {
   isEven: "even" | "odd";
 }
 
-type IView = 'license change' | 'connected source' | 'mechanical properties' | 'pressure test' | 'pig run' | 'pipeline batch' | 'risk' | 'system fields';
+type IView = 'license change' | 'connected source' | 'mechanical properties' | 'pressure test' | 'pig run' | 'pipeline batch' | 'risk' | 'chemical' | 'system fields';
 
 interface ITabPanelMap {
   title: string;
@@ -108,6 +109,13 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, au
         firstLicenseDate={firstLicenseDate}
       />
     }
+    if (view === 'chemical') {
+      return <Chemical
+        id={id}
+        license={license}
+        segment={segment}
+      />
+    }
     // if (view === 'system fields') {
     //   return <PipelineProperties
     //     open={open}
@@ -126,9 +134,10 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, au
     { title: 'Pressure Tests', view: 'pressure test' },
     { title: 'Pig Runs', view: 'pig run' },
     { title: 'Pipeline Batches', view: 'pipeline batch' },
+    { title: 'Chemical', view: 'chemical' },
     { title: 'Risk', view: 'risk' },
     { title: 'System Fields', view: 'system fields' },
-  ]
+  ];
 
 
   return (

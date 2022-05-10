@@ -1092,6 +1092,40 @@ query RiskById($id: String!) {
   }
 }
 
+query ChemicalById($id: String!) {
+  chemicalById(id: $id) {
+    id
+    baselineFluidAnalysisDate
+    scaling
+    bacteria
+    co2
+    o2
+    h2s
+    continuousInjection
+    injectionRate
+    downholeBatch
+    inhibitorPipelineBatch
+    bacteriaTreatment
+    scaleTreatment
+    batchFrequency
+    comment
+    createdAt
+    updatedAt
+    authorized
+    chemicalSupplier {
+      name
+    }
+    createdBy {
+      id
+      email
+    }
+    updatedBy {
+      id
+      email
+    }
+  }
+}
+
 query PipelinesFlow($idList: [String]!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
   pipelinesFlow(idList: $idList, flowCalculationDirection: $flowCalculationDirection) {
     id

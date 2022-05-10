@@ -11,6 +11,8 @@ export * from './PipelineBatch';
 export * from './WellBatch';
 export * from './PressureTest';
 export * from './Risk';
+export * from './Chemical';
+export * from './ChemicalSupplier';
 export * from './Well';
 export * from './SalesPoint';
 export * from './PipelineFlow';

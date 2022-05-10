@@ -15,6 +15,7 @@ import '../styles/pig-run.css';
 import '../styles/pipeline-batch.css';
 import '../styles/pressure-test.css';
 import '../styles/injection-point.css';
+import '../styles/chemical.css';
 import '../styles/risk.css';
 import '../styles/search-navigation.css';
 import '../styles/button-container.css';

@@ -21,6 +21,48 @@ type BatchProduct {
   wellBatches: [WellBatch]
 }
 
+type Chemical {
+  authorized: Boolean!
+  bacteria: Boolean
+  bacteriaTreatment: Boolean
+  baselineFluidAnalysisDate: DateTime
+  batchFrequency: Int
+  chemicalSupplier: ChemicalSupplier
+  co2: Boolean
+  comment: String
+  continuousInjection: Boolean
+  createdAt: DateTime!
+  createdBy: User!
+  downholeBatch: Boolean
+  h2s: Boolean
+  id: String!
+  inhibitorPipelineBatch: Boolean
+  injectionRate: Float
+  o2: Boolean
+  pipeline: Pipeline!
+  scaleTreatment: Boolean
+  scaling: Boolean
+  updatedAt: DateTime!
+  updatedBy: User!
+}
+
+type ChemicalPayload {
+  chemical: Chemical
+  error: FieldError
+}
+
+type ChemicalSupplier {
+  authorized: Boolean!
+  chemicals: [Chemical]
+  createdAt: DateTime!
+  createdBy: User!
+  description: String
+  id: String!
+  name: String!
+  updatedAt: DateTime!
+  updatedBy: User!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -306,6 +348,7 @@ type MaterialEnumObject {
 }
 
 type Mutation {
+  addChemical(id: String!): ChemicalPayload
   addLicenseChange(pipelineId: String!): LicenseChangePayload
   addPigRun(pipelineId: String!): PigRunPayload
   addPipelineBatch(pipelineId: String!): PipelineBatchPayload
@@ -316,6 +359,7 @@ type Mutation {
   connectSalesPoint(id: String!, pipelineId: String!): SalesPointPayload
   connectWell(id: String!, pipelineId: String!): WellPayload
   createFacility(data: FacilityCreateInput!): Facility
+  deleteChemical(id: String!): ChemicalPayload
   deleteLicenseChange(id: String!): LicenseChangePayload
   deletePigRun(id: String!): PigRunPayload
   deletePipeline(id: String!): PipelinePayload
@@ -328,6 +372,7 @@ type Mutation {
   disconnectSalesPoint(id: String!): SalesPointPayload
   disconnectWell(id: String!): WellPayload
   duplicatePipeline(id: String!): PipelinePayload
+  editChemical(bacteria: Boolean, bacteriaTreatment: Boolean, baselineFluidAnalysisDate: DateTime, batchFrequency: Int, co2: Boolean, comment: String, continuousInjection: Boolean, downholeBatch: Boolean, h2s: Boolean, id: String!, inhibitorPipelineBatch: Boolean, injectionRate: Float, o2: Boolean, scaleTreatment: Boolean, scaling: Boolean): ChemicalPayload
   editFacility(id: String!, name: String): Facility
   editLicenseChange(comment: String, date: DateTime, id: String!, linkToDocumentation: String, status: StatusEnum, substance: SubstanceEnum): LicenseChangePayload
   editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigType: PigTypeEnum): PigRunPayload
@@ -755,6 +800,7 @@ type Query {
   allFacilities: [Facility]
   allSatellites: [Satellite]
   allUsers: [User]
+  chemicalById(id: String!): Chemical
   connectedPipelinesByPipelineId(flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): PipelinesFlowAndSourceGroupBy
   licenseChangesByPipelineId(pipelineId: String!): [LicenseChange]
   me: User
@@ -993,6 +1039,7 @@ type SubstanceEnumObject {
 }
 
 enum TableEnum {
+  chemical
   facility
   licenseChanges
   pigRuns

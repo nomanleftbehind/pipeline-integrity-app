@@ -1,6 +1,7 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
 import { PipelineObjectFields } from './Pipeline';
 import { RiskObjectFields } from './Risk';
+import { ChemicalObjectFields } from './Chemical';
 import { WellObjectFields } from './Well';
 import { SalesPointObjectFields } from './SalesPoint';
 import { LicenseChangeObjectFields } from './LicenseChange';
@@ -35,6 +36,7 @@ interface ITableObjectExtend extends Omit<NexusGenObjects['SearchNavigationObjec
 export const TableEnumMembers = {
   pipeline: 'pipeline',
   risk: 'risk',
+  chemical: 'chemical',
   facility: 'facility',
   satellite: 'satellite',
   wells: 'wells',
@@ -99,6 +101,12 @@ const searchNavigationObjectRisk = RiskObjectFields
     return newObj;
   });
 
+const searchNavigationObjectChemical = ChemicalObjectFields
+  .map((obj) => {
+    const newObj: ITableObjectExtend = { table: 'chemical', ...obj };
+    return newObj;
+  });
+
 const searchNavigationObjectWell = WellObjectFields
   .map((obj) => {
     const newObj: ITableObjectExtend = { table: 'wells', ...obj };
@@ -138,6 +146,7 @@ const searchNavigationObjectPipelineBatch = PipelineBatchObjectFields
 const searchNavigationObject = searchNavigationObjectPipeline
   .concat(
     searchNavigationObjectRisk,
+    searchNavigationObjectChemical,
     searchNavigationObjectWell,
     searchNavigationObjectSalesPoint,
     searchNavigationObjectLicenseChange,

@@ -1,0 +1,21 @@
+.chemical {
+  display: grid;
+  grid-template-columns: 30px auto;
+  row-gap: 2px;
+  column-gap: 4px;
+  /* grid-auto-rows: 30px auto; */
+  /* flex-direction: row;
+  justify-content: space-between; */
+}
+
+
+
+.chemical-fields {
+  padding: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 240px);
+  column-gap: 10px;
+  row-gap: 20px;
+  grid-template-rows: minmax(50px, auto);
+  /* border: 2px solid black; */
+}
