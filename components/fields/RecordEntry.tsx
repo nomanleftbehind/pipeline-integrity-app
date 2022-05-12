@@ -127,6 +127,32 @@ export default function RecordEntry({ id, columnName, columnType, nullable, reco
 
   const recordDisplay = switchRecordDisplay();
 
+  const switchinitialValue = () => {
+    if (record == null) {
+      if (validatorIsObject) {
+        return Object.keys(validator)[0]
+      }
+      if (columnType === 'boolean') {
+        return 'true'
+      }
+      return '';
+    }
+    if (columnType === 'date' && typeof record === 'string') {
+      return record.slice(0, 10);
+    }
+    if (columnType === 'boolean') {
+      if (record === true) {
+        return 'true'
+      }
+      if (record === false) {
+        return 'false'
+      }
+    }
+    return record;
+  }
+
+  const initialValue = switchinitialValue();
+
   const validationSchema = Yup.object().shape({ [columnName]: Yup.string().required('required').nullable(true), });
 
   return (
@@ -139,15 +165,17 @@ export default function RecordEntry({ id, columnName, columnType, nullable, reco
     >{edit && editRecord && authorized ?
       <Formik
         initialValues={{
-          [columnName]: record == null ? validatorIsObject ? Object.keys(validator)[0] : '' : (columnType === 'date' && typeof record === 'string') ? record.slice(0, 10) : record,
+          [columnName]: initialValue,
         }}
         validationSchema={validationSchema}
         onSubmit={(values: IValues, { setFieldError }: FormikHelpers<IValues>) => {
           try {
             editRecord({ id, columnName, columnType, newRecord: values[columnName] });
-          } catch (err) {
-            const apolloErr = err as ApolloError;
-            setFieldError(columnName, apolloErr.message);
+          } catch (e) {
+            if (e instanceof ApolloError) {
+              setFieldError(columnName, e.message);
+            }
+            throw e;
           }
           setEdit(false);
           setSelected(false);
@@ -173,16 +201,24 @@ export default function RecordEntry({ id, columnName, columnType, nullable, reco
                       {validatorDatabase}
                     </option>)}
                 </DOMSelectInput> :
-                <TextInputRecordEntry
-                  className={`record-entry-input${valid ? ' valid' : ' invalid'}`}
-                  name={columnName}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-                    handleValidation(e);
-                    handleChange(e);
-                  }}
-                  type={columnType === 'date' ? 'date' : columnType === 'number' ? 'number' : columnType === 'link' ? 'url' : 'text'}
-                  autoComplete='off'
-                />}
+                columnType === 'boolean' ?
+                  <DOMSelectInput
+                    className='record-entry-input'
+                    name={columnName}
+                  >
+                    <option value='true' >Y</option>
+                    <option value='false' >N</option>
+                  </DOMSelectInput> :
+                  <TextInputRecordEntry
+                    className={`record-entry-input${valid ? ' valid' : ' invalid'}`}
+                    name={columnName}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+                      handleValidation(e);
+                      handleChange(e);
+                    }}
+                    type={columnType === 'date' ? 'date' : columnType === 'number' ? 'number' : columnType === 'link' ? 'url' : 'text'}
+                    autoComplete='off'
+                  />}
               <div>
                 <IconButton aria-label='submit cell' size='small' type='submit' disabled={!valid}>
                   <CheckCircleOutlineIcon />

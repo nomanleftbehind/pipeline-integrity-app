@@ -32,7 +32,7 @@ export default function PipelineIntegrityApp({ Component, pageProps }: AppLayout
   return (
     <ApolloProvider client={apolloClient}>
       <AuthProvider>
-        <Layout title='Pipeline Database'>
+        <Layout title='Pipeline Integrity'>
           <Component {...pageProps} />
         </Layout>
       </AuthProvider>

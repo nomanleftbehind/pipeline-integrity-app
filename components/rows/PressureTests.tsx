@@ -72,6 +72,13 @@ export default function PressureTests({ pipelineId }: IPressureTestsProps) {
             const date = new Date(newRecord);
             return date.toISOString();
           }
+        case 'boolean':
+          if (newRecord === 'true') {
+            return true;
+          }
+          if (newRecord === 'false') {
+            return false;
+          }
         default:
           return newRecord;
       }

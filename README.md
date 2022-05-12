@@ -1,4 +1,4 @@
-## Pipeline Database
+## Pipeline Integrity
 
 Web app with simple user interface and intuitive functionality for tracking pipeline integrity.
 

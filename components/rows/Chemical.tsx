@@ -71,6 +71,7 @@ export default function Chemical({ id, license, segment }: IChemicalProps) {
   });
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
+
     const switchNewRecord = () => {
       switch (columnType) {
         case 'number':
@@ -82,6 +83,13 @@ export default function Chemical({ id, license, segment }: IChemicalProps) {
           if (newRecord && typeof newRecord !== 'boolean') {
             const date = new Date(newRecord);
             return date.toISOString();
+          }
+        case 'boolean':
+          if (newRecord === 'true') {
+            return true;
+          }
+          if (newRecord === 'false') {
+            return false;
           }
         default:
           return newRecord;
@@ -117,9 +125,9 @@ export default function Chemical({ id, license, segment }: IChemicalProps) {
         { columnName: 'baselineFluidAnalysisDate', record: baselineFluidAnalysisDate, label: 'Baseline Fluid Analysis Date', columnType: 'date', nullable: true, editRecord },
         { columnName: 'scaling', record: scaling, label: 'Scaling', columnType: 'boolean', nullable: true, editRecord },
         { columnName: 'bacteria', record: bacteria, label: 'Bacteria', columnType: 'boolean', nullable: true, editRecord },
-        { columnName: 'co2', record: co2, label: 'CO2', columnType: 'boolean', nullable: true, editRecord },
-        { columnName: 'o2', record: o2, label: 'O2', columnType: 'boolean', nullable: true, editRecord },
-        { columnName: 'h2s', record: h2s, label: 'H2S', columnType: 'boolean', nullable: true, editRecord },
+        { columnName: 'co2', record: co2, label: 'CO₂', columnType: 'boolean', nullable: true, editRecord },
+        { columnName: 'o2', record: o2, label: 'O₂', columnType: 'boolean', nullable: true, editRecord },
+        { columnName: 'h2s', record: h2s, label: 'H₂S', columnType: 'boolean', nullable: true, editRecord },
         { columnName: 'continuousInjection', record: continuousInjection, label: 'Continuous Injection', columnType: 'boolean', nullable: true, editRecord },
         { columnName: 'injectionRate', record: injectionRate, label: 'Injection Rate (L/day)', columnType: 'number', nullable: true, editRecord },
         { columnName: 'downholeBatch', record: downholeBatch, label: 'Downhole Batch', columnType: 'boolean', nullable: true, editRecord },

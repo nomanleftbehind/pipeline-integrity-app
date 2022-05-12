@@ -1943,7 +1943,7 @@ export type EditChemicalMutationVariables = Exact<{
   bacteria?: Maybe<Scalars['Boolean']>;
   co2?: Maybe<Scalars['Boolean']>;
   o2?: Maybe<Scalars['Boolean']>;
-  h2S?: Maybe<Scalars['Boolean']>;
+  h2s?: Maybe<Scalars['Boolean']>;
   continuousInjection?: Maybe<Scalars['Boolean']>;
   injectionRate?: Maybe<Scalars['Float']>;
   downholeBatch?: Maybe<Scalars['Boolean']>;
@@ -3499,7 +3499,7 @@ export type DeleteRiskMutationHookResult = ReturnType<typeof useDeleteRiskMutati
 export type DeleteRiskMutationResult = Apollo.MutationResult<DeleteRiskMutation>;
 export type DeleteRiskMutationOptions = Apollo.BaseMutationOptions<DeleteRiskMutation, DeleteRiskMutationVariables>;
 export const EditChemicalDocument = gql`
-    mutation EditChemical($id: String!, $baselineFluidAnalysisDate: DateTime, $scaling: Boolean, $bacteria: Boolean, $co2: Boolean, $o2: Boolean, $h2S: Boolean, $continuousInjection: Boolean, $injectionRate: Float, $downholeBatch: Boolean, $inhibitorPipelineBatch: Boolean, $bacteriaTreatment: Boolean, $scaleTreatment: Boolean, $batchFrequency: Int, $comment: String) {
+    mutation EditChemical($id: String!, $baselineFluidAnalysisDate: DateTime, $scaling: Boolean, $bacteria: Boolean, $co2: Boolean, $o2: Boolean, $h2s: Boolean, $continuousInjection: Boolean, $injectionRate: Float, $downholeBatch: Boolean, $inhibitorPipelineBatch: Boolean, $bacteriaTreatment: Boolean, $scaleTreatment: Boolean, $batchFrequency: Int, $comment: String) {
   editChemical(
     id: $id
     baselineFluidAnalysisDate: $baselineFluidAnalysisDate
@@ -3507,7 +3507,7 @@ export const EditChemicalDocument = gql`
     bacteria: $bacteria
     co2: $co2
     o2: $o2
-    h2s: $h2S
+    h2s: $h2s
     continuousInjection: $continuousInjection
     injectionRate: $injectionRate
     downholeBatch: $downholeBatch
@@ -3548,7 +3548,7 @@ export type EditChemicalMutationFn = Apollo.MutationFunction<EditChemicalMutatio
  *      bacteria: // value for 'bacteria'
  *      co2: // value for 'co2'
  *      o2: // value for 'o2'
- *      h2S: // value for 'h2S'
+ *      h2s: // value for 'h2s'
  *      continuousInjection: // value for 'continuousInjection'
  *      injectionRate: // value for 'injectionRate'
  *      downholeBatch: // value for 'downholeBatch'

@@ -7,19 +7,10 @@ import { getUser } from '../lib/user';
 import { IGetServerSideProps } from './register';
 
 function Index() {
-  // const { user, authLoading } = useAuth() || {};
-  // const router = useRouter();
-
-  // useEffect(() => {
-  //   if (!user && !authLoading) {
-  //     router.push('/register');
-  //   }
-  // }, [user, authLoading]);
-
 
   return (
     <section>
-      <h2>Welcome to Pipeline Database web app</h2>
+      <h2>Welcome to Pipeline Integrity web app</h2>
       <p>
         Click buttons in the navigation bar to view or edit desired entities.
       </p>

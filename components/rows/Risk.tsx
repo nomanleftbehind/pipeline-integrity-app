@@ -93,6 +93,13 @@ export default function Risk({ id, license, segment, flowCalculationDirection, c
             const date = new Date(newRecord);
             return date.toISOString();
           }
+        case 'boolean':
+          if (newRecord === 'true') {
+            return true;
+          }
+          if (newRecord === 'false') {
+            return false;
+          }
         default:
           return newRecord;
       }

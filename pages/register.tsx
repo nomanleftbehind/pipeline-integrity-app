@@ -105,9 +105,11 @@ function Register({ userCount, user }: IServerSideProps) {
                 setFieldError('email', errors.map(error => error.message).join('; '));
               }
             }
-          } catch (err) {
-            const apolloErr = err as ApolloError;
-            setFieldError('email', apolloErr.message);
+          } catch (e) {
+            if (e instanceof ApolloError) {
+              setFieldError(e.name, e.message);
+            }
+            throw e;
           }
         }
         }

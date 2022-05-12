@@ -59,7 +59,11 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
     setSearchValue('');
     const { type, enumObjectArray } = options?.find(({ table, field }) => table === searchTable && field === e.target.value) || {};
     setSearchFieldType(type || '');
-    setSearchEnumObjectArray(enumObjectArray || []);
+    setSearchEnumObjectArray(enumObjectArray ? enumObjectArray :
+      type === 'Boolean' ? [
+        { serverEnum: 'true', databaseEnum: 'Y', },
+        { serverEnum: '', databaseEnum: 'N', },
+      ] : []);
   }
 
   const handleChangeOperation = (e: React.ChangeEvent<HTMLSelectElement>) => {

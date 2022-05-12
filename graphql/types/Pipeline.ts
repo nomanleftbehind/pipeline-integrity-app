@@ -303,7 +303,7 @@ export const Pipeline = objectType({
                               const result = internalProtection && serverEnumToDatabaseEnum(InternalProtectionEnumMembers, internalProtection);
                               return result;
                             } :
-                              undefined,
+                            undefined,
       });
     }
   }
@@ -566,14 +566,13 @@ export const PipelineQuery = extendType({
         }
 
         if (search) {
+
           const { table, field, value, type, operation } = search;
           const castValue =
             type === 'Int' ? parseInt(value) :
               type === 'Float' ? Number(value) :
                 type === 'DateTime' ? new Date(value) :
                   type === 'Boolean' ? Boolean(value) : value //, 'Float'].includes(type) ? Number(value) : value;
-
-          console.log(table, field, value, type, operation, JSON.stringify(castValue));
 
 
           if (table === 'pipeline') {
@@ -586,13 +585,11 @@ export const PipelineQuery = extendType({
 
           const b = await ctx.prisma.pipeline.findMany({
             where: {
-              wells: {
-
-              }
+              AND: [{}]
             }
           });
 
-          if (table === 'risk') {
+          if (table === 'risk' || table === 'chemical') {
             return await ctx.prisma.pipeline.findMany({
               where: {
                 [table]: {

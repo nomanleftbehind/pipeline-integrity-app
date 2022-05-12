@@ -9,10 +9,24 @@ type HeaderProps = {
   filterText: IHeader;
 }
 
-export const prettifyColumnName = (columnName: string) => columnName === 'id' ? 'ID' : columnName
-  .split(/(?=[A-Z])/)
-  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-  .join(' ');
+export const prettifyColumnName = (columnName: string) => {
+  if (columnName === 'id') {
+    return 'ID'
+  }
+  if (columnName === 'co2') {
+    return 'CO₂'
+  }
+  if (columnName === 'o2') {
+    return 'O₂'
+  }
+  if (columnName === 'h2s') {
+    return 'H₂S'
+  }
+  return columnName
+    .split(/(?=[A-Z])/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
 
 export default function Header({ onFilterTextChange, filterText }: HeaderProps): JSX.Element {
 
