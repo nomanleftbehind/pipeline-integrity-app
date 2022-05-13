@@ -391,7 +391,7 @@ type Mutation {
 
 input NavigationInput {
   hierarchy: HierarchyInput
-  search: SearchNavigationInput
+  search: [SearchNavigationInput!]
 }
 
 enum OperationEnum {

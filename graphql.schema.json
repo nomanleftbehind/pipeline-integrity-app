@@ -5922,9 +5922,17 @@
             "name": "search",
             "description": null,
             "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "SearchNavigationInput",
-              "ofType": null
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "SearchNavigationInput",
+                  "ofType": null
+                }
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,

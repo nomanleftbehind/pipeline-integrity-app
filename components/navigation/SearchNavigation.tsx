@@ -9,6 +9,7 @@ import {
   TableEnum,
   OperationEnum,
   EnumObject,
+  SearchNavigationInput,
 } from '../../graphql/generated/graphql';
 
 import { IOnNavigationAction } from './HierarchyNavigation';
@@ -22,6 +23,8 @@ interface ISearchNavigationProps {
 export default function SearchNavigation({ onSearchNavigation }: ISearchNavigationProps) {
 
   const [search, setSearch] = useState(false);
+
+  const [searchArray, setSearchArray] = useState<SearchNavigationInput[]>([]);
 
   const [searchTable, setSearchTable] = useState<TableEnum>(TableEnum.Pipeline);
   const [searchField, setSearchField] = useState('');
@@ -51,12 +54,14 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
     setSearchTable(e.target.value as TableEnum);
     setSearchField('');
     setSearchFieldType('');
+    setSearchOperation(OperationEnum.Equals);
   }
 
   const handleChangeField = (e: React.ChangeEvent<HTMLSelectElement>) => {
     loadOperationEnum();
     setSearchField(e.target.value);
     setSearchValue('');
+    setSearchOperation(OperationEnum.Equals);
     const { type, enumObjectArray } = options?.find(({ table, field }) => table === searchTable && field === e.target.value) || {};
     setSearchFieldType(type || '');
     setSearchEnumObjectArray(enumObjectArray ? enumObjectArray :
@@ -72,24 +77,33 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setSearchValue(e.target.value);
+    setSearchArray(previousSearchArray => [...previousSearchArray, {
+      table: searchTable,
+      field: searchField,
+      type: searchFieldType,
+      operation: searchOperation,
+      value: searchValue,
+    }])
   }
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     onSearchNavigation({
-      search: {
-        table: searchTable,
-        field: searchField,
-        type: searchFieldType,
-        operation: searchOperation,
-        value: searchValue,
-      }
+      search: [
+        {
+          table: searchTable,
+          field: searchField,
+          type: searchFieldType,
+          operation: searchOperation,
+          value: searchValue,
+        }
+      ]
     })
   }
 
   useEffect(() => {
-    console.log(searchTable, searchField, searchFieldType, searchValue, searchOperation);
-  }, [searchTable, searchField, searchFieldType, searchValue, searchOperation])
+    console.log(searchTable, searchField, searchFieldType, searchValue, searchOperation, searchArray);
+  }, [searchTable, searchField, searchFieldType, searchValue, searchOperation, searchArray])
 
 
   return (

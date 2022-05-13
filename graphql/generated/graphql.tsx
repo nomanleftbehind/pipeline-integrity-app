@@ -701,7 +701,7 @@ export type MutationSignupArgs = {
 
 export type NavigationInput = {
   hierarchy?: Maybe<HierarchyInput>;
-  search?: Maybe<SearchNavigationInput>;
+  search?: Maybe<Array<SearchNavigationInput>>;
 };
 
 export enum OperationEnum {

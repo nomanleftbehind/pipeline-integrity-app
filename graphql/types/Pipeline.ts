@@ -567,50 +567,89 @@ export const PipelineQuery = extendType({
 
         if (search) {
 
-          const { table, field, value, type, operation } = search;
-          const castValue =
-            type === 'Int' ? parseInt(value) :
-              type === 'Float' ? Number(value) :
-                type === 'DateTime' ? new Date(value) :
-                  type === 'Boolean' ? Boolean(value) : value //, 'Float'].includes(type) ? Number(value) : value;
 
 
-          if (table === 'pipeline') {
-            return await ctx.prisma.pipeline.findMany({
-              where: {
+          const query = search.map(({ table, field, value, type, operation }) => {
+            const castValue =
+              type === 'Int' ? parseInt(value) :
+                type === 'Float' ? Number(value) :
+                  type === 'DateTime' ? new Date(value) :
+                    type === 'Boolean' ? Boolean(value) : value
+
+            if (table === 'pipeline') {
+              return {
                 [field]: { [operation]: castValue },
               }
-            });
-          }
-
-          const b = await ctx.prisma.pipeline.findMany({
-            where: {
-              AND: [{}]
-            }
-          });
-
-          if (table === 'risk' || table === 'chemical') {
-            return await ctx.prisma.pipeline.findMany({
-              where: {
+            } else if (table === 'risk' || table === 'chemical') {
+              return {
                 [table]: {
                   [field]: { [operation]: castValue },
                 }
-              }
-            });
-          }
-          if (table === 'wells' || table === 'licenseChanges' || table === 'salesPoints' || table === 'pressureTests' || table === 'pigRuns' || table === 'pipelineBatches') {
-            return await ctx.prisma.pipeline.findMany({
-              where: {
+              };
+            } else {
+              return {
                 [table]: {
                   some: {
                     [field]: { [operation]: castValue },
                   }
                 }
-              }
-            });
-          }
-        }
+              };
+            }
+          });
+          console.log('search:', search, JSON.stringify(query));
 
+
+          // const { table, field, value, type, operation } = search;
+          // const castValue =
+          //   type === 'Int' ? parseInt(value) :
+          //     type === 'Float' ? Number(value) :
+          //       type === 'DateTime' ? new Date(value) :
+          //         type === 'Boolean' ? Boolean(value) : value;
+
+
+          const b = await ctx.prisma.pipeline.findMany({
+            where: {
+              AND: [{ chemical: { h2s: { equals: true } } }]
+            }
+          });
+
+          // return b
+
+          return await ctx.prisma.pipeline.findMany({
+            where: {
+              AND: query,
+            }
+          });
+
+          // if (table === 'pipeline') {
+          //   return await ctx.prisma.pipeline.findMany({
+          //     where: {
+          //       [field]: { [operation]: castValue },
+          //     }
+          //   });
+          // }
+
+          // if (table === 'risk' || table === 'chemical') {
+          //   return await ctx.prisma.pipeline.findMany({
+          //     where: {
+          //       [table]: {
+          //         [field]: { [operation]: castValue },
+          //       }
+          //     }
+          //   });
+          // }
+          // if (table === 'wells' || table === 'licenseChanges' || table === 'salesPoints' || table === 'pressureTests' || table === 'pigRuns' || table === 'pipelineBatches') {
+          //   return await ctx.prisma.pipeline.findMany({
+          //     where: {
+          //       [table]: {
+          //         some: {
+          //           [field]: { [operation]: castValue },
+          //         }
+          //       }
+          //     }
+          //   });
+          // }
+        }
         return null;
       }
     })
@@ -622,7 +661,7 @@ export const NavigationInput = inputObjectType({
   name: 'NavigationInput',
   definition(t) {
     t.field('hierarchy', { type: 'HierarchyInput' })
-    t.field('search', { type: 'SearchNavigationInput' })
+    t.list.nonNull.field('search', { type: 'SearchNavigationInput' })
   },
 });
 
