@@ -71,9 +71,9 @@ function PipelineDatabase() {
           <SearchNavigation
             onSearchNavigation={handleNavigation}
           />
-          <HierarchyNavigation
+          {/* <HierarchyNavigation
             onHierarchyItemClick={handleNavigation}
-          />
+          /> */}
         </div>
       </div>
       <div className='pipelines-window'>

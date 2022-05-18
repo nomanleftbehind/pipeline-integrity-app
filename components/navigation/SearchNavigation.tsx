@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import IconButton from '@mui/material/IconButton';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import SearchIcon from '@mui/icons-material/Search';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import {
-  useSearchNavigationOptionsLazyQuery,
-  useOperationEnumLazyQuery,
+  useSearchNavigationOptionsQuery,
+  useOperationEnumQuery,
   TableEnum,
   OperationEnum,
   EnumObject,
@@ -22,160 +24,169 @@ interface ISearchNavigationProps {
 
 export default function SearchNavigation({ onSearchNavigation }: ISearchNavigationProps) {
 
-  const [search, setSearch] = useState(false);
+  const [searchNavigationInputArray, setSearchNavigationInputArray] = useState<SearchNavigationInput[]>([]);
+  const [searchEnumObjectArray, setSearchEnumObjectArray] = useState<EnumObject[][]>([]);
 
-  const [searchArray, setSearchArray] = useState<SearchNavigationInput[]>([]);
+  const { data } = useSearchNavigationOptionsQuery();
+  const { data: dataOperationEnum } = useOperationEnumQuery();
 
-  const [searchTable, setSearchTable] = useState<TableEnum>(TableEnum.Pipeline);
-  const [searchField, setSearchField] = useState('');
-  const [searchFieldType, setSearchFieldType] = useState('');
-  const [searchEnumObjectArray, setSearchEnumObjectArray] = useState<EnumObject[]>([]);
-  const [searchOperation, setSearchOperation] = useState<OperationEnum>(OperationEnum.Equals);
-  const [searchValue, setSearchValue] = useState('');
+  const addFilter = () => {
+    setSearchNavigationInputArray(previousSearchNavigationInputArray => [...previousSearchNavigationInputArray, { table: TableEnum.Pipeline, field: '', operation: OperationEnum.Equals, type: '', value: '' }]);
+    setSearchEnumObjectArray(previousSearchEnumObjectArray => [...previousSearchEnumObjectArray, []]);
+  }
 
-  const [loadSearchOptions, { data }] = useSearchNavigationOptionsLazyQuery();
-  const [loadOperationEnum, { data: dataOperationEnum }] = useOperationEnumLazyQuery();
-
-
-  const toggleSearch = () => {
-    setSearchTable(TableEnum.Pipeline);
-    setSearchField('');
-    setSearchFieldType('');
-    setSearchOperation(OperationEnum.Equals);
-    setSearchValue('');
-    setSearch(!search);
-    loadSearchOptions();
+  const removeFilter = (index: number) => {
+    setSearchNavigationInputArray(searchNavigationInputArray.filter((_, i) => i !== index));
+    setSearchEnumObjectArray(searchEnumObjectArray.filter((_, i) => i !== index));
   }
 
   const options = data?.searchNavigationOptions;
   const tableOptions = options?.map(({ table }) => table);
 
-  const handleChangeTable = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSearchTable(e.target.value as TableEnum);
-    setSearchField('');
-    setSearchFieldType('');
-    setSearchOperation(OperationEnum.Equals);
-  }
+  const handleChange = ({ e, index, key }: { e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>, index: number, key: keyof SearchNavigationInput }) => {
+    let newSearchArray = [...searchNavigationInputArray];
+    let searchItem = { ...newSearchArray[index] };
 
-  const handleChangeField = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    loadOperationEnum();
-    setSearchField(e.target.value);
-    setSearchValue('');
-    setSearchOperation(OperationEnum.Equals);
-    const { type, enumObjectArray } = options?.find(({ table, field }) => table === searchTable && field === e.target.value) || {};
-    setSearchFieldType(type || '');
-    setSearchEnumObjectArray(enumObjectArray ? enumObjectArray :
-      type === 'Boolean' ? [
-        { serverEnum: 'true', databaseEnum: 'Y', },
-        { serverEnum: '', databaseEnum: 'N', },
-      ] : []);
-  }
+    let newSearchEnumObjectArray = [...searchEnumObjectArray];
+    let newSearchEnumObject = [...newSearchEnumObjectArray[index]];
 
-  const handleChangeOperation = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSearchOperation(e.target.value as OperationEnum);
-  }
+    if (key === 'table') {
+      searchItem[key] = e.target.value as TableEnum;
+      searchItem.field = '';
+      searchItem.type = '';
+      searchItem.operation = OperationEnum.Equals;
+      searchItem.value = '';
+      newSearchEnumObject = [];
 
-  const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setSearchValue(e.target.value);
-    setSearchArray(previousSearchArray => [...previousSearchArray, {
-      table: searchTable,
-      field: searchField,
-      type: searchFieldType,
-      operation: searchOperation,
-      value: searchValue,
-    }])
+    } else if (key === 'field') {
+      searchItem[key] = e.target.value;
+      searchItem.value = '';
+      const { type, enumObjectArray } = options?.find(({ table, field }) => table === searchItem.table && field === e.target.value) || {};
+      searchItem.type = type || '';
+      newSearchEnumObject = enumObjectArray ? enumObjectArray :
+        type === 'Boolean' ? [
+          { serverEnum: 'true', databaseEnum: 'Y', },
+          { serverEnum: '', databaseEnum: 'N', },
+        ] : [];
+
+    } else if (key === 'operation') {
+      searchItem[key] = e.target.value as OperationEnum;
+
+    } else if (key === 'value') {
+      searchItem[key] = e.target.value;
+    }
+
+    newSearchArray[index] = searchItem;
+    setSearchNavigationInputArray(newSearchArray);
+
+    newSearchEnumObjectArray[index] = newSearchEnumObject;
+    setSearchEnumObjectArray(newSearchEnumObjectArray);
   }
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     onSearchNavigation({
-      search: [
-        {
-          table: searchTable,
-          field: searchField,
-          type: searchFieldType,
-          operation: searchOperation,
-          value: searchValue,
-        }
-      ]
+      search: searchNavigationInputArray
     })
   }
 
   useEffect(() => {
-    console.log(searchTable, searchField, searchFieldType, searchValue, searchOperation, searchArray);
-  }, [searchTable, searchField, searchFieldType, searchValue, searchOperation, searchArray])
+    console.log(searchEnumObjectArray);
+  }, [searchEnumObjectArray])
 
 
   return (
-    // <div>
     <form className='search-navigation-form' onSubmit={onSubmit}>
-      <div style={{ gridRow: 1, gridColumn: 1 }}>
+      {/* <div style={{ gridRow: 1, gridColumn: 1 }}>
         <IconButton className='button-container' size='small' onClick={toggleSearch}>{search ? <SearchOffIcon /> : <ManageSearchIcon />}</IconButton>
-      </div>
-      {search && tableOptions && <><div style={{ gridRow: 1, gridColumn: '2/4' }}>Pipeline by:</div>
-        <select style={{ gridRow: 1, gridColumn: '4/6' }} value={searchTable} onChange={handleChangeTable}>
-          {tableOptions.filter((table, pos) => {
-            return tableOptions.indexOf(table) === pos;
-          }).map((table, key) => {
-            const prettyTableName = prettifyColumnName(table)
-            return (
-              <option key={key} value={table}>
-                {prettyTableName}
-              </option>
-            );
-          })}
-        </select>
-      </>}
-      {search && searchTable && options && <>
-        <div style={{ gridRow: 2, gridColumn: '1/3' }}>Field:</div>
-        <select style={{ gridRow: 2, gridColumn: '3/6' }} value={searchField} onChange={handleChangeField}>
-          <option></option>
-          {options.filter(({ table }) => table === searchTable).map(({ field }) => {
-            const prettyField = prettifyColumnName(field);
-            return (
-              <option key={field} value={field}>{prettyField}</option>
-            );
-          })}
-        </select>
-      </>}
-      {search && searchField && dataOperationEnum?.validators && <>
-        <div style={{ gridRow: 3, gridColumn: '1/3' }}>Operation:</div>
-        <select style={{ gridRow: 3, gridColumn: '3/6' }} value={searchOperation} onChange={handleChangeOperation}>
-          {Object.values(dataOperationEnum.validators.operationEnum).filter((operationDb) => {
-            if (['Int', 'Float', 'DateTime'].includes(searchFieldType)) {
-              return [OperationEnum.Equals, OperationEnum.GreaterThan, OperationEnum.GreaterThanOrEqual, OperationEnum.LessThan, OperationEnum.LessThanOrEqual, OperationEnum.Not].includes(operationDb);
-            }
-            if (searchFieldType === 'String') {
-              return [OperationEnum.Equals, OperationEnum.Contains, OperationEnum.StartsWith, OperationEnum.EndsWith, OperationEnum.Not].includes(operationDb);
-            }
-            if (searchFieldType === 'Boolean' || searchEnumObjectArray.length > 0) {
-              return [OperationEnum.Equals, OperationEnum.Not].includes(operationDb);
-            }
-          }).map((operationDb) => {
-            const prettyOperation = prettifyColumnName(operationDb);
-            return (
-              <option key={operationDb} value={operationDb}>{prettyOperation}</option>
-            );
-          })}
-        </select>
-      </>}
-      {searchField && <>
-        <div style={{ gridRow: 4, gridColumn: '1/3' }}>Value:</div>
-        {searchEnumObjectArray.length > 0 ?
-          <select style={{ gridRow: 4, gridColumn: '3/5' }} value={searchValue} onChange={handleChangeValue}>
-            {searchEnumObjectArray.map(({ serverEnum, databaseEnum }) => {
+      </div> */}
+
+      {searchNavigationInputArray.map(({ table, field, operation, type, value }, index) => {
+        return <div className='search-navigation-input-item' key={index}>
+          <div style={{ gridRow: '1/3', gridColumn: 1 }}>
+            <IconButton className='button-container' size='small' onClick={() => removeFilter(index)}>
+              <RemoveCircleOutlineOutlinedIcon />
+            </IconButton>
+          </div>
+
+          <div style={{ gridRow: 1, gridColumn: 2 }}>Pipeline by:</div>
+          <select style={{ gridRow: 1, gridColumn: 3 }} value={searchNavigationInputArray[index].table} onChange={(e) => handleChange({ e, index, key: 'table' })}>
+            {tableOptions?.filter((table, pos) => {
+              return tableOptions.indexOf(table) === pos;
+            }).map((table, key) => {
+              const prettyTableName = prettifyColumnName(table)
               return (
-                <option key={serverEnum} value={serverEnum}>{databaseEnum}</option>
-              )
+                <option key={key} value={table}>
+                  {prettyTableName}
+                </option>
+              );
             })}
-          </select> :
-          <input style={{ gridRow: 4, gridColumn: '3/5' }} type={['Int', 'Float'].includes(searchFieldType) ? 'number' : ['DateTime'].includes(searchFieldType) ? 'date' : 'text'} value={searchValue} onChange={handleChangeValue} />
-        }
-      </>}
-      {searchField && <div style={{ gridRow: 4, gridColumn: 5 }}>
-        <IconButton aria-label='disconnect row' size='small' type='submit'><SearchIcon /></IconButton>
+          </select>
+
+          <div style={{ gridRow: 2, gridColumn: 2 }}>Field:</div>
+          <select style={{ gridRow: 2, gridColumn: 3 }} value={searchNavigationInputArray[index].field} onChange={(e) => handleChange({ e, index, key: 'field' })}>
+            <option></option>
+            {options?.filter(({ table }) => table === searchNavigationInputArray[index].table).map(({ field }) => {
+              const prettyField = prettifyColumnName(field);
+              return (
+                <option key={field} value={field}>{prettyField}</option>
+              );
+            })}
+          </select>
+
+          <div style={{ gridRow: 3, gridColumn: 2 }}>Operation:</div>
+          <select style={{ gridRow: 3, gridColumn: 3 }} value={searchNavigationInputArray[index].operation} onChange={(e) => handleChange({ e, index, key: 'operation' })}>
+            {dataOperationEnum?.validators && Object.values(dataOperationEnum.validators.operationEnum)/*.filter((operationDb) => {
+
+              if (['Int', 'Float', 'DateTime'].includes(searchNavigationInputArray[index].type)) {
+                return [OperationEnum.Equals, OperationEnum.GreaterThan, OperationEnum.GreaterThanOrEqual, OperationEnum.LessThan, OperationEnum.LessThanOrEqual, OperationEnum.Not].includes(operationDb);
+              }
+              if (searchFieldType === 'String') {
+                return [OperationEnum.Equals, OperationEnum.Contains, OperationEnum.StartsWith, OperationEnum.EndsWith, OperationEnum.Not].includes(operationDb);
+              }
+              if (searchFieldType === 'Boolean' || searchEnumObjectArray.length > 0) {
+                return [OperationEnum.Equals, OperationEnum.Not].includes(operationDb);
+              }
+              // console.log(operationDb, [OperationEnum.Equals, OperationEnum.Not].includes(operationDb));
+              
+            })*/.map((operationDb) => {
+              // console.log(operationDb);
+
+              const prettyOperation = prettifyColumnName(operationDb);
+              return (
+                <option key={operationDb} value={operationDb}>{prettyOperation}</option>
+              );
+            })}
+          </select>
+
+          <div style={{ gridRow: 4, gridColumn: 2 }}>Value:</div>
+          {searchEnumObjectArray[index].length > 0 ?
+            <select style={{ gridRow: 4, gridColumn: 3 }} value={searchNavigationInputArray[index].value} onChange={(e) => handleChange({ e, index, key: 'value' })}>
+              {searchEnumObjectArray[index].map(({ serverEnum, databaseEnum }) => {
+                return (
+                  <option key={serverEnum} value={serverEnum}>{databaseEnum}</option>
+                )
+              })}
+            </select> :
+            <input
+              style={{ gridRow: 4, gridColumn: 3 }}
+              type={['Int', 'Float'].includes(searchNavigationInputArray[index].type) ? 'number' : searchNavigationInputArray[index].type === 'DateTime' ? 'date' : 'text'}
+              value={searchNavigationInputArray[index].value}
+              onChange={(e) => handleChange({ e, index, key: 'value' })}
+            />
+          }
+
+        </div>
+      })}
+      <div>
+        <IconButton className='button-container' size='small' onClick={addFilter}>
+          <AddCircleOutlineOutlinedIcon />
+        </IconButton>
+      </div>
+
+      {<div>
+        <IconButton aria-label='submit-search' size='small' type='submit'><SearchIcon /></IconButton>
       </div>}
     </form>
-    // </div>
   );
 }

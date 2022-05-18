@@ -149,9 +149,6 @@ export const ChemicalMutation = extendType({
       },
       resolve: async (_, args, ctx: Context) => {
 
-        console.log(args);
-        
-
         const user = ctx.user;
 
         if (user) {
