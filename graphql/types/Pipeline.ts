@@ -574,7 +574,7 @@ export const PipelineQuery = extendType({
               type === 'Int' ? parseInt(value) :
                 type === 'Float' ? Number(value) :
                   type === 'DateTime' ? new Date(value) :
-                    type === 'Boolean' ? Boolean(value) : value
+                    type === 'Boolean' ? value === 'true' ? true : false : value
 
             if (table === 'pipeline') {
               return {

@@ -1,4 +1,6 @@
 .search-navigation-form {
+  border: 1px solid red;
+  padding: 4px;
   display: flex;
   flex-direction: column;
   /* grid-template-columns: 30px 30px 55px 120px 30px;
@@ -13,7 +15,10 @@
 }
 
 .search-navigation-input-item {
+  border: 1px solid green;
+  /* padding: 4px; */
   display: grid;
-  grid-template-columns: 30px 80px auto;
+  grid-template-columns: 30px 70px auto;
   row-gap: 2px;
+  overflow-y: auto;
 }
