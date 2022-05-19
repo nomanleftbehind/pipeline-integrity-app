@@ -31,7 +31,7 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
   const { data: dataOperationEnum } = useOperationEnumQuery();
 
   const addFilter = () => {
-    setSearchNavigationInputArray(previousSearchNavigationInputArray => [...previousSearchNavigationInputArray, { table: TableEnum.Pipeline, field: '', operation: OperationEnum.Equals, type: '', value: '' }]);
+    setSearchNavigationInputArray(previousSearchNavigationInputArray => [...previousSearchNavigationInputArray, { table: TableEnum.Pipeline, field: 'id', operation: OperationEnum.Equals, type: 'String', value: '' }]);
     setSearchEnumObjectArray(previousSearchEnumObjectArray => [...previousSearchEnumObjectArray, []]);
   }
 
@@ -44,16 +44,16 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
   const tableOptions = options?.map(({ table }) => table);
 
   const handleChange = ({ e, index, key }: { e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>, index: number, key: keyof SearchNavigationInput }) => {
-    let newSearchArray = [...searchNavigationInputArray];
-    let searchItem = { ...newSearchArray[index] };
+    let newSearchNavigationInputArray = [...searchNavigationInputArray];
+    let searchItem = { ...newSearchNavigationInputArray[index] };
 
     let newSearchEnumObjectArray = [...searchEnumObjectArray];
     let newSearchEnumObject = [...newSearchEnumObjectArray[index]];
 
     if (key === 'table') {
       searchItem[key] = e.target.value as TableEnum;
-      searchItem.field = '';
-      searchItem.type = '';
+      searchItem.field = 'id';
+      searchItem.type = 'String';
       searchItem.operation = OperationEnum.Equals;
       searchItem.value = '';
       newSearchEnumObject = [];
@@ -63,11 +63,11 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
       searchItem.value = '';
       const { type, enumObjectArray } = options?.find(({ table, field }) => table === searchItem.table && field === e.target.value) || {};
       searchItem.type = type || '';
-      newSearchEnumObject = enumObjectArray ? enumObjectArray :
-        type === 'Boolean' ? [
-          { serverEnum: 'true', databaseEnum: 'Y', },
-          { serverEnum: 'false', databaseEnum: 'N', },
-        ] : [];
+      newSearchEnumObject = type === 'Boolean' ? [
+        { serverEnum: 'true', databaseEnum: 'Y', },
+        { serverEnum: 'false', databaseEnum: 'N', },
+      ] : enumObjectArray ? enumObjectArray :
+        [];
 
     } else if (key === 'operation') {
       searchItem[key] = e.target.value as OperationEnum;
@@ -76,8 +76,8 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
       searchItem[key] = e.target.value;
     }
 
-    newSearchArray[index] = searchItem;
-    setSearchNavigationInputArray(newSearchArray);
+    newSearchNavigationInputArray[index] = searchItem;
+    setSearchNavigationInputArray(newSearchNavigationInputArray);
 
     newSearchEnumObjectArray[index] = newSearchEnumObject;
     setSearchEnumObjectArray(newSearchEnumObjectArray);
@@ -91,14 +91,13 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
   }
 
   useEffect(() => {
-    console.log(searchNavigationInputArray);
-  }, [searchNavigationInputArray])
+    console.log(dataOperationEnum?.validators);
+  }, [dataOperationEnum?.validators])
 
-  const av = searchNavigationInputArray.find(({ value }) => value === '')
   return (
     <form className='search-navigation-form' onSubmit={onSubmit}>
       {searchNavigationInputArray.map(({ table, field, operation, type, value }, index) => {
-        return <div className='search-navigation-input-item' key={index}>
+        return <div className='search-navigation-input-item' key={index} style={{ gridRow: index + 1, gridColumn: '1/4' }}>
           <div style={{ gridRow: '1/5', gridColumn: 1 }}>
             <IconButton className='button-container' size='small' onClick={() => removeFilter(index)}>
               <RemoveCircleOutlineOutlinedIcon />
@@ -107,21 +106,19 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
 
           <div style={{ gridRow: 1, gridColumn: 2 }}>Pipeline by:</div>
           <select style={{ gridRow: 1, gridColumn: 3 }} value={table} onChange={(e) => handleChange({ e, index, key: 'table' })}>
-            {tableOptions?.filter((tableName, pos) => {
-              return tableOptions.indexOf(tableName) === pos;
-            }).map((tableName, key) => {
-              const prettyTableName = prettifyColumnName(tableName)
-              return (
-                <option key={key} value={tableName}>
-                  {prettyTableName}
-                </option>
-              );
-            })}
+            {tableOptions?.filter((tableName, pos) => tableOptions.indexOf(tableName) === pos)
+              .map((tableName, key) => {
+                const prettyTableName = prettifyColumnName(tableName)
+                return (
+                  <option key={key} value={tableName}>
+                    {prettyTableName}
+                  </option>
+                );
+              })}
           </select>
 
           <div style={{ gridRow: 2, gridColumn: 2 }}>Field:</div>
           <select style={{ gridRow: 2, gridColumn: 3 }} value={field} onChange={(e) => handleChange({ e, index, key: 'field' })}>
-            <option></option>
             {options?.filter(({ table: tableName }) => tableName === table).map(({ field: fieldName }) => {
               const prettyField = prettifyColumnName(fieldName);
               return (
@@ -172,13 +169,13 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
 
         </div>
       })}
-      <div>
+      <div style={{ gridRow: searchNavigationInputArray.length + 1, gridColumn: 1 }}>
         <IconButton className='button-container' size='small' onClick={addFilter}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>
 
-      <div>
+      <div style={{ gridRow: searchNavigationInputArray.length + 1, gridColumn: 3 }}>
         <IconButton aria-label='submit-search' size='small' type='submit' disabled={searchNavigationInputArray.length === 0 || searchNavigationInputArray.find(({ value }) => value === '') !== undefined}><SearchIcon /></IconButton>
       </div>
     </form>
