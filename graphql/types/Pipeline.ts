@@ -897,10 +897,24 @@ export const PipelineMutation = extendType({
           const { firstName } = user;
           const authorized = resolvePipelineAuthorized(user);
           if (authorized) {
-            const pipeline = await ctx.prisma.pipeline.delete({
-              where: { id },
-            });
-            return { pipeline }
+            try {
+              const pipeline = await ctx.prisma.pipeline.delete({
+                where: { id },
+              });
+              return { pipeline }
+            } catch (e) {
+              if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2003') {
+                  return {
+                    error: {
+                      field: 'Pipeline',
+                      message: 'Delete all dependent fields before deleting this pipeline',
+                    }
+                  }
+                }
+              }
+              throw e;
+            }
           }
           return {
             error: {

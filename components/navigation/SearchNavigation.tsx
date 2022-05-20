@@ -97,7 +97,7 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
   return (
     <form className='search-navigation-form' onSubmit={onSubmit}>
       {searchNavigationInputArray.map(({ table, field, operation, type, value }, index) => {
-        return <div className='search-navigation-input-item' key={index} style={{ gridRow: index + 1, gridColumn: '1/4' }}>
+        return <div className='search-navigation-input-item' key={index}>
           <div style={{ gridRow: '1/5', gridColumn: 1 }}>
             <IconButton className='button-container' size='small' onClick={() => removeFilter(index)}>
               <RemoveCircleOutlineOutlinedIcon />
@@ -169,14 +169,17 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
 
         </div>
       })}
-      <div style={{ gridRow: searchNavigationInputArray.length + 1, gridColumn: 1 }}>
-        <IconButton className='button-container' size='small' onClick={addFilter}>
-          <AddCircleOutlineOutlinedIcon />
-        </IconButton>
-      </div>
 
-      <div style={{ gridRow: searchNavigationInputArray.length + 1, gridColumn: 3 }}>
-        <IconButton aria-label='submit-search' size='small' type='submit' disabled={searchNavigationInputArray.length === 0 || searchNavigationInputArray.find(({ value }) => value === '') !== undefined}><SearchIcon /></IconButton>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex' }}>
+          <IconButton size='small' onClick={addFilter}>
+            <AddCircleOutlineOutlinedIcon />
+          </IconButton>
+          <div>Add Filter</div>
+        </div>
+        <IconButton aria-label='submit-search' size='small' type='submit' disabled={searchNavigationInputArray.length === 0 || searchNavigationInputArray.find(({ value }) => value === '') !== undefined}>
+          <SearchIcon />
+        </IconButton>
       </div>
     </form>
   );
