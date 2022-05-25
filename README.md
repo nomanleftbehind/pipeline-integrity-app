@@ -33,7 +33,7 @@ Populate your database by running `prisma db seed`.
 
 Pipeline daily flow volume is the total of all upstream chained pipelines. Because the number of upstream pipelines is arbitrary, we are not able to write this query using Prisma Client. We must create user-defined database function that loops through left joins until it reaches null. Run `psql -h localhost -U postgres -d integrity_pro -a -f prisma/pipeline_flow_dynamic.sql` to do that. You will be prompted to enter superuser password.
 
-Prisma Client configures database to restrict deletion of a records that are referenced by records in foreign tables. We want to alter this constraint for all the records referencing pipeline table to be automatically deleted when a pipeline is deleted. Run `psql -h localhost -U postgres -d integrity_pro -a -f prisma/alter_on_delete_cascade.sql`.
+Prisma Client configures database to restrict deletion of record that are referenced by records in foreign tables. We want to alter this constraint for all the records referencing pipeline table to be automatically deleted when a pipeline is deleted. Run `psql -h localhost -U postgres -d integrity_pro -a -f prisma/alter_on_delete_cascade.sql`.
 
 ### Run the development server:
 
