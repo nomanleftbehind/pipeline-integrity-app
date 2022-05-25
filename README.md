@@ -1,35 +1,44 @@
-## Pipeline Integrity
+# Pipeline Integrity
 
-Web app with simple user interface and intuitive functionality for tracking pipeline integrity.
+Intuitive web app for tracking pipeline integrity and visualizing risk assesment. Fully featured with secure cookie authentication, levels of user authorization, rules enforcement, and modification tracking.
 
-## Getting Started
+## Technology
 
-Install dependencies by typing either of following comands in root directory:
+### Client
+- [Next.js](https://nextjs.org/) React framework with TypeScript
+- [Apollo Client](https://www.apollographql.com/docs/react) to fetch, cache, and modify application data
 
-```bash
-npm i
-# or
-yarn i
-```
+### Server
+- [Node.js](https://nodejs.dev/learn/nodejs-with-typescript) with TypeScript
+- [Apollo](https://www.apollographql.com/docs/apollo-server/) GraphQL server
+- [Prisma](https://www.prisma.io/docs/getting-started) TypeScript ORM
+- [Nexus](https://nexusjs.org/) declarative, code-first and strongly typed GraphQL schema construction for TypeScript
 
-This project uses some WebAssembly functions written in Rust language. To Compile .rs files to .wasm install Rust by following these [`instructions`](https://www.rust-lang.org/tools/install).
+### Database
+- [PostgreSQL](https://www.postgresql.org/) object-relational database
 
-### Build with `wasm-pack build`
+## Setup
 
-```
-cd wasm
-wasm-pack build
-```
-Check out [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen) to learn how communication between WebAssembly and JavaScript works in Rust.
+### Installing dependencies
+Install dependencies by runnign `npm i` in root directory.
 
-<br />
+### PostgreSQL
+Before running following commands make sure you have PostgreSQL installed on your machine.
 
-Next, run the development server:
+Rename `.env.example` file to `.env`. Inside, replace the word 'password' of DATABASE_URL with your 'postgres' superuser password.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+Migrate Prisma schema defined in `prisma/schema.prisma` file to Postgres database schema by running `prisma migrate dev --name init`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to view the app.
+Populate your database by running `prisma db seed`.
+
+Pipeline daily flow volume is the sum total of all upstream chained pipelines. Because the number of upstream pipelines is arbitrary we are not able to write this query using Prisma Client. We have to create user-defined database function that loops through left joins until it reaches null. Run `psql -h localhost -U postgres -d integrity_pro -a -f prisma/pipeline_flow_dynamic.sql` to do that. You will be prompted to enter superuser password.
+
+Prisma Client configures database to restrict deletion of a records that are referenced by records in foreign tables. We want to alter this constraint for all the records referencing pipeline table to be automatically deleted when a pipeline is deleted. Run `psql -h localhost -U postgres -d integrity_pro -a -f prisma/alter_on_delete_cascade.sql`.
+
+### Run the development server:
+
+`npm run dev`
+
+Open [http://localhost:3000](http://localhost:3000) to view the app.
+
+App will automatically make the first ever registered user an ADMIN. Only users with role of ADMIN are able to add new users.
