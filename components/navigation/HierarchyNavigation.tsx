@@ -5,14 +5,11 @@ import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 
-export type IOnNavigationAction = (arg: NavigationInput) => void;
 
-interface IHierarchyNavigationProps {
-  onHierarchyItemClick: IOnNavigationAction;
-};
+import { INavigationProps } from './Navigation';
 
 
-export default function HierarchyNavigation({ onHierarchyItemClick }: IHierarchyNavigationProps) {
+export default function HierarchyNavigation({ onNavigationAction }: INavigationProps) {
   const { loading, error, data } = useSideBarQuery();
 
   return (
@@ -34,7 +31,7 @@ export default function HierarchyNavigation({ onHierarchyItemClick }: IHierarchy
             key={facility.id}
             id={facility.id}
             name={facility.name}
-            onHierarchyItemClick={onHierarchyItemClick}
+            onNavigationAction={onNavigationAction}
             satellites={facility.satellites}
           />
         ))

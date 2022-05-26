@@ -1,10 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
-import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import SearchIcon from '@mui/icons-material/Search';
-import SearchOffIcon from '@mui/icons-material/SearchOff';
 import {
   useSearchNavigationOptionsQuery,
   useOperationEnumQuery,
@@ -14,15 +12,11 @@ import {
   SearchNavigationInput,
 } from '../../graphql/generated/graphql';
 
-import { IOnNavigationAction } from './HierarchyNavigation';
+import { INavigationProps } from './Navigation';
 import { prettifyColumnName } from '../Header';
 
-interface ISearchNavigationProps {
-  onSearchNavigation: IOnNavigationAction
-}
 
-
-export default function SearchNavigation({ onSearchNavigation }: ISearchNavigationProps) {
+export default function SearchNavigation({ onNavigationAction }: INavigationProps) {
 
   const [searchNavigationInputArray, setSearchNavigationInputArray] = useState<SearchNavigationInput[]>([]);
   const [searchEnumObjectArray, setSearchEnumObjectArray] = useState<EnumObject[][]>([]);
@@ -85,14 +79,10 @@ export default function SearchNavigation({ onSearchNavigation }: ISearchNavigati
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    onSearchNavigation({
+    onNavigationAction({
       search: searchNavigationInputArray
     })
   }
-
-  useEffect(() => {
-    console.log(dataOperationEnum?.validators);
-  }, [dataOperationEnum?.validators])
 
   return (
     <form className='search-navigation-form' onSubmit={onSubmit}>

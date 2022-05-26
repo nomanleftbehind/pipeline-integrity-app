@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import FacilityIcon from '../svg/facility';
 import SatelliteIcon from '../svg/satellite';
-import { IOnNavigationAction } from './HierarchyNavigation'
+import { IOnNavigationAction } from './Navigation'
 
 import List from '@mui/material/List';
 import Collapse from '@mui/material/Collapse';
@@ -58,7 +58,7 @@ function HierarchyNavigationItem({ id, name, paddingLeft, onClick, onExpand, ope
 interface IHierarchyNavigationDropdownItemProps {
   id?: string;
   name: string;
-  onHierarchyItemClick: IOnNavigationAction;
+  onNavigationAction: IOnNavigationAction;
   satellites?: {
     id: string;
     name: string;
@@ -66,7 +66,7 @@ interface IHierarchyNavigationDropdownItemProps {
 }
 
 
-export default function HierarchyNavigationDropdownItem({ id, name, onHierarchyItemClick, satellites }: IHierarchyNavigationDropdownItemProps) {
+export default function HierarchyNavigationDropdownItem({ id, name, onNavigationAction, satellites }: IHierarchyNavigationDropdownItemProps) {
 
   const [open, setOpen] = useState(false);
 
@@ -79,7 +79,7 @@ export default function HierarchyNavigationDropdownItem({ id, name, onHierarchyI
       <HierarchyNavigationItem
         id={id}
         name={name}
-        onClick={(e) => onHierarchyItemClick({ hierarchy: { id: e.currentTarget.value, table: TableEnum.Facility } })}
+        onClick={(e) => onNavigationAction({ hierarchy: { id: e.currentTarget.value, table: TableEnum.Facility } })}
         onExpand={handleExpand}
         open={open}
       />
@@ -90,7 +90,7 @@ export default function HierarchyNavigationDropdownItem({ id, name, onHierarchyI
               <HierarchyNavigationItem
                 id={satellite.id}
                 name={satellite.name}
-                onClick={(e) => onHierarchyItemClick({ hierarchy: { id: e.currentTarget.value, table: TableEnum.Satellite } })}
+                onClick={(e) => onNavigationAction({ hierarchy: { id: e.currentTarget.value, table: TableEnum.Satellite } })}
                 paddingLeft={6}
               />
             </List>

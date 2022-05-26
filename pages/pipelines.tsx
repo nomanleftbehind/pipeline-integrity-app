@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma';
 import { getUser } from '../lib/user';
 
 import RenderPipeline from '../components/rows/RenderPipeline';
+import Navigation from '../components/navigation/Navigation';
 import HierarchyNavigation from '../components/navigation/HierarchyNavigation';
 import SearchNavigation from '../components/navigation/SearchNavigation';
 
@@ -68,9 +69,12 @@ function PipelineDatabase() {
     <div className="pipeline-database-wrapper">
       <div className="pipeline-database-side-bar"/* style={{border: '1px solid green'}}*/>
         <div className="pipeline-database-side-bar-fixed" /*style={{border: '1px solid red'}}*/>
-          <SearchNavigation
-            onSearchNavigation={handleNavigation}
+          <Navigation
+            onNavigationAction={handleNavigation}
           />
+          {/* <SearchNavigation
+            onSearchNavigation={handleNavigation}
+          /> */}
           {/* <HierarchyNavigation
             onHierarchyItemClick={handleNavigation}
           /> */}
