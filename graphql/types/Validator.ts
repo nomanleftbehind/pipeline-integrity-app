@@ -14,7 +14,7 @@ import { PigTypeEnumMembers, PigInspectionEnumMembers } from './PigRun';
 import { LimitingSpecEnumMembers } from './PressureTest';
 import { EnvironmentProximityToEnumMembers, GeotechnicalFacingEnumMembers } from './Risk';
 import { SolubilityEnumMembers } from './BatchProduct';
-import { OperationEnumMembers } from './SearchNavigation';
+import { OperationEnumMembers, HavingEnumMembers } from './SearchNavigation';
 
 export const anyTextMatchPattern = "^[\\s\\S]*$";
 export const licenseMatchPattern = "^(AB|SK|BC)(\\d{5}|\\d{6})$";
@@ -177,6 +177,20 @@ export const OperationEnumObject = objectType({
 	}
 });
 
+export const HavingEnumObject = objectType({
+	name: 'HavingEnumObject',
+	definition(t) {
+		for (const [key, value] of Object.entries(HavingEnumMembers)) {
+			t.nonNull.field(value, {
+				type: 'HavingEnum',
+				resolve: () => {
+					return HavingEnumMembers[key];
+				}
+			})
+		}
+	}
+});
+
 export const Validator = objectType({
 	name: 'Validator',
 	definition(t) {
@@ -205,6 +219,7 @@ export const Validator = objectType({
 		t.nonNull.field('geotechnicalFacingEnum', { type: 'GeotechnicalFacingEnumObject' })
 		t.nonNull.field('solubilityEnum', { type: 'SolubilityEnumObject' })
 		t.nonNull.field('operationEnum', { type: 'OperationEnumObject' })
+		t.nonNull.field('havingEnum', { type: 'HavingEnumObject' })
 	}
 })
 
@@ -239,7 +254,8 @@ export const ValidatorQuery = extendType({
 					environmentProximityToEnum: EnvironmentProximityToEnumMembers,
 					geotechnicalFacingEnum: GeotechnicalFacingEnumMembers,
 					solubilityEnum: SolubilityEnumMembers,
-					operationEnum: OperationEnumMembers
+					operationEnum: OperationEnumMembers,
+					havingEnum: HavingEnumMembers
 				};
 			}
 		})

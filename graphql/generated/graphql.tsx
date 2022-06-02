@@ -277,6 +277,20 @@ export type GradeEnumObject = {
   GradeX52: Scalars['String'];
 };
 
+export enum HavingEnum {
+  Any = 'any',
+  Count = 'count',
+  Maximum = 'maximum',
+  Minimum = 'minimum'
+}
+
+export type HavingEnumObject = {
+  _any: HavingEnum;
+  _count: HavingEnum;
+  _max: HavingEnum;
+  _min: HavingEnum;
+};
+
 export type HierarchyInput = {
   id: Scalars['String'];
   table: TableEnum;
@@ -1347,6 +1361,7 @@ export type SatelliteUniqueInput = {
 
 export type SearchNavigationInput = {
   field: Scalars['String'];
+  having: HavingEnum;
   operation: OperationEnum;
   table: TableEnum;
   type: Scalars['String'];
@@ -1576,6 +1591,7 @@ export type Validator = {
   fromToMatchPattern: Scalars['String'];
   geotechnicalFacingEnum: GeotechnicalFacingEnumObject;
   gradeEnum: GradeEnumObject;
+  havingEnum: HavingEnumObject;
   internalProtectionEnum: InternalProtectionEnumObject;
   lengthMatchPattern: Scalars['String'];
   licenseMatchPattern: Scalars['String'];
@@ -2000,10 +2016,10 @@ export type SearchNavigationOptionsQueryVariables = Exact<{ [key: string]: never
 
 export type SearchNavigationOptionsQuery = { searchNavigationOptions: Array<{ table: TableEnum, field: string, nullable: boolean, type: string, enumObjectArray?: Array<{ serverEnum: string, databaseEnum: string }> | null | undefined }> };
 
-export type OperationEnumQueryVariables = Exact<{ [key: string]: never; }>;
+export type OperationAndHavingEnumQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OperationEnumQuery = { validators?: { operationEnum: { equals: OperationEnum, not: OperationEnum, gt: OperationEnum, gte: OperationEnum, lt: OperationEnum, lte: OperationEnum, contains: OperationEnum, startsWith: OperationEnum, endsWith: OperationEnum } } | null | undefined };
+export type OperationAndHavingEnumQuery = { validators?: { operationEnum: { equals: OperationEnum, not: OperationEnum, gt: OperationEnum, gte: OperationEnum, lt: OperationEnum, lte: OperationEnum, contains: OperationEnum, startsWith: OperationEnum, endsWith: OperationEnum }, havingEnum: { _min: HavingEnum, _max: HavingEnum, _count: HavingEnum, _any: HavingEnum } } | null | undefined };
 
 export type ValidatorsPigRunQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3878,8 +3894,8 @@ export function useSearchNavigationOptionsLazyQuery(baseOptions?: Apollo.LazyQue
 export type SearchNavigationOptionsQueryHookResult = ReturnType<typeof useSearchNavigationOptionsQuery>;
 export type SearchNavigationOptionsLazyQueryHookResult = ReturnType<typeof useSearchNavigationOptionsLazyQuery>;
 export type SearchNavigationOptionsQueryResult = Apollo.QueryResult<SearchNavigationOptionsQuery, SearchNavigationOptionsQueryVariables>;
-export const OperationEnumDocument = gql`
-    query OperationEnum {
+export const OperationAndHavingEnumDocument = gql`
+    query OperationAndHavingEnum {
   validators {
     operationEnum {
       equals
@@ -3892,36 +3908,42 @@ export const OperationEnumDocument = gql`
       startsWith
       endsWith
     }
+    havingEnum {
+      _min
+      _max
+      _count
+      _any
+    }
   }
 }
     `;
 
 /**
- * __useOperationEnumQuery__
+ * __useOperationAndHavingEnumQuery__
  *
- * To run a query within a React component, call `useOperationEnumQuery` and pass it any options that fit your needs.
- * When your component renders, `useOperationEnumQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useOperationAndHavingEnumQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOperationAndHavingEnumQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useOperationEnumQuery({
+ * const { data, loading, error } = useOperationAndHavingEnumQuery({
  *   variables: {
  *   },
  * });
  */
-export function useOperationEnumQuery(baseOptions?: Apollo.QueryHookOptions<OperationEnumQuery, OperationEnumQueryVariables>) {
+export function useOperationAndHavingEnumQuery(baseOptions?: Apollo.QueryHookOptions<OperationAndHavingEnumQuery, OperationAndHavingEnumQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<OperationEnumQuery, OperationEnumQueryVariables>(OperationEnumDocument, options);
+        return Apollo.useQuery<OperationAndHavingEnumQuery, OperationAndHavingEnumQueryVariables>(OperationAndHavingEnumDocument, options);
       }
-export function useOperationEnumLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OperationEnumQuery, OperationEnumQueryVariables>) {
+export function useOperationAndHavingEnumLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OperationAndHavingEnumQuery, OperationAndHavingEnumQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<OperationEnumQuery, OperationEnumQueryVariables>(OperationEnumDocument, options);
+          return Apollo.useLazyQuery<OperationAndHavingEnumQuery, OperationAndHavingEnumQueryVariables>(OperationAndHavingEnumDocument, options);
         }
-export type OperationEnumQueryHookResult = ReturnType<typeof useOperationEnumQuery>;
-export type OperationEnumLazyQueryHookResult = ReturnType<typeof useOperationEnumLazyQuery>;
-export type OperationEnumQueryResult = Apollo.QueryResult<OperationEnumQuery, OperationEnumQueryVariables>;
+export type OperationAndHavingEnumQueryHookResult = ReturnType<typeof useOperationAndHavingEnumQuery>;
+export type OperationAndHavingEnumLazyQueryHookResult = ReturnType<typeof useOperationAndHavingEnumLazyQuery>;
+export type OperationAndHavingEnumQueryResult = Apollo.QueryResult<OperationAndHavingEnumQuery, OperationAndHavingEnumQueryVariables>;
 export const ValidatorsPigRunDocument = gql`
     query ValidatorsPigRun {
   validators {

@@ -89,7 +89,7 @@ query SearchNavigationOptions {
   }
 }
 
-query OperationEnum {
+query OperationAndHavingEnum {
   validators {
     operationEnum {
       equals
@@ -101,6 +101,12 @@ query OperationEnum {
       contains
       startsWith
       endsWith
+    }
+    havingEnum {
+      _min
+      _max
+      _count
+      _any
     }
   }
 }

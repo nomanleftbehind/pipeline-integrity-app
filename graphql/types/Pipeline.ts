@@ -567,8 +567,6 @@ export const PipelineQuery = extendType({
 
         if (search) {
 
-
-
           const query = search.map(({ table, field, value, type, operation }) => {
             const castValue =
               type === 'Int' ? parseInt(value) :
@@ -599,21 +597,160 @@ export const PipelineQuery = extendType({
           console.log('search:', search, JSON.stringify(query));
 
 
-          // const { table, field, value, type, operation } = search;
-          // const castValue =
-          //   type === 'Int' ? parseInt(value) :
-          //     type === 'Float' ? Number(value) :
-          //       type === 'DateTime' ? new Date(value) :
-          //         type === 'Boolean' ? Boolean(value) : value;
+          const query2 = await Promise.all(search.map(async ({ table, field, having, operation, value, type }) => {
+            const castValue =
+              type === 'Int' ? parseInt(value) :
+                type === 'Float' ? Number(value) :
+                  type === 'DateTime' ? new Date(value) :
+                    type === 'Boolean' ? value === 'true' ? true : false : value
 
+            if (table === 'pipeline') {
+              return {
+                [field]: { [operation]: castValue },
+              }
+            } else if (table === 'risk' || table === 'chemical') {
+              return {
+                [table]: {
+                  [field]: { [operation]: castValue },
+                }
+              };
+            } else if (table !== 'facility' && table !== 'satellite') {
+              if (having === '_any') {
+                return {
+                  [table]: {
+                    some: {
+                      [field]: { [operation]: castValue },
+                    }
+                  }
+                };
+              } else {
+                const pipelineIds: string[] = [];
+                if (table === 'licenseChanges') {
+                  if (having === '_count') {
+                    for (const { pipelineId } of await ctx.prisma.licenseChange.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        id: {
+                          _count: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(pipelineId)
+                    }
+                  } else {
+                    for (const { pipelineId } of await ctx.prisma.licenseChange.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        [field]: {
+                          [having]: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(pipelineId)
+                    }
+                  }
 
-          const b = await ctx.prisma.pipeline.findMany({
+                } else if (table === 'wells') {
+                  if (having === '_count') {
+                    for (const { pipelineId } of await ctx.prisma.well.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        id: {
+                          _count: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      if (pipelineId) {
+                        pipelineIds.push(pipelineId);
+                      }
+                    }
+                  } else {
+                    for (const { pipelineId } of await ctx.prisma.well.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        [field]: {
+                          [having]: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      if (pipelineId) {
+                        pipelineIds.push(pipelineId);
+                      }
+                    }
+                  }
+                } else if (table === 'salesPoints') {
+                  if (having === '_count') {
+                    for (const { pipelineId } of await ctx.prisma.salesPoint.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        id: {
+                          _count: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      if (pipelineId) {
+                        pipelineIds.push(pipelineId);
+                      }
+                    }
+                  } else {
+                    for (const { pipelineId } of await ctx.prisma.salesPoint.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        [field]: {
+                          [having]: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      if (pipelineId) {
+                        pipelineIds.push(pipelineId);
+                      }
+                    }
+                  }
+                }
+
+                return {
+                  id: {
+                    in: pipelineIds
+                  }
+                }
+              }
+            }
+          }
+          ));
+
+          await ctx.prisma.pipeline.findMany({
             where: {
-              AND: [{ chemical: { h2s: { equals: true } } }]
+              AND: [{
+                "licenseChanges":
+                {
+                  "some": {
+                    "status": {
+                      "equals": "Abandoned"
+                    }
+                  }
+                }
+              },
+              {
+                toFeature: {
+                  equals: ''
+                }
+              }]
             }
           });
 
-          // return b
+
 
           return await ctx.prisma.pipeline.findMany({
             where: {
@@ -621,34 +758,7 @@ export const PipelineQuery = extendType({
             }
           });
 
-          // if (table === 'pipeline') {
-          //   return await ctx.prisma.pipeline.findMany({
-          //     where: {
-          //       [field]: { [operation]: castValue },
-          //     }
-          //   });
-          // }
 
-          // if (table === 'risk' || table === 'chemical') {
-          //   return await ctx.prisma.pipeline.findMany({
-          //     where: {
-          //       [table]: {
-          //         [field]: { [operation]: castValue },
-          //       }
-          //     }
-          //   });
-          // }
-          // if (table === 'wells' || table === 'licenseChanges' || table === 'salesPoints' || table === 'pressureTests' || table === 'pigRuns' || table === 'pipelineBatches') {
-          //   return await ctx.prisma.pipeline.findMany({
-          //     where: {
-          //       [table]: {
-          //         some: {
-          //           [field]: { [operation]: castValue },
-          //         }
-          //       }
-          //     }
-          //   });
-          // }
         }
         return null;
       }
@@ -680,6 +790,7 @@ export const SearchNavigationInput = inputObjectType({
     t.nonNull.string('field')
     t.nonNull.string('value')
     t.nonNull.string('type')
+    t.nonNull.field('having', { type: 'HavingEnum' })
     t.nonNull.field('operation', { type: 'OperationEnum' })
   },
 });

@@ -69,6 +69,18 @@ export const OperationEnum = enumType({
   members: OperationEnumMembers,
 });
 
+export const HavingEnumMembers: { [x: string]: NexusGenEnums['HavingEnum'] } = {
+  any: '_any',
+  minimum: '_min',
+  maximum: '_max',
+  count: '_count',
+}
+
+export const HavingEnum = enumType({
+  name: 'HavingEnum',
+  members: HavingEnumMembers,
+});
+
 
 export const EnumObject = objectType({
   name: 'EnumObject',

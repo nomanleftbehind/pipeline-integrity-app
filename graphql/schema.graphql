@@ -268,6 +268,20 @@ type GradeEnumObject {
   GradeX52: String!
 }
 
+enum HavingEnum {
+  any
+  count
+  maximum
+  minimum
+}
+
+type HavingEnumObject {
+  _any: HavingEnum!
+  _count: HavingEnum!
+  _max: HavingEnum!
+  _min: HavingEnum!
+}
+
 input HierarchyInput {
   id: String!
   table: TableEnum!
@@ -942,6 +956,7 @@ input SatelliteUniqueInput {
 
 input SearchNavigationInput {
   field: String!
+  having: HavingEnum!
   operation: OperationEnum!
   table: TableEnum!
   type: String!
@@ -1171,6 +1186,7 @@ type Validator {
   fromToMatchPattern: String!
   geotechnicalFacingEnum: GeotechnicalFacingEnumObject!
   gradeEnum: GradeEnumObject!
+  havingEnum: HavingEnumObject!
   internalProtectionEnum: InternalProtectionEnumObject!
   lengthMatchPattern: String!
   licenseMatchPattern: String!
