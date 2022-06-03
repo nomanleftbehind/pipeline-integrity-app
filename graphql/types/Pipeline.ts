@@ -567,37 +567,7 @@ export const PipelineQuery = extendType({
 
         if (search) {
 
-          const query = search.map(({ table, field, value, type, operation }) => {
-            const castValue =
-              type === 'Int' ? parseInt(value) :
-                type === 'Float' ? Number(value) :
-                  type === 'DateTime' ? new Date(value) :
-                    type === 'Boolean' ? value === 'true' ? true : false : value
-
-            if (table === 'pipeline') {
-              return {
-                [field]: { [operation]: castValue },
-              }
-            } else if (table === 'risk' || table === 'chemical') {
-              return {
-                [table]: {
-                  [field]: { [operation]: castValue },
-                }
-              };
-            } else {
-              return {
-                [table]: {
-                  some: {
-                    [field]: { [operation]: castValue },
-                  }
-                }
-              };
-            }
-          });
-          console.log('search:', search, JSON.stringify(query));
-
-
-          const query2 = await Promise.all(search.map(async ({ table, field, having, operation, value, type }) => {
+          const query = await Promise.all(search.map(async ({ table, field, having, operation, value, type }) => {
             const castValue =
               type === 'Int' ? parseInt(value) :
                 type === 'Float' ? Number(value) :
@@ -718,8 +688,91 @@ export const PipelineQuery = extendType({
                       }
                     }
                   }
+                } else if (table === 'pigRuns') {
+                  if (having === '_count') {
+                    for (const { pipelineId } of await ctx.prisma.pigRun.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        id: {
+                          _count: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(pipelineId);
+                    }
+                  } else {
+                    for (const { pipelineId } of await ctx.prisma.pigRun.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        [field]: {
+                          [having]: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(pipelineId);
+                    }
+                  }
+                } else if (table === 'pressureTests') {
+                  if (having === '_count') {
+                    for (const { pipelineId } of await ctx.prisma.pressureTest.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        id: {
+                          _count: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(pipelineId);
+                    }
+                  } else {
+                    for (const { pipelineId } of await ctx.prisma.pressureTest.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        [field]: {
+                          [having]: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(pipelineId);
+                    }
+                  }
+                } else if (table === 'pipelineBatches') {
+                  if (having === '_count') {
+                    for (const { pipelineId } of await ctx.prisma.pipelineBatch.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        id: {
+                          _count: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(pipelineId);
+                    }
+                  } else {
+                    for (const { pipelineId } of await ctx.prisma.pipelineBatch.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        [field]: {
+                          [having]: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(pipelineId);
+                    }
+                  }
                 }
-
                 return {
                   id: {
                     in: pipelineIds
@@ -730,35 +783,11 @@ export const PipelineQuery = extendType({
           }
           ));
 
-          await ctx.prisma.pipeline.findMany({
-            where: {
-              AND: [{
-                "licenseChanges":
-                {
-                  "some": {
-                    "status": {
-                      "equals": "Abandoned"
-                    }
-                  }
-                }
-              },
-              {
-                toFeature: {
-                  equals: ''
-                }
-              }]
-            }
-          });
-
-
-
           return await ctx.prisma.pipeline.findMany({
             where: {
               AND: query,
             }
           });
-
-
         }
         return null;
       }
