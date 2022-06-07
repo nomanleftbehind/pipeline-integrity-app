@@ -12,8 +12,8 @@ query UserCount {
   userCount
 }
 
-query PipelinesById($navigationInput: NavigationInput!) {
-  pipelinesById(navigationInput: $navigationInput) {
+query PipelinesById($navigationInput: NavigationInput!, $skip: Int!, $take: Int!) {
+  pipelinesById(navigationInput: $navigationInput, skip: $skip, take: $take) {
     id
     license
     segment

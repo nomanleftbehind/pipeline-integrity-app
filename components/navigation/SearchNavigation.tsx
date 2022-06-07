@@ -103,7 +103,9 @@ export default function SearchNavigation({ onNavigationAction }: INavigationProp
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     onNavigationAction({
-      search: searchNavigationInputArray
+      navigationInput: { search: searchNavigationInputArray },
+      skip: 0,
+      take: 20
     })
   }
 

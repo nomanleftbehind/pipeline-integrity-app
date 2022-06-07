@@ -79,7 +79,7 @@ export default function HierarchyNavigationDropdownItem({ id, name, onNavigation
       <HierarchyNavigationItem
         id={id}
         name={name}
-        onClick={(e) => onNavigationAction({ hierarchy: { id: e.currentTarget.value, table: TableEnum.Facility } })}
+        onClick={(e) => onNavigationAction({ navigationInput: { hierarchy: { id: e.currentTarget.value, table: TableEnum.Facility } }, skip: 0, take: 20 })}
         onExpand={handleExpand}
         open={open}
       />
@@ -90,7 +90,7 @@ export default function HierarchyNavigationDropdownItem({ id, name, onNavigation
               <HierarchyNavigationItem
                 id={satellite.id}
                 name={satellite.name}
-                onClick={(e) => onNavigationAction({ hierarchy: { id: e.currentTarget.value, table: TableEnum.Satellite } })}
+                onClick={(e) => onNavigationAction({ navigationInput: { hierarchy: { id: e.currentTarget.value, table: TableEnum.Satellite } }, skip: 0, take: 20 })}
                 paddingLeft={6}
               />
             </List>

@@ -4,11 +4,9 @@ import { getUser } from '../lib/user';
 
 import RenderPipeline from '../components/rows/RenderPipeline';
 import Navigation from '../components/navigation/Navigation';
-import HierarchyNavigation from '../components/navigation/HierarchyNavigation';
-import SearchNavigation from '../components/navigation/SearchNavigation';
 
 import { IGetServerSideProps } from './register';
-import { usePipelinesByIdLazyQuery, useValidatorsPipelineQuery, NavigationInput } from '../graphql/generated/graphql';
+import { usePipelinesByIdLazyQuery, useValidatorsPipelineQuery, PipelinesByIdQueryVariables } from '../graphql/generated/graphql';
 
 export interface IHeader {
   license: string;
@@ -22,19 +20,19 @@ export interface IHeader {
 
 function PipelineDatabase() {
 
-  const header: IHeader = { license: "", segment: "", from: "", fromFeature: "", to: "", toFeature: "" };
+  const header: IHeader = { license: '', segment: '', from: '', fromFeature: '', to: '', toFeature: '' };
   const [filterText, setFilterText] = useState<IHeader>(header);
   const [filterTextCaseInsensitive, setFilterTextCaseInsensitive] = useState<IHeader>(header);
 
   const [pipelinesById, { data, loading, error }] = usePipelinesByIdLazyQuery();
   const { data: validatorsData } = useValidatorsPipelineQuery();
 
-  const handleNavigation = ({ hierarchy, search }: NavigationInput) => {
+  const handleNavigation = ({ navigationInput: { hierarchy, search }, skip, take }: PipelinesByIdQueryVariables) => {
     if (hierarchy) {
-      pipelinesById({ variables: { navigationInput: { hierarchy } } });
+      pipelinesById({ variables: { navigationInput: { hierarchy }, skip, take } });
     }
     if (search) {
-      pipelinesById({ variables: { navigationInput: { search } } });
+      pipelinesById({ variables: { navigationInput: { search }, skip, take } });
     }
   }
 
@@ -72,12 +70,6 @@ function PipelineDatabase() {
           <Navigation
             onNavigationAction={handleNavigation}
           />
-          {/* <SearchNavigation
-            onSearchNavigation={handleNavigation}
-          /> */}
-          {/* <HierarchyNavigation
-            onHierarchyItemClick={handleNavigation}
-          /> */}
         </div>
       </div>
       <div className='pipelines-window'>

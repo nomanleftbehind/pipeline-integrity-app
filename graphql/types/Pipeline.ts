@@ -518,14 +518,18 @@ export const PipelineQuery = extendType({
       type: 'Pipeline',
       args: {
         navigationInput: nonNull(arg({ type: 'NavigationInput' })),
+        skip: nonNull(intArg()),
+        take: nonNull(intArg()),
       },
-      resolve: async (_, { navigationInput: { hierarchy, search } }, ctx: Context) => {
+      resolve: async (_, { navigationInput: { hierarchy, search }, skip, take }, ctx: Context) => {
 
         if (hierarchy) {
           const { id, table } = hierarchy;
           if (table === 'satellite') {
             const result = await ctx.prisma.pipeline.findMany({
               where: { satelliteId: id },
+              skip,
+              take,
               orderBy: [
                 { license: 'asc' },
                 { segment: 'asc' },
@@ -537,6 +541,8 @@ export const PipelineQuery = extendType({
               where: {
                 satellite: { facilityId: null }
               },
+              skip,
+              take,
               orderBy: [
                 { license: 'asc' },
                 { segment: 'asc' },
@@ -548,6 +554,8 @@ export const PipelineQuery = extendType({
               where: {
                 satellite: { facilityId: id }
               },
+              skip,
+              take,
               orderBy: [
                 { license: 'asc' },
                 { segment: 'asc' },
@@ -556,6 +564,8 @@ export const PipelineQuery = extendType({
             return result;
           } else {
             const result = await ctx.prisma.pipeline.findMany({
+              skip,
+              take,
               orderBy: [
                 { license: 'asc' },
                 { segment: 'asc' },
@@ -810,7 +820,8 @@ export const PipelineQuery = extendType({
             where: {
               AND: query,
             },
-            take: 20
+            skip,
+            take,
           });
         }
         return null;

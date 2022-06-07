@@ -1187,6 +1187,8 @@ export type QueryPipelineOptionsArgs = {
 
 export type QueryPipelinesByIdArgs = {
   navigationInput: NavigationInput;
+  skip: Scalars['Int'];
+  take: Scalars['Int'];
 };
 
 
@@ -1999,6 +2001,8 @@ export type UserCountQuery = { userCount?: number | null | undefined };
 
 export type PipelinesByIdQueryVariables = Exact<{
   navigationInput: NavigationInput;
+  skip: Scalars['Int'];
+  take: Scalars['Int'];
 }>;
 
 
@@ -3732,8 +3736,8 @@ export type UserCountQueryHookResult = ReturnType<typeof useUserCountQuery>;
 export type UserCountLazyQueryHookResult = ReturnType<typeof useUserCountLazyQuery>;
 export type UserCountQueryResult = Apollo.QueryResult<UserCountQuery, UserCountQueryVariables>;
 export const PipelinesByIdDocument = gql`
-    query PipelinesById($navigationInput: NavigationInput!) {
-  pipelinesById(navigationInput: $navigationInput) {
+    query PipelinesById($navigationInput: NavigationInput!, $skip: Int!, $take: Int!) {
+  pipelinesById(navigationInput: $navigationInput, skip: $skip, take: $take) {
     id
     license
     segment
@@ -3784,6 +3788,8 @@ export const PipelinesByIdDocument = gql`
  * const { data, loading, error } = usePipelinesByIdQuery({
  *   variables: {
  *      navigationInput: // value for 'navigationInput'
+ *      skip: // value for 'skip'
+ *      take: // value for 'take'
  *   },
  * });
  */

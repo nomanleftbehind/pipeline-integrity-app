@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import HierarchyNavigation from './HierarchyNavigation';
 import SearchNavigation from './SearchNavigation';
-import { NavigationInput } from '../../graphql/generated/graphql';
+import { PipelinesByIdQueryVariables } from '../../graphql/generated/graphql';
 
 import IconButton from '@mui/material/IconButton';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
 
-export type IOnNavigationAction = (arg: NavigationInput) => void;
+export type IOnNavigationAction = (arg: PipelinesByIdQueryVariables) => void;
 
 export interface INavigationProps {
   onNavigationAction: IOnNavigationAction;
@@ -35,7 +35,7 @@ const Navigation = ({ onNavigationAction }: INavigationProps) => {
 
   return (
     <>
-      <div style={{display: 'flex', justifyContent: 'space-around'}}>
+      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
         <IconButton size='small' onClick={() => setNavigation('hierarchy')} disabled={navigation === 'hierarchy'}>
           <AccountTreeIcon />
         </IconButton>
