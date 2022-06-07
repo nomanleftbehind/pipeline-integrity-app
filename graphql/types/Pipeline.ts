@@ -593,6 +593,28 @@ export const PipelineQuery = extendType({
                     }
                   }
                 };
+              } else if (having === '_count' && (operation === 'equals' || operation === 'lte') && castValue === 0) {
+                // This filter returns pipelines that have zero related records of specified table
+                return {
+                  [table]: {
+                    none: {}
+                  }
+                }
+              } else if (having === '_count' && operation === 'gte' && castValue === 0) {
+                // This filter effectively returns all pipelines
+                return {}
+              } else if (having === '_count' && operation === 'lt' && castValue === 0) {
+                // It's impossible to have count less than 0 so filter needs to return zero pipelines. ID is never an empty string so this will do the job.
+                return {
+                  id: ''
+                }
+              } else if (having === '_count' && ((operation === 'gt' && castValue === 0) || (operation === 'gte' && castValue === 1))) {
+                // This filter returns pipelines with at least one related record of specified table. This condition would have been captured later but in this specific case we can write a query that's much less expensive.
+                return {
+                  [table]: {
+                    some: {}
+                  }
+                }
               } else {
                 const pipelineIds: string[] = [];
                 if (table === 'licenseChanges') {
@@ -623,7 +645,6 @@ export const PipelineQuery = extendType({
                       pipelineIds.push(pipelineId)
                     }
                   }
-
                 } else if (table === 'wells') {
                   if (having === '_count') {
                     for (const { pipelineId } of await ctx.prisma.well.groupBy({
@@ -783,10 +804,13 @@ export const PipelineQuery = extendType({
           }
           ));
 
+          console.log(JSON.stringify(query));
+
           return await ctx.prisma.pipeline.findMany({
             where: {
               AND: query,
-            }
+            },
+            take: 20
           });
         }
         return null;

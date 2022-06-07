@@ -131,8 +131,8 @@ export default function SearchNavigation({ onNavigationAction }: INavigationProp
           </select>
 
           {[TableEnum.LicenseChanges, TableEnum.Wells, TableEnum.SalesPoints, TableEnum.PigRuns, TableEnum.PressureTests, TableEnum.PipelineBatches].includes(table) && <>
-            <div style={{ gridRow: 2, gridColumn: 2 }}>Having:</div>
-            <select style={{ gridRow: 2, gridColumn: 3 }} value={having} onChange={(e) => handleChange({ e, index, key: 'having' })}>
+            <div style={{ gridRow: 3, gridColumn: 2 }}>Having:</div>
+            <select style={{ gridRow: 3, gridColumn: 3 }} value={having} onChange={(e) => handleChange({ e, index, key: 'having' })}>
               {dataOperationAndHavingEnum?.validators && Object.values(dataOperationAndHavingEnum.validators.havingEnum).filter((operationDb) => {
                 // Special case when searching for Count of related fields, field is set to `id` and type is set to `Int` even though `id` is of type `String`
                 // We are never able to select `minimum` or `maximum` Having when type is String, but because in this special case, we have to add special condition when current Having is Count.
@@ -154,8 +154,8 @@ export default function SearchNavigation({ onNavigationAction }: INavigationProp
           </>}
 
           {having !== HavingEnum.Count && <>
-            <div style={{ gridRow: 3, gridColumn: 2 }}>Field:</div>
-            <select style={{ gridRow: 3, gridColumn: 3 }} value={field} onChange={(e) => handleChange({ e, index, key: 'field' })}>
+            <div style={{ gridRow: 2, gridColumn: 2 }}>Field:</div>
+            <select style={{ gridRow: 2, gridColumn: 3 }} value={field} onChange={(e) => handleChange({ e, index, key: 'field' })}>
               {options?.filter(({ table: tableName }) => tableName === table).map(({ field: fieldName }) => {
                 const prettyField = prettifyColumnName(fieldName);
                 return (
@@ -182,8 +182,9 @@ export default function SearchNavigation({ onNavigationAction }: INavigationProp
             }).map((operationDb) => {
 
               const prettyOperation = prettifyColumnName(operationDb);
+              const customOperation = type === 'DateTime' ? operationDb === OperationEnum.GreaterThan ? 'After' : operationDb === OperationEnum.GreaterThanOrEqual ? 'After Or Equal' : operationDb === OperationEnum.LessThan ? 'Before' : operationDb === OperationEnum.LessThanOrEqual ? 'Before Or Equal' : prettyOperation : prettyOperation;
               return (
-                <option key={operationDb} value={operationDb}>{prettyOperation}</option>
+                <option key={operationDb} value={operationDb}>{customOperation}</option>
               );
             })}
           </select>
