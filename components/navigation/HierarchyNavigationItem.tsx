@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import FacilityIcon from '../svg/facility';
 import SatelliteIcon from '../svg/satellite';
-import { IOnNavigationAction } from './Navigation'
+import { IOnNavigationAction, IOffsetPagination } from './Navigation'
 
 import List from '@mui/material/List';
 import Collapse from '@mui/material/Collapse';
@@ -62,11 +62,12 @@ interface IHierarchyNavigationDropdownItemProps {
   satellites?: {
     id: string;
     name: string;
-  }[]
+  }[];
+  offsetPagination: IOffsetPagination;
 }
 
 
-export default function HierarchyNavigationDropdownItem({ id, name, onNavigationAction, satellites }: IHierarchyNavigationDropdownItemProps) {
+export default function HierarchyNavigationDropdownItem({ id, name, onNavigationAction, satellites, offsetPagination: { skip, take } }: IHierarchyNavigationDropdownItemProps) {
 
   const [open, setOpen] = useState(false);
 
@@ -79,7 +80,7 @@ export default function HierarchyNavigationDropdownItem({ id, name, onNavigation
       <HierarchyNavigationItem
         id={id}
         name={name}
-        onClick={(e) => onNavigationAction({ navigationInput: { hierarchy: { id: e.currentTarget.value, table: TableEnum.Facility } }, skip: 0, take: 20 })}
+        onClick={(e) => onNavigationAction({ navigationInput: { hierarchy: { id: e.currentTarget.value, table: TableEnum.Facility } }, skip, take })}
         onExpand={handleExpand}
         open={open}
       />
@@ -90,7 +91,7 @@ export default function HierarchyNavigationDropdownItem({ id, name, onNavigation
               <HierarchyNavigationItem
                 id={satellite.id}
                 name={satellite.name}
-                onClick={(e) => onNavigationAction({ navigationInput: { hierarchy: { id: e.currentTarget.value, table: TableEnum.Satellite } }, skip: 0, take: 20 })}
+                onClick={(e) => onNavigationAction({ navigationInput: { hierarchy: { id: e.currentTarget.value, table: TableEnum.Satellite } }, skip, take })}
                 paddingLeft={6}
               />
             </List>

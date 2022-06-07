@@ -9,7 +9,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { INavigationProps } from './Navigation';
 
 
-export default function HierarchyNavigation({ onNavigationAction }: INavigationProps) {
+export default function HierarchyNavigation({ onNavigationAction, offsetPagination }: INavigationProps) {
   const { loading, error, data } = useSideBarQuery();
 
   return (
@@ -33,6 +33,7 @@ export default function HierarchyNavigation({ onNavigationAction }: INavigationP
             name={facility.name}
             onNavigationAction={onNavigationAction}
             satellites={facility.satellites}
+            offsetPagination={offsetPagination}
           />
         ))
       )}

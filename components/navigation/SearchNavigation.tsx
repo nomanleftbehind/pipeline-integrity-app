@@ -17,7 +17,7 @@ import { INavigationProps } from './Navigation';
 import { prettifyColumnName } from '../Header';
 
 
-export default function SearchNavigation({ onNavigationAction }: INavigationProps) {
+export default function SearchNavigation({ onNavigationAction, offsetPagination: { skip, take } }: INavigationProps) {
 
   const [searchNavigationInputArray, setSearchNavigationInputArray] = useState<SearchNavigationInput[]>([]);
   const [searchEnumObjectArray, setSearchEnumObjectArray] = useState<EnumObject[][]>([]);
@@ -104,8 +104,8 @@ export default function SearchNavigation({ onNavigationAction }: INavigationProp
     e.preventDefault();
     onNavigationAction({
       navigationInput: { search: searchNavigationInputArray },
-      skip: 0,
-      take: 20
+      skip,
+      take,
     })
   }
 

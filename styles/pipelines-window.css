@@ -8,10 +8,8 @@
   grid-auto-rows: min-content;
   border: #00b9f7 2px solid;
   border-radius: 6px;
-  /* height: 1fr; */
+  height: calc(100vh - 88px); /* This thing keep pagination control at the bottom of the page */
   overflow: auto;
-  /* overflow-y: auto; */
-  /* overflow-x: hidden; */
 }
 
 .pipeline-row {
