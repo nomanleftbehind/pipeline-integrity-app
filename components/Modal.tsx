@@ -7,7 +7,7 @@ interface IModalProps {
   children: ReactNode
 }
 
-function Modal({ children }: IModalProps) {
+export function Modal({ children }: IModalProps) {
 
   const [isBrowser, setIsBrowser] = useState(false);
   const modalRoot = document.getElementById('modal-root');
@@ -38,8 +38,7 @@ interface IModalFieldErrorProps {
   executeFunction?: () => void;
 }
 
-export function ModalFieldError({ fieldError, hideFieldError, executeFunction }: IModalFieldErrorProps) {
-  const { field, message } = fieldError;
+export function ModalFieldError({ fieldError: { field, message }, hideFieldError, executeFunction }: IModalFieldErrorProps) {
   return (
     <Modal>
       <div className='modal'>
