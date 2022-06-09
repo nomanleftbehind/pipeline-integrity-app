@@ -20,32 +20,24 @@ import { prettifyColumnName } from '../Header';
 
 export type ISearchNavigationOptions = SearchNavigationOptionsQuery['searchNavigationOptions'];
 
-interface ISearchNavigation extends INavigationProps {
+interface ISearchNavigation {
   searchNavigationInputArray: SearchNavigationInput[];
   searchEnumObjectArray: EnumObject[][];
   options?: ISearchNavigationOptions;
   addFilter: () => void;
   removeFilter: (index: number) => void;
   handleChange: ({ e, index, key }: IHandleSearchNavigationChange) => void;
+  handleClick: () => void;
 }
 
-export default function SearchNavigation({ onNavigationAction, searchNavigationInputArray, searchEnumObjectArray, options, addFilter, removeFilter, handleChange }: ISearchNavigation) {
+export default function SearchNavigation({ searchNavigationInputArray, searchEnumObjectArray, options, addFilter, removeFilter, handleChange, handleClick }: ISearchNavigation) {
 
   const tableOptions = options?.map(({ table }) => table);
 
   const { data: dataOperationAndHavingEnum } = useOperationAndHavingEnumQuery();
 
-  function onSubmit(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    // e.preventDefault();
-    onNavigationAction({
-      navigationInput: { search: searchNavigationInputArray },
-      skip: 0,
-      take: 10,
-    })
-  }
-
   return (
-    <div className='search-navigation-form' /*onSubmit={onSubmit}*/>
+    <div className='search-navigation-form'>
       {searchNavigationInputArray.map(({ table, field, having, operation, type, value }, index) => {
         return <div className='search-navigation-input-item' key={index}>
           <div style={{ gridRow: '1/6', gridColumn: 1 }}>
@@ -153,7 +145,7 @@ export default function SearchNavigation({ onNavigationAction, searchNavigationI
           </IconButton>
           <div>Add Filter</div>
         </div>
-        <IconButton aria-label='submit-search' size='small' /*type='submit'*/ onClick={onSubmit} disabled={searchNavigationInputArray.length === 0 || searchNavigationInputArray.find(({ value }) => value === '') !== undefined}>
+        <IconButton aria-label='submit-search' size='small' onClick={handleClick} disabled={searchNavigationInputArray.length === 0 || searchNavigationInputArray.find(({ value }) => value === '') !== undefined}>
           <SearchIcon />
         </IconButton>
       </div>

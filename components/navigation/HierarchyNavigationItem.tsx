@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import FacilityIcon from '../svg/facility';
 import SatelliteIcon from '../svg/satellite';
-import { IOnNavigationAction, IOffsetPagination } from './Navigation'
+import { IHierarchyNavigationProps, ISetHierarchy } from './HierarchyNavigation';
+import { IHierarchy } from './Navigation';
 
 import List from '@mui/material/List';
 import Collapse from '@mui/material/Collapse';
@@ -55,32 +56,48 @@ function HierarchyNavigationItem({ id, name, paddingLeft, onClick, onExpand, ope
 }
 
 
-interface IHierarchyNavigationDropdownItemProps {
+interface IHierarchyNavigationDropdownItemProps extends IHierarchyNavigationProps {
   id?: string;
   name: string;
-  onNavigationAction: IOnNavigationAction;
   satellites?: {
     id: string;
     name: string;
   }[];
-  offsetPagination: IOffsetPagination;
+
 }
 
 
-export default function HierarchyNavigationDropdownItem({ id, name, onNavigationAction, satellites, offsetPagination: { skip, take } }: IHierarchyNavigationDropdownItemProps) {
+export default function HierarchyNavigationDropdownItem({ id, name, satellites, handleClick, setHierarchy }: IHierarchyNavigationDropdownItemProps) {
 
   const [open, setOpen] = useState(false);
-
   const handleExpand = () => {
     setOpen(!open);
   };
+
+  const someThing = (fn: ISetHierarchy, hierarchy: IHierarchy) => {
+    console.log("Do Something!");
+    fn(hierarchy);
+  }
+
+  const doThirdThing = (fn: () => void) => {
+    console.log("Do Third thing!");
+    fn();
+  }
+
+  const onClick = (hierarchy: IHierarchy) => {
+    someThing(function () {
+      console.log("First anonymous callback!");
+      doThirdThing(handleClick)
+    }, hierarchy)
+  }
+
 
   return (
     <>
       <HierarchyNavigationItem
         id={id}
         name={name}
-        onClick={(e) => onNavigationAction({ navigationInput: { hierarchy: { id: e.currentTarget.value, table: TableEnum.Facility } }, skip, take })}
+        onClick={(e) => onClick({ id: e.currentTarget.value, table: TableEnum.Facility })}
         onExpand={handleExpand}
         open={open}
       />
@@ -91,7 +108,7 @@ export default function HierarchyNavigationDropdownItem({ id, name, onNavigation
               <HierarchyNavigationItem
                 id={satellite.id}
                 name={satellite.name}
-                onClick={(e) => onNavigationAction({ navigationInput: { hierarchy: { id: e.currentTarget.value, table: TableEnum.Satellite } }, skip, take })}
+                onClick={(e) => onClick({ id: e.currentTarget.value, table: TableEnum.Satellite })}
                 paddingLeft={6}
               />
             </List>

@@ -19,8 +19,9 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
 
-export type IOnNavigationAction = (arg: PipelinesByIdQueryVariables) => void;
-export type IOffsetPagination = { skip: number; take: number };
+type IOnNavigationAction = (arg: PipelinesByIdQueryVariables) => void;
+
+export type IHierarchy = { id: string; table: TableEnum };
 
 export type IHandleSearchNavigationChange = { e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>, index: number, key: keyof SearchNavigationInput };
 
@@ -43,7 +44,8 @@ const Navigation = ({ onNavigationAction }: INavigationProps) => {
     setRowsPerPage(parseInt(e.target.value, 10));
     setPage(0);
   };
-  const offsetPagination = { skip: page * rowsPerPage, take: rowsPerPage }
+
+  const skip = page * rowsPerPage;
 
 
   // Search Navigation
@@ -63,7 +65,7 @@ const Navigation = ({ onNavigationAction }: INavigationProps) => {
     setSearchEnumObjectArray(searchEnumObjectArray.filter((_, i) => i !== index));
   }
 
-  const handleChange = ({ e, index, key }: IHandleSearchNavigationChange) => {
+  const handleSearchNavigationChange = ({ e, index, key }: IHandleSearchNavigationChange) => {
 
     let newSearchNavigationInputArray = [...searchNavigationInputArray];
     let searchItem = { ...newSearchNavigationInputArray[index] };
@@ -120,7 +122,25 @@ const Navigation = ({ onNavigationAction }: INavigationProps) => {
 
   }
 
+  const handleSearchNavigationClick = () => {
+    onNavigationAction({
+      navigationInput: { search: searchNavigationInputArray },
+      skip,
+      take: rowsPerPage,
+    });
+  }
 
+
+  // Hierarchy Navigation
+  const [hierarchy, setHierarchy] = useState<IHierarchy>({ id: '', table: TableEnum.Facility });
+
+  const handleHierarchyNavigationClick = () => {
+    onNavigationAction({
+      navigationInput: { hierarchy: { id: hierarchy.id, table: hierarchy.table } },
+      skip,
+      take: rowsPerPage,
+    });
+  }
 
 
   const [navigation, setNavigation] = useState<INavigation>('hierarchy');
@@ -128,17 +148,17 @@ const Navigation = ({ onNavigationAction }: INavigationProps) => {
   const renderNavigation = () => {
     if (navigation === 'hierarchy') {
       return <HierarchyNavigation
-        onNavigationAction={onNavigationAction}
-        offsetPagination={offsetPagination}
+        setHierarchy={setHierarchy}
+        handleClick={handleHierarchyNavigationClick}
       />
     }
     if (navigation === 'search') {
       return <SearchNavigation
-        onNavigationAction={onNavigationAction}
         searchNavigationInputArray={searchNavigationInputArray}
         searchEnumObjectArray={searchEnumObjectArray}
         options={options}
-        handleChange={handleChange}
+        handleChange={handleSearchNavigationChange}
+        handleClick={handleSearchNavigationClick}
         addFilter={addFilter}
         removeFilter={removeFilter}
       />
