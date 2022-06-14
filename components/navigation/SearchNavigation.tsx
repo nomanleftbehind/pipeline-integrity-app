@@ -13,14 +13,14 @@ import {
   SearchNavigationOptionsQuery,
 } from '../../graphql/generated/graphql';
 
-import { INavigationProps, IHandleSearchNavigationChange } from './Navigation';
+import { IHandleSearchNavigationChange } from './Navigation';
 import { prettifyColumnName } from '../Header';
 
 
 
 export type ISearchNavigationOptions = SearchNavigationOptionsQuery['searchNavigationOptions'];
 
-interface ISearchNavigation {
+interface ISearchNavigationProps {
   searchNavigationInputArray: SearchNavigationInput[];
   searchEnumObjectArray: EnumObject[][];
   options?: ISearchNavigationOptions;
@@ -30,7 +30,7 @@ interface ISearchNavigation {
   handleClick: () => void;
 }
 
-export default function SearchNavigation({ searchNavigationInputArray, searchEnumObjectArray, options, addFilter, removeFilter, handleChange, handleClick }: ISearchNavigation) {
+export default function SearchNavigation({ searchNavigationInputArray, searchEnumObjectArray, options, addFilter, removeFilter, handleChange, handleClick }: ISearchNavigationProps) {
 
   const tableOptions = options?.map(({ table }) => table);
 

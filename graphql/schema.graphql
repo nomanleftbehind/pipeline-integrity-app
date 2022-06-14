@@ -776,6 +776,11 @@ type PipelinePayload {
   pipeline: Pipeline
 }
 
+type PipelinesByIdPayload {
+  count: Int!
+  pipelines: [Pipeline]
+}
+
 type PipelinesFlowAndSourceGroupBy {
   pipelinesFlow: [PipelineFlow]
   sourceGroupBy: SourceGroupBy
@@ -822,7 +827,7 @@ type Query {
   pipelineBatchesByPipelineId(pipelineId: String!): [PipelineBatch]
   pipelineFlow(flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): PipelineFlow
   pipelineOptions(id: String!): [SourceOptions]
-  pipelinesById(navigationInput: NavigationInput!, skip: Int!, take: Int!): [Pipeline]
+  pipelinesById(navigationInput: NavigationInput!, skip: Int!, take: Int!): PipelinesByIdPayload!
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
   pipelinesFlow(flowCalculationDirection: FlowCalculationDirectionEnum!, idList: [String]!): [PipelineFlow]
   pressureTestsByPipelineId(pipelineId: String!): [PressureTest]

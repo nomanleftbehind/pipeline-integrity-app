@@ -1083,6 +1083,11 @@ export type PipelinePayload = {
   pipeline?: Maybe<Pipeline>;
 };
 
+export type PipelinesByIdPayload = {
+  count: Scalars['Int'];
+  pipelines?: Maybe<Array<Maybe<Pipeline>>>;
+};
+
 export type PipelinesFlowAndSourceGroupBy = {
   pipelinesFlow?: Maybe<Array<Maybe<PipelineFlow>>>;
   sourceGroupBy?: Maybe<SourceGroupBy>;
@@ -1129,7 +1134,7 @@ export type Query = {
   pipelineBatchesByPipelineId?: Maybe<Array<Maybe<PipelineBatch>>>;
   pipelineFlow?: Maybe<PipelineFlow>;
   pipelineOptions?: Maybe<Array<Maybe<SourceOptions>>>;
-  pipelinesById?: Maybe<Array<Maybe<Pipeline>>>;
+  pipelinesById: PipelinesByIdPayload;
   pipelinesByUser?: Maybe<Array<Maybe<Pipeline>>>;
   pipelinesFlow?: Maybe<Array<Maybe<PipelineFlow>>>;
   pressureTestsByPipelineId?: Maybe<Array<Maybe<PressureTest>>>;
@@ -2006,7 +2011,7 @@ export type PipelinesByIdQueryVariables = Exact<{
 }>;
 
 
-export type PipelinesByIdQuery = { pipelinesById?: Array<{ id: string, license: string, segment: string, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, currentStatus?: StatusEnum | null | undefined, currentSubstance?: SubstanceEnum | null | undefined, firstLicenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type PipelinesByIdQuery = { pipelinesById: { count: number, pipelines?: Array<{ id: string, license: string, segment: string, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, currentStatus?: StatusEnum | null | undefined, currentSubstance?: SubstanceEnum | null | undefined, firstLicenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined } };
 
 export type PigRunsByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -3738,39 +3743,42 @@ export type UserCountQueryResult = Apollo.QueryResult<UserCountQuery, UserCountQ
 export const PipelinesByIdDocument = gql`
     query PipelinesById($navigationInput: NavigationInput!, $skip: Int!, $take: Int!) {
   pipelinesById(navigationInput: $navigationInput, skip: $skip, take: $take) {
-    id
-    license
-    segment
-    flowCalculationDirection
-    from
-    fromFeature
-    to
-    toFeature
-    currentStatus
-    currentSubstance
-    firstLicenseDate
-    length
-    type
-    grade
-    yieldStrength
-    outsideDiameter
-    wallThickness
-    material
-    mop
-    internalProtection
-    piggable
-    piggingFrequency
-    createdBy {
+    pipelines {
       id
-      email
+      license
+      segment
+      flowCalculationDirection
+      from
+      fromFeature
+      to
+      toFeature
+      currentStatus
+      currentSubstance
+      firstLicenseDate
+      length
+      type
+      grade
+      yieldStrength
+      outsideDiameter
+      wallThickness
+      material
+      mop
+      internalProtection
+      piggable
+      piggingFrequency
+      createdBy {
+        id
+        email
+      }
+      createdAt
+      updatedBy {
+        id
+        email
+      }
+      updatedAt
+      authorized
     }
-    createdAt
-    updatedBy {
-      id
-      email
-    }
-    updatedAt
-    authorized
+    count
   }
 }
     `;

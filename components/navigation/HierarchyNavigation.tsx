@@ -2,7 +2,8 @@ import { Dispatch, SetStateAction } from 'react';
 import {
   useSideBarQuery,
   TableEnum,
-  NavigationInput
+  NavigationInput,
+  HierarchyInput,
 } from '../../graphql/generated/graphql';
 import HierarchyNavigationItem from './HierarchyNavigationItem';
 
@@ -11,17 +12,15 @@ import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 
 
-import { IHierarchy } from './Navigation';
 
-export type ISetHierarchy = Dispatch<SetStateAction<IHierarchy>>;
+export type ISetHierarchy = Dispatch<SetStateAction<HierarchyInput>>;
 
 export interface IHierarchyNavigationProps {
-  setHierarchy: ISetHierarchy;
-  handleClick: () => void;
+  handleClick: (hierarchyInput: HierarchyInput) => void;
 }
 
 
-export default function HierarchyNavigation({ handleClick, setHierarchy }: IHierarchyNavigationProps) {
+export default function HierarchyNavigation({ handleClick }: IHierarchyNavigationProps) {
   const { loading, error, data } = useSideBarQuery();
 
   return (
@@ -44,7 +43,6 @@ export default function HierarchyNavigation({ handleClick, setHierarchy }: IHier
             id={facility.id}
             name={facility.name}
             handleClick={handleClick}
-            setHierarchy={setHierarchy}
             satellites={facility.satellites}
           />
         ))

@@ -49,6 +49,7 @@ function PipelineDatabase() {
         <div className="pipeline-database-side-bar-fixed" /*style={{border: '1px solid red'}}*/>
           <Navigation
             onNavigationAction={handleNavigation}
+            paginationCount={data?.pipelinesById.count || 0}
           />
         </div>
       </div>
@@ -61,7 +62,7 @@ function PipelineDatabase() {
         <div className='pipeline-data-view-header sticky top' style={{ gridColumn: 12 }}></div>
         {loading && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>Loading...</div>}
         {error && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>{error.message}</div>}
-        {data?.pipelinesById?.map((pipeline, gridRow) => {
+        {data?.pipelinesById.pipelines?.map((pipeline, gridRow) => {
           gridRow *= 2;
           gridRow += 2;
           return pipeline && <RenderPipeline

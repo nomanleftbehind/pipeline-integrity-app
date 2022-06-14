@@ -2,7 +2,6 @@ import { useState } from 'react';
 import FacilityIcon from '../svg/facility';
 import SatelliteIcon from '../svg/satellite';
 import { IHierarchyNavigationProps, ISetHierarchy } from './HierarchyNavigation';
-import { IHierarchy } from './Navigation';
 
 import List from '@mui/material/List';
 import Collapse from '@mui/material/Collapse';
@@ -63,41 +62,22 @@ interface IHierarchyNavigationDropdownItemProps extends IHierarchyNavigationProp
     id: string;
     name: string;
   }[];
-
 }
 
 
-export default function HierarchyNavigationDropdownItem({ id, name, satellites, handleClick, setHierarchy }: IHierarchyNavigationDropdownItemProps) {
+export default function HierarchyNavigationDropdownItem({ id, name, satellites, handleClick }: IHierarchyNavigationDropdownItemProps) {
 
   const [open, setOpen] = useState(false);
   const handleExpand = () => {
     setOpen(!open);
   };
 
-  const someThing = (fn: ISetHierarchy, hierarchy: IHierarchy) => {
-    console.log("Do Something!");
-    fn(hierarchy);
-  }
-
-  const doThirdThing = (fn: () => void) => {
-    console.log("Do Third thing!");
-    fn();
-  }
-
-  const onClick = (hierarchy: IHierarchy) => {
-    someThing(function () {
-      console.log("First anonymous callback!");
-      doThirdThing(handleClick)
-    }, hierarchy)
-  }
-
-
   return (
     <>
       <HierarchyNavigationItem
         id={id}
         name={name}
-        onClick={(e) => onClick({ id: e.currentTarget.value, table: TableEnum.Facility })}
+        onClick={e => handleClick({ id: e.currentTarget.value, table: TableEnum.Facility })}
         onExpand={handleExpand}
         open={open}
       />
@@ -108,7 +88,7 @@ export default function HierarchyNavigationDropdownItem({ id, name, satellites, 
               <HierarchyNavigationItem
                 id={satellite.id}
                 name={satellite.name}
-                onClick={(e) => onClick({ id: e.currentTarget.value, table: TableEnum.Satellite })}
+                onClick={(e) => handleClick({ id: e.currentTarget.value, table: TableEnum.Satellite })}
                 paddingLeft={6}
               />
             </List>

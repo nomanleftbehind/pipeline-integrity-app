@@ -11,6 +11,7 @@ import {
   TableEnum,
   HavingEnum,
   OperationEnum,
+  HierarchyInput,
 
 } from '../../graphql/generated/graphql';
 
@@ -21,28 +22,60 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
 type IOnNavigationAction = (arg: PipelinesByIdQueryVariables) => void;
 
-export type IHierarchy = { id: string; table: TableEnum };
-
 export type IHandleSearchNavigationChange = { e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>, index: number, key: keyof SearchNavigationInput };
 
 export interface INavigationProps {
   onNavigationAction: IOnNavigationAction;
+  paginationCount: number;
 };
 
 
 type INavigation = 'hierarchy' | 'search';
 
-const Navigation = ({ onNavigationAction }: INavigationProps) => {
+const Navigation = ({ onNavigationAction, paginationCount }: INavigationProps) => {
+
+
+  const [navigation, setNavigation] = useState<INavigation>('hierarchy');
 
   // Pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const handleChangePage = (_e: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
+    if (navigation === 'hierarchy') {
+      onNavigationAction({
+        navigationInput: { hierarchy: hierarchyInput },
+        skip: newPage * rowsPerPage,
+        take: rowsPerPage,
+      });
+    }
+    if (navigation === 'search') {
+      onNavigationAction({
+        navigationInput: { search: searchNavigationInputArray },
+        skip: newPage * rowsPerPage,
+        take: rowsPerPage,
+      });
+    }
   };
   const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setRowsPerPage(parseInt(e.target.value, 10));
+    const newRowsPerPage = parseInt(e.target.value, 10);
+    setRowsPerPage(newRowsPerPage);
     setPage(0);
+
+    if (navigation === 'hierarchy') {
+      onNavigationAction({
+        navigationInput: { hierarchy: hierarchyInput },
+        skip: 0,
+        take: newRowsPerPage,
+      });
+    }
+    if (navigation === 'search') {
+      onNavigationAction({
+        navigationInput: { search: searchNavigationInputArray },
+        skip: 0,
+        take: newRowsPerPage,
+      });
+    }
   };
 
   const skip = page * rowsPerPage;
@@ -132,23 +165,22 @@ const Navigation = ({ onNavigationAction }: INavigationProps) => {
 
 
   // Hierarchy Navigation
-  const [hierarchy, setHierarchy] = useState<IHierarchy>({ id: '', table: TableEnum.Facility });
+  const [hierarchyInput, setHierarchyInput] = useState<HierarchyInput>({ id: '', table: TableEnum.Facility });
 
-  const handleHierarchyNavigationClick = () => {
+  const handleHierarchyNavigationClick = (hierarchyInput: HierarchyInput) => {
+    setHierarchyInput(hierarchyInput);
     onNavigationAction({
-      navigationInput: { hierarchy: { id: hierarchy.id, table: hierarchy.table } },
+      navigationInput: { hierarchy: hierarchyInput },
       skip,
       take: rowsPerPage,
     });
   }
 
 
-  const [navigation, setNavigation] = useState<INavigation>('hierarchy');
 
   const renderNavigation = () => {
     if (navigation === 'hierarchy') {
       return <HierarchyNavigation
-        setHierarchy={setHierarchy}
         handleClick={handleHierarchyNavigationClick}
       />
     }
@@ -181,7 +213,7 @@ const Navigation = ({ onNavigationAction }: INavigationProps) => {
         <TablePagination
           style={{ position: 'fixed', left: '950px', bottom: '-10px' }}
           component='div'
-          count={100}
+          count={paginationCount}
           size='small'
           page={page}
           onPageChange={handleChangePage}

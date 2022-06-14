@@ -14,39 +14,42 @@ query UserCount {
 
 query PipelinesById($navigationInput: NavigationInput!, $skip: Int!, $take: Int!) {
   pipelinesById(navigationInput: $navigationInput, skip: $skip, take: $take) {
-    id
-    license
-    segment
-    flowCalculationDirection
-    from
-    fromFeature
-    to
-    toFeature
-    currentStatus
-    currentSubstance
-    firstLicenseDate
-    length
-    type
-    grade
-    yieldStrength
-    outsideDiameter
-    wallThickness
-    material
-    mop
-    internalProtection
-    piggable
-    piggingFrequency
-    createdBy {
+    pipelines {
       id
-      email
+      license
+      segment
+      flowCalculationDirection
+      from
+      fromFeature
+      to
+      toFeature
+      currentStatus
+      currentSubstance
+      firstLicenseDate
+      length
+      type
+      grade
+      yieldStrength
+      outsideDiameter
+      wallThickness
+      material
+      mop
+      internalProtection
+      piggable
+      piggingFrequency
+      createdBy {
+        id
+        email
+      }
+      createdAt
+      updatedBy {
+        id
+        email
+      }
+      updatedAt
+      authorized
     }
-    createdAt
-    updatedBy {
-      id
-      email
-    }
-    updatedAt
-    authorized
+    count
   }
 }
 

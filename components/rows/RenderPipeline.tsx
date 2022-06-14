@@ -12,7 +12,7 @@ import { IRecordEntryMap } from './LicenseChanges';
 
 export type IInferFromArray<T> = T extends (infer U)[] ? NonNullable<U> : never;
 
-export type IPipeline = IInferFromArray<NonNullable<PipelinesByIdQuery['pipelinesById']>>;
+export type IPipeline = IInferFromArray<NonNullable<PipelinesByIdQuery['pipelinesById']['pipelines']>>;
 export type IValidators = GetValidatorsQuery['validators'];
 
 type IValidatorsPipeline = ValidatorsPipelineQuery['validators'];

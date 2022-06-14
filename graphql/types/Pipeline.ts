@@ -428,6 +428,15 @@ export const resolvePipelineAuthorized = (user: IUser) => {
 }
 
 
+export const PipelinesByIdPayload = objectType({
+  name: 'PipelinesByIdPayload',
+  definition: t => {
+    t.list.field('pipelines', { type: 'Pipeline' })
+    t.nonNull.int('count')
+  },
+});
+
+
 export const PipelineQuery = extendType({
   type: 'Query',
   definition(t) {
@@ -514,8 +523,8 @@ export const PipelineQuery = extendType({
         return null;
       }
     })
-    t.list.field('pipelinesById', {
-      type: 'Pipeline',
+    t.nonNull.field('pipelinesById', {
+      type: 'PipelinesByIdPayload',
       args: {
         navigationInput: nonNull(arg({ type: 'NavigationInput' })),
         skip: nonNull(intArg()),
@@ -526,8 +535,10 @@ export const PipelineQuery = extendType({
         if (hierarchy) {
           const { id, table } = hierarchy;
           if (table === 'satellite') {
-            const result = await ctx.prisma.pipeline.findMany({
-              where: { satelliteId: id },
+            const where = { satelliteId: id };
+            const count = await ctx.prisma.pipeline.count({ where });
+            const pipelines = await ctx.prisma.pipeline.findMany({
+              where,
               skip,
               take,
               orderBy: [
@@ -535,12 +546,12 @@ export const PipelineQuery = extendType({
                 { segment: 'asc' },
               ]
             });
-            return result;
+            return { pipelines, count };
           } else if (table === 'facility' && id === 'no-facility') {
-            const result = await ctx.prisma.pipeline.findMany({
-              where: {
-                satellite: { facilityId: null }
-              },
+            const where = { satellite: { facilityId: null } };
+            const count = await ctx.prisma.pipeline.count({ where });
+            const pipelines = await ctx.prisma.pipeline.findMany({
+              where,
               skip,
               take,
               orderBy: [
@@ -548,12 +559,12 @@ export const PipelineQuery = extendType({
                 { segment: 'asc' },
               ]
             });
-            return result;
+            return { pipelines, count };
           } else if (table === 'facility' && id) {
-            const result = await ctx.prisma.pipeline.findMany({
-              where: {
-                satellite: { facilityId: id }
-              },
+            const where = { satellite: { facilityId: id } };
+            const count = await ctx.prisma.pipeline.count({ where });
+            const pipelines = await ctx.prisma.pipeline.findMany({
+              where,
               skip,
               take,
               orderBy: [
@@ -561,9 +572,10 @@ export const PipelineQuery = extendType({
                 { segment: 'asc' },
               ]
             });
-            return result;
+            return { pipelines, count };
           } else {
-            const result = await ctx.prisma.pipeline.findMany({
+            const count = await ctx.prisma.pipeline.count();
+            const pipelines = await ctx.prisma.pipeline.findMany({
               skip,
               take,
               orderBy: [
@@ -571,7 +583,7 @@ export const PipelineQuery = extendType({
                 { segment: 'asc' },
               ]
             });
-            return result;
+            return { pipelines, count };
           }
         }
 
@@ -816,15 +828,16 @@ export const PipelineQuery = extendType({
 
           console.log(JSON.stringify(query));
 
-          return await ctx.prisma.pipeline.findMany({
-            where: {
-              AND: query,
-            },
+          const where = { AND: query, };
+          const count = await ctx.prisma.pipeline.count({ where });
+          const pipelines = await ctx.prisma.pipeline.findMany({
+            where,
             skip,
             take,
           });
+          return { pipelines, count };
         }
-        return null;
+        return { pipelines: null, count: 0 };
       }
     })
   },
