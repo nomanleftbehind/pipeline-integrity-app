@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { Modal } from '../Modal';
+import { useEffect, useState } from 'react';
 import TablePagination from '@mui/material/TablePagination';
 import HierarchyNavigation from './HierarchyNavigation';
 import SearchNavigation from './SearchNavigation';
@@ -36,6 +35,11 @@ const Navigation = ({ onNavigationAction, paginationCount }: INavigationProps) =
 
 
   const [navigation, setNavigation] = useState<INavigation>('hierarchy');
+  const [componentPaginationCount, setPaginationCount] = useState(0);
+
+  useEffect(() => {
+    setPaginationCount(paginationCount)
+  }, [paginationCount]);
 
   // Pagination
   const [page, setPage] = useState(0);
@@ -61,7 +65,6 @@ const Navigation = ({ onNavigationAction, paginationCount }: INavigationProps) =
     const newRowsPerPage = parseInt(e.target.value, 10);
     setRowsPerPage(newRowsPerPage);
     setPage(0);
-
     if (navigation === 'hierarchy') {
       onNavigationAction({
         navigationInput: { hierarchy: hierarchyInput },
@@ -78,8 +81,6 @@ const Navigation = ({ onNavigationAction, paginationCount }: INavigationProps) =
     }
   };
 
-  const skip = page * rowsPerPage;
-
 
   // Search Navigation
   const { data } = useSearchNavigationOptionsQuery();
@@ -89,17 +90,20 @@ const Navigation = ({ onNavigationAction, paginationCount }: INavigationProps) =
 
 
   const addFilter = () => {
+    setPaginationCount(0);
     setSearchNavigationInputArray(previousSearchNavigationInputArray => [...previousSearchNavigationInputArray, { table: TableEnum.Pipeline, field: 'id', having: HavingEnum.Any, operation: OperationEnum.Equals, type: 'String', value: '' }]);
     setSearchEnumObjectArray(previousSearchEnumObjectArray => [...previousSearchEnumObjectArray, []]);
   }
 
   const removeFilter = (index: number) => {
+    setPaginationCount(0);
     setSearchNavigationInputArray(searchNavigationInputArray.filter((_, i) => i !== index));
     setSearchEnumObjectArray(searchEnumObjectArray.filter((_, i) => i !== index));
   }
 
   const handleSearchNavigationChange = ({ e, index, key }: IHandleSearchNavigationChange) => {
 
+    setPaginationCount(0);
     let newSearchNavigationInputArray = [...searchNavigationInputArray];
     let searchItem = { ...newSearchNavigationInputArray[index] };
 
@@ -156,9 +160,10 @@ const Navigation = ({ onNavigationAction, paginationCount }: INavigationProps) =
   }
 
   const handleSearchNavigationClick = () => {
+    setPage(0);
     onNavigationAction({
       navigationInput: { search: searchNavigationInputArray },
-      skip,
+      skip: 0,
       take: rowsPerPage,
     });
   }
@@ -169,9 +174,10 @@ const Navigation = ({ onNavigationAction, paginationCount }: INavigationProps) =
 
   const handleHierarchyNavigationClick = (hierarchyInput: HierarchyInput) => {
     setHierarchyInput(hierarchyInput);
+    setPage(0);
     onNavigationAction({
       navigationInput: { hierarchy: hierarchyInput },
-      skip,
+      skip: 0,
       take: rowsPerPage,
     });
   }
@@ -208,19 +214,19 @@ const Navigation = ({ onNavigationAction, paginationCount }: INavigationProps) =
         </IconButton>
       </div>
       <div>{renderNavigation()}</div>
-      {/* We place pagination inside modal portal because TablePagination component is not a child of Navigation but it needs to use its state */}
-      <Modal>
-        <TablePagination
-          style={{ position: 'fixed', left: '950px', bottom: '-10px' }}
-          component='div'
-          count={paginationCount}
-          size='small'
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Modal>
+      <TablePagination
+        // Replace default 12px padding of nested button
+        // TablePagination component needs to be a child of Navigation component because we are using Navigation's state to render number of pages.
+        // We place it fixed centered at the bottom of the page.
+        sx={{ '& > div > div > button': { padding: '3px' }, position: 'fixed', left: '950px', bottom: '-10px' }}
+        component='div'
+        count={componentPaginationCount}
+        size='small'
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </>
   );
 }
