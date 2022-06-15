@@ -398,7 +398,7 @@ export const PipelineExtendObject = extendType({
       type: 'Pipeline',
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.pipeline.findMany({
-          where: { downstream: { some: { id } } },
+          where: { upstream: { some: { downstreamId: id } } },
         })
       },
     })
@@ -406,7 +406,7 @@ export const PipelineExtendObject = extendType({
       type: 'Pipeline',
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.pipeline.findMany({
-          where: { upstream: { some: { id } } },
+          where: { downstream: { some: { upstreamId: id } } },
         })
       },
     })

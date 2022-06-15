@@ -111,6 +111,18 @@ CREATE TABLE "Pipeline" (
 );
 
 -- CreateTable
+CREATE TABLE "PipelinesOnPipelines" (
+    "upstreamId" TEXT NOT NULL,
+    "downstreamId" TEXT NOT NULL,
+    "createdById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedById" TEXT NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "PipelinesOnPipelines_pkey" PRIMARY KEY ("upstreamId","downstreamId")
+);
+
+-- CreateTable
 CREATE TABLE "LicenseChange" (
     "id" TEXT NOT NULL,
     "pipelineId" TEXT NOT NULL,
@@ -349,12 +361,6 @@ CREATE TABLE "BatchProduct" (
     CONSTRAINT "BatchProduct_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "_PipelineFollows" (
-    "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -388,12 +394,6 @@ CREATE UNIQUE INDEX "SalesPoint_fdcRecId_key" ON "SalesPoint"("fdcRecId");
 -- CreateIndex
 CREATE UNIQUE INDEX "BatchProduct_product_key" ON "BatchProduct"("product");
 
--- CreateIndex
-CREATE UNIQUE INDEX "_PipelineFollows_AB_unique" ON "_PipelineFollows"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_PipelineFollows_B_index" ON "_PipelineFollows"("B");
-
 -- AddForeignKey
 ALTER TABLE "Facility" ADD CONSTRAINT "Facility_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -417,6 +417,18 @@ ALTER TABLE "Pipeline" ADD CONSTRAINT "Pipeline_updatedById_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "Pipeline" ADD CONSTRAINT "Pipeline_satelliteId_fkey" FOREIGN KEY ("satelliteId") REFERENCES "Satellite"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PipelinesOnPipelines" ADD CONSTRAINT "PipelinesOnPipelines_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PipelinesOnPipelines" ADD CONSTRAINT "PipelinesOnPipelines_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PipelinesOnPipelines" ADD CONSTRAINT "PipelinesOnPipelines_upstreamId_fkey" FOREIGN KEY ("upstreamId") REFERENCES "Pipeline"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PipelinesOnPipelines" ADD CONSTRAINT "PipelinesOnPipelines_downstreamId_fkey" FOREIGN KEY ("downstreamId") REFERENCES "Pipeline"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "LicenseChange" ADD CONSTRAINT "LicenseChange_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -522,9 +534,3 @@ ALTER TABLE "BatchProduct" ADD CONSTRAINT "BatchProduct_createdById_fkey" FOREIG
 
 -- AddForeignKey
 ALTER TABLE "BatchProduct" ADD CONSTRAINT "BatchProduct_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_PipelineFollows" ADD CONSTRAINT "_PipelineFollows_A_fkey" FOREIGN KEY ("A") REFERENCES "Pipeline"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_PipelineFollows" ADD CONSTRAINT "_PipelineFollows_B_fkey" FOREIGN KEY ("B") REFERENCES "Pipeline"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -127,16 +127,16 @@ export const PipelineFlowQuery = extendType({
         const currentPipeline = await ctx.prisma.pipeline.findMany({
           where: { id },
           select: {
-            upstream: { select: { id: true } },
-            downstream: { select: { id: true } },
+            upstream: { select: { upstreamId: true } },
+            downstream: { select: { downstreamId: true } },
           },
         });
         for (const { upstream, downstream } of currentPipeline) {
-          for (const { id } of upstream) {
-            ids.push(id);
+          for (const { upstreamId } of upstream) {
+            ids.push(upstreamId);
           }
-          for (const { id } of downstream) {
-            ids.push(id);
+          for (const { downstreamId } of downstream) {
+            ids.push(downstreamId);
           }
         }
         const options = await ctx.prisma.pipeline.findMany({

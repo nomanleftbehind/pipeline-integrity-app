@@ -22,8 +22,8 @@ DECLARE
 	res text;
 	keep_going boolean := true;
 	counter integer := 1;
-	connected_pipeline_column text := CASE WHEN flow_calculation_direction = 'Upstream' THEN '"A"' WHEN flow_calculation_direction = 'Downstream' THEN '"B"' END;
-	connected_pipeline_join_on_column text := CASE WHEN flow_calculation_direction = 'Upstream' THEN '"B"' WHEN flow_calculation_direction = 'Downstream' THEN '"A"' END;
+	connected_pipeline_column text := CASE WHEN flow_calculation_direction = 'Upstream' THEN '"upstreamId"' WHEN flow_calculation_direction = 'Downstream' THEN '"downstreamId"' END;
+	connected_pipeline_join_on_column text := CASE WHEN flow_calculation_direction = 'Upstream' THEN '"downstreamId"' WHEN flow_calculation_direction = 'Downstream' THEN '"upstreamId"' END;
 	query_pipeline_volume text := '
 WITH pipeline_volume as (
 SELECT
@@ -40,7 +40,7 @@ MIN(LEAST(w."firstInjection", sp."firstInjection")) as "firstInjection",
 MAX(GREATEST(w."lastInjection", sp."lastInjection")) as "lastInjection"
 
 FROM "ppl_db"."Pipeline" pip
-LEFT OUTER JOIN "ppl_db"."_PipelineFollows" fl ON fl.' || connected_pipeline_join_on_column || ' = pip.id
+LEFT OUTER JOIN "ppl_db"."PipelinesOnPipelines" fl ON fl.' || connected_pipeline_join_on_column || ' = pip.id
 LEFT OUTER JOIN (	SELECT
 
 					w."pipelineId",

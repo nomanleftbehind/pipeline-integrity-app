@@ -5,10 +5,11 @@ import {
   satelliteData,
   pipelineData,
   pipelineData2,
-  pipelineUpstreamData,
   pressureTestData,
   riskData,
 } from './SeedData';
+
+import { pipelinesOnPipelinesData } from './SeedPipelinesOnPipelinesData';
 
 import { batchProductData } from './SeedBatchProductData';
 
@@ -133,9 +134,11 @@ async function main() {
     console.log(`Created pipeline in batch 2 with id: ${pipeline.id}`)
   }
 
-  for (const u of pipelineUpstreamData) {
-    const pipeline = await prisma.pipeline.update(u)
-    console.log(`Updated pipeline with id: ${pipeline.id}`)
+  for (const u of pipelinesOnPipelinesData) {
+    const pipelineOnPipeline = await prisma.pipelinesOnPipelines.create({
+      data: u,
+    })
+    console.log(`Created pipeline on pipeline with upstreamId: ${pipelineOnPipeline.upstreamId} and downstreamId ${pipelineOnPipeline.downstreamId}`)
   }
 
   for (const u of licenseChangeData1) {
@@ -334,7 +337,7 @@ async function main() {
     })
     console.log(`Created risk with id: ${risk.id}`)
   }
-  
+
   for (const u of chemicalSupplierData) {
     const chemicalSupplier = await prisma.chemicalSupplier.create({
       data: u,
