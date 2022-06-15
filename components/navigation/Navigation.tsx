@@ -205,7 +205,7 @@ const Navigation = ({ onNavigationAction, paginationCount }: INavigationProps) =
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-around', position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'rgb(250, 250, 210)', padding: '4px' }}>
         <IconButton size='small' onClick={() => setNavigation('hierarchy')} disabled={navigation === 'hierarchy'}>
           <AccountTreeIcon />
         </IconButton>
@@ -218,7 +218,7 @@ const Navigation = ({ onNavigationAction, paginationCount }: INavigationProps) =
         // Replace default 12px padding of nested button
         // TablePagination component needs to be a child of Navigation component because we are using Navigation's state to render number of pages.
         // We place it fixed centered at the bottom of the page.
-        sx={{ '& > div > div > button': { padding: '3px' }, position: 'fixed', left: '950px', bottom: '-10px' }}
+        sx={{ '& > div > div > button': { padding: '3px' }, position: 'fixed', left: '50vw', bottom: '-1vh' }}
         component='div'
         count={componentPaginationCount}
         size='small'
