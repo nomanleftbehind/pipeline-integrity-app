@@ -63,7 +63,7 @@ export default function SourceRow({ pipelineId, source, formId, isLastRow, loadO
   return (
     <tr>
       <td className={`connected-source-row sticky left${isLastRow ? ' last' : ''}`}>
-        <IconButton aria-label='disconnect row' size='small' disabled={!authorized} onClick={() => disconnectSource({ id, pipelineId })}><DisconnectIcon /></IconButton>
+        <IconButton aria-label='disconnect row' size='small' title="Disconnect source (does NOT delete it)" disabled={!authorized} onClick={() => disconnectSource({ id, pipelineId })}><DisconnectIcon /></IconButton>
       </td>
       {showOptionsForm ? <AutocompleteForm
         pipelineId={pipelineId}
@@ -73,10 +73,10 @@ export default function SourceRow({ pipelineId, source, formId, isLastRow, loadO
         options={dataOptions}
       /> : <td style={{ borderRight: 'unset', textAlign: 'left', paddingLeft: '6px' }}>{name}</td>}
       {!showOptionsForm && <td style={{ display: 'flex' }}>
-        <IconButton size='small' disabled={!authorized} onClick={toggleShowOptionsForm}>{showOptionsForm ? <BlockOutlinedIcon /> : <EditOutlinedIcon />}</IconButton>
+        <IconButton size='small' title='Change connected source' disabled={!authorized} onClick={toggleShowOptionsForm}>{showOptionsForm ? <BlockOutlinedIcon /> : <EditOutlinedIcon />}</IconButton>
       </td>}
       <td>
-        {showOptionsForm && <IconButton size='small' onClick={() => setShowOptionsForm(false)}><BlockOutlinedIcon /></IconButton>}
+        {showOptionsForm && <IconButton size='small' title='Cancel' onClick={() => setShowOptionsForm(false)}><BlockOutlinedIcon /></IconButton>}
       </td>
       {columns.map(({ record, style }, column) => {
         column += 3

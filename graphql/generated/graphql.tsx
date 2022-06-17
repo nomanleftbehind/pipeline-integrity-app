@@ -519,8 +519,9 @@ export type MutationDeleteWellBatchArgs = {
 
 
 export type MutationDisconnectPipelineArgs = {
-  downstreamId: Scalars['String'];
-  upstreamId: Scalars['String'];
+  disconnectPipelineId: Scalars['String'];
+  flowCalculationDirection: FlowCalculationDirectionEnum;
+  pipelineId: Scalars['String'];
 };
 
 
@@ -1755,12 +1756,13 @@ export type ConnectPipelineMutationVariables = Exact<{
 export type ConnectPipelineMutation = { connectPipeline?: { pipelinesOnPipelines?: { upstreamId: string, downstreamId: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type DisconnectPipelineMutationVariables = Exact<{
-  upstreamId: Scalars['String'];
-  downstreamId: Scalars['String'];
+  pipelineId: Scalars['String'];
+  disconnectPipelineId: Scalars['String'];
+  flowCalculationDirection: FlowCalculationDirectionEnum;
 }>;
 
 
-export type DisconnectPipelineMutation = { disconnectPipeline?: { pipelinesOnPipelines?: { upstreamId: string, downstreamId: string } | null | undefined, error?: { message: string, field: string } | null | undefined } | null | undefined };
+export type DisconnectPipelineMutation = { disconnectPipeline?: { pipelinesOnPipelines?: { upstreamId: string, downstreamId: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type ConnectWellMutationVariables = Exact<{
   id: Scalars['String'];
@@ -2478,15 +2480,19 @@ export type ConnectPipelineMutationHookResult = ReturnType<typeof useConnectPipe
 export type ConnectPipelineMutationResult = Apollo.MutationResult<ConnectPipelineMutation>;
 export type ConnectPipelineMutationOptions = Apollo.BaseMutationOptions<ConnectPipelineMutation, ConnectPipelineMutationVariables>;
 export const DisconnectPipelineDocument = gql`
-    mutation DisconnectPipeline($upstreamId: String!, $downstreamId: String!) {
-  disconnectPipeline(upstreamId: $upstreamId, downstreamId: $downstreamId) {
+    mutation DisconnectPipeline($pipelineId: String!, $disconnectPipelineId: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
+  disconnectPipeline(
+    pipelineId: $pipelineId
+    disconnectPipelineId: $disconnectPipelineId
+    flowCalculationDirection: $flowCalculationDirection
+  ) {
     pipelinesOnPipelines {
       upstreamId
       downstreamId
     }
     error {
-      message
       field
+      message
     }
   }
 }
@@ -2506,8 +2512,9 @@ export type DisconnectPipelineMutationFn = Apollo.MutationFunction<DisconnectPip
  * @example
  * const [disconnectPipelineMutation, { data, loading, error }] = useDisconnectPipelineMutation({
  *   variables: {
- *      upstreamId: // value for 'upstreamId'
- *      downstreamId: // value for 'downstreamId'
+ *      pipelineId: // value for 'pipelineId'
+ *      disconnectPipelineId: // value for 'disconnectPipelineId'
+ *      flowCalculationDirection: // value for 'flowCalculationDirection'
  *   },
  * });
  */

@@ -382,7 +382,7 @@ type Mutation {
   deleteRisk(id: String!): RiskPayload
   deleteSatellite(id: String!): Satellite
   deleteWellBatch(id: String!): WellBatchPayload
-  disconnectPipeline(downstreamId: String!, upstreamId: String!): PipelinesOnPipelinesPayload
+  disconnectPipeline(disconnectPipelineId: String!, flowCalculationDirection: FlowCalculationDirectionEnum!, pipelineId: String!): PipelinesOnPipelinesPayload
   disconnectSalesPoint(id: String!): SalesPointPayload
   disconnectWell(id: String!): WellPayload
   duplicatePipeline(id: String!): PipelinePayload

@@ -71,15 +71,15 @@ mutation ConnectPipeline($pipelineId: String!, $connectNewPipelineId: String!, $
   }
 }
 
-mutation DisconnectPipeline($upstreamId: String!, $downstreamId: String!) {
-  disconnectPipeline(upstreamId: $upstreamId, downstreamId: $downstreamId) {
+mutation DisconnectPipeline($pipelineId: String!, $disconnectPipelineId: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
+  disconnectPipeline(pipelineId: $pipelineId, disconnectPipelineId: $disconnectPipelineId, flowCalculationDirection: $flowCalculationDirection) {
     pipelinesOnPipelines {
       upstreamId
       downstreamId
     }
     error {
-      message
       field
+      message
     }
   }
 }

@@ -214,17 +214,23 @@ export const PipelinesOnPipelinesMutation = extendType({
     t.field('disconnectPipeline', {
       type: 'PipelinesOnPipelinesPayload',
       args: {
-        upstreamId: nonNull(stringArg()),
-        downstreamId: nonNull(stringArg()),
+        pipelineId: nonNull(stringArg()),
+        disconnectPipelineId: nonNull(stringArg()),
+        flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
       },
-      resolve: async (_, { upstreamId, downstreamId }, ctx: Context) => {
+      resolve: async (_, { pipelineId, disconnectPipelineId, flowCalculationDirection }, ctx: Context) => {
         const user = ctx.user;
         if (user) {
           const { firstName } = user;
           const authorized = resolvePipelineAuthorized(user);
           if (authorized) {
             const pipelinesOnPipelines = await ctx.prisma.pipelinesOnPipelines.delete({
-              where: { upstreamId_downstreamId: { upstreamId, downstreamId } },
+              where: {
+                upstreamId_downstreamId: {
+                  upstreamId: flowCalculationDirection === 'Upstream' ? disconnectPipelineId : pipelineId,
+                  downstreamId: flowCalculationDirection === 'Downstream' ? disconnectPipelineId : pipelineId,
+                }
+              },
             });
             return { pipelinesOnPipelines }
           }

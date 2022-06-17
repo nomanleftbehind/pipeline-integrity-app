@@ -89,7 +89,7 @@ export default function AutocompleteForm({ pipelineId, sourceId, formId, options
         </form>
       </td>
       <td>
-        <button className='MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1pe4mpk-MuiButtonBase-root-MuiIconButton-root' type='submit' form={elementId} disabled={state === '' ? true : false}>
+        <button className='MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1pe4mpk-MuiButtonBase-root-MuiIconButton-root' type='submit' form={elementId} title='Submit' disabled={state === '' ? true : false}>
           <CheckCircleOutlineIcon />
         </ button>
       </td>

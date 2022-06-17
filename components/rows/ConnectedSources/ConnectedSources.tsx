@@ -173,10 +173,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection,
     }
   });
   const handleConnectPipeline = ({ id, pipelineId, oldSourceId }: IDis_ConnectSource) => {
-    // if (oldSourceId) {
-    //   disconnectPipeline({ variables: { /* id: oldSourceId, pipelineId */upstreamId: flowCalculationDirection === 'Upstream' ? id : pipelineId, downstreamId: pipelineId } });
-    // }
-    connectPipeline({ variables: { /* id, pipelineId */pipelineId, connectNewPipelineId: id, flowCalculationDirection } });
+    connectPipeline({ variables: { pipelineId, connectedPipelineId: oldSourceId, connectNewPipelineId: id, flowCalculationDirection } });
   }
 
   const [disconnectPipeline] = useDisconnectPipelineMutation({
@@ -189,7 +186,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection,
     }
   });
   const handleDisconnectPipeline = ({ id, pipelineId }: IDis_ConnectSource) => {
-    disconnectPipeline({ variables: { id, pipelineId } });
+    disconnectPipeline({ variables: { pipelineId, disconnectPipelineId: id, flowCalculationDirection } });
   }
 
   const { data: dataValidatorFlowCalculationDirection } = useValidatorFlowCalculationDirectionQuery();

@@ -21,3 +21,9 @@ ALTER TABLE ppl_db."Risk"
 ALTER TABLE ppl_db."Chemical"
 	DROP CONSTRAINT "Chemical_id_fkey",
 	ADD CONSTRAINT "Chemical_id_fkey" FOREIGN KEY ("id") REFERENCES ppl_db."Pipeline"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE ppl_db."PipelinesOnPipelines"
+	DROP CONSTRAINT "PipelinesOnPipelines_upstreamId_fkey",
+	ADD CONSTRAINT "PipelinesOnPipelines_upstreamId_fkey" FOREIGN KEY ("upstreamId") REFERENCES ppl_db."Pipeline"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	DROP CONSTRAINT "PipelinesOnPipelines_downstreamId_fkey",
+	ADD CONSTRAINT "PipelinesOnPipelines_downstreamId_fkey" FOREIGN KEY ("downstreamId") REFERENCES ppl_db."Pipeline"("id") ON DELETE CASCADE ON UPDATE CASCADE;

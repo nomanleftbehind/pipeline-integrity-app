@@ -4199,7 +4199,7 @@
             "description": null,
             "args": [
               {
-                "name": "downstreamId",
+                "name": "disconnectPipelineId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -4215,7 +4215,23 @@
                 "deprecationReason": null
               },
               {
-                "name": "upstreamId",
+                "name": "flowCalculationDirection",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "FlowCalculationDirectionEnum",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "pipelineId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",

@@ -121,7 +121,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
       <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
         <IconButton
           className='button-container'
-          aria-label='add row' size='small' onClick={addRecord}>
+          aria-label='add row' size='small' title='Add license change' onClick={addRecord}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>
@@ -157,7 +157,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
               <div className={`license-change-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   className='button-container'
-                  aria-label='delete row' size='small' disabled={!authorized} onClick={() => deleteRecord(id)}>
+                  aria-label='delete row' size='small' title='Delete license change' disabled={!authorized} onClick={() => deleteRecord(id)}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </div>

@@ -137,17 +137,17 @@ export default function RenderPipeline({ gridRow, pipeline, validators }: IRende
         executeFunction={deleteRecord}
       />}
       <div className='pipeline-row' style={{ gridColumn: 1, gridRow: gridRow }}>
-        <IconButton className='button-container' aria-label='expand row' size='small' onClick={() => setOpen(!open)}>
+        <IconButton className='button-container' aria-label='expand row' size='small' title={open ? 'Collapse pipeline row' : 'Expand pipeline row'} onClick={() => setOpen(!open)}>
           {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
         </IconButton>
       </div>
       <div className='pipeline-row' style={{ gridColumn: 2, gridRow: gridRow }}>
-        {<IconButton className='button-container' aria-label='delete row' size='small' disabled={!authorized} onClick={() => setConfirmDeletePipelineModal(true)}>
+        {<IconButton className='button-container' aria-label='delete row' size='small' title='Delete pipeline' disabled={!authorized} onClick={() => setConfirmDeletePipelineModal(true)}>
           <DeleteOutlineOutlinedIcon />
         </IconButton>}
       </div>
       <div className='pipeline-row' style={{ gridColumn: 3, gridRow: gridRow }}>
-        {<IconButton className='button-container' aria-label='add row' size='small' disabled={!authorized} onClick={() => duplicatePipeline()}>
+        {<IconButton className='button-container' aria-label='add row' size='small' title='Create a copy of pipeline' disabled={!authorized} onClick={() => duplicatePipeline()}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>}
       </div>
