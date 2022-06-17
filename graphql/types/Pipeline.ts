@@ -449,15 +449,15 @@ export const PipelineQuery = extendType({
       resolve: async (_, { id, flowCalculationDirection }, ctx: Context) => {
 
         if (flowCalculationDirection === 'Upstream') {
-          const { upstream } = await ctx.prisma.pipeline.findUnique({
+          const { downstream } = await ctx.prisma.pipeline.findUnique({
             where: { id },
             select: {
-              upstream: { select: { id: true } },
+              downstream: { select: { upstreamId: true } },
             },
           }) || {};
-          if (upstream && upstream.length > 0) {
+          if (downstream && downstream.length > 0) {
 
-            const idList = upstream.map(({ id }) => id);
+            const idList = downstream.map(({ upstreamId }) => upstreamId);
             const pipelinesFlow = await totalPipelineFlowRawQuery({ idList, flowCalculationDirection, ctx });
 
             if (pipelinesFlow.length > 0) {
@@ -485,15 +485,15 @@ export const PipelineQuery = extendType({
           }
         }
         if (flowCalculationDirection === 'Downstream') {
-          const { downstream } = await ctx.prisma.pipeline.findUnique({
+          const { upstream } = await ctx.prisma.pipeline.findUnique({
             where: { id },
             select: {
-              downstream: { select: { id: true } },
+              upstream: { select: { downstreamId: true } },
             },
           }) || {};
-          if (downstream && downstream.length > 0) {
+          if (upstream && upstream.length > 0) {
 
-            const idList = downstream.map(({ id }) => id);
+            const idList = upstream.map(({ downstreamId }) => downstreamId);
             const pipelinesFlow = await totalPipelineFlowRawQuery({ idList, flowCalculationDirection, ctx });
 
             if (pipelinesFlow.length > 0) {
@@ -1174,118 +1174,6 @@ export const PipelineMutation = extendType({
             error: {
               field: 'User',
               message: `Hi ${firstName}, you are not authorized to create a new pipeline.`,
-            }
-          }
-        }
-        return {
-          error: {
-            field: 'User',
-            message: 'Not authorized',
-          }
-        }
-      }
-    })
-    t.field('connectPipeline', {
-      type: 'PipelinePayload',
-      args: {
-        id: nonNull(stringArg()),
-        pipelineId: nonNull(stringArg()),
-      },
-      resolve: async (_parent, { id, pipelineId }, ctx: Context) => {
-        console.log('id:', id, 'pipelineId:', pipelineId);
-
-        const user = ctx.user;
-        if (user) {
-          const { id: userId, firstName } = user;
-          const authorized = resolvePipelineAuthorized(user);
-          if (authorized) {
-            const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({
-              where: { id: pipelineId },
-              select: { flowCalculationDirection: true }
-            }) || {};
-            if (flowCalculationDirection) {
-              const pipeline = await ctx.prisma.pipeline.update({
-                where: { id: pipelineId },
-                data: {
-                  upstream: flowCalculationDirection === 'Upstream' ? {
-                    connect: { id }
-                  } : undefined,
-                  downstream: flowCalculationDirection === 'Downstream' ? {
-                    connect: { id }
-                  } : undefined,
-                  updatedBy: {
-                    connect: { id: userId }
-                  }
-                }
-              });
-              return { pipeline }
-            }
-            return {
-              error: {
-                field: 'Flow calculation direction',
-                message: `Hi ${firstName}, query is unable to determine direction used to calculate flow.`,
-              }
-            }
-          }
-          return {
-            error: {
-              field: 'User',
-              message: `Hi ${firstName}, you are not authorized to make changes to pipelines.`,
-            }
-          }
-        }
-        return {
-          error: {
-            field: 'User',
-            message: 'Not authorized',
-          }
-        }
-      }
-    })
-    t.field('disconnectPipeline', {
-      type: 'PipelinePayload',
-      args: {
-        id: nonNull(stringArg()),
-        pipelineId: nonNull(stringArg()),
-      },
-      resolve: async (_, { id, pipelineId }, ctx: Context) => {
-        const user = ctx.user;
-        if (user) {
-          const { id: userId, firstName } = user;
-          const authorized = resolvePipelineAuthorized(user);
-          if (authorized) {
-            const { flowCalculationDirection } = await ctx.prisma.pipeline.findUnique({
-              where: { id: pipelineId },
-              select: { flowCalculationDirection: true }
-            }) || {};
-            if (flowCalculationDirection) {
-              const pipeline = await ctx.prisma.pipeline.update({
-                where: { id: pipelineId },
-                data: {
-                  upstream: flowCalculationDirection === 'Upstream' ? {
-                    disconnect: { id }
-                  } : undefined,
-                  downstream: flowCalculationDirection === 'Downstream' ? {
-                    disconnect: { id }
-                  } : undefined,
-                  updatedBy: {
-                    connect: { id: userId }
-                  }
-                }
-              });
-              return { pipeline }
-            }
-            return {
-              error: {
-                field: 'Flow calculation direction',
-                message: `Hi ${firstName}, query is unable to determine direction used to calculate flow.`,
-              }
-            }
-          }
-          return {
-            error: {
-              field: 'User',
-              message: `Hi ${firstName}, you are not authorized to make changes to pipelines.`,
             }
           }
         }

@@ -58,10 +58,11 @@ mutation DuplicatePipeline($id: String!) {
   }
 }
 
-mutation ConnectPipeline($id: String!, $pipelineId: String!) {
-  connectPipeline(id: $id, pipelineId: $pipelineId) {
-    pipeline {
-      id
+mutation ConnectPipeline($pipelineId: String!, $connectNewPipelineId: String!, $flowCalculationDirection: FlowCalculationDirectionEnum!, $connectedPipelineId: String) {
+  connectPipeline(pipelineId: $pipelineId, connectNewPipelineId: $connectNewPipelineId, flowCalculationDirection: $flowCalculationDirection, connectedPipelineId: $connectedPipelineId) {
+    pipelinesOnPipelines {
+      upstreamId
+      downstreamId
     }
     error {
       field
@@ -70,14 +71,15 @@ mutation ConnectPipeline($id: String!, $pipelineId: String!) {
   }
 }
 
-mutation DisconnectPipeline($id: String!, $pipelineId: String!) {
-  disconnectPipeline(id: $id, pipelineId: $pipelineId) {
-    pipeline {
-      id
+mutation DisconnectPipeline($upstreamId: String!, $downstreamId: String!) {
+  disconnectPipeline(upstreamId: $upstreamId, downstreamId: $downstreamId) {
+    pipelinesOnPipelines {
+      upstreamId
+      downstreamId
     }
     error {
-      field
       message
+      field
     }
   }
 }

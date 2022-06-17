@@ -369,7 +369,7 @@ type Mutation {
   addPressureTest(pipelineId: String!): PressureTestPayload
   addRisk(id: String!): RiskPayload
   addWellBatch(wellId: String!): WellBatchPayload
-  connectPipeline(id: String!, pipelineId: String!): PipelinePayload
+  connectPipeline(connectNewPipelineId: String!, connectedPipelineId: String, flowCalculationDirection: FlowCalculationDirectionEnum!, pipelineId: String!): PipelinesOnPipelinesPayload
   connectSalesPoint(id: String!, pipelineId: String!): SalesPointPayload
   connectWell(id: String!, pipelineId: String!): WellPayload
   createFacility(data: FacilityCreateInput!): Facility
@@ -382,7 +382,7 @@ type Mutation {
   deleteRisk(id: String!): RiskPayload
   deleteSatellite(id: String!): Satellite
   deleteWellBatch(id: String!): WellBatchPayload
-  disconnectPipeline(id: String!, pipelineId: String!): PipelinePayload
+  disconnectPipeline(downstreamId: String!, upstreamId: String!): PipelinesOnPipelinesPayload
   disconnectSalesPoint(id: String!): SalesPointPayload
   disconnectWell(id: String!): WellPayload
   duplicatePipeline(id: String!): PipelinePayload
@@ -786,6 +786,23 @@ type PipelinesFlowAndSourceGroupBy {
   sourceGroupBy: SourceGroupBy
 }
 
+type PipelinesOnPipelines {
+  authorized: Boolean!
+  createdAt: DateTime!
+  createdBy: User!
+  downstream: Pipeline!
+  downstreamId: String!
+  updatedAt: DateTime!
+  updatedBy: User!
+  upstream: Pipeline!
+  upstreamId: String!
+}
+
+type PipelinesOnPipelinesPayload {
+  error: FieldError
+  pipelinesOnPipelines: PipelinesOnPipelines
+}
+
 type PressureTest {
   authorized: Boolean!
   comment: String
@@ -830,6 +847,8 @@ type Query {
   pipelinesById(navigationInput: NavigationInput!, skip: Int!, take: Int!): PipelinesByIdPayload!
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
   pipelinesFlow(flowCalculationDirection: FlowCalculationDirectionEnum!, idList: [String]!): [PipelineFlow]
+  pipelinesOnPipelinesByDownstreamId(downstreamId: String!): [PipelinesOnPipelines]
+  pipelinesOnPipelinesByUpstreamId(upstreamId: String!): [PipelinesOnPipelines]
   pressureTestsByPipelineId(pipelineId: String!): [PressureTest]
   riskById(id: String!): Risk
   salesPointOptions(pipelineId: String!): [SourceOptions]
