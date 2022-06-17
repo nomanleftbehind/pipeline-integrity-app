@@ -45,6 +45,8 @@ export const TableEnumMembers = {
   pressureTests: 'pressureTests',
   pigRuns: 'pigRuns',
   pipelineBatches: 'pipelineBatches',
+  upstreamPipelines: 'upstream',
+  downstreamPipelines: 'downstream',
 }
 
 export const TableEnum = enumType({
@@ -107,6 +109,18 @@ const searchNavigationObjectPipeline = PipelineObjectFields
     return newObj;
   });
 
+const searchNavigationObjectUpstreamPipeline = PipelineObjectFields
+  .map((obj) => {
+    const newObj: ITableObjectExtend = { table: 'upstream', ...obj };
+    return newObj;
+  });
+
+const searchNavigationObjectDownstreamPipeline = PipelineObjectFields
+  .map((obj) => {
+    const newObj: ITableObjectExtend = { table: 'downstream', ...obj };
+    return newObj;
+  });
+
 const searchNavigationObjectRisk = RiskObjectFields
   .map((obj) => {
     const newObj: ITableObjectExtend = { table: 'risk', ...obj };
@@ -161,6 +175,8 @@ const searchNavigationObject = searchNavigationObjectPipeline
     searchNavigationObjectChemical,
     searchNavigationObjectWell,
     searchNavigationObjectSalesPoint,
+    searchNavigationObjectUpstreamPipeline,
+    searchNavigationObjectDownstreamPipeline,
     searchNavigationObjectLicenseChange,
     searchNavigationObjectPressureTest,
     searchNavigationObjectPigRun,

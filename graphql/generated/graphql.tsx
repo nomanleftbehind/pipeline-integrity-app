@@ -1499,6 +1499,7 @@ export type SubstanceEnumObject = {
 
 export enum TableEnum {
   Chemical = 'chemical',
+  DownstreamPipelines = 'downstreamPipelines',
   Facility = 'facility',
   LicenseChanges = 'licenseChanges',
   PigRuns = 'pigRuns',
@@ -1508,6 +1509,7 @@ export enum TableEnum {
   Risk = 'risk',
   SalesPoints = 'salesPoints',
   Satellite = 'satellite',
+  UpstreamPipelines = 'upstreamPipelines',
   Wells = 'wells'
 }
 

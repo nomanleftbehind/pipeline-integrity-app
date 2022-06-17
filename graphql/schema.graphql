@@ -1079,6 +1079,7 @@ type SubstanceEnumObject {
 
 enum TableEnum {
   chemical
+  downstreamPipelines
   facility
   licenseChanges
   pigRuns
@@ -1088,6 +1089,7 @@ enum TableEnum {
   risk
   salesPoints
   satellite
+  upstreamPipelines
   wells
 }
 

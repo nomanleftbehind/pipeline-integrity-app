@@ -14,6 +14,7 @@ import {
 
 import { IHandleSearchNavigationChange } from './Navigation';
 import { prettifyColumnName } from '../Header';
+import { Table } from '@mui/material';
 
 
 
@@ -32,6 +33,9 @@ interface ISearchNavigationProps {
 export default function SearchNavigation({ searchNavigationInputArray, searchEnumObjectArray, options, addFilter, removeFilter, handleChange, handleClick }: ISearchNavigationProps) {
 
   const tableOptions = options?.map(({ table }) => table);
+
+  console.log(tableOptions?.filter((tableName, pos) => tableOptions.indexOf(tableName) === pos));
+
 
   const { data: dataOperationAndHavingEnum } = useOperationAndHavingEnumQuery();
 
@@ -58,13 +62,25 @@ export default function SearchNavigation({ searchNavigationInputArray, searchEnu
               })}
           </select>
 
-          {[TableEnum.LicenseChanges, TableEnum.Wells, TableEnum.SalesPoints, TableEnum.PigRuns, TableEnum.PressureTests, TableEnum.PipelineBatches].includes(table) && <>
+          {having !== HavingEnum.Count && <>
+            <div style={{ gridRow: 2, gridColumn: 2 }}>Field:</div>
+            <select style={{ gridRow: 2, gridColumn: 3 }} value={field} onChange={(e) => handleChange({ e, index, key: 'field' })}>
+              {options?.filter(({ table: tableName }) => tableName === table).map(({ field: fieldName }) => {
+                const prettyField = prettifyColumnName(fieldName);
+                return (
+                  <option key={fieldName} value={fieldName}>{prettyField}</option>
+                );
+              })}
+            </select>
+          </>}
+
+          {[TableEnum.LicenseChanges, TableEnum.Wells, TableEnum.SalesPoints, TableEnum.PigRuns, TableEnum.PressureTests, TableEnum.PipelineBatches, TableEnum.UpstreamPipelines, TableEnum.DownstreamPipelines].includes(table) && <>
             <div style={{ gridRow: 3, gridColumn: 2 }}>Having:</div>
             <select style={{ gridRow: 3, gridColumn: 3 }} value={having} onChange={(e) => handleChange({ e, index, key: 'having' })}>
               {dataOperationAndHavingEnum?.validators && Object.values(dataOperationAndHavingEnum.validators.havingEnum).filter((operationDb) => {
                 // Special case when searching for Count of related fields, field is set to `id` and type is set to `Int` even though `id` is of type `String`
                 // We are never able to select `minimum` or `maximum` Having when type is String, but because in this special case, we have to add special condition when current Having is Count.
-                if (['Int', 'Float', 'DateTime'].includes(type) && having !== HavingEnum.Count) {
+                if (['Int', 'Float', 'DateTime'].includes(type) && having !== HavingEnum.Count && ![TableEnum.DownstreamPipelines, TableEnum.UpstreamPipelines].includes(table)) {
                   return true;
                 }
                 return [HavingEnum.Any, HavingEnum.Count].includes(operationDb);
@@ -76,18 +92,6 @@ export default function SearchNavigation({ searchNavigationInputArray, searchEnu
 
                 return (
                   <option key={operationDb} value={operationDb}>{customHaving}</option>
-                );
-              })}
-            </select>
-          </>}
-
-          {having !== HavingEnum.Count && <>
-            <div style={{ gridRow: 2, gridColumn: 2 }}>Field:</div>
-            <select style={{ gridRow: 2, gridColumn: 3 }} value={field} onChange={(e) => handleChange({ e, index, key: 'field' })}>
-              {options?.filter(({ table: tableName }) => tableName === table).map(({ field: fieldName }) => {
-                const prettyField = prettifyColumnName(fieldName);
-                return (
-                  <option key={fieldName} value={fieldName}>{prettyField}</option>
                 );
               })}
             </select>

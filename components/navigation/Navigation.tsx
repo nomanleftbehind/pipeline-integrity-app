@@ -88,7 +88,6 @@ const Navigation = ({ onNavigationAction, paginationCount }: INavigationProps) =
   const [searchEnumObjectArray, setSearchEnumObjectArray] = useState<EnumObject[][]>([]);
   const options = data?.searchNavigationOptions;
 
-
   const addFilter = () => {
     setPaginationCount(0);
     setSearchNavigationInputArray(previousSearchNavigationInputArray => [...previousSearchNavigationInputArray, { table: TableEnum.Pipeline, field: 'id', having: HavingEnum.Any, operation: OperationEnum.Equals, type: 'String', value: '' }]);

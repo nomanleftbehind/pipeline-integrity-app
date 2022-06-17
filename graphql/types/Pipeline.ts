@@ -597,16 +597,95 @@ export const PipelineQuery = extendType({
                     type === 'Boolean' ? value === 'true' ? true : false : value
 
             if (table === 'pipeline') {
+              // self relation
               return {
                 [field]: { [operation]: castValue },
               }
             } else if (table === 'risk' || table === 'chemical') {
+              // one-to-one relation
               return {
                 [table]: {
                   [field]: { [operation]: castValue },
                 }
               };
+            } else if (table === 'downstream' || table === 'upstream') {
+              // many-to-many relations
+              const opposite = table === 'downstream' ? 'upstream' : 'downstream';
+
+              if (having === '_any') {
+                return {
+                  [opposite]: {
+                    some: {
+                      [table]: {
+                        [field]: { [operation]: castValue },
+                      }
+                    }
+                  }
+                }
+              } else if (having === '_count') {
+
+                if ((operation === 'equals' || operation === 'lte') && castValue === 0) {
+                  // This filter returns pipelines that have zero related records of specified table
+                  return {
+                    [opposite]: {
+                      none: {}
+                    }
+                  }
+                } else if (operation === 'gte' && castValue === 0) {
+                  // This filter effectively returns all pipelines
+                  return {}
+                } else if (operation === 'lt' && castValue === 0) {
+                  // It's impossible to have count less than 0 so filter needs to return zero pipelines. ID is never an empty string so this will do the job.
+                  return {
+                    id: ''
+                  }
+                } else if ((operation === 'gt' && castValue === 0) || (operation === 'gte' && castValue === 1)) {
+                  // This filter returns pipelines with at least one related record of specified table. This condition would have been captured later but in this specific case we can write a much less expensive query.
+                  return {
+                    [opposite]: {
+                      some: {}
+                    }
+                  }
+                } else {
+                  const pipelineIds: string[] = [];
+                  if (table === 'downstream') {
+                    for (const { upstreamId } of await ctx.prisma.pipelinesOnPipelines.groupBy({
+                      by: ['upstreamId'],
+                      having: {
+                        downstreamId: {
+                          _count: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(upstreamId)
+                    }
+                  } else if (table === 'upstream') {
+                    for (const { downstreamId } of await ctx.prisma.pipelinesOnPipelines.groupBy({
+                      by: ['downstreamId'],
+                      having: {
+                        upstreamId: {
+                          _count: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(downstreamId)
+                    }
+                  }
+                  return {
+                    id: {
+                      in: pipelineIds
+                    }
+                  }
+                }
+              } else {
+                // TODO implement search navigation for _min and _max 'Having' for numeric and date fields of upstream and downstream pipelines
+              }
             } else if (table !== 'facility' && table !== 'satellite') {
+              // one-to-many relations
               if (having === '_any') {
                 return {
                   [table]: {
@@ -827,6 +906,32 @@ export const PipelineQuery = extendType({
           ));
 
           console.log(JSON.stringify(query));
+
+          const ara = await ctx.prisma.pipeline.findMany({
+            where: {
+              AND: [
+                {
+                  downstream: { some: {} }
+                },
+                {
+                  upstream: { none: {} }
+                },
+                // {
+                //   upstream: {
+                //     some: {
+                //       downstream: {
+                //         license: "AB57726"
+                //       }
+                //     }
+                //   }
+                // }
+              ]
+            },
+            skip: 0,
+            take: 50,
+          })
+
+          // return { pipelines: ara, count: ara.length }
 
           const where = { AND: query, };
           const count = await ctx.prisma.pipeline.count({ where });

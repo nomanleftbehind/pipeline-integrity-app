@@ -13872,6 +13872,12 @@
             "deprecationReason": null
           },
           {
+            "name": "downstreamPipelines",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "facility",
             "description": null,
             "isDeprecated": false,
@@ -13921,6 +13927,12 @@
           },
           {
             "name": "satellite",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "upstreamPipelines",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
