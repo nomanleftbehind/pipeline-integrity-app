@@ -30,19 +30,18 @@ export default function ManuBar() {
               </li>
             )}
           </>
-        )
-        }
+        )}
+        {(user && ['ADMIN', 'ENGINEER'].includes(user.role)) && (
+          <li>
+            <AllocateMenu />
+          </li>
+        )}
         {(!user || user.role === 'ADMIN') && (
-          <>
-            <li>
-              <AllocateMenu />
-            </li>
-            <li>
-              <Link href="/register">
-                <a>Register</a>
-              </Link>
-            </li>
-          </>
+          <li>
+            <Link href="/register">
+              <a>Register</a>
+            </Link>
+          </li>
         )}
         {user && <li>
           <DropDown user={user} />

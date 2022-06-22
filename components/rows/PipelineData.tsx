@@ -16,11 +16,11 @@ export type ITable = 'pressure tests' | 'pig runs' | 'risk' | 'license change';
 
 export interface IPipelineDataProps {
   gridRow: number;
+  rowIsEven: boolean;
   open: boolean;
   pipeline: IPipeline;
   authorized: boolean;
   editPipeline: IEditRecordFunction;
-  isEven: "even" | "odd";
 }
 
 type IView = 'license change' | 'connected source' | 'mechanical properties' | 'pressure test' | 'pig run' | 'pipeline batch' | 'risk' | 'chemical' | 'system fields';
@@ -35,7 +35,7 @@ interface ITabPanelProps extends ITabPanelMap {
   handleViewClick: (view: IView) => void;
 }
 
-export default function PipelineData({ gridRow, open, pipeline, editPipeline, authorized, isEven }: IPipelineDataProps) {
+export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editPipeline, authorized }: IPipelineDataProps) {
   const [view, setView] = useState<IView>('license change');
 
   const { id, license, segment, currentSubstance, flowCalculationDirection, currentStatus, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, firstLicenseDate, piggable, piggingFrequency } = pipeline;
@@ -141,7 +141,7 @@ export default function PipelineData({ gridRow, open, pipeline, editPipeline, au
 
 
   return (
-    <div style={{ gridColumn: '1 / 13', gridRow: gridRow + 1 }}>
+    <div style={{ gridColumn: '1 / 13', gridRow: gridRow + 1, backgroundColor: rowIsEven ? '#abeaff' : undefined }}>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <div className='pipeline-data'>
           <div className='tabs'>

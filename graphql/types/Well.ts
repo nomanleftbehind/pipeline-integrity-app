@@ -284,25 +284,34 @@ export const WellMutation = extendType({
       },
       resolve: async (_, args, ctx: Context) => {
         const user = ctx.user;
-        const authorized = !!user && resolveWellAuthorized(user);
-        if (authorized) {
-          const well = await ctx.prisma.well.update({
-            where: { id: args.id },
-            data: {
-              pipelineId: args.pipelineId || undefined,
-              name: args.name || undefined,
-              oil: args.oil || undefined,
-              water: args.water || undefined,
-              gas: args.gas || undefined,
-              firstProduction: args.firstProduction,
-              lastProduction: args.lastProduction,
-              firstInjection: args.firstInjection,
-              lastInjection: args.lastInjection,
-              fdcRecId: args.fdcRecId,
-              updatedById: user.id,
-            },
-          });
-          return { well }
+        if (user) {
+          const { id: userId, firstName } = user
+          const authorized = resolveWellAuthorized(user);
+          if (authorized) {
+            const well = await ctx.prisma.well.update({
+              where: { id: args.id },
+              data: {
+                pipelineId: args.pipelineId || undefined,
+                name: args.name || undefined,
+                oil: args.oil || undefined,
+                water: args.water || undefined,
+                gas: args.gas || undefined,
+                firstProduction: args.firstProduction,
+                lastProduction: args.lastProduction,
+                firstInjection: args.firstInjection,
+                lastInjection: args.lastInjection,
+                fdcRecId: args.fdcRecId,
+                updatedById: userId,
+              },
+            });
+            return { well }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to make changes to wells.`,
+            }
+          }
         }
         return {
           error: {
@@ -344,7 +353,7 @@ export const WellMutation = extendType({
           return {
             error: {
               field: 'User',
-              message: `Hi ${firstName}, you are not authorized to make changes to wells.`,
+              message: `Hi ${firstName}, you are not authorized to connect wells to pipelines.`,
             }
           }
         }
@@ -385,7 +394,7 @@ export const WellMutation = extendType({
           return {
             error: {
               field: 'User',
-              message: `Hi ${firstName}, you are not authorized to make changes to wells.`,
+              message: `Hi ${firstName}, you are not authorized to disconnect wells from pipelines.`,
             }
           }
         }

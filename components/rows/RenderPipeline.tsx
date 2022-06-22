@@ -28,17 +28,18 @@ export const openModal = ({ field, message }: IFieldError) => {
 
 interface IRenderPipelineProps {
   gridRow: number;
+  rowIsEven: boolean;
   pipeline: IPipeline;
   validators: IValidatorsPipeline;
 }
 
-const isEven = (value: number): 'even' | 'odd' => {
+const isEven = (value: number) => {
   if (value % 2 === 0)
     return 'even';
   else return 'odd';
 }
 
-export default function RenderPipeline({ gridRow, pipeline, validators }: IRenderPipelineProps) {
+export default function RenderPipeline({ gridRow, rowIsEven, pipeline, validators }: IRenderPipelineProps) {
 
   const [open, setOpen] = useState(false);
   const initialFieldError = { field: '', message: '' };
@@ -129,6 +130,8 @@ export default function RenderPipeline({ gridRow, pipeline, validators }: IRende
     { columnName: 'currentSubstance', columnType: 'string', nullable: false, record: currentSubstance, validator: substanceEnum },
   ];
 
+  const backgroundColor = rowIsEven ? '#abeaff' : undefined;
+
   return (
     <>
       {confirmDeletePipelineModal && <ModalFieldError
@@ -136,17 +139,17 @@ export default function RenderPipeline({ gridRow, pipeline, validators }: IRende
         hideFieldError={() => setConfirmDeletePipelineModal(false)}
         executeFunction={deleteRecord}
       />}
-      <div className='pipeline-row' style={{ gridColumn: 1, gridRow: gridRow }}>
+      <div className='pipeline-row' style={{ gridColumn: 1, gridRow, backgroundColor }}>
         <IconButton className='button-container' aria-label='expand row' size='small' title={open ? 'Collapse pipeline row' : 'Expand pipeline row'} onClick={() => setOpen(!open)}>
           {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
         </IconButton>
       </div>
-      <div className='pipeline-row' style={{ gridColumn: 2, gridRow: gridRow }}>
+      <div className='pipeline-row' style={{ gridColumn: 2, gridRow, backgroundColor }}>
         {<IconButton className='button-container' aria-label='delete row' size='small' title='Delete pipeline' disabled={!authorized} onClick={() => setConfirmDeletePipelineModal(true)}>
           <DeleteOutlineOutlinedIcon />
         </IconButton>}
       </div>
-      <div className='pipeline-row' style={{ gridColumn: 3, gridRow: gridRow }}>
+      <div className='pipeline-row' style={{ gridColumn: 3, gridRow, backgroundColor }}>
         {<IconButton className='button-container' aria-label='add row' size='small' title='Create a copy of pipeline' disabled={!authorized} onClick={() => duplicatePipeline()}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>}
@@ -158,19 +161,20 @@ export default function RenderPipeline({ gridRow, pipeline, validators }: IRende
       {pipelineColumns.map(({ columnName, columnType, nullable, record, validator, editRecord }, gridColumn) => {
         gridColumn += 4;
         return (
-          <div key={gridColumn} className='pipeline-row' style={{ gridColumn, gridRow: gridRow }}>
+          <div key={gridColumn} className='pipeline-row' style={{ gridColumn, gridRow, backgroundColor }}>
             <RecordEntry id={id} columnName={columnName} columnType={columnType} nullable={nullable} record={record} validator={validator} authorized={authorized} editRecord={editRecord} />
           </div>
         );
       })}
+      <div className='pipeline-row' style={{ gridColumn: 12, gridRow, backgroundColor }}></div>
       <PipelineData
-        gridRow={gridRow}
         key={`${id} data`}
+        gridRow={gridRow}
+        rowIsEven={rowIsEven}
         open={open}
         pipeline={pipeline}
         authorized={authorized}
         editPipeline={editRecord}
-        isEven={isEven(gridRow)}
       />
     </>
   );

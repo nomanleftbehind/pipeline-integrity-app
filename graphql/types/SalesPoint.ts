@@ -290,7 +290,7 @@ export const SalesPointMutation = extendType({
           return {
             error: {
               field: 'User',
-              message: `Hi ${firstName}, you are not authorized to make changes to sales points.`,
+              message: `Hi ${firstName}, you are not authorized to connect sales points to pipelines.`,
             }
           }
         }
@@ -331,7 +331,7 @@ export const SalesPointMutation = extendType({
           return {
             error: {
               field: 'User',
-              message: `Hi ${firstName}, you are not authorized to make changes to sales points.`,
+              message: `Hi ${firstName}, you are not authorized to disconnect sales points from pipelines.`,
             }
           }
         }

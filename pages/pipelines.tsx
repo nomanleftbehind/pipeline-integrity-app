@@ -63,11 +63,15 @@ function PipelineDatabase() {
         {loading && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>Loading...</div>}
         {error && <div style={{ padding: '4px', gridColumn: 1, gridRow: 2 }}>{error.message}</div>}
         {data?.pipelinesById.pipelines?.map((pipeline, gridRow) => {
+          const rowIsEven = gridRow % 2 === 0;
+          
           gridRow *= 2;
           gridRow += 2;
+          console.log(gridRow, rowIsEven);
           return pipeline && <RenderPipeline
             key={pipeline.id}
             gridRow={gridRow}
+            rowIsEven={rowIsEven}
             pipeline={pipeline}
             validators={validatorsData?.validators}
           />
