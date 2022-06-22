@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import DropDown from './Dropdown';
+import AllocateMenu from './AllocateMenu';
 import styles from './sidebar.module.css';
 
 export default function ManuBar() {
@@ -9,11 +10,11 @@ export default function ManuBar() {
   const links = [
     { href: '/', a: 'Home' },
     { href: 'pipelines', a: 'Pipelines' },
-    { href: 'pressuretests', a: 'Pressure Tests' },
-    { href: 'pigruns', a: 'Pig Runs' },
+    // { href: 'pressuretests', a: 'Pressure Tests' },
+    // { href: 'pigruns', a: 'Pig Runs' },
     { href: 'webassembly', a: 'WebAssembly' },
-    { href: 'satellites', a: 'Satellites' },
-    { href: 'facilities', a: 'Facilities' },
+    // { href: 'satellites', a: 'Satellites' },
+    // { href: 'facilities', a: 'Facilities' },
   ]
 
   return (
@@ -28,19 +29,24 @@ export default function ManuBar() {
                 </Link>
               </li>
             )}
-            <li>
-              <DropDown user={user} />
-            </li>
           </>
         )
         }
         {(!user || user.role === 'ADMIN') && (
-          <li>
-            <Link href="/register">
-              <a>Register</a>
-            </Link>
-          </li>
+          <>
+            <li>
+              <AllocateMenu />
+            </li>
+            <li>
+              <Link href="/register">
+                <a>Register</a>
+              </Link>
+            </li>
+          </>
         )}
+        {user && <li>
+          <DropDown user={user} />
+        </li>}
       </ul>
     </nav>
   )

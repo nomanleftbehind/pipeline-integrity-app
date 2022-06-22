@@ -172,45 +172,6 @@ export const PipelinesOnPipelinesMutation = extendType({
         }
       }
     })
-    // t.field('connectPipeline', {
-    //   type: 'PipelinesOnPipelinesPayload',
-    //   args: {
-    //     pipelineId: nonNull(stringArg()),
-    //     connectNewPipelineId: nonNull(stringArg()),
-    //     flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' })),
-    //   },
-    //   resolve: async (_parent, { pipelineId, connectNewPipelineId, flowCalculationDirection }, ctx: Context) => {
-
-    //     const user = ctx.user;
-    //     if (user) {
-    //       const { id: userId, firstName } = user;
-    //       const authorized = resolvePipelineAuthorized(user);
-    //       if (authorized) {
-    //         const pipelinesOnPipelines = await ctx.prisma.pipelinesOnPipelines.create({
-    //           data: {
-    //             upstreamId: flowCalculationDirection === 'Upstream' ? connectNewPipelineId : pipelineId,
-    //             downstreamId: flowCalculationDirection === 'Downstream' ? connectNewPipelineId : pipelineId,
-    //             createdById: userId,
-    //             updatedById: userId,
-    //           }
-    //         });
-    //         return { pipelinesOnPipelines }
-    //       }
-    //       return {
-    //         error: {
-    //           field: 'User',
-    //           message: `Hi ${firstName}, you are not authorized to connect pipelines.`,
-    //         }
-    //       }
-    //     }
-    //     return {
-    //       error: {
-    //         field: 'User',
-    //         message: 'Not authorized',
-    //       }
-    //     }
-    //   }
-    // })
     t.field('disconnectPipeline', {
       type: 'PipelinesOnPipelinesPayload',
       args: {

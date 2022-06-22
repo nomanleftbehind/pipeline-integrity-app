@@ -44,8 +44,7 @@ export default function DropdownMenu({ user }: IDropdownMenuProps) {
         aria-controls='basic-menu'
         aria-haspopup='true'
         aria-expanded={open ? 'true' : undefined}
-        style={{ textTransform: 'none', padding: 0 }}
-        color='inherit'
+        style={{ textTransform: 'none', padding: 0, color: 'inherit' }}
         onClick={handleClick}
       >
         {user.email}

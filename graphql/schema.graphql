@@ -2,6 +2,11 @@
 ### Do not make changes to this file directly
 
 
+type AllocationPayload {
+  error: FieldError
+  success: FieldError
+}
+
 type AuthPayload {
   error: FieldError
   user: User
@@ -369,6 +374,7 @@ type Mutation {
   addPressureTest(pipelineId: String!): PressureTestPayload
   addRisk(id: String!): RiskPayload
   addWellBatch(wellId: String!): WellBatchPayload
+  allocateRisk: AllocationPayload
   connectPipeline(connectNewPipelineId: String!, connectedPipelineId: String, flowCalculationDirection: FlowCalculationDirectionEnum!, pipelineId: String!): PipelinesOnPipelinesPayload
   connectSalesPoint(id: String!, pipelineId: String!): SalesPointPayload
   connectWell(id: String!, pipelineId: String!): WellPayload

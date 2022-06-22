@@ -1,27 +1,9 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
 import { NexusGenObjects } from 'nexus-typegen';
-import { totalFluidsCalc } from './Well';
-import { pipelineFlow } from './PipelineFlow';
 import { databaseEnumToServerEnum } from './Pipeline';
 import { Context } from '../context';
 import { User as IUser } from '@prisma/client';
-import {
-  consequenceAssetCalc,
-  consequenceEnviroCalc,
-  probabilityExteriorCalc,
-  probabilityInteriorCalc,
-  conequenceMaxCalc,
-  riskPotentialGeoCalc,
-  riskPotentialInternalCalc,
-  riskPotentialExternalCalc,
-  safeguardPiggingCalc,
-  safeguardChemicalInhibitionCalc,
-  probabilityInteriorWithSafeguardsCalc,
-  riskPotentialInternalWithSafeguardsCalc,
-  safeguardCathodicCalc,
-  probabilityExteriorWithSafeguardsCalc,
-  riskPotentialExternalWithSafeguardsCalc,
-} from './RiskCalcs';
+import { allocateRisk } from './RiskCalcs';
 import { ITableConstructObject } from './SearchNavigation';
 
 
@@ -187,118 +169,8 @@ export const RiskQuery = extendType({
       args: {
         id: nonNull(stringArg()),
       },
-      resolve: async (_parent, { id }, ctx: Context) => {
-        
-        const risk = await ctx.prisma.risk.findUnique({
-          where: { id },
-          select: {
-            environmentProximityTo: true,
-            repairTimeDays: true,
-            oilReleaseCost: true,
-            gasReleaseCost: true,
-            consequencePeople: true,
-            probabilityGeo: true,
-            safeguardInternalProtection: true,
-            safeguardExternalCoating: true,
-          }
-        });
-
-        const lastLicenseChange = await ctx.prisma.licenseChange.findFirst({
-          where: { pipelineId: id },
-          orderBy: { date: 'desc' },
-          select: {
-            substance: true,
-            status: true,
-          },
-        });
-
-        const firstLicenseChange = await ctx.prisma.licenseChange.findFirst({
-          where: { pipelineId: id },
-          orderBy: { date: 'asc' },
-          select: { date: true },
-        });
-
-        const pipeline = await ctx.prisma.pipeline.findUnique({
-          where: { id },
-          select: {
-            flowCalculationDirection: true,
-            type: true,
-            material: true,
-            piggable: true,
-          }
-        });
-
-        if (risk && lastLicenseChange && firstLicenseChange && pipeline) {
-
-          const { environmentProximityTo, oilReleaseCost, gasReleaseCost, repairTimeDays, consequencePeople, probabilityGeo, safeguardInternalProtection, safeguardExternalCoating } = risk;
-          const { substance: currentSubstance, status: currentStatus } = lastLicenseChange;
-          const { date: firstLicenseDate } = firstLicenseChange;
-          const { flowCalculationDirection, type, material, piggable } = pipeline;
-
-          const { oil, water, gas } = (await pipelineFlow({ id, flowCalculationDirection, ctx })) || { oil: 0, water: 0, gas: 0 };
-
-          const totalFluids = await totalFluidsCalc({ oil, water, gas });
-
-          const costPerM3Released = currentSubstance === 'FreshWater' ? 0 : 25000 * water + 1000 * gas + 15000 * oil;
-
-          const consequenceEnviro = await consequenceEnviroCalc({ environmentProximityTo, currentSubstance, currentStatus, totalFluids });
-
-          const consequenceAsset = await consequenceAssetCalc({ repairTimeDays, oilReleaseCost, gasReleaseCost, oil, gas, totalFluids });
-
-          const consequenceMax = await conequenceMaxCalc({ consequencePeople, consequenceEnviro, consequenceAsset });
-
-          const probabilityInterior = await probabilityInteriorCalc({ type, material, currentStatus, currentSubstance });
-
-          const probabilityExterior = await probabilityExteriorCalc({ firstLicenseDate, currentStatus, material });
-
-          const riskPotentialGeo = await riskPotentialGeoCalc({ consequenceMax, probabilityGeo });
-
-          const riskPotentialInternal = await riskPotentialInternalCalc({ consequenceMax, probabilityInterior });
-
-          const riskPotentialExternal = await riskPotentialExternalCalc({ consequenceMax, probabilityExterior });
-
-          const safeguardPigging = await safeguardPiggingCalc({ piggable });
-
-          const safeguardChemicalInhibition = await safeguardChemicalInhibitionCalc();
-
-          const probabilityInteriorWithSafeguards = await probabilityInteriorWithSafeguardsCalc({ probabilityInterior, safeguardPigging, safeguardChemicalInhibition, safeguardInternalProtection });
-
-          const riskPotentialInternalWithSafeguards = await riskPotentialInternalWithSafeguardsCalc({ consequenceMax, probabilityInteriorWithSafeguards });
-
-          const safeguardCathodic = await safeguardCathodicCalc();
-
-          const probabilityExteriorWithSafeguards = await probabilityExteriorWithSafeguardsCalc({ probabilityExterior, safeguardCathodic, safeguardExternalCoating });
-
-          const riskPotentialExternalWithSafeguards = await riskPotentialExternalWithSafeguardsCalc({ consequenceMax, probabilityExteriorWithSafeguards });
-
-          const result = await ctx.prisma.risk.update({
-            where: { id },
-            data: {
-              costPerM3Released,
-              consequenceEnviro,
-              consequenceAsset,
-              consequenceMax,
-              probabilityInterior,
-              probabilityExterior,
-              riskPotentialGeo,
-              riskPotentialInternal,
-              riskPotentialExternal,
-              safeguardPigging,
-              safeguardChemicalInhibition,
-              probabilityInteriorWithSafeguards,
-              riskPotentialInternalWithSafeguards,
-              safeguardCathodic,
-              probabilityExteriorWithSafeguards,
-              riskPotentialExternalWithSafeguards,
-            }
-          });
-
-          return result;
-        }
-        const result = await ctx.prisma.risk.findUnique({
-          where: { id },
-        });
-        return result;
+      resolve: async (_, { id }, ctx: Context) => {
+        return await allocateRisk({ id, ctx });
       }
     })
   }
@@ -307,7 +179,7 @@ export const RiskQuery = extendType({
 
 export const RiskPayload = objectType({
   name: 'RiskPayload',
-  definition(t) {
+  definition: t => {
     t.field('risk', { type: 'Risk' })
     t.field('error', { type: 'FieldError' })
   },
@@ -316,7 +188,7 @@ export const RiskPayload = objectType({
 
 export const RiskMutation = extendType({
   type: 'Mutation',
-  definition(t) {
+  definition: t => {
     t.field('editRisk', {
       type: 'RiskPayload',
       args: {
@@ -455,5 +327,52 @@ export const RiskMutation = extendType({
         }
       }
     })
+    t.field('allocateRisk', {
+      type: 'AllocationPayload',
+      resolve: async (_, _args, ctx) => {
+        const user = ctx.user;
+        if (user) {
+          const { firstName } = user;
+          const authorized = resolveRiskAuthorized(user);
+          if (authorized) {
+            const allRisks = await ctx.prisma.risk.findMany({
+              select: {
+                id: true,
+              }
+            });
+            for (const { id } of allRisks) {
+              console.log(id);
+              await allocateRisk({ id, ctx });
+            }
+            return {
+              success: {
+                field: 'Risk',
+                message: `Allocated ${allRisks.length} risks`,
+              }
+            }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to allocate risks.`,
+            }
+          }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
+      }
+    })
   }
 })
+
+export const AllocationPayload = objectType({
+  name: 'AllocationPayload',
+  definition: t => {
+    t.field('success', { type: 'FieldError' })
+    t.field('error', { type: 'FieldError' })
+  },
+});

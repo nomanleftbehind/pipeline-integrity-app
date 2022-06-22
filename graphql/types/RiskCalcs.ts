@@ -1,4 +1,7 @@
-import { Risk as IRisk, LicenseChange as ILicenseChange, Pipeline as IPipeline } from '@prisma/client';
+import { Risk as IRisk, LicenseChange as ILicenseChange, Pipeline as IPipeline, Chemical as IChemical } from '@prisma/client';
+import { Context } from '../context';
+import { totalFluidsCalc } from './Well';
+import { pipelineFlow } from './PipelineFlow';
 
 
 
@@ -176,7 +179,6 @@ export const riskPotentialGeoCalc = async ({ consequenceMax, probabilityGeo }: I
 interface IRiskPotentialInternalCalcArgs {
   consequenceMax: IRisk['consequenceMax'];
   probabilityInterior: IRisk['probabilityInterior'];
-
 }
 
 export const riskPotentialInternalCalc = async ({ consequenceMax, probabilityInterior }: IRiskPotentialInternalCalcArgs) => {
@@ -212,7 +214,20 @@ export const safeguardPiggingCalc = async ({ piggable }: ISafeguardPiggingCalcAr
   return null;
 }
 
-export const safeguardChemicalInhibitionCalc = async () => {
+interface ISafeguardChemicalInhibitionCalcArgs {
+  downholeBatch: IChemical['downholeBatch'];
+  inhibitorPipelineBatch: IChemical['inhibitorPipelineBatch'];
+  bacteriaTreatment: IChemical['bacteriaTreatment'];
+  scaleTreatment: IChemical['scaleTreatment'];
+}
+
+export const safeguardChemicalInhibitionCalc = async ({ downholeBatch, inhibitorPipelineBatch, bacteriaTreatment, scaleTreatment }: ISafeguardChemicalInhibitionCalcArgs) => {
+  if (typeof downholeBatch === 'boolean' || typeof inhibitorPipelineBatch === 'boolean' || typeof bacteriaTreatment === 'boolean' || typeof scaleTreatment === 'boolean') {
+    if (downholeBatch === true || inhibitorPipelineBatch === true || bacteriaTreatment === true || scaleTreatment === true) {
+      return 1;
+    }
+    return 0;
+  }
   return null;
 }
 
@@ -273,4 +288,134 @@ export const riskPotentialExternalWithSafeguardsCalc = async ({ consequenceMax, 
     return consequenceMax * probabilityExteriorWithSafeguards;
   }
   return null;
+}
+
+
+interface IAllocateRiskArgs {
+  id: IRisk['id'];
+  ctx: Context;
+}
+
+export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
+  const risk = await ctx.prisma.risk.findUnique({
+    where: { id },
+    select: {
+      environmentProximityTo: true,
+      repairTimeDays: true,
+      oilReleaseCost: true,
+      gasReleaseCost: true,
+      consequencePeople: true,
+      probabilityGeo: true,
+      safeguardInternalProtection: true,
+      safeguardExternalCoating: true,
+    }
+  });
+
+  const lastLicenseChange = await ctx.prisma.licenseChange.findFirst({
+    where: { pipelineId: id },
+    orderBy: { date: 'desc' },
+    select: {
+      substance: true,
+      status: true,
+    },
+  });
+
+  const firstLicenseChange = await ctx.prisma.licenseChange.findFirst({
+    where: { pipelineId: id },
+    orderBy: { date: 'asc' },
+    select: { date: true },
+  });
+
+  const pipeline = await ctx.prisma.pipeline.findUnique({
+    where: { id },
+    select: {
+      flowCalculationDirection: true,
+      type: true,
+      material: true,
+      piggable: true,
+    }
+  });
+
+  const chemical = await ctx.prisma.chemical.findUnique({
+    where: { id },
+    select: {
+      downholeBatch: true,
+      inhibitorPipelineBatch: true,
+      bacteriaTreatment: true,
+      scaleTreatment: true,
+    }
+  })
+
+  if (risk && lastLicenseChange && firstLicenseChange && pipeline && chemical) {
+
+    const { environmentProximityTo, oilReleaseCost, gasReleaseCost, repairTimeDays, consequencePeople, probabilityGeo, safeguardInternalProtection, safeguardExternalCoating } = risk;
+    const { substance: currentSubstance, status: currentStatus } = lastLicenseChange;
+    const { date: firstLicenseDate } = firstLicenseChange;
+    const { flowCalculationDirection, type, material, piggable } = pipeline;
+    const { downholeBatch, inhibitorPipelineBatch, bacteriaTreatment, scaleTreatment } = chemical;
+
+    const { oil, water, gas } = (await pipelineFlow({ id, flowCalculationDirection, ctx })) || { oil: 0, water: 0, gas: 0 };
+
+    const totalFluids = await totalFluidsCalc({ oil, water, gas });
+
+    const costPerM3Released = currentSubstance === 'FreshWater' ? 0 : 25000 * water + 1000 * gas + 15000 * oil;
+
+    const consequenceEnviro = await consequenceEnviroCalc({ environmentProximityTo, currentSubstance, currentStatus, totalFluids });
+
+    const consequenceAsset = await consequenceAssetCalc({ repairTimeDays, oilReleaseCost, gasReleaseCost, oil, gas, totalFluids });
+
+    const consequenceMax = await conequenceMaxCalc({ consequencePeople, consequenceEnviro, consequenceAsset });
+
+    const probabilityInterior = await probabilityInteriorCalc({ type, material, currentStatus, currentSubstance });
+
+    const probabilityExterior = await probabilityExteriorCalc({ firstLicenseDate, currentStatus, material });
+
+    const riskPotentialGeo = await riskPotentialGeoCalc({ consequenceMax, probabilityGeo });
+
+    const riskPotentialInternal = await riskPotentialInternalCalc({ consequenceMax, probabilityInterior });
+
+    const riskPotentialExternal = await riskPotentialExternalCalc({ consequenceMax, probabilityExterior });
+
+    const safeguardPigging = await safeguardPiggingCalc({ piggable });
+
+    const safeguardChemicalInhibition = await safeguardChemicalInhibitionCalc({ downholeBatch, inhibitorPipelineBatch, bacteriaTreatment, scaleTreatment });
+
+    const probabilityInteriorWithSafeguards = await probabilityInteriorWithSafeguardsCalc({ probabilityInterior, safeguardPigging, safeguardChemicalInhibition, safeguardInternalProtection });
+
+    const riskPotentialInternalWithSafeguards = await riskPotentialInternalWithSafeguardsCalc({ consequenceMax, probabilityInteriorWithSafeguards });
+
+    const safeguardCathodic = await safeguardCathodicCalc();
+
+    const probabilityExteriorWithSafeguards = await probabilityExteriorWithSafeguardsCalc({ probabilityExterior, safeguardCathodic, safeguardExternalCoating });
+
+    const riskPotentialExternalWithSafeguards = await riskPotentialExternalWithSafeguardsCalc({ consequenceMax, probabilityExteriorWithSafeguards });
+
+    const result = await ctx.prisma.risk.update({
+      where: { id },
+      data: {
+        costPerM3Released,
+        consequenceEnviro,
+        consequenceAsset,
+        consequenceMax,
+        probabilityInterior,
+        probabilityExterior,
+        riskPotentialGeo,
+        riskPotentialInternal,
+        riskPotentialExternal,
+        safeguardPigging,
+        safeguardChemicalInhibition,
+        probabilityInteriorWithSafeguards,
+        riskPotentialInternalWithSafeguards,
+        safeguardCathodic,
+        probabilityExteriorWithSafeguards,
+        riskPotentialExternalWithSafeguards,
+      }
+    });
+
+    return result;
+  }
+  const result = await ctx.prisma.risk.findUnique({
+    where: { id },
+  });
+  return result;
 }

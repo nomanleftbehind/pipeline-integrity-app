@@ -1,4 +1,4 @@
-import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg, booleanArg } from 'nexus';
+import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg, booleanArg, subscriptionType } from 'nexus';
 import { NexusGenObjects } from 'nexus-typegen';
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';

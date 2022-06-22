@@ -16,6 +16,11 @@ export type Scalars = {
   DateTime: string;
 };
 
+export type AllocationPayload = {
+  error?: Maybe<FieldError>;
+  success?: Maybe<FieldError>;
+};
+
 export type AuthPayload = {
   error?: Maybe<FieldError>;
   user?: Maybe<User>;
@@ -378,6 +383,7 @@ export type Mutation = {
   addPressureTest?: Maybe<PressureTestPayload>;
   addRisk?: Maybe<RiskPayload>;
   addWellBatch?: Maybe<WellBatchPayload>;
+  allocateRisk?: Maybe<AllocationPayload>;
   connectPipeline?: Maybe<PipelinesOnPipelinesPayload>;
   connectSalesPoint?: Maybe<SalesPointPayload>;
   connectWell?: Maybe<WellPayload>;
@@ -1996,6 +2002,11 @@ export type DeleteRiskMutationVariables = Exact<{
 
 export type DeleteRiskMutation = { deleteRisk?: { risk?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
+export type AllocateRiskMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllocateRiskMutation = { allocateRisk?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
 export type EditChemicalMutationVariables = Exact<{
   id: Scalars['String'];
   baselineFluidAnalysisDate?: Maybe<Scalars['DateTime']>;
@@ -3574,6 +3585,45 @@ export function useDeleteRiskMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteRiskMutationHookResult = ReturnType<typeof useDeleteRiskMutation>;
 export type DeleteRiskMutationResult = Apollo.MutationResult<DeleteRiskMutation>;
 export type DeleteRiskMutationOptions = Apollo.BaseMutationOptions<DeleteRiskMutation, DeleteRiskMutationVariables>;
+export const AllocateRiskDocument = gql`
+    mutation AllocateRisk {
+  allocateRisk {
+    success {
+      field
+      message
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type AllocateRiskMutationFn = Apollo.MutationFunction<AllocateRiskMutation, AllocateRiskMutationVariables>;
+
+/**
+ * __useAllocateRiskMutation__
+ *
+ * To run a mutation, you first call `useAllocateRiskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAllocateRiskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [allocateRiskMutation, { data, loading, error }] = useAllocateRiskMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllocateRiskMutation(baseOptions?: Apollo.MutationHookOptions<AllocateRiskMutation, AllocateRiskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AllocateRiskMutation, AllocateRiskMutationVariables>(AllocateRiskDocument, options);
+      }
+export type AllocateRiskMutationHookResult = ReturnType<typeof useAllocateRiskMutation>;
+export type AllocateRiskMutationResult = Apollo.MutationResult<AllocateRiskMutation>;
+export type AllocateRiskMutationOptions = Apollo.BaseMutationOptions<AllocateRiskMutation, AllocateRiskMutationVariables>;
 export const EditChemicalDocument = gql`
     mutation EditChemical($id: String!, $baselineFluidAnalysisDate: DateTime, $scaling: Boolean, $bacteria: Boolean, $co2: Boolean, $o2: Boolean, $h2s: Boolean, $continuousInjection: Boolean, $injectionRate: Float, $downholeBatch: Boolean, $inhibitorPipelineBatch: Boolean, $bacteriaTreatment: Boolean, $scaleTreatment: Boolean, $batchFrequency: Int, $comment: String) {
   editChemical(
