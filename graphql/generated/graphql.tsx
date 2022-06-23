@@ -625,7 +625,7 @@ export type MutationEditPipelineBatchArgs = {
   date?: Maybe<Scalars['DateTime']>;
   diluentVolume?: Maybe<Scalars['Float']>;
   id: Scalars['String'];
-  product?: Maybe<Scalars['String']>;
+  productId?: Maybe<Scalars['String']>;
 };
 
 
@@ -771,6 +771,7 @@ export type PigRun = {
   id: Scalars['String'];
   isolationValveFunctionTest?: Maybe<PigInspectionEnum>;
   operator?: Maybe<User>;
+  operatorId?: Maybe<Scalars['String']>;
   pigSenderReceiverInspection?: Maybe<PigInspectionEnum>;
   pigType?: Maybe<PigTypeEnum>;
   pipeline: Pipeline;
@@ -1174,6 +1175,8 @@ export type Query = {
   sideBar?: Maybe<Array<Maybe<SideBar>>>;
   userCount?: Maybe<Scalars['Int']>;
   validators?: Maybe<Validator>;
+  validatorsBatchProduct?: Maybe<ValidatorsBatchProduct>;
+  validatorsPigRun?: Maybe<ValidatorsPigRun>;
   wellBatchesByWellId?: Maybe<Array<Maybe<WellBatch>>>;
   wellOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   wellsByPipelineId?: Maybe<Array<Maybe<Well>>>;
@@ -1659,6 +1662,17 @@ export type Validator = {
   yieldStrengthMatchPattern: Scalars['String'];
 };
 
+export type ValidatorsBatchProduct = {
+  batchProductEnum: Array<EnumObject>;
+  solubilityEnum: Array<EnumObject>;
+};
+
+export type ValidatorsPigRun = {
+  operatorFullNameEnum: Array<EnumObject>;
+  pigInspectionEnum: Array<EnumObject>;
+  pigTypeEnum: Array<EnumObject>;
+};
+
 export type Well = {
   authorized: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
@@ -1913,7 +1927,7 @@ export type DeletePigRunMutation = { deletePigRun?: { pigRun?: { id: string } | 
 export type EditPipelineBatchMutationVariables = Exact<{
   id: Scalars['String'];
   date?: Maybe<Scalars['DateTime']>;
-  product?: Maybe<Scalars['String']>;
+  productId?: Maybe<Scalars['String']>;
   cost?: Maybe<Scalars['Float']>;
   chemicalVolume?: Maybe<Scalars['Float']>;
   diluentVolume?: Maybe<Scalars['Float']>;
@@ -2066,7 +2080,7 @@ export type PigRunsByPipelineIdQueryVariables = Exact<{
 }>;
 
 
-export type PigRunsByPipelineIdQuery = { pigRunsByPipelineId?: Array<{ id: string, pigType?: PigTypeEnum | null | undefined, dateIn: string, dateOut?: string | null | undefined, isolationValveFunctionTest?: PigInspectionEnum | null | undefined, pigSenderReceiverInspection?: PigInspectionEnum | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, operator?: { email: string } | null | undefined, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type PigRunsByPipelineIdQuery = { pigRunsByPipelineId?: Array<{ id: string, pigType?: PigTypeEnum | null | undefined, dateIn: string, dateOut?: string | null | undefined, isolationValveFunctionTest?: PigInspectionEnum | null | undefined, pigSenderReceiverInspection?: PigInspectionEnum | null | undefined, comment?: string | null | undefined, operatorId?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type SearchNavigationOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2077,11 +2091,6 @@ export type OperationAndHavingEnumQueryVariables = Exact<{ [key: string]: never;
 
 
 export type OperationAndHavingEnumQuery = { validators?: { operationEnum: { equals: OperationEnum, not: OperationEnum, gt: OperationEnum, gte: OperationEnum, lt: OperationEnum, lte: OperationEnum, contains: OperationEnum, startsWith: OperationEnum, endsWith: OperationEnum }, havingEnum: { _min: HavingEnum, _max: HavingEnum, _count: HavingEnum, _any: HavingEnum } } | null | undefined };
-
-export type ValidatorsPigRunQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ValidatorsPigRunQuery = { validators?: { pigTypeEnum: { Scrapper: string, PigType4inArgus: string, PigType6inargus: string, PigType6inArgus: string, ScraperP400: string, PigType3inPurpleScraper: string, ScraperP304: string, PigType3inscapper: string, PigType3inscrapper: string, PigType3inscraper: string, Foam: string, Shutin: string, RedStubby: string, Redscraper: string, PigType3inGSCR: string, PigType2inGSCR: string, NoSender: string, PigType2ingscr: string, PigType2inGSCR_GFP: string, PigType4inGSCR: string, PigType2inPSCR_FLM: string, PigType3inPSCR: string, Highline: string, PigType2inPSCR: string, PigType3_scrapper: string, ScraperP401: string, ScraperP300: string, ScraperP301: string, ScraperP309: string, ScraperP314: string, ScaperP314: string, ScaperPP309: string, ScraperP204: string, ScraperP208: string, PigType3inArgus: string, PigType2inpurple: string, Ball: string, Black3inBall: string, PigType3inWhite: string, PigType3: string, SIMAY2018: string, ScraperP206: string, ScraperP200: string, PigType3inRscr: string, PigType3inPurpleStubby: string, PigType3inSCRAPER: string, Red3inscraper: string, PigType3inGreenDisc: string, PigType4inGreenDisc: string, PigType4green2disc: string, PigType4gree2disc: string, PigType3ingreendisc: string, PigType3inpurpledisc: string, PigType2inPurpleDisc: string, disc: string, PigType2purple2disc: string, PigType3inpurple2disc: string, PigType2green2disc: string, bullet: string, PigType8inFoam: string, PigType3inscr: string, ScraperP305: string, ScraperP312: string, ScraperP303: string, ScraperP311: string, ScrapperP307: string, PigType4inpurplescraper: string, Torpedo: string, PigType4in: string, PigType3inStubby: string, Stubby: string, PigType3in: string, redball: string, PigType2inStubby: string, PigType1inStubby: string, PigType3inBrownRibbed: string, PigType3inGreenRibbed: string, PigType3inBlueRibbed: string, BlueRibbed: string, M_D_Foamy: string, PigType6inGreenRibbed: string, BlueinScraper: string, Red4inscraper: string, Blue3inscraper: string, PigType4inBlueDisc: string, PigType8inBlackDisc: string, PigType4inGreendisc: string, PigType6inGreenDisc: string, PigType6inscrapper: string, PigType4inscrapper: string, PigType4inFoam: string, PigType3inredscrape: string, GSCR: string, PigType4GreenStubby: string, PigType4_GreenRibbed: string, PigType4Green: string, PigType3inpurplescraper: string, PigType6ingreenscraper: string, Purple3inDisc: string }, pigInspectionEnum: { Failed: string, Good: string } } | null | undefined };
 
 export type PipelineBatchesByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -2100,7 +2109,12 @@ export type WellBatchesByWellIdQuery = { wellBatchesByWellId?: Array<{ id: strin
 export type ValidatorsBatchProductQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorsBatchProductQuery = { validators?: { solubilityEnum: { Oil: string, Water: string } } | null | undefined };
+export type ValidatorsBatchProductQuery = { validatorsBatchProduct?: { solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
+
+export type ValidatorsPigRunQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ValidatorsPigRunQuery = { validatorsPigRun?: { pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorFullNameEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
 
 export type GetValidatorsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3171,11 +3185,11 @@ export type DeletePigRunMutationHookResult = ReturnType<typeof useDeletePigRunMu
 export type DeletePigRunMutationResult = Apollo.MutationResult<DeletePigRunMutation>;
 export type DeletePigRunMutationOptions = Apollo.BaseMutationOptions<DeletePigRunMutation, DeletePigRunMutationVariables>;
 export const EditPipelineBatchDocument = gql`
-    mutation EditPipelineBatch($id: String!, $date: DateTime, $product: String, $cost: Float, $chemicalVolume: Float, $diluentVolume: Float, $comment: String) {
+    mutation EditPipelineBatch($id: String!, $date: DateTime, $productId: String, $cost: Float, $chemicalVolume: Float, $diluentVolume: Float, $comment: String) {
   editPipelineBatch(
     id: $id
     date: $date
-    product: $product
+    productId: $productId
     cost: $cost
     chemicalVolume: $chemicalVolume
     diluentVolume: $diluentVolume
@@ -3208,7 +3222,7 @@ export type EditPipelineBatchMutationFn = Apollo.MutationFunction<EditPipelineBa
  *   variables: {
  *      id: // value for 'id'
  *      date: // value for 'date'
- *      product: // value for 'product'
+ *      productId: // value for 'productId'
  *      cost: // value for 'cost'
  *      chemicalVolume: // value for 'chemicalVolume'
  *      diluentVolume: // value for 'diluentVolume'
@@ -3923,9 +3937,7 @@ export const PigRunsByPipelineIdDocument = gql`
     isolationValveFunctionTest
     pigSenderReceiverInspection
     comment
-    operator {
-      email
-    }
+    operatorId
     createdBy {
       id
       email
@@ -4059,144 +4071,6 @@ export function useOperationAndHavingEnumLazyQuery(baseOptions?: Apollo.LazyQuer
 export type OperationAndHavingEnumQueryHookResult = ReturnType<typeof useOperationAndHavingEnumQuery>;
 export type OperationAndHavingEnumLazyQueryHookResult = ReturnType<typeof useOperationAndHavingEnumLazyQuery>;
 export type OperationAndHavingEnumQueryResult = Apollo.QueryResult<OperationAndHavingEnumQuery, OperationAndHavingEnumQueryVariables>;
-export const ValidatorsPigRunDocument = gql`
-    query ValidatorsPigRun {
-  validators {
-    pigTypeEnum {
-      Scrapper
-      PigType4inArgus
-      PigType6inargus
-      PigType6inArgus
-      ScraperP400
-      PigType3inPurpleScraper
-      ScraperP304
-      PigType3inscapper
-      PigType3inscrapper
-      PigType3inscraper
-      Foam
-      Shutin
-      RedStubby
-      Redscraper
-      PigType3inGSCR
-      PigType2inGSCR
-      NoSender
-      PigType2ingscr
-      PigType2inGSCR_GFP
-      PigType4inGSCR
-      PigType2inPSCR_FLM
-      PigType3inPSCR
-      Highline
-      PigType2inPSCR
-      PigType3_scrapper
-      ScraperP401
-      ScraperP300
-      ScraperP301
-      ScraperP309
-      ScraperP314
-      ScaperP314
-      ScaperPP309
-      ScraperP204
-      ScraperP208
-      PigType3inArgus
-      PigType2inpurple
-      Ball
-      Black3inBall
-      PigType3inWhite
-      PigType3
-      SIMAY2018
-      ScraperP206
-      ScraperP200
-      PigType3inRscr
-      PigType3inPurpleStubby
-      PigType3inSCRAPER
-      Red3inscraper
-      PigType3inGreenDisc
-      PigType4inGreenDisc
-      PigType4green2disc
-      PigType4gree2disc
-      PigType3ingreendisc
-      PigType3inpurpledisc
-      PigType2inPurpleDisc
-      disc
-      PigType2purple2disc
-      PigType3inpurple2disc
-      PigType2green2disc
-      bullet
-      PigType8inFoam
-      PigType3inscr
-      ScraperP305
-      ScraperP312
-      ScraperP303
-      ScraperP311
-      ScrapperP307
-      PigType4inpurplescraper
-      Torpedo
-      PigType4in
-      PigType3inStubby
-      Stubby
-      PigType3in
-      redball
-      PigType2inStubby
-      PigType1inStubby
-      PigType3inBrownRibbed
-      PigType3inGreenRibbed
-      PigType3inBlueRibbed
-      BlueRibbed
-      M_D_Foamy
-      PigType6inGreenRibbed
-      BlueinScraper
-      Red4inscraper
-      Blue3inscraper
-      PigType4inBlueDisc
-      PigType8inBlackDisc
-      PigType4inGreendisc
-      PigType6inGreenDisc
-      PigType6inscrapper
-      PigType4inscrapper
-      PigType4inFoam
-      PigType3inredscrape
-      GSCR
-      PigType4GreenStubby
-      PigType4_GreenRibbed
-      PigType4Green
-      PigType3inpurplescraper
-      PigType6ingreenscraper
-      Purple3inDisc
-    }
-    pigInspectionEnum {
-      Failed
-      Good
-    }
-  }
-}
-    `;
-
-/**
- * __useValidatorsPigRunQuery__
- *
- * To run a query within a React component, call `useValidatorsPigRunQuery` and pass it any options that fit your needs.
- * When your component renders, `useValidatorsPigRunQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useValidatorsPigRunQuery({
- *   variables: {
- *   },
- * });
- */
-export function useValidatorsPigRunQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorsPigRunQuery, ValidatorsPigRunQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ValidatorsPigRunQuery, ValidatorsPigRunQueryVariables>(ValidatorsPigRunDocument, options);
-      }
-export function useValidatorsPigRunLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorsPigRunQuery, ValidatorsPigRunQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ValidatorsPigRunQuery, ValidatorsPigRunQueryVariables>(ValidatorsPigRunDocument, options);
-        }
-export type ValidatorsPigRunQueryHookResult = ReturnType<typeof useValidatorsPigRunQuery>;
-export type ValidatorsPigRunLazyQueryHookResult = ReturnType<typeof useValidatorsPigRunLazyQuery>;
-export type ValidatorsPigRunQueryResult = Apollo.QueryResult<ValidatorsPigRunQuery, ValidatorsPigRunQueryVariables>;
 export const PipelineBatchesByPipelineIdDocument = gql`
     query PipelineBatchesByPipelineId($pipelineId: String!) {
   pipelineBatchesByPipelineId(pipelineId: $pipelineId) {
@@ -4313,10 +4187,14 @@ export type WellBatchesByWellIdLazyQueryHookResult = ReturnType<typeof useWellBa
 export type WellBatchesByWellIdQueryResult = Apollo.QueryResult<WellBatchesByWellIdQuery, WellBatchesByWellIdQueryVariables>;
 export const ValidatorsBatchProductDocument = gql`
     query ValidatorsBatchProduct {
-  validators {
+  validatorsBatchProduct {
     solubilityEnum {
-      Oil
-      Water
+      serverEnum
+      databaseEnum
+    }
+    batchProductEnum {
+      serverEnum
+      databaseEnum
     }
   }
 }
@@ -4348,6 +4226,51 @@ export function useValidatorsBatchProductLazyQuery(baseOptions?: Apollo.LazyQuer
 export type ValidatorsBatchProductQueryHookResult = ReturnType<typeof useValidatorsBatchProductQuery>;
 export type ValidatorsBatchProductLazyQueryHookResult = ReturnType<typeof useValidatorsBatchProductLazyQuery>;
 export type ValidatorsBatchProductQueryResult = Apollo.QueryResult<ValidatorsBatchProductQuery, ValidatorsBatchProductQueryVariables>;
+export const ValidatorsPigRunDocument = gql`
+    query ValidatorsPigRun {
+  validatorsPigRun {
+    pigTypeEnum {
+      serverEnum
+      databaseEnum
+    }
+    pigInspectionEnum {
+      serverEnum
+      databaseEnum
+    }
+    operatorFullNameEnum {
+      serverEnum
+      databaseEnum
+    }
+  }
+}
+    `;
+
+/**
+ * __useValidatorsPigRunQuery__
+ *
+ * To run a query within a React component, call `useValidatorsPigRunQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorsPigRunQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatorsPigRunQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useValidatorsPigRunQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorsPigRunQuery, ValidatorsPigRunQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorsPigRunQuery, ValidatorsPigRunQueryVariables>(ValidatorsPigRunDocument, options);
+      }
+export function useValidatorsPigRunLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorsPigRunQuery, ValidatorsPigRunQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorsPigRunQuery, ValidatorsPigRunQueryVariables>(ValidatorsPigRunDocument, options);
+        }
+export type ValidatorsPigRunQueryHookResult = ReturnType<typeof useValidatorsPigRunQuery>;
+export type ValidatorsPigRunLazyQueryHookResult = ReturnType<typeof useValidatorsPigRunLazyQuery>;
+export type ValidatorsPigRunQueryResult = Apollo.QueryResult<ValidatorsPigRunQuery, ValidatorsPigRunQueryVariables>;
 export const GetValidatorsDocument = gql`
     query getValidators {
   validators {

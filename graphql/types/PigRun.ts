@@ -1,9 +1,10 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
 import { NexusGenObjects } from 'nexus-typegen';
 import { Context } from '../context';
-import { User as IUser, PigRun as IPigRun } from '@prisma/client';
+import { Prisma, User as IUser, PigRun as IPigRun } from '@prisma/client';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 import { ITableConstructObject } from './SearchNavigation';
+
 
 
 
@@ -120,7 +121,7 @@ export const PigTypeEnum = enumType({
 });
 
 
-const PigTypeEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(PigTypeEnumMembers).map(([serverEnum, databaseEnum]) => {
+export const PigTypeEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(PigTypeEnumMembers).map(([serverEnum, databaseEnum]) => {
 	return { serverEnum, databaseEnum }
 });
 
@@ -139,7 +140,7 @@ export const PigInspectionEnum = enumType({
 	members: PigInspectionEnumMembers
 });
 
-const PigInspectionEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(PigInspectionEnumMembers).map(([serverEnum, databaseEnum]) => {
+export const PigInspectionEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(PigInspectionEnumMembers).map(([serverEnum, databaseEnum]) => {
 	return { serverEnum, databaseEnum }
 });
 
@@ -152,6 +153,7 @@ export const PigRunObjectFields: ITableConstructObject[] = [
 	{ field: 'isolationValveFunctionTest', nullable: true, type: 'PigInspectionEnum', enumObjectArray: PigInspectionEnumArray },
 	{ field: 'pigSenderReceiverInspection', nullable: true, type: 'PigInspectionEnum', enumObjectArray: PigInspectionEnumArray },
 	{ field: 'comment', nullable: true, type: 'String' },
+	{ field: 'operatorId', nullable: true, type: 'String' },
 	{ field: 'createdAt', nullable: false, type: 'DateTime' },
 	{ field: 'updatedAt', nullable: false, type: 'DateTime' },
 ];
@@ -336,20 +338,34 @@ export const PigRunMutation = extendType({
 								}
 							}
 						}
-						const pigRun = await ctx.prisma.pigRun.update({
-							where: { id: args.id },
-							data: {
-								pigType: databaseEnumToServerEnum(PigTypeEnumMembers, args.pigType),
-								dateIn: args.dateIn || undefined,
-								dateOut: args.dateOut,
-								isolationValveFunctionTest: args.isolationValveFunctionTest,
-								pigSenderReceiverInspection: args.pigSenderReceiverInspection,
-								comment: args.comment,
-								operatorId: args.operatorId,
-								updatedById: userId,
-							},
-						});
-						return { pigRun }
+						try {
+							const pigRun = await ctx.prisma.pigRun.update({
+								where: { id: args.id },
+								data: {
+									pigType: databaseEnumToServerEnum(PigTypeEnumMembers, args.pigType),
+									dateIn: args.dateIn || undefined,
+									dateOut: args.dateOut,
+									isolationValveFunctionTest: args.isolationValveFunctionTest,
+									pigSenderReceiverInspection: args.pigSenderReceiverInspection,
+									comment: args.comment,
+									operatorId: args.operatorId,
+									updatedById: userId,
+								},
+							});
+							return { pigRun }
+						} catch (e) {
+							if (e instanceof Prisma.PrismaClientKnownRequestError) {
+								if (e.code === 'P2003') {
+									return {
+										error: {
+											field: Object.keys(args)[1],
+											message: "Foreign table field doesn't contain specified ID.",
+										}
+									}
+								}
+							}
+							throw e;
+						}
 					}
 					return {
 						error: {

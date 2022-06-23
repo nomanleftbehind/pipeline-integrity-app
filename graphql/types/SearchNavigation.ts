@@ -8,10 +8,13 @@ import { LicenseChangeObjectFields } from './LicenseChange';
 import { PressureTestObjectFields } from './PressureTest';
 import { PigRunObjectFields } from './PigRun';
 import { PipelineBatchObjectFields } from './PipelineBatch';
+import { loadOperatorEnumObjectArray } from './Validator';
 import type { GetGen } from 'nexus/dist/typegenTypeHelpers';
 import type { AllNexusOutputTypeDefs } from 'nexus/dist/definitions/wrapping';
 import type { NexusMetaType } from 'nexus/dist/definitions/nexusMeta';
 import { NexusGenEnums, NexusGenObjects } from 'nexus-typegen';
+import { prisma } from '../../lib/prisma';
+import { Context } from '../context';
 
 
 
@@ -157,31 +160,12 @@ const searchNavigationObjectPressureTest = PressureTestObjectFields
     return newObj;
   });
 
-const searchNavigationObjectPigRun = PigRunObjectFields
-  .map((obj) => {
-    const newObj: ITableObjectExtend = { table: 'pigRuns', ...obj };
-    return newObj;
-  });
-
 const searchNavigationObjectPipelineBatch = PipelineBatchObjectFields
   .map((obj) => {
     const newObj: ITableObjectExtend = { table: 'pipelineBatches', ...obj };
     return newObj;
   });
 
-const searchNavigationObject = searchNavigationObjectPipeline
-  .concat(
-    searchNavigationObjectRisk,
-    searchNavigationObjectChemical,
-    searchNavigationObjectWell,
-    searchNavigationObjectSalesPoint,
-    searchNavigationObjectUpstreamPipeline,
-    searchNavigationObjectDownstreamPipeline,
-    searchNavigationObjectLicenseChange,
-    searchNavigationObjectPressureTest,
-    searchNavigationObjectPigRun,
-    searchNavigationObjectPipelineBatch,
-  );
 
 
 export const SearchNavigationQuery = extendType({
@@ -189,7 +173,32 @@ export const SearchNavigationQuery = extendType({
   definition: t => {
     t.nonNull.list.nonNull.field('searchNavigationOptions', {
       type: 'SearchNavigationObject',
-      resolve: () => {
+      resolve: async (_, _args, ctx: Context) => {
+
+        const searchNavigationObjectPigRun = await Promise.all(PigRunObjectFields
+          .map(async ({ field, nullable, type, enumObjectArray }) => {
+            const operatorIdEnumObjectArray = await loadOperatorEnumObjectArray({ ctx });
+            const newObj: ITableObjectExtend = {
+              table: 'pigRuns', field, nullable, type, enumObjectArray: field === 'operatorId' ? operatorIdEnumObjectArray : enumObjectArray
+            };
+            return newObj;
+          })
+        );
+
+        const searchNavigationObject = searchNavigationObjectPipeline
+          .concat(
+            searchNavigationObjectRisk,
+            searchNavigationObjectChemical,
+            searchNavigationObjectWell,
+            searchNavigationObjectSalesPoint,
+            searchNavigationObjectUpstreamPipeline,
+            searchNavigationObjectDownstreamPipeline,
+            searchNavigationObjectLicenseChange,
+            searchNavigationObjectPressureTest,
+            searchNavigationObjectPigRun,
+            searchNavigationObjectPipelineBatch,
+          );
+
         return searchNavigationObject as NexusGenObjects['SearchNavigationObject'][];
       }
     })

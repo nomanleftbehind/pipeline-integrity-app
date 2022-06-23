@@ -1,6 +1,7 @@
 import { objectType, extendType } from 'nexus';
 import { UserRoleEnumMembers } from './User';
 import { serverEnumToDatabaseEnum } from './Pipeline';
+import { Context } from '../context';
 import {
 	FromToFeatureEnumMembers,
 	TypeEnumMembers,
@@ -10,10 +11,10 @@ import {
 	FlowCalculationDirectionEnumMembers,
 } from './Pipeline';
 import { StatusEnumMembers, SubstanceEnumMembers } from './LicenseChange';
-import { PigTypeEnumMembers, PigInspectionEnumMembers } from './PigRun';
+import { PigTypeEnumMembers, PigInspectionEnumMembers, PigTypeEnumArray, PigInspectionEnumArray } from './PigRun';
 import { LimitingSpecEnumMembers } from './PressureTest';
 import { EnvironmentProximityToEnumMembers, GeotechnicalFacingEnumMembers } from './Risk';
-import { SolubilityEnumMembers } from './BatchProduct';
+import { SolubilityEnumMembers, SolubilityEnumArray } from './BatchProduct';
 import { OperationEnumMembers, HavingEnumMembers } from './SearchNavigation';
 
 export const anyTextMatchPattern = "^[\\s\\S]*$";
@@ -222,6 +223,78 @@ export const Validator = objectType({
 		t.nonNull.field('havingEnum', { type: 'HavingEnumObject' })
 	}
 })
+
+
+export const ValidatorsBatchProduct = objectType({
+	name: 'ValidatorsBatchProduct',
+	definition: t => {
+		t.nonNull.list.nonNull.field('solubilityEnum', { type: 'EnumObject' })
+		t.nonNull.list.nonNull.field('batchProductEnum', {
+			type: 'EnumObject',
+			resolve: async (_, _args, ctx: Context) => {
+				const batchProductEnumObjectArray = (await ctx.prisma.batchProduct.findMany({
+					select: { id: true, product: true },
+					orderBy: { product: 'asc' },
+				})).map(({ id, product }) => {
+					return { databaseEnum: product, serverEnum: id };
+				});
+				return batchProductEnumObjectArray;
+			},
+		})
+	}
+})
+
+interface IOperatorEnumObjectArrayArgs {
+	ctx: Context;
+}
+
+export const loadOperatorEnumObjectArray = async ({ ctx }: IOperatorEnumObjectArrayArgs) => {
+	const operatorEnumObjectArray = (await ctx.prisma.user.findMany({
+		where: { role: 'OPERATOR' },
+		select: { id: true, firstName: true, lastName: true },
+		orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }],
+	})).map(({ id, firstName, lastName }) => {
+		return { databaseEnum: `${firstName} ${lastName}`, serverEnum: id };
+	});
+	return operatorEnumObjectArray;
+}
+
+export const ValidatorsPigRun = objectType({
+	name: 'ValidatorsPigRun',
+	definition: t => {
+		t.nonNull.list.nonNull.field('pigTypeEnum', { type: 'EnumObject' })
+		t.nonNull.list.nonNull.field('pigInspectionEnum', { type: 'EnumObject' })
+		t.nonNull.list.nonNull.field('operatorFullNameEnum', {
+			type: 'EnumObject',
+			resolve: async (_, _args, ctx: Context) => await loadOperatorEnumObjectArray({ ctx })
+		})
+	}
+})
+
+
+export const ValidatorQuery2 = extendType({
+	type: 'Query',
+	definition(t) {
+		t.field('validatorsBatchProduct', {
+			type: 'ValidatorsBatchProduct',
+			resolve: () => {
+				return {
+					solubilityEnum: SolubilityEnumArray,
+				};
+			}
+		})
+		t.field('validatorsPigRun', {
+			type: 'ValidatorsPigRun',
+			resolve: () => {
+				return {
+					pigTypeEnum: PigTypeEnumArray,
+					pigInspectionEnum: PigInspectionEnumArray,
+				};
+			}
+		})
+	},
+});
+
 
 export const ValidatorQuery = extendType({
 	type: 'Query',

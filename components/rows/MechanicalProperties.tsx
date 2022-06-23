@@ -16,6 +16,8 @@ export default function MechanicalProperties({ id, length, type, grade, yieldStr
 
   const { lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = dataValidators?.validators || {};
 
+  console.log(materialEnum);
+  
   const mechanicalProperties: IMechanicalPropertyRecordEntryMap[] = [
     { columnName: 'length', record: length, label: 'Length (km)', columnType: 'number', nullable: false, validator: lengthMatchPattern, editRecord },
     { columnName: 'type', record: type, label: 'Type', columnType: 'string', nullable: true, validator: typeEnum, editRecord },

@@ -6,20 +6,8 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { TextInputRecordEntry, DOMSelectInput } from '../../pages/register';
 import { Formik, Form, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
-import { GetValidatorsQuery } from '../../graphql/generated/graphql';
+import { EnumObject } from '../../graphql/generated/graphql';
 
-
-// We are taking `validators` type which is a union of many objects, a string and undefined.
-// We are removing string and undefined and combining all objects into one object that contains all properties.
-// This is because we we will use keys of this type to index validators.
-type InferValue<T> = T[keyof T];
-type RemoveStringFromUnion<T> = T extends infer U ? string extends U ? never : U : never;
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
-type IntersectionToObject<I> = UnionToIntersection<I> extends infer O ? { [K in keyof O]: O[K] } : never;
-
-type IValidators = NonNullable<GetValidatorsQuery['validators']>;
-type IValidator = InferValue<IValidators>;
-type IValidatorEnumsToOneObject = IntersectionToObject<UnionToIntersection<RemoveStringFromUnion<IValidator>>>;
 
 export type IRecord = string | number | boolean | null | undefined;
 export type IColumnType = 'string' | 'number' | 'date' | 'boolean' | 'link';
@@ -43,7 +31,7 @@ export interface IRecordEntryProps {
   columnType: IColumnType;
   nullable: boolean;
   record: IRecord;
-  validator?: IValidator;
+  validator?: EnumObject[] | string;
   authorized: boolean;
   editRecord?: IEditRecordFunction;
 }
@@ -70,7 +58,7 @@ export default function RecordEntry({ id, columnName, columnType, nullable, reco
     }
   };
 
-  const validatorIsObject = typeof validator === 'object' && !Array.isArray(validator) && validator !== null;
+  const validatorIsEnumObjectArray = Array.isArray(validator);
 
   const handleValidation = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     if (typeof validator === 'string') {
@@ -111,9 +99,13 @@ export default function RecordEntry({ id, columnName, columnType, nullable, reco
         }
       case 'string':
         if (typeof record === 'string') {
-          if (validatorIsObject) {
+          if (validatorIsEnumObjectArray) {
             // Using previously defined object type that represents all validator properties.
-            return (validator as IValidatorEnumsToOneObject)[record as keyof IValidatorEnumsToOneObject];
+            // return (validator as IValidatorEnumsToOneObject)[record as keyof IValidatorEnumsToOneObject];
+            const databaseEnumRecord = validator.find(({ serverEnum }) => serverEnum === record)?.databaseEnum;
+            console.log('databaseEnumRecord:', databaseEnumRecord);
+
+            return databaseEnumRecord;
           } else {
             return record;
           }
@@ -127,10 +119,11 @@ export default function RecordEntry({ id, columnName, columnType, nullable, reco
 
   const recordDisplay = switchRecordDisplay();
 
-  const switchinitialValue = () => {
+  const switchInitialValue = () => {
     if (record == null) {
-      if (validatorIsObject) {
-        return Object.keys(validator)[0]
+      if (validatorIsEnumObjectArray) {
+        // return Object.keys(validator)[0]
+        return validator[0].serverEnum;
       }
       if (columnType === 'boolean') {
         return 'true'
@@ -151,7 +144,12 @@ export default function RecordEntry({ id, columnName, columnType, nullable, reco
     return record;
   }
 
-  const initialValue = switchinitialValue();
+  const initialValue = switchInitialValue();
+
+  if (columnName === 'product') {
+    console.log('initialValue:', initialValue);
+  }
+
 
   const validationSchema = Yup.object().shape({ [columnName]: Yup.string().required('required').nullable(true), });
 
@@ -187,19 +185,19 @@ export default function RecordEntry({ id, columnName, columnType, nullable, reco
             <Form
               className='entry-field-form'
             >
-              {validatorIsObject ?
+              {validatorIsEnumObjectArray ?
                 <DOMSelectInput
                   className='record-entry-input'
                   name={columnName}
                 >
-                  {validator && Object
+                  {validator/* && Object
                     .entries(validator)
-                    .map(([validatorServer, validatorDatabase]) => <option
-                      key={validatorServer}
-                      value={validatorServer}
-                    >
-                      {validatorDatabase}
-                    </option>)}
+                    */.map((/*[validatorServer, validatorDatabase]*/{ serverEnum, databaseEnum }) => <option
+                    key={/* validatorServer */serverEnum}
+                    value={/* validatorServer */serverEnum}
+                  >
+                    {/* validatorDatabase */databaseEnum}
+                  </option>)}
                 </DOMSelectInput> :
                 columnType === 'boolean' ?
                   <DOMSelectInput

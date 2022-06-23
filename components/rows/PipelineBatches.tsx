@@ -28,6 +28,7 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
 
   const { data, loading, error } = usePipelineBatchesByPipelineIdQuery({ variables: { pipelineId } });
   const { data: dataValidators } = useValidatorsBatchProductQuery();
+
   const [editPipelineBatch] = useEditPipelineBatchMutation({
     refetchQueries: [PipelineBatchesByPipelineIdDocument, 'PipelineBatchesByPipelineId'],
     onCompleted: ({ editPipelineBatch }) => {
@@ -58,7 +59,8 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
   });
 
 
-  const { solubilityEnum } = dataValidators?.validators || {};
+  const { solubilityEnum, batchProductEnum } = dataValidators?.validatorsBatchProduct || {};
+
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {
@@ -143,7 +145,7 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
           const { id, date, product, cost, chemicalVolume, diluentVolume, comment, createdBy, createdAt, updatedBy, updatedAt, authorized } = pipelineBatch;
           const pipelineBatchColumns: IRecordEntryMap[] = [
             { columnName: 'date', columnType: 'date', nullable: false, record: date, editRecord },
-            { columnName: 'product', columnType: 'string', nullable: false, record: product.product, editRecord },
+            { columnName: 'productId', columnType: 'string', nullable: false, record: product.id, editRecord, validator: batchProductEnum },
             { columnName: 'solubility', columnType: 'string', nullable: false, record: product.solubility, validator: solubilityEnum },
             { columnName: 'cost', columnType: 'number', nullable: true, record: cost, editRecord },
             { columnName: 'chemicalVolume', columnType: 'number', nullable: true, record: chemicalVolume, editRecord },

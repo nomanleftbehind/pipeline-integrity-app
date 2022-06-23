@@ -56,7 +56,7 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
 
-  const { pigTypeEnum, pigInspectionEnum } = dataValidators?.validators || {};
+  const { pigTypeEnum, pigInspectionEnum, operatorFullNameEnum } = dataValidators?.validatorsPigRun || {};
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {
@@ -138,12 +138,12 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
         const isLastRow = data.pigRunsByPipelineId?.length === gridRow + 1;
         gridRow += 2;
         if (pigRun) {
-          const { id, pigType, dateIn, dateOut, operator, isolationValveFunctionTest, pigSenderReceiverInspection, comment, createdBy, createdAt, updatedBy, updatedAt, authorized } = pigRun;
+          const { id, pigType, dateIn, dateOut, operatorId, isolationValveFunctionTest, pigSenderReceiverInspection, comment, createdBy, createdAt, updatedBy, updatedAt, authorized } = pigRun;
           const pigRunColumns: IRecordEntryMap[] = [
             { columnName: 'pigType', columnType: 'string', nullable: true, record: pigType, validator: pigTypeEnum, editRecord },
             { columnName: 'dateIn', columnType: 'date', nullable: false, record: dateIn, editRecord },
             { columnName: 'dateOut', columnType: 'date', nullable: true, record: dateOut, editRecord },
-            { columnName: 'operator', columnType: 'string', nullable: true, record: operator?.email },
+            { columnName: 'operatorId', columnType: 'string', nullable: true, record: operatorId, validator: operatorFullNameEnum, editRecord },
             { columnName: 'isolationValveFunctionTest', columnType: 'string', nullable: true, record: isolationValveFunctionTest, validator: pigInspectionEnum, editRecord },
             { columnName: 'pigSenderReceiverInspection', columnType: 'string', nullable: true, record: pigSenderReceiverInspection, validator: pigInspectionEnum, editRecord },
             { columnName: 'comment', columnType: 'string', nullable: true, record: comment, editRecord },

@@ -252,8 +252,8 @@ mutation DeletePigRun($id: String!) {
   }
 }
 
-mutation EditPipelineBatch($id: String!, $date: DateTime, $product: String, $cost: Float, $chemicalVolume: Float, $diluentVolume: Float, $comment: String) {
-  editPipelineBatch(id: $id, date: $date, product: $product, cost: $cost, chemicalVolume: $chemicalVolume, diluentVolume: $diluentVolume, comment: $comment) {
+mutation EditPipelineBatch($id: String!, $date: DateTime, $productId: String, $cost: Float, $chemicalVolume: Float, $diluentVolume: Float, $comment: String) {
+  editPipelineBatch(id: $id, date: $date, productId: $productId, cost: $cost, chemicalVolume: $chemicalVolume, diluentVolume: $diluentVolume, comment: $comment) {
     pipelineBatch {
       id
     }

@@ -1,4 +1,5 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
+import { NexusGenObjects } from 'nexus-typegen';
 import { Context } from '../context';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 
@@ -75,4 +76,9 @@ export const SolubilityEnum = enumType({
   },
   name: 'SolubilityEnum',
   members: SolubilityEnumMembers
+});
+
+
+export const SolubilityEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(SolubilityEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
 });

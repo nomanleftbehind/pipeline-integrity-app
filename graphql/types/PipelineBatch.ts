@@ -82,12 +82,12 @@ export const PipelineBatchExtendObject = extendType({
   },
 });
 
-interface IresolvePipelineBatchAuthorizedArgs {
+interface IResolvePipelineBatchAuthorizedArgs {
   user: IUser;
   createdById: IPipelineBatch['createdById'];
 }
 
-const resolvePipelineBatchAuthorized = ({ user, createdById }: IresolvePipelineBatchAuthorizedArgs) => {
+const resolvePipelineBatchAuthorized = ({ user, createdById }: IResolvePipelineBatchAuthorizedArgs) => {
   const { role, id } = user;
   return role === 'ADMIN' || role === 'ENGINEER' || (role === 'CHEMICAL' && createdById === id);
 }
@@ -130,7 +130,7 @@ export const PipelineBatchMutation = extendType({
       args: {
         id: nonNull(stringArg()),
         date: arg({ type: 'DateTime' }),
-        product: stringArg(),
+        productId: stringArg(),
         cost: floatArg(),
         chemicalVolume: floatArg(),
         diluentVolume: floatArg(),
@@ -142,35 +142,36 @@ export const PipelineBatchMutation = extendType({
           const { id: userId, role, firstName } = user;
 
           if (role === 'ADMIN' || role === 'ENGINEER' || role === 'CHEMICAL') {
-            if (args.product) {
-              const { id: productId } = await ctx.prisma.batchProduct.findUnique({
-                where: { product: args.product },
-                select: { id: true },
-              }) || {};
-              if (productId) {
-                const pipelineBatch = await ctx.prisma.pipelineBatch.update({
-                  where: { id: args.id },
-                  data: {
-                    productId,
-                    updatedById: userId,
-                  },
-                });
-                return { pipelineBatch }
-              }
-              const products = (await ctx.prisma.batchProduct.findMany({
-                select: { product: true },
-              })).map(batchProduct => batchProduct.product).join(', ');
-              return {
-                error: {
-                  field: 'Product',
-                  message: `Product ${args.product} doesn't exist. Please choose from the following products: ${products}`,
-                }
-              }
-            }
+            // if (args.product) {
+            //   const { id: productId } = await ctx.prisma.batchProduct.findUnique({
+            //     where: { product: args.product },
+            //     select: { id: true },
+            //   }) || {};
+            //   if (productId) {
+            //     const pipelineBatch = await ctx.prisma.pipelineBatch.update({
+            //       where: { id: args.id },
+            //       data: {
+            //         productId,
+            //         updatedById: userId,
+            //       },
+            //     });
+            //     return { pipelineBatch }
+            //   }
+            //   const products = (await ctx.prisma.batchProduct.findMany({
+            //     select: { product: true },
+            //   })).map(batchProduct => batchProduct.product).join(', ');
+            //   return {
+            //     error: {
+            //       field: 'Product',
+            //       message: `Product ${args.product} doesn't exist. Please choose from the following products: ${products}`,
+            //     }
+            //   }
+            // }
             const pipelineBatch = await ctx.prisma.pipelineBatch.update({
               where: { id: args.id },
               data: {
                 date: args.date || undefined,
+                productId: args.productId || undefined,
                 cost: args.cost,
                 chemicalVolume: args.chemicalVolume,
                 diluentVolume: args.diluentVolume,

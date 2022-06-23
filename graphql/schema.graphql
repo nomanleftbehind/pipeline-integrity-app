@@ -397,7 +397,7 @@ type Mutation {
   editLicenseChange(comment: String, date: DateTime, id: String!, linkToDocumentation: String, status: StatusEnum, substance: SubstanceEnum): LicenseChangePayload
   editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigType: PigTypeEnum): PigRunPayload
   editPipeline(flowCalculationDirection: FlowCalculationDirectionEnum, from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float, yieldStrength: Int): PipelinePayload
-  editPipelineBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, product: String): PipelineBatchPayload
+  editPipelineBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, productId: String): PipelineBatchPayload
   editPressureTest(comment: String, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pressureTestDate: DateTime, pressureTestReceivedDate: DateTime): PressureTestPayload
   editRisk(aerialReview: Boolean, comment: String, consequencePeople: Int, dateSlopeChecked: DateTime, environmentProximityTo: EnvironmentProximityToEnum, gasReleaseCost: Float, geotechnicalFacingS1: GeotechnicalFacingEnum, geotechnicalFacingS2: GeotechnicalFacingEnum, geotechnicalHeightS1: Int, geotechnicalHeightS2: Int, geotechnicalSlopeAngleS1: Int, geotechnicalSlopeAngleS2: Int, id: String!, oilReleaseCost: Float, probabilityGeo: Int, releaseTimeDays: Int, repairTimeDays: Int, safeguardExternalCoating: Int, safeguardInternalProtection: Int): RiskPayload
   editSalesPoint(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, name: String, oil: Float, pipelineId: String, water: Float): SalesPointPayload
@@ -458,6 +458,7 @@ type PigRun {
   id: String!
   isolationValveFunctionTest: PigInspectionEnum
   operator: User
+  operatorId: String
   pigSenderReceiverInspection: PigInspectionEnum
   pigType: PigTypeEnum
   pipeline: Pipeline!
@@ -864,6 +865,8 @@ type Query {
   sideBar: [SideBar]
   userCount: Int
   validators: Validator
+  validatorsBatchProduct: ValidatorsBatchProduct
+  validatorsPigRun: ValidatorsPigRun
   wellBatchesByWellId(wellId: String!): [WellBatch]
   wellOptions(pipelineId: String!): [SourceOptions]
   wellsByPipelineId(pipelineId: String!): [Well]
@@ -1237,6 +1240,17 @@ type Validator {
   userRoleEnum: UserRoleEnumObject!
   wallThicknessMatchPattern: String!
   yieldStrengthMatchPattern: String!
+}
+
+type ValidatorsBatchProduct {
+  batchProductEnum: [EnumObject!]!
+  solubilityEnum: [EnumObject!]!
+}
+
+type ValidatorsPigRun {
+  operatorFullNameEnum: [EnumObject!]!
+  pigInspectionEnum: [EnumObject!]!
+  pigTypeEnum: [EnumObject!]!
 }
 
 type Well {

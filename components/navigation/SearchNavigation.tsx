@@ -34,9 +34,6 @@ export default function SearchNavigation({ searchNavigationInputArray, searchEnu
 
   const tableOptions = options?.map(({ table }) => table);
 
-  console.log(tableOptions?.filter((tableName, pos) => tableOptions.indexOf(tableName) === pos));
-
-
   const { data: dataOperationAndHavingEnum } = useOperationAndHavingEnumQuery();
 
   return (
