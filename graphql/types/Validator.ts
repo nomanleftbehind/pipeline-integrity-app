@@ -257,6 +257,15 @@ export const loadOperatorEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayA
 	});
 }
 
+export const loadChemicalSupplierEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.chemicalSupplier.findMany({
+		select: { id: true, name: true, },
+		orderBy: { name: 'asc' },
+	})).map(({ id, name }) => {
+		return { databaseEnum: name, serverEnum: id };
+	});
+}
+
 
 export const ValidatorsPipeline = objectType({
 	name: 'ValidatorsPipeline',
@@ -285,6 +294,7 @@ export const ValidatorsPipeline = objectType({
 		t.nonNull.list.nonNull.field('pigTypeEnum', { type: 'EnumObject' })
 		t.nonNull.list.nonNull.field('pigInspectionEnum', { type: 'EnumObject' })
 		t.nonNull.list.nonNull.field('operatorEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadOperatorEnumObjectArray({ ctx }) })
+		t.nonNull.list.nonNull.field('chemicalSupplierEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadChemicalSupplierEnumObjectArray({ ctx }) })
 	}
 });
 

@@ -1,4 +1,4 @@
-import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
+import { enumType, objectType, extendType } from 'nexus';
 import { PipelineObjectFields } from './Pipeline';
 import { RiskObjectFields } from './Risk';
 import { ChemicalObjectFields } from './Chemical';
@@ -8,12 +8,15 @@ import { LicenseChangeObjectFields } from './LicenseChange';
 import { PressureTestObjectFields } from './PressureTest';
 import { PigRunObjectFields } from './PigRun';
 import { PipelineBatchObjectFields } from './PipelineBatch';
-import { loadOperatorEnumObjectArray } from './Validator';
+import {
+  loadOperatorEnumObjectArray,
+  loadBatchProductEnumObjectArray,
+  loadChemicalSupplierEnumObjectArray
+} from './Validator';
 import type { GetGen } from 'nexus/dist/typegenTypeHelpers';
 import type { AllNexusOutputTypeDefs } from 'nexus/dist/definitions/wrapping';
 import type { NexusMetaType } from 'nexus/dist/definitions/nexusMeta';
 import { NexusGenEnums, NexusGenObjects } from 'nexus-typegen';
-import { prisma } from '../../lib/prisma';
 import { Context } from '../context';
 
 
@@ -130,12 +133,6 @@ const searchNavigationObjectRisk = RiskObjectFields
     return newObj;
   });
 
-const searchNavigationObjectChemical = ChemicalObjectFields
-  .map((obj) => {
-    const newObj: ITableObjectExtend = { table: 'chemical', ...obj };
-    return newObj;
-  });
-
 const searchNavigationObjectWell = WellObjectFields
   .map((obj) => {
     const newObj: ITableObjectExtend = { table: 'wells', ...obj };
@@ -160,13 +157,6 @@ const searchNavigationObjectPressureTest = PressureTestObjectFields
     return newObj;
   });
 
-const searchNavigationObjectPipelineBatch = PipelineBatchObjectFields
-  .map((obj) => {
-    const newObj: ITableObjectExtend = { table: 'pipelineBatches', ...obj };
-    return newObj;
-  });
-
-
 
 export const SearchNavigationQuery = extendType({
   type: 'Query',
@@ -178,9 +168,28 @@ export const SearchNavigationQuery = extendType({
         const searchNavigationObjectPigRun = await Promise.all(PigRunObjectFields
           .map(async ({ field, nullable, type, enumObjectArray }) => {
             const operatorIdEnumObjectArray = await loadOperatorEnumObjectArray({ ctx });
+
             const newObj: ITableObjectExtend = {
               table: 'pigRuns', field, nullable, type, enumObjectArray: field === 'operatorId' ? operatorIdEnumObjectArray : enumObjectArray
             };
+            return newObj;
+          })
+        );
+
+        const searchNavigationObjectPipelineBatch = await Promise.all(PipelineBatchObjectFields
+          .map(async ({ field, nullable, type, enumObjectArray }) => {
+            const productIdEnumObjectArray = await loadBatchProductEnumObjectArray({ ctx });
+
+            const newObj: ITableObjectExtend = { table: 'pipelineBatches', field, nullable, type, enumObjectArray: field === 'productId' ? productIdEnumObjectArray : enumObjectArray };
+            return newObj;
+          })
+        );
+
+        const searchNavigationObjectChemical = await Promise.all(ChemicalObjectFields
+          .map(async ({ field, nullable, type, enumObjectArray }) => {
+            const chemicalSupplierIdEnumObjectArray = await loadChemicalSupplierEnumObjectArray({ ctx });
+
+            const newObj: ITableObjectExtend = { table: 'chemical', field, nullable, type, enumObjectArray: field === 'chemicalSupplierId' ? chemicalSupplierIdEnumObjectArray : enumObjectArray };
             return newObj;
           })
         );

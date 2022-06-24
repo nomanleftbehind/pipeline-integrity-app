@@ -33,6 +33,7 @@ type Chemical {
   baselineFluidAnalysisDate: DateTime
   batchFrequency: Int
   chemicalSupplier: ChemicalSupplier
+  chemicalSupplierId: String
   co2: Boolean
   comment: String
   continuousInjection: Boolean
@@ -392,7 +393,7 @@ type Mutation {
   disconnectSalesPoint(id: String!): SalesPointPayload
   disconnectWell(id: String!): WellPayload
   duplicatePipeline(id: String!): PipelinePayload
-  editChemical(bacteria: Boolean, bacteriaTreatment: Boolean, baselineFluidAnalysisDate: DateTime, batchFrequency: Int, co2: Boolean, comment: String, continuousInjection: Boolean, downholeBatch: Boolean, h2s: Boolean, id: String!, inhibitorPipelineBatch: Boolean, injectionRate: Float, o2: Boolean, scaleTreatment: Boolean, scaling: Boolean): ChemicalPayload
+  editChemical(bacteria: Boolean, bacteriaTreatment: Boolean, baselineFluidAnalysisDate: DateTime, batchFrequency: Int, chemicalSupplierId: String, co2: Boolean, comment: String, continuousInjection: Boolean, downholeBatch: Boolean, h2s: Boolean, id: String!, inhibitorPipelineBatch: Boolean, injectionRate: Float, o2: Boolean, scaleTreatment: Boolean, scaling: Boolean): ChemicalPayload
   editFacility(id: String!, name: String): Facility
   editLicenseChange(comment: String, date: DateTime, id: String!, linkToDocumentation: String, status: StatusEnum, substance: SubstanceEnum): LicenseChangePayload
   editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigType: PigTypeEnum): PigRunPayload
@@ -726,6 +727,7 @@ type PipelineBatch {
   id: String!
   pipeline: Pipeline!
   product: BatchProduct!
+  productId: String!
   updatedAt: DateTime!
   updatedBy: User!
 }
@@ -1243,6 +1245,7 @@ type Validator {
 
 type ValidatorsPipeline {
   batchProductEnum: [EnumObject!]!
+  chemicalSupplierEnum: [EnumObject!]!
   environmentProximityToEnum: [EnumObject!]!
   flowCalculationDirectionEnum: [EnumObject!]!
   fromToFeatureEnum: [EnumObject!]!

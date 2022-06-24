@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { openModal } from './RenderPipeline';
+import { IValidatorsChemical } from './PipelineData';
 
 import {
   useChemicalByIdQuery,
@@ -17,14 +18,12 @@ import {
 } from '../../graphql/generated/graphql';
 
 
-export interface IChemicalProps {
-  id: string;
-  license: IPipeline['license'];
-  segment: IPipeline['segment'];
-}
+type IChemicalProps = Pick<IPipeline, 'id' | 'license' | 'segment'> & {
+  validators?: IValidatorsChemical;
+};
 
 
-export default function Chemical({ id, license, segment }: IChemicalProps) {
+export default function Chemical({ id, license, segment, validators }: IChemicalProps) {
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
@@ -116,12 +115,14 @@ export default function Chemical({ id, license, segment }: IChemicalProps) {
 
   const renderChemical = () => {
     if (data?.chemicalById) {
-      const { id, chemicalSupplier, baselineFluidAnalysisDate, scaling, bacteria, co2, o2, h2s, continuousInjection, injectionRate, downholeBatch, inhibitorPipelineBatch,
+      const { id, chemicalSupplierId, baselineFluidAnalysisDate, scaling, bacteria, co2, o2, h2s, continuousInjection, injectionRate, downholeBatch, inhibitorPipelineBatch,
         bacteriaTreatment, scaleTreatment, batchFrequency, comment,
         createdBy, createdAt, updatedBy, updatedAt, authorized } = data.chemicalById;
 
+      const { chemicalSupplierEnum } = validators || {};
+
       const chemicalFields: IChemicalPropertyRecordEntryMap[] = [
-        { columnName: 'chemicalSupplier', record: chemicalSupplier?.name, label: 'Chemical Supplier', columnType: 'string', nullable: true },
+        { columnName: 'chemicalSupplierId', record: chemicalSupplierId, label: 'Chemical Supplier', columnType: 'string', nullable: true, editRecord, validator: chemicalSupplierEnum },
         { columnName: 'baselineFluidAnalysisDate', record: baselineFluidAnalysisDate, label: 'Baseline Fluid Analysis Date', columnType: 'date', nullable: true, editRecord },
         { columnName: 'scaling', record: scaling, label: 'Scaling', columnType: 'boolean', nullable: true, editRecord },
         { columnName: 'bacteria', record: bacteria, label: 'Bacteria', columnType: 'boolean', nullable: true, editRecord },
@@ -147,6 +148,7 @@ export default function Chemical({ id, license, segment }: IChemicalProps) {
       return (
         <div className='chemical-fields' style={{ gridColumn: 2, gridRow: '1/3' }}>
           {chemicalFields.map(({ columnName, label, record, validator, columnType, nullable, editRecord }, i) => {
+
             let gridColumn = i;
             gridColumn = gridColumn % 4 + 1;
             if (gridColumn === 1) {

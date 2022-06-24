@@ -7,6 +7,7 @@ import { ITableConstructObject } from './SearchNavigation';
 export const PipelineBatchObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
   { field: 'date', nullable: false, type: 'DateTime' },
+  { field: 'productId', nullable: false, type: 'String' },
   { field: 'cost', nullable: true, type: 'Float' },
   { field: 'chemicalVolume', nullable: true, type: 'Float' },
   { field: 'diluentVolume', nullable: true, type: 'Float' },

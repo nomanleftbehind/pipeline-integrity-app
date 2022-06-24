@@ -7,6 +7,7 @@ import { ITableConstructObject } from './SearchNavigation';
 
 export const ChemicalObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
+  { field: 'chemicalSupplierId', nullable: true, type: 'String' },
   { field: 'baselineFluidAnalysisDate', nullable: true, type: 'DateTime' },
   { field: 'scaling', nullable: true, type: 'Boolean' },
   { field: 'bacteria', nullable: true, type: 'Boolean' },
@@ -132,6 +133,7 @@ export const ChemicalMutation = extendType({
       type: 'ChemicalPayload',
       args: {
         id: nonNull(stringArg()),
+        chemicalSupplierId: stringArg(),
         baselineFluidAnalysisDate: arg({ type: 'DateTime' }),
         scaling: booleanArg(),
         bacteria: booleanArg(),
@@ -155,9 +157,12 @@ export const ChemicalMutation = extendType({
           const { id: userId, firstName } = user;
           const authorized = resolveChemicalAuthorized(user);
           if (authorized) {
+            console.log('chemical supplier:', args);
+            
             const chemical = await ctx.prisma.chemical.update({
               where: { id: args.id },
               data: {
+                chemicalSupplierId: args.chemicalSupplierId,
                 baselineFluidAnalysisDate: args.baselineFluidAnalysisDate,
                 scaling: args.scaling,
                 bacteria: args.bacteria,

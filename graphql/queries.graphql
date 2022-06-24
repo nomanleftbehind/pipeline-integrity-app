@@ -242,6 +242,10 @@ query ValidatorsPipeline {
       serverEnum
       databaseEnum
     }
+    chemicalSupplierEnum {
+      serverEnum
+      databaseEnum
+    }
   }
 }
 
@@ -1016,6 +1020,7 @@ query RiskById($id: String!) {
 query ChemicalById($id: String!) {
   chemicalById(id: $id) {
     id
+    chemicalSupplierId
     baselineFluidAnalysisDate
     scaling
     bacteria
@@ -1033,9 +1038,6 @@ query ChemicalById($id: String!) {
     createdAt
     updatedAt
     authorized
-    chemicalSupplier {
-      name
-    }
     createdBy {
       id
       email

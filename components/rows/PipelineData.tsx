@@ -37,6 +37,7 @@ export type IValidatorsPressureTests = PickNullable<NonNullable<IValidators>, 'l
 export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'environmentProximityToEnum' | 'geotechnicalFacingEnum' | 'typeEnum' | 'materialEnum'>;
 export type IValidatorsPigRuns = PickNullable<NonNullable<IValidators>, 'pigTypeEnum' | 'pigInspectionEnum' | 'operatorEnum'>;
 export type IValidatorsPipelineBatches = PickNullable<NonNullable<IValidators>, 'solubilityEnum' | 'batchProductEnum'>;
+export type IValidatorsChemical = PickNullable<NonNullable<IValidators>, 'chemicalSupplierEnum'>;
 
 type IView = 'license change' | 'connected source' | 'mechanical properties' | 'pressure test' | 'pig run' | 'pipeline batch' | 'risk' | 'chemical' | 'system fields';
 
@@ -96,6 +97,10 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
   const validatorsPipelineBatches: IValidatorsPipelineBatches = validators && {
     solubilityEnum: validators.solubilityEnum,
     batchProductEnum: validators.batchProductEnum,
+  };
+
+  const validatorsChemical: IValidatorsChemical = validators && {
+    chemicalSupplierEnum: validators.chemicalSupplierEnum,
   };
 
 
@@ -184,6 +189,7 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
         id={id}
         license={license}
         segment={segment}
+        validators={validatorsChemical}
       />
     }
     // if (view === 'system fields') {

@@ -38,10 +38,6 @@ export interface IRecordEntryProps {
 
 export default function RecordEntry({ id, columnName, columnType, nullable, record, validator, authorized, editRecord }: IRecordEntryProps) {
 
-  if (columnName === 'limitingSpec')
-  console.log(validator);
-  
-
   const [edit, setEdit] = useState(false);
   const [selected, setSelected] = useState(false);
   const [valid, setValid] = useState(true);
@@ -169,6 +165,8 @@ export default function RecordEntry({ id, columnName, columnType, nullable, reco
         validationSchema={validationSchema}
         onSubmit={(values: IValues, { setFieldError }: FormikHelpers<IValues>) => {
           try {
+            console.log('values:', values, 'columnName:', columnName, 'newRecord:', values[columnName]);
+
             editRecord({ id, columnName, columnType, newRecord: values[columnName] });
           } catch (e) {
             if (e instanceof ApolloError) {

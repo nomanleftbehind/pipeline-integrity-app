@@ -22,6 +22,15 @@ export const prettifyColumnName = (columnName: string) => {
   if (columnName === 'h2s') {
     return 'H₂S'
   }
+  if (columnName === 'chemicalSupplierId') {
+    return 'Chemical Supplier'
+  }
+  if (columnName === 'productId') {
+    return 'Product'
+  }
+  if (columnName === 'operatorId') {
+    return 'Operator'
+  }
   return columnName
     .split(/(?=[A-Z])/)
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))

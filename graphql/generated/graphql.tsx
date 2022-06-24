@@ -47,6 +47,7 @@ export type Chemical = {
   baselineFluidAnalysisDate?: Maybe<Scalars['DateTime']>;
   batchFrequency?: Maybe<Scalars['Int']>;
   chemicalSupplier?: Maybe<ChemicalSupplier>;
+  chemicalSupplierId?: Maybe<Scalars['String']>;
   co2?: Maybe<Scalars['Boolean']>;
   comment?: Maybe<Scalars['String']>;
   continuousInjection?: Maybe<Scalars['Boolean']>;
@@ -551,6 +552,7 @@ export type MutationEditChemicalArgs = {
   bacteriaTreatment?: Maybe<Scalars['Boolean']>;
   baselineFluidAnalysisDate?: Maybe<Scalars['DateTime']>;
   batchFrequency?: Maybe<Scalars['Int']>;
+  chemicalSupplierId?: Maybe<Scalars['String']>;
   co2?: Maybe<Scalars['Boolean']>;
   comment?: Maybe<Scalars['String']>;
   continuousInjection?: Maybe<Scalars['Boolean']>;
@@ -1663,6 +1665,7 @@ export type Validator = {
 
 export type ValidatorsPipeline = {
   batchProductEnum: Array<EnumObject>;
+  chemicalSupplierEnum: Array<EnumObject>;
   environmentProximityToEnum: Array<EnumObject>;
   flowCalculationDirectionEnum: Array<EnumObject>;
   fromToFeatureEnum: Array<EnumObject>;
@@ -2038,6 +2041,7 @@ export type AllocateRiskMutation = { allocateRisk?: { success?: { field: string,
 
 export type EditChemicalMutationVariables = Exact<{
   id: Scalars['String'];
+  chemicalSupplierId?: Maybe<Scalars['String']>;
   baselineFluidAnalysisDate?: Maybe<Scalars['DateTime']>;
   scaling?: Maybe<Scalars['Boolean']>;
   bacteria?: Maybe<Scalars['Boolean']>;
@@ -2124,7 +2128,7 @@ export type WellBatchesByWellIdQuery = { wellBatchesByWellId?: Array<{ id: strin
 export type ValidatorsPipelineQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, typeEnum: Array<{ serverEnum: string, databaseEnum: string }>, gradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, materialEnum: Array<{ serverEnum: string, databaseEnum: string }>, internalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, environmentProximityToEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
+export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, typeEnum: Array<{ serverEnum: string, databaseEnum: string }>, gradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, materialEnum: Array<{ serverEnum: string, databaseEnum: string }>, internalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, environmentProximityToEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }>, chemicalSupplierEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
 
 export type GetValidatorsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2252,7 +2256,7 @@ export type ChemicalByIdQueryVariables = Exact<{
 }>;
 
 
-export type ChemicalByIdQuery = { chemicalById?: { id: string, baselineFluidAnalysisDate?: string | null | undefined, scaling?: boolean | null | undefined, bacteria?: boolean | null | undefined, co2?: boolean | null | undefined, o2?: boolean | null | undefined, h2s?: boolean | null | undefined, continuousInjection?: boolean | null | undefined, injectionRate?: number | null | undefined, downholeBatch?: boolean | null | undefined, inhibitorPipelineBatch?: boolean | null | undefined, bacteriaTreatment?: boolean | null | undefined, scaleTreatment?: boolean | null | undefined, batchFrequency?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, chemicalSupplier?: { name: string } | null | undefined, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
+export type ChemicalByIdQuery = { chemicalById?: { id: string, chemicalSupplierId?: string | null | undefined, baselineFluidAnalysisDate?: string | null | undefined, scaling?: boolean | null | undefined, bacteria?: boolean | null | undefined, co2?: boolean | null | undefined, o2?: boolean | null | undefined, h2s?: boolean | null | undefined, continuousInjection?: boolean | null | undefined, injectionRate?: number | null | undefined, downholeBatch?: boolean | null | undefined, inhibitorPipelineBatch?: boolean | null | undefined, bacteriaTreatment?: boolean | null | undefined, scaleTreatment?: boolean | null | undefined, batchFrequency?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
 
 export type PipelinesFlowQueryVariables = Exact<{
   idList: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
@@ -3644,9 +3648,10 @@ export type AllocateRiskMutationHookResult = ReturnType<typeof useAllocateRiskMu
 export type AllocateRiskMutationResult = Apollo.MutationResult<AllocateRiskMutation>;
 export type AllocateRiskMutationOptions = Apollo.BaseMutationOptions<AllocateRiskMutation, AllocateRiskMutationVariables>;
 export const EditChemicalDocument = gql`
-    mutation EditChemical($id: String!, $baselineFluidAnalysisDate: DateTime, $scaling: Boolean, $bacteria: Boolean, $co2: Boolean, $o2: Boolean, $h2s: Boolean, $continuousInjection: Boolean, $injectionRate: Float, $downholeBatch: Boolean, $inhibitorPipelineBatch: Boolean, $bacteriaTreatment: Boolean, $scaleTreatment: Boolean, $batchFrequency: Int, $comment: String) {
+    mutation EditChemical($id: String!, $chemicalSupplierId: String, $baselineFluidAnalysisDate: DateTime, $scaling: Boolean, $bacteria: Boolean, $co2: Boolean, $o2: Boolean, $h2s: Boolean, $continuousInjection: Boolean, $injectionRate: Float, $downholeBatch: Boolean, $inhibitorPipelineBatch: Boolean, $bacteriaTreatment: Boolean, $scaleTreatment: Boolean, $batchFrequency: Int, $comment: String) {
   editChemical(
     id: $id
+    chemicalSupplierId: $chemicalSupplierId
     baselineFluidAnalysisDate: $baselineFluidAnalysisDate
     scaling: $scaling
     bacteria: $bacteria
@@ -3688,6 +3693,7 @@ export type EditChemicalMutationFn = Apollo.MutationFunction<EditChemicalMutatio
  * const [editChemicalMutation, { data, loading, error }] = useEditChemicalMutation({
  *   variables: {
  *      id: // value for 'id'
+ *      chemicalSupplierId: // value for 'chemicalSupplierId'
  *      baselineFluidAnalysisDate: // value for 'baselineFluidAnalysisDate'
  *      scaling: // value for 'scaling'
  *      bacteria: // value for 'bacteria'
@@ -4262,6 +4268,10 @@ export const ValidatorsPipelineDocument = gql`
       databaseEnum
     }
     operatorEnum {
+      serverEnum
+      databaseEnum
+    }
+    chemicalSupplierEnum {
       serverEnum
       databaseEnum
     }
@@ -5616,6 +5626,7 @@ export const ChemicalByIdDocument = gql`
     query ChemicalById($id: String!) {
   chemicalById(id: $id) {
     id
+    chemicalSupplierId
     baselineFluidAnalysisDate
     scaling
     bacteria
@@ -5633,9 +5644,6 @@ export const ChemicalByIdDocument = gql`
     createdAt
     updatedAt
     authorized
-    chemicalSupplier {
-      name
-    }
     createdBy {
       id
       email
