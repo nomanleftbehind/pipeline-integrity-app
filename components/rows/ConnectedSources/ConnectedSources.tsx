@@ -3,6 +3,7 @@ import RecordEntry, { IRecord, IEditRecordFunction } from '../../fields/RecordEn
 import SourceData from './SourceData';
 import { ModalFieldError } from '../../Modal';
 import { IPipeline, openModal } from '../RenderPipeline';
+import { IValidatorsConnectedSources } from '../PipelineData';
 import {
   useWellsByPipelineIdQuery,
   useWellsGroupByPipelineIdQuery,
@@ -29,8 +30,6 @@ import {
   ConnectedPipelinesByPipelineIdDocument,
   PipelineFlowDocument,
 
-  useValidatorFlowCalculationDirectionQuery,
-
 } from '../../../graphql/generated/graphql';
 
 export interface ISourceHeaderMap {
@@ -49,14 +48,15 @@ export interface IDis_ConnectSource {
   oldSourceId?: string;
 }
 
-interface ISourcesProps {
+interface IConnectedSourcesProps {
   pipelineId: string;
   flowCalculationDirection: IPipeline['flowCalculationDirection'];
   editPipeline: IEditRecordFunction;
   authorized: boolean;
+  validators?: IValidatorsConnectedSources;
 }
 
-export default function ConnectedSources({ pipelineId, flowCalculationDirection, editPipeline, authorized }: ISourcesProps) {
+export default function ConnectedSources({ pipelineId, flowCalculationDirection, editPipeline, authorized, validators }: IConnectedSourcesProps) {
 
   // Total pipeline flow
   const { data: dataPipelineFlow } = usePipelineFlowQuery({ variables: { id: pipelineId, flowCalculationDirection } });
@@ -189,10 +189,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection,
     disconnectPipeline({ variables: { pipelineId, disconnectPipelineId: id, flowCalculationDirection } });
   }
 
-  const { data: dataValidatorFlowCalculationDirection } = useValidatorFlowCalculationDirectionQuery();
-  const validator = dataValidatorFlowCalculationDirection?.validators?.flowCalculationDirectionEnum;
-
-  const recordEntryProps = { editRecord: editPipeline, authorized, record: flowCalculationDirection, validator };
+  const recordEntryProps = { editRecord: editPipeline, authorized, record: flowCalculationDirection, validator: validators?.flowCalculationDirectionEnum };
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);

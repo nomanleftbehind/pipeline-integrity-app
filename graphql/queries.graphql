@@ -168,8 +168,60 @@ query WellBatchesByWellId($wellId: String!) {
   }
 }
 
-query ValidatorsBatchProduct {
-  validatorsBatchProduct {
+query ValidatorsPipeline {
+  validatorsPipeline {
+    licenseMatchPattern
+    segmentMatchPattern
+    fromToMatchPattern
+    fromToFeatureEnum {
+      serverEnum
+      databaseEnum
+    }
+    statusEnum {
+      serverEnum
+      databaseEnum
+    }
+    substanceEnum {
+      serverEnum
+      databaseEnum
+    }
+    lengthMatchPattern
+    typeEnum {
+      serverEnum
+      databaseEnum
+    }
+    gradeEnum {
+      serverEnum
+      databaseEnum
+    }
+    yieldStrengthMatchPattern
+    outsideDiameterMatchPattern
+    wallThicknessMatchPattern
+    materialEnum {
+      serverEnum
+      databaseEnum
+    }
+    mopMatchPattern
+    internalProtectionEnum {
+      serverEnum
+      databaseEnum
+    }
+    flowCalculationDirectionEnum {
+      serverEnum
+      databaseEnum
+    }
+    limitingSpecEnum {
+      serverEnum
+      databaseEnum
+    }
+    environmentProximityToEnum {
+      serverEnum
+      databaseEnum
+    }
+    geotechnicalFacingEnum {
+      serverEnum
+      databaseEnum
+    }
     solubilityEnum {
       serverEnum
       databaseEnum
@@ -178,11 +230,6 @@ query ValidatorsBatchProduct {
       serverEnum
       databaseEnum
     }
-  }
-}
-
-query ValidatorsPigRun {
-  validatorsPigRun {
     pigTypeEnum {
       serverEnum
       databaseEnum
@@ -191,7 +238,7 @@ query ValidatorsPigRun {
       serverEnum
       databaseEnum
     }
-    operatorFullNameEnum {
+    operatorEnum {
       serverEnum
       databaseEnum
     }
@@ -469,50 +516,6 @@ query getValidators {
     solubilityEnum {
       Oil
       Water
-    }
-  }
-}
-
-query ValidatorsPipeline {
-  validators {
-    licenseMatchPattern
-    segmentMatchPattern
-    fromToMatchPattern
-    fromToFeatureEnum {
-      BlindEnd
-      Battery
-      Pipeline
-      Satellite
-      StorageTank
-      InjectionPlant
-      Well
-      CompressorStation
-      MeterStation
-      PumpStation
-      GasProcessingPlant
-      UndergroundCapOrTieIn
-      Header
-    }
-    statusEnum {
-      Operating
-      Discontinued
-      Abandoned
-      Removed
-      ToBeConstructed
-      Active
-      Cancelled
-      New
-      NotConstructed
-    }
-    substanceEnum {
-      NaturalGas
-      FreshWater
-      SaltWater
-      CrudeOil
-      OilWellEffluent
-      LVPProducts
-      FuelGas
-      SourNaturalGas
     }
   }
 }

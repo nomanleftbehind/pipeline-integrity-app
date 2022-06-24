@@ -35,7 +35,7 @@ export const FromToFeatureEnum = enumType({
   members: FromToFeatureEnumMembers
 });
 
-const FromToFeatureEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(FromToFeatureEnumMembers).map(([serverEnum, databaseEnum]) => {
+export const FromToFeatureEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(FromToFeatureEnumMembers).map(([serverEnum, databaseEnum]) => {
   return { serverEnum, databaseEnum }
 });
 
@@ -77,7 +77,7 @@ export const TypeEnum = enumType({
   members: TypeEnumMembers
 });
 
-const TypeEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(TypeEnumMembers).map(([serverEnum, databaseEnum]) => {
+export const TypeEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(TypeEnumMembers).map(([serverEnum, databaseEnum]) => {
   return { serverEnum, databaseEnum }
 });
 
@@ -132,7 +132,7 @@ export const GradeEnum = enumType({
   members: GradeEnumMembers
 });
 
-const GradeEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(GradeEnumMembers).map(([serverEnum, databaseEnum]) => {
+export const GradeEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(GradeEnumMembers).map(([serverEnum, databaseEnum]) => {
   return { serverEnum, databaseEnum }
 });
 
@@ -157,7 +157,7 @@ export const MaterialEnum = enumType({
   members: MaterialEnumMembers
 });
 
-const MaterialEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(MaterialEnumMembers).map(([serverEnum, databaseEnum]) => {
+export const MaterialEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(MaterialEnumMembers).map(([serverEnum, databaseEnum]) => {
   return { serverEnum, databaseEnum }
 });
 
@@ -179,7 +179,7 @@ export const InternalProtectionEnum = enumType({
   members: InternalProtectionEnumMembers
 });
 
-const InternalProtectionEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(InternalProtectionEnumMembers).map(([serverEnum, databaseEnum]) => {
+export const InternalProtectionEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(InternalProtectionEnumMembers).map(([serverEnum, databaseEnum]) => {
   return { serverEnum, databaseEnum }
 });
 
@@ -197,7 +197,7 @@ export const FlowCalculationDirectionEnum = enumType({
   members: FlowCalculationDirectionEnumMembers
 });
 
-const FlowCalculationDirectionEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(FlowCalculationDirectionEnumMembers).map(([serverEnum, databaseEnum]) => {
+export const FlowCalculationDirectionEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(FlowCalculationDirectionEnumMembers).map(([serverEnum, databaseEnum]) => {
   return { serverEnum, databaseEnum }
 });
 

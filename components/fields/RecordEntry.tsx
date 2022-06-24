@@ -37,6 +37,11 @@ export interface IRecordEntryProps {
 }
 
 export default function RecordEntry({ id, columnName, columnType, nullable, record, validator, authorized, editRecord }: IRecordEntryProps) {
+
+  if (columnName === 'limitingSpec')
+  console.log(validator);
+  
+
   const [edit, setEdit] = useState(false);
   const [selected, setSelected] = useState(false);
   const [valid, setValid] = useState(true);
@@ -100,11 +105,7 @@ export default function RecordEntry({ id, columnName, columnType, nullable, reco
       case 'string':
         if (typeof record === 'string') {
           if (validatorIsEnumObjectArray) {
-            // Using previously defined object type that represents all validator properties.
-            // return (validator as IValidatorEnumsToOneObject)[record as keyof IValidatorEnumsToOneObject];
             const databaseEnumRecord = validator.find(({ serverEnum }) => serverEnum === record)?.databaseEnum;
-            console.log('databaseEnumRecord:', databaseEnumRecord);
-
             return databaseEnumRecord;
           } else {
             return record;

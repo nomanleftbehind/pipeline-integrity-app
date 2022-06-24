@@ -8,7 +8,7 @@ import PipelineBatches from './PipelineBatches';
 import Risk from './Risk';
 import Chemical from './Chemical';
 import { IEditRecordFunction } from '../fields/RecordEntry';
-import { IPipeline } from './RenderPipeline';
+import { IPipeline, IValidators } from './RenderPipeline';
 import Collapse from '@mui/material/Collapse';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
@@ -19,9 +19,24 @@ export interface IPipelineDataProps {
   rowIsEven: boolean;
   open: boolean;
   pipeline: IPipeline;
+  validators: IValidators;
   authorized: boolean;
   editPipeline: IEditRecordFunction;
 }
+
+
+type PickNullable<T, K extends keyof T> = {
+  [P in K]: T[P];
+} | null | undefined;
+
+
+export type IValidatorsMechanicalProperties = PickNullable<NonNullable<IValidators>, 'lengthMatchPattern' | 'typeEnum' | 'gradeEnum' | 'yieldStrengthMatchPattern' | 'outsideDiameterMatchPattern' | 'wallThicknessMatchPattern' | 'materialEnum' | 'mopMatchPattern' | 'internalProtectionEnum'>;
+export type IValidatorsLicenseChanges = PickNullable<NonNullable<IValidators>, 'statusEnum' | 'substanceEnum'>;
+export type IValidatorsConnectedSources = PickNullable<NonNullable<IValidators>, 'flowCalculationDirectionEnum'>;
+export type IValidatorsPressureTests = PickNullable<NonNullable<IValidators>, 'limitingSpecEnum'>;
+export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'environmentProximityToEnum' | 'geotechnicalFacingEnum' | 'typeEnum' | 'materialEnum'>;
+export type IValidatorsPigRuns = PickNullable<NonNullable<IValidators>, 'pigTypeEnum' | 'pigInspectionEnum' | 'operatorEnum'>;
+export type IValidatorsPipelineBatches = PickNullable<NonNullable<IValidators>, 'solubilityEnum' | 'batchProductEnum'>;
 
 type IView = 'license change' | 'connected source' | 'mechanical properties' | 'pressure test' | 'pig run' | 'pipeline batch' | 'risk' | 'chemical' | 'system fields';
 
@@ -35,10 +50,54 @@ interface ITabPanelProps extends ITabPanelMap {
   handleViewClick: (view: IView) => void;
 }
 
-export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editPipeline, authorized }: IPipelineDataProps) {
+export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editPipeline, authorized, validators }: IPipelineDataProps) {
   const [view, setView] = useState<IView>('license change');
 
   const { id, license, segment, currentSubstance, flowCalculationDirection, currentStatus, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, firstLicenseDate, piggable, piggingFrequency } = pipeline;
+
+  const validatorsMechanicalProperties: IValidatorsMechanicalProperties = validators && {
+    lengthMatchPattern: validators.lengthMatchPattern,
+    typeEnum: validators.typeEnum,
+    gradeEnum: validators.gradeEnum,
+    yieldStrengthMatchPattern: validators.yieldStrengthMatchPattern,
+    outsideDiameterMatchPattern: validators.outsideDiameterMatchPattern,
+    wallThicknessMatchPattern: validators.wallThicknessMatchPattern,
+    materialEnum: validators.materialEnum,
+    mopMatchPattern: validators.mopMatchPattern,
+    internalProtectionEnum: validators.internalProtectionEnum,
+  };
+
+  const validatorsLicenseChanges: IValidatorsLicenseChanges = validators && {
+    statusEnum: validators.statusEnum,
+    substanceEnum: validators.substanceEnum,
+  };
+
+  const validatorsConnectedSources: IValidatorsConnectedSources = validators && {
+    flowCalculationDirectionEnum: validators.flowCalculationDirectionEnum,
+  };
+
+  const validatorsPressureTests: IValidatorsPressureTests = validators && {
+    limitingSpecEnum: validators.limitingSpecEnum,
+  };
+
+  const validatorsRisk: IValidatorsRisk = validators && {
+    environmentProximityToEnum: validators.environmentProximityToEnum,
+    geotechnicalFacingEnum: validators.geotechnicalFacingEnum,
+    typeEnum: validators.typeEnum,
+    materialEnum: validators.materialEnum,
+  };
+
+  const validatorsPigRuns: IValidatorsPigRuns = validators && {
+    pigTypeEnum: validators.pigTypeEnum,
+    pigInspectionEnum: validators.pigInspectionEnum,
+    operatorEnum: validators.operatorEnum,
+  };
+
+  const validatorsPipelineBatches: IValidatorsPipelineBatches = validators && {
+    solubilityEnum: validators.solubilityEnum,
+    batchProductEnum: validators.batchProductEnum,
+  };
+
 
   // const systemFields: IPipelineProperty[] = [
   //   { columnName: 'createdBy', record: createdBy.email, columnType: 'string' },
@@ -56,12 +115,14 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
     if (view === 'license change') {
       return <LicenseChanges
         pipelineId={id}
+        validators={validatorsLicenseChanges}
       />
     }
     if (view === 'connected source') {
       return <ConnectedSources
         pipelineId={id}
         flowCalculationDirection={flowCalculationDirection}
+        validators={validatorsConnectedSources}
         editPipeline={editPipeline}
         authorized={authorized}
       />
@@ -82,18 +143,26 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
         piggingFrequency={piggingFrequency}
         authorized={authorized}
         editPipeline={editPipeline}
+        validators={validatorsMechanicalProperties}
       />
     }
     if (view === 'pressure test') {
       return <PressureTests
         pipelineId={id}
+        validators={validatorsPressureTests}
       />
     }
     if (view === 'pig run') {
-      return <PigRuns pipelineId={id} />
+      return <PigRuns
+        pipelineId={id}
+        validators={validatorsPigRuns}
+      />
     }
     if (view === 'pipeline batch') {
-      return <PipelineBatches pipelineId={id} />
+      return <PipelineBatches
+        pipelineId={id}
+        validators={validatorsPipelineBatches}
+      />
     }
     if (view === 'risk') {
       return <Risk
@@ -107,6 +176,7 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
         type={type}
         material={material}
         firstLicenseDate={firstLicenseDate}
+        validators={validatorsRisk}
       />
     }
     if (view === 'chemical') {

@@ -142,31 +142,6 @@ export const PipelineBatchMutation = extendType({
           const { id: userId, role, firstName } = user;
 
           if (role === 'ADMIN' || role === 'ENGINEER' || role === 'CHEMICAL') {
-            // if (args.product) {
-            //   const { id: productId } = await ctx.prisma.batchProduct.findUnique({
-            //     where: { product: args.product },
-            //     select: { id: true },
-            //   }) || {};
-            //   if (productId) {
-            //     const pipelineBatch = await ctx.prisma.pipelineBatch.update({
-            //       where: { id: args.id },
-            //       data: {
-            //         productId,
-            //         updatedById: userId,
-            //       },
-            //     });
-            //     return { pipelineBatch }
-            //   }
-            //   const products = (await ctx.prisma.batchProduct.findMany({
-            //     select: { product: true },
-            //   })).map(batchProduct => batchProduct.product).join(', ');
-            //   return {
-            //     error: {
-            //       field: 'Product',
-            //       message: `Product ${args.product} doesn't exist. Please choose from the following products: ${products}`,
-            //     }
-            //   }
-            // }
             const pipelineBatch = await ctx.prisma.pipelineBatch.update({
               where: { id: args.id },
               data: {

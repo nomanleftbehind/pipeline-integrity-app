@@ -1,7 +1,6 @@
 import { useState, Fragment } from 'react';
 import {
   usePipelineBatchesByPipelineIdQuery,
-  useValidatorsBatchProductQuery,
   useEditPipelineBatchMutation,
   useAddPipelineBatchMutation,
   useDeletePipelineBatchMutation,
@@ -14,20 +13,21 @@ import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { openModal } from './RenderPipeline';
+import { IValidatorsPipelineBatches } from './PipelineData';
 
 export type IRecordEntryMap = Omit<IRecordEntryProps, 'id' | 'createdById' | 'authorized'>;
 
 interface IPipelineBatchesProps {
   pipelineId: string;
+  validators?: IValidatorsPipelineBatches;
 }
 
-export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
+export default function PipelineBatches({ pipelineId, validators }: IPipelineBatchesProps) {
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
 
   const { data, loading, error } = usePipelineBatchesByPipelineIdQuery({ variables: { pipelineId } });
-  const { data: dataValidators } = useValidatorsBatchProductQuery();
 
   const [editPipelineBatch] = useEditPipelineBatchMutation({
     refetchQueries: [PipelineBatchesByPipelineIdDocument, 'PipelineBatchesByPipelineId'],
@@ -59,7 +59,7 @@ export default function PipelineBatches({ pipelineId }: IPipelineBatchesProps) {
   });
 
 
-  const { solubilityEnum, batchProductEnum } = dataValidators?.validatorsBatchProduct || {};
+  const { solubilityEnum, batchProductEnum } = validators || {};
 
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {

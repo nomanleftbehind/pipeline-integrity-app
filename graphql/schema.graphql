@@ -865,8 +865,7 @@ type Query {
   sideBar: [SideBar]
   userCount: Int
   validators: Validator
-  validatorsBatchProduct: ValidatorsBatchProduct
-  validatorsPigRun: ValidatorsPigRun
+  validatorsPipeline: ValidatorsPipeline
   wellBatchesByWellId(wellId: String!): [WellBatch]
   wellOptions(pipelineId: String!): [SourceOptions]
   wellsByPipelineId(pipelineId: String!): [Well]
@@ -1242,15 +1241,31 @@ type Validator {
   yieldStrengthMatchPattern: String!
 }
 
-type ValidatorsBatchProduct {
+type ValidatorsPipeline {
   batchProductEnum: [EnumObject!]!
-  solubilityEnum: [EnumObject!]!
-}
-
-type ValidatorsPigRun {
-  operatorFullNameEnum: [EnumObject!]!
+  environmentProximityToEnum: [EnumObject!]!
+  flowCalculationDirectionEnum: [EnumObject!]!
+  fromToFeatureEnum: [EnumObject!]!
+  fromToMatchPattern: String!
+  geotechnicalFacingEnum: [EnumObject!]!
+  gradeEnum: [EnumObject!]!
+  internalProtectionEnum: [EnumObject!]!
+  lengthMatchPattern: String!
+  licenseMatchPattern: String!
+  limitingSpecEnum: [EnumObject!]!
+  materialEnum: [EnumObject!]!
+  mopMatchPattern: String!
+  operatorEnum: [EnumObject!]!
+  outsideDiameterMatchPattern: String!
   pigInspectionEnum: [EnumObject!]!
   pigTypeEnum: [EnumObject!]!
+  segmentMatchPattern: String!
+  solubilityEnum: [EnumObject!]!
+  statusEnum: [EnumObject!]!
+  substanceEnum: [EnumObject!]!
+  typeEnum: [EnumObject!]!
+  wallThicknessMatchPattern: String!
+  yieldStrengthMatchPattern: String!
 }
 
 type Well {

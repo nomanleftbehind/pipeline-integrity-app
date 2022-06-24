@@ -19,7 +19,7 @@ export function Modal({ children }: IModalProps) {
     return () => {
       if (modalRoot) modalRoot.removeChild(el);
     }
-  }, [el]);
+  }, [el, modalRoot]);
 
   if (isBrowser && modalRoot) {
     return ReactDOM.createPortal(

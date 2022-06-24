@@ -2,12 +2,12 @@ import { useState, Fragment } from 'react';
 import RecordEntry, { IEditRecord } from '../fields/RecordEntry';
 import { openModal } from './RenderPipeline';
 import { ModalFieldError } from '../Modal';
+import { IValidatorsPressureTests } from './PipelineData';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import {
   usePressureTestsByPipelineIdQuery,
-  useValidatorsPressureTestQuery,
   useEditPressureTestMutation,
   useAddPressureTestMutation,
   useDeletePressureTestMutation,
@@ -19,12 +19,12 @@ import { IRecordEntryMap } from './LicenseChanges';
 
 interface IPressureTestsProps {
   pipelineId: string;
+  validators?: IValidatorsPressureTests;
 }
 
-export default function PressureTests({ pipelineId }: IPressureTestsProps) {
+export default function PressureTests({ pipelineId, validators }: IPressureTestsProps) {
 
   const { data, loading, error } = usePressureTestsByPipelineIdQuery({ variables: { pipelineId } });
-  const { data: dataValidators } = useValidatorsPressureTestQuery();
   const [editPressureTest] = useEditPressureTestMutation({
     refetchQueries: [PressureTestsByPipelineIdDocument, 'PressureTestsByPipelineId'],
     onCompleted: ({ editPressureTest }) => {
@@ -57,7 +57,7 @@ export default function PressureTests({ pipelineId }: IPressureTestsProps) {
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
 
-  const { limitingSpecEnum } = dataValidators?.validators || {};
+  const { limitingSpecEnum } = validators || {};
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {

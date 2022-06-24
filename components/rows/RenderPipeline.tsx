@@ -13,9 +13,8 @@ import { IRecordEntryMap } from './LicenseChanges';
 export type IInferFromArray<T> = T extends (infer U)[] ? NonNullable<U> : never;
 
 export type IPipeline = IInferFromArray<NonNullable<PipelinesByIdQuery['pipelinesById']['pipelines']>>;
-export type IValidators = GetValidatorsQuery['validators'];
 
-type IValidatorsPipeline = ValidatorsPipelineQuery['validators'];
+export type IValidators = ValidatorsPipelineQuery['validatorsPipeline'];
 
 type IFieldError = {
   field: string;
@@ -30,13 +29,7 @@ interface IRenderPipelineProps {
   gridRow: number;
   rowIsEven: boolean;
   pipeline: IPipeline;
-  validators: IValidatorsPipeline;
-}
-
-const isEven = (value: number) => {
-  if (value % 2 === 0)
-    return 'even';
-  else return 'odd';
+  validators?: IValidators;
 }
 
 export default function RenderPipeline({ gridRow, rowIsEven, pipeline, validators }: IRenderPipelineProps) {
@@ -173,6 +166,7 @@ export default function RenderPipeline({ gridRow, rowIsEven, pipeline, validator
         rowIsEven={rowIsEven}
         open={open}
         pipeline={pipeline}
+        validators={validators}
         authorized={authorized}
         editPipeline={editRecord}
       />

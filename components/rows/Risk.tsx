@@ -7,10 +7,10 @@ import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { openModal } from './RenderPipeline';
+import { IValidatorsRisk } from './PipelineData';
 
 import {
   useRiskByIdQuery,
-  useValidatorsRiskQuery,
   useEditRiskMutation,
   useAddRiskMutation,
   useDeleteRiskMutation,
@@ -18,21 +18,13 @@ import {
 } from '../../graphql/generated/graphql';
 
 
-export interface IRiskProps {
-  id: string;
-  license: IPipeline['license'];
-  segment: IPipeline['segment'];
-  flowCalculationDirection: IPipeline['flowCalculationDirection'];
-  currentSubstance: IPipeline['currentSubstance'];
-  currentStatus: IPipeline['currentStatus'];
+type IRiskProps = Pick<IPipeline, 'id' | 'license' | 'segment' | 'flowCalculationDirection' | 'currentSubstance' | 'currentStatus' | 'type' | 'material' | 'firstLicenseDate'> & {
   editPipeline: IEditRecordFunction;
-  type: IPipeline['type'];
-  material: IPipeline['material'];
-  firstLicenseDate: IPipeline['firstLicenseDate'];
-}
+  validators?: IValidatorsRisk;
+};
 
 
-export default function Risk({ id, license, segment, flowCalculationDirection, currentSubstance, currentStatus, type, material, firstLicenseDate, editPipeline }: IRiskProps) {
+export default function Risk({ id, license, segment, flowCalculationDirection, currentSubstance, currentStatus, type, material, firstLicenseDate, editPipeline, validators }: IRiskProps) {
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
@@ -47,8 +39,6 @@ export default function Risk({ id, license, segment, flowCalculationDirection, c
       });
     }
   });
-
-  const { data: dataValidatorsRisk } = useValidatorsRiskQuery();
 
   const [editRisk] = useEditRiskMutation({
     refetchQueries: [RiskByIdDocument, 'RiskById'],
@@ -133,7 +123,7 @@ export default function Risk({ id, license, segment, flowCalculationDirection, c
         oilReleaseCost, gasReleaseCost, repairTimeDays, releaseTimeDays, costPerM3Released,
         safeguardExternalCoating, safeguardCathodic, probabilityExteriorWithSafeguards, riskPotentialExternalWithSafeguards,
         createdBy, createdAt, updatedBy, updatedAt, comment, authorized } = data.riskById;
-      const { environmentProximityToEnum, geotechnicalFacingEnum, typeEnum, materialEnum } = dataValidatorsRisk?.validators || {};
+      const { environmentProximityToEnum, geotechnicalFacingEnum, typeEnum, materialEnum } = validators || {};
 
       const riskProperties: IRiskPropertyRecordEntryMap[] = [
         { columnName: 'aerialReview', record: aerialReview, columnType: 'boolean', label: 'Aerial Review', nullable: true, editRecord },

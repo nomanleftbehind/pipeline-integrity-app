@@ -17,6 +17,7 @@ import {
   SalesPointOptionsQuery,
   ConnectedPipelinesByPipelineIdQuery,
   PipelineOptionsQuery,
+  EnumObject,
 } from '../../../graphql/generated/graphql';
 
 
@@ -35,10 +36,7 @@ interface ISourcesDataProps {
     editRecord: IEditRecordFunction;
     authorized: boolean;
     record: IPipeline['flowCalculationDirection'];
-    validator: {
-      Upstream: string;
-      Downstream: string;
-    } | undefined;
+    validator?: EnumObject[];
   };
   formId: string;
   data?: WellsByPipelineIdQuery['wellsByPipelineId'] | SalesPointsByPipelineIdQuery['salesPointsByPipelineId'] | NonNullable<ConnectedPipelinesByPipelineIdQuery['connectedPipelinesByPipelineId']>['pipelinesFlow'];

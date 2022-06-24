@@ -16,20 +16,21 @@ import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { openModal } from './RenderPipeline';
+import { IValidatorsLicenseChanges } from './PipelineData';
 
 export type IRecordEntryMap = Omit<IRecordEntryProps, 'id' | 'createdById' | 'authorized'>;
 
 interface ILicenseChangesProps {
   pipelineId: string;
+  validators?: IValidatorsLicenseChanges;
 }
 
-export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
+export default function LicenseChanges({ pipelineId, validators }: ILicenseChangesProps) {
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
 
   const { data, loading, error } = useLicenseChangesByPipelineIdQuery({ variables: { pipelineId } });
-  const { data: dataValidators } = useValidatorsLicenseChangeQuery();
   const [editLicenseChange] = useEditLicenseChangeMutation({
     refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdDocument, 'pipelinesById', RiskByIdDocument, 'RiskById'],
     onCompleted: ({ editLicenseChange }) => {
@@ -59,7 +60,7 @@ export default function LicenseChanges({ pipelineId }: ILicenseChangesProps) {
     }
   });
 
-  const { statusEnum, substanceEnum } = dataValidators?.validators || {};
+  const { statusEnum, substanceEnum } = validators || {};
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {

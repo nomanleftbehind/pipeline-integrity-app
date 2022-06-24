@@ -27,7 +27,7 @@ export const EnvironmentProximityToEnum = enumType({
   members: EnvironmentProximityToEnumMembers
 });
 
-const EnvironmentProximityToEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(EnvironmentProximityToEnumMembers).map(([serverEnum, databaseEnum]) => {
+export const EnvironmentProximityToEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(EnvironmentProximityToEnumMembers).map(([serverEnum, databaseEnum]) => {
   return { serverEnum, databaseEnum }
 });
 
@@ -52,7 +52,7 @@ export const GeotechnicalFacingEnum = enumType({
   members: GeotechnicalFacingEnumMembers
 });
 
-const GeotechnicalFacingEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(GeotechnicalFacingEnumMembers).map(([serverEnum, databaseEnum]) => {
+export const GeotechnicalFacingEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(GeotechnicalFacingEnumMembers).map(([serverEnum, databaseEnum]) => {
   return { serverEnum, databaseEnum }
 });
 

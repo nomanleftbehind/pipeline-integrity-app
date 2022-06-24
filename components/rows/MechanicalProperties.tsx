@@ -2,22 +2,19 @@
 import RecordEntry, { IEditRecordFunction } from '../fields/RecordEntry';
 import { IRecordEntryMap } from './LicenseChanges';
 import { IPipeline } from './RenderPipeline';
-import {
-  useValidatorsMechanicalPropertiesQuery,
-} from '../../graphql/generated/graphql';
+import { IValidatorsMechanicalProperties } from './PipelineData';
 
 export type IMechanicalPropertyRecordEntryMap = IRecordEntryMap & { label: string };
 
-type IMechanicalPropertiesProps = Pick<IPipeline, 'id' | 'length' | 'type' | 'grade' | 'yieldStrength' | 'outsideDiameter' | 'wallThickness' | 'material' | 'mop' | 'internalProtection' | 'piggable' | 'piggingFrequency' | 'authorized'> & { editPipeline: IEditRecordFunction };
+type IMechanicalPropertiesProps = Pick<IPipeline, 'id' | 'length' | 'type' | 'grade' | 'yieldStrength' | 'outsideDiameter' | 'wallThickness' | 'material' | 'mop' | 'internalProtection' | 'piggable' | 'piggingFrequency' | 'authorized'> & {
+  editPipeline: IEditRecordFunction;
+  validators?: IValidatorsMechanicalProperties;
+};
 
-export default function MechanicalProperties({ id, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, piggable, piggingFrequency, authorized, editPipeline: editRecord }: IMechanicalPropertiesProps) {
+export default function MechanicalProperties({ id, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, piggable, piggingFrequency, authorized, editPipeline: editRecord, validators }: IMechanicalPropertiesProps) {
 
-  const { data: dataValidators } = useValidatorsMechanicalPropertiesQuery();
+  const { lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
 
-  const { lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = dataValidators?.validators || {};
-
-  console.log(materialEnum);
-  
   const mechanicalProperties: IMechanicalPropertyRecordEntryMap[] = [
     { columnName: 'length', record: length, label: 'Length (km)', columnType: 'number', nullable: false, validator: lengthMatchPattern, editRecord },
     { columnName: 'type', record: type, label: 'Type', columnType: 'string', nullable: true, validator: typeEnum, editRecord },

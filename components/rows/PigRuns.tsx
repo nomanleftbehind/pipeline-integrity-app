@@ -6,10 +6,10 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { IRecordEntryMap } from './LicenseChanges';
 import { openModal } from './RenderPipeline';
+import { IValidatorsPigRuns } from './PipelineData';
 
 import {
   usePigRunsByPipelineIdQuery,
-  useValidatorsPigRunQuery,
   useEditPigRunMutation,
   useAddPigRunMutation,
   useDeletePigRunMutation,
@@ -19,11 +19,12 @@ import {
 
 export interface IPigRunsProps {
   pipelineId: string;
+  validators?: IValidatorsPigRuns;
 }
 
-export default function PigRuns({ pipelineId }: IPigRunsProps) {
+export default function PigRuns({ pipelineId, validators }: IPigRunsProps) {
+
   const { data, loading, error } = usePigRunsByPipelineIdQuery({ variables: { pipelineId } });
-  const { data: dataValidators } = useValidatorsPigRunQuery();
   const [editPigRun] = useEditPigRunMutation({
     refetchQueries: [PigRunsByPipelineIdDocument, 'PigRunsByPipelineId'],
     onCompleted: ({ editPigRun }) => {
@@ -56,7 +57,7 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
 
-  const { pigTypeEnum, pigInspectionEnum, operatorFullNameEnum } = dataValidators?.validatorsPigRun || {};
+  const { pigTypeEnum, pigInspectionEnum, operatorEnum } = validators || {};
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {
@@ -143,7 +144,7 @@ export default function PigRuns({ pipelineId }: IPigRunsProps) {
             { columnName: 'pigType', columnType: 'string', nullable: true, record: pigType, validator: pigTypeEnum, editRecord },
             { columnName: 'dateIn', columnType: 'date', nullable: false, record: dateIn, editRecord },
             { columnName: 'dateOut', columnType: 'date', nullable: true, record: dateOut, editRecord },
-            { columnName: 'operatorId', columnType: 'string', nullable: true, record: operatorId, validator: operatorFullNameEnum, editRecord },
+            { columnName: 'operatorId', columnType: 'string', nullable: true, record: operatorId, validator: operatorEnum, editRecord },
             { columnName: 'isolationValveFunctionTest', columnType: 'string', nullable: true, record: isolationValveFunctionTest, validator: pigInspectionEnum, editRecord },
             { columnName: 'pigSenderReceiverInspection', columnType: 'string', nullable: true, record: pigSenderReceiverInspection, validator: pigInspectionEnum, editRecord },
             { columnName: 'comment', columnType: 'string', nullable: true, record: comment, editRecord },
