@@ -29,7 +29,7 @@ CREATE TYPE "internal_protection" AS ENUM ('Uncoated', 'Free Standing (Slip Line
 CREATE TYPE "flow_calculation_direction" AS ENUM ('Upstream', 'Downstream');
 
 -- CreateEnum
-CREATE TYPE "pig_type" AS ENUM ('Scrapper', '4in Argus', '6in argus', '6in Argus', 'Scraper P400', '3in Purple Scraper', 'Scraper P304', '3inscapper', '3inscrapper', '3in scraper', 'Foam', 'Shut in', 'Red Stubby', 'Red scraper', '3in GSCR', '2in GSCR', 'No Sender', '2ing scr', '2in GSCR/GFP', '4in GSCR', '2in PSCR/FLM', '3in PSCR', 'High line', '2in PSCR', '3:scrapper', 'Scraper P401', 'Scraper P300', 'Scraper P301', 'Scraper P309', 'Scraper P314', 'Scaper P314', 'Scaper PP309', 'Scraper P204', 'Scraper P208', '3in Argus', '2in purple', 'Ball', 'Black 3in Ball', '3in White', '3', 'SI MAY 2018', 'Scraper P206', 'Scraper P200', '3in R scr', '3in Purple Stubby', '3in SCRAPER', 'Red 3in scraper', '3in Green Disc', '4in Green Disc', '4green 2 disc', '4 gree 2 disc', '3in green disc', '3in purple disc', '2in Purple Disc', 'disc', '2 purple 2 disc', '3in purple 2 disc', '2 green 2 disc', 'bullet', '8in Foam', '3in scr', 'Scraper P305', 'Scraper P312', 'Scraper P303', 'Scraper P311', 'Scrapper P307', '4in  purple scraper', 'Torpedo', '4in', '3in Stubby', 'Stubby', '3in', 'red ball', '2in Stubby', '1in Stubby', '3in Brown Ribbed', '3in Green Ribbed', '3in Blue Ribbed', 'Blue Ribbed', 'M.D. Foamy', '6in Green Ribbed', 'Blue #in Scraper', 'Red 4in scraper', 'Blue 3in scraper', '4inBlue Disc', '8in Black Disc', '4in Green disc', '6in Green Disc', '6in scrapper', '4inscrapper', '4in Foam', '3in red scrape', 'GSCR', '4 Green Stubby', '4: Green Ribbed', '#4 Green', '3in purple scraper', '6in green scraper', 'Purple 3in Disc');
+CREATE TYPE "pig_type" AS ENUM ('Scrapper', '4in Argus', '6in argus', '6in Argus', 'Scraper P400', '3in Purple Scraper', 'Scraper P304', '3in Scrapper', '3inscrapper', 'Foam', 'Red Stubby', 'Red scraper', '3in GSCR', '2in GSCR', '2ing scr', '2in GSCR/GFP', '4in GSCR', '2in PSCR/FLM', '3in PSCR', 'High line', '2in PSCR', '3:scrapper', 'Scraper P401', 'Scraper P300', 'Scraper P301', 'Scraper P309', 'Scraper P314', 'Scaper P314', 'Scaper PP309', 'Scraper P204', 'Scraper P208', '3in Argus', '2in purple', 'Ball', 'Black 3in Ball', '3in White', '3', 'SI MAY 2018', 'Scraper P206', 'Scraper P200', '3in R scr', '3in Purple Stubby', 'Red 3in Scrapper', '3in Green Disc', '4in Green Disc', '4green 2 disc', '4 gree 2 disc', '3in green disc', '3in purple disc', '2in Purple Disc', 'disc', '2 purple 2 disc', '3in purple 2 disc', '2 green 2 disc', 'bullet', '8in Foam', '3in scr', 'Scraper P305', 'Scraper P312', 'Scraper P303', 'Scraper P311', 'Scrapper P307', '4in  purple scraper', 'Torpedo', '4in', '3in Stubby', 'Stubby', '3in', 'red ball', '2in Stubby', '1in Stubby', '3in Brown Ribbed', '3in Green Ribbed', '3in Blue Ribbed', 'Blue Ribbed', 'M.D. Foamy', '6in Green Ribbed', 'Blue #in Scraper', 'Red 4in scraper', 'Blue 3in Scrapper', '4inBlue Disc', '8in Black Disc', '4in Green disc', '6in Green Disc', '6in scrapper', '4inscrapper', '4in Foam', '3in red scrape', 'GSCR', '4 Green Stubby', '4: Green Ribbed', '#4 Green', '3in purple scraper', '6in green scraper', 'Purple 3in Disc');
 
 -- CreateEnum
 CREATE TYPE "pig_inspection" AS ENUM ('Good', 'Failed');
@@ -50,7 +50,7 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
-    "role" "user_role" NOT NULL DEFAULT E'Operator',
+    "role" "user_role" NOT NULL DEFAULT 'Operator',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -126,8 +126,8 @@ CREATE TABLE "PipelinesOnPipelines" (
 CREATE TABLE "LicenseChange" (
     "id" TEXT NOT NULL,
     "pipelineId" TEXT NOT NULL,
-    "status" "status" NOT NULL DEFAULT E'Operating',
-    "substance" "substance" NOT NULL DEFAULT E'Oil Well Effluent',
+    "status" "status" NOT NULL DEFAULT 'Operating',
+    "substance" "substance" NOT NULL DEFAULT 'Oil Well Effluent',
     "date" TIMESTAMP(3) NOT NULL,
     "comment" TEXT,
     "linkToDocumentation" TEXT,

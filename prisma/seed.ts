@@ -9,7 +9,7 @@ import {
   riskData,
 } from './SeedData';
 
-import { pipelinesOnPipelinesData } from './SeedPipelinesOnPipelinesData';
+import { pipelinesOnPipelinesData1 } from './SeedPipelinesOnPipelinesData';
 
 import { batchProductData } from './SeedBatchProductData';
 
@@ -134,7 +134,7 @@ async function main() {
     console.log(`Created pipeline in batch 2 with id: ${pipeline.id}`)
   }
 
-  for (const u of pipelinesOnPipelinesData) {
+  for (const u of pipelinesOnPipelinesData1) {
     const pipelineOnPipeline = await prisma.pipelinesOnPipelines.create({
       data: u,
     })

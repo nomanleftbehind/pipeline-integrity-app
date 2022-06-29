@@ -297,6 +297,7 @@ interface IAllocateRiskArgs {
 }
 
 export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
+  
   const risk = await ctx.prisma.risk.findUnique({
     where: { id },
     select: {
@@ -310,7 +311,7 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
       safeguardExternalCoating: true,
     }
   });
-
+  
   const lastLicenseChange = await ctx.prisma.licenseChange.findFirst({
     where: { pipelineId: id },
     orderBy: { date: 'desc' },
@@ -319,13 +320,13 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
       status: true,
     },
   });
-
+  
   const firstLicenseChange = await ctx.prisma.licenseChange.findFirst({
     where: { pipelineId: id },
     orderBy: { date: 'asc' },
     select: { date: true },
   });
-
+  
   const pipeline = await ctx.prisma.pipeline.findUnique({
     where: { id },
     select: {
@@ -335,7 +336,7 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
       piggable: true,
     }
   });
-
+  
   const chemical = await ctx.prisma.chemical.findUnique({
     where: { id },
     select: {
@@ -344,18 +345,18 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
       bacteriaTreatment: true,
       scaleTreatment: true,
     }
-  })
-
+  });
+  
   if (risk && lastLicenseChange && firstLicenseChange && pipeline && chemical) {
-
+    
     const { environmentProximityTo, oilReleaseCost, gasReleaseCost, repairTimeDays, consequencePeople, probabilityGeo, safeguardInternalProtection, safeguardExternalCoating } = risk;
     const { substance: currentSubstance, status: currentStatus } = lastLicenseChange;
     const { date: firstLicenseDate } = firstLicenseChange;
     const { flowCalculationDirection, type, material, piggable } = pipeline;
     const { downholeBatch, inhibitorPipelineBatch, bacteriaTreatment, scaleTreatment } = chemical;
-
+    
     const { oil, water, gas } = (await pipelineFlow({ id, flowCalculationDirection, ctx })) || { oil: 0, water: 0, gas: 0 };
-
+    
     const totalFluids = await totalFluidsCalc({ oil, water, gas });
 
     const costPerM3Released = currentSubstance === 'FreshWater' ? 0 : 25000 * water + 1000 * gas + 15000 * oil;

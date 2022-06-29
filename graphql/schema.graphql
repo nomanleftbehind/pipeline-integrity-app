@@ -475,14 +475,13 @@ type PigRunPayload {
 enum PigTypeEnum {
   Ball
   Black3inBall
-  Blue3inscraper
+  Blue3inScrapper
   BlueRibbed
   BlueinScraper
   Foam
   GSCR
   Highline
   M_D_Foamy
-  NoSender
   PigType1inStubby
   PigType2green2disc
   PigType2inGSCR
@@ -507,7 +506,7 @@ enum PigTypeEnum {
   PigType3inPurpleScraper
   PigType3inPurpleStubby
   PigType3inRscr
-  PigType3inSCRAPER
+  PigType3inScrapper
   PigType3inStubby
   PigType3inWhite
   PigType3ingreendisc
@@ -515,9 +514,7 @@ enum PigTypeEnum {
   PigType3inpurpledisc
   PigType3inpurplescraper
   PigType3inredscrape
-  PigType3inscapper
   PigType3inscr
-  PigType3inscraper
   PigType3inscrapper
   PigType4Green
   PigType4GreenStubby
@@ -542,7 +539,7 @@ enum PigTypeEnum {
   PigType8inBlackDisc
   PigType8inFoam
   Purple3inDisc
-  Red3inscraper
+  Red3inScrapper
   Red4inscraper
   RedStubby
   Redscraper
@@ -566,7 +563,6 @@ enum PigTypeEnum {
   ScraperP401
   Scrapper
   ScrapperP307
-  Shutin
   Stubby
   Torpedo
   bullet
@@ -577,14 +573,13 @@ enum PigTypeEnum {
 type PigTypeEnumObject {
   Ball: String!
   Black3inBall: String!
-  Blue3inscraper: String!
+  Blue3inScrapper: String!
   BlueRibbed: String!
   BlueinScraper: String!
   Foam: String!
   GSCR: String!
   Highline: String!
   M_D_Foamy: String!
-  NoSender: String!
   PigType1inStubby: String!
   PigType2green2disc: String!
   PigType2inGSCR: String!
@@ -609,7 +604,7 @@ type PigTypeEnumObject {
   PigType3inPurpleScraper: String!
   PigType3inPurpleStubby: String!
   PigType3inRscr: String!
-  PigType3inSCRAPER: String!
+  PigType3inScrapper: String!
   PigType3inStubby: String!
   PigType3inWhite: String!
   PigType3ingreendisc: String!
@@ -617,9 +612,7 @@ type PigTypeEnumObject {
   PigType3inpurpledisc: String!
   PigType3inpurplescraper: String!
   PigType3inredscrape: String!
-  PigType3inscapper: String!
   PigType3inscr: String!
-  PigType3inscraper: String!
   PigType3inscrapper: String!
   PigType4Green: String!
   PigType4GreenStubby: String!
@@ -644,7 +637,7 @@ type PigTypeEnumObject {
   PigType8inBlackDisc: String!
   PigType8inFoam: String!
   Purple3inDisc: String!
-  Red3inscraper: String!
+  Red3inScrapper: String!
   Red4inscraper: String!
   RedStubby: String!
   Redscraper: String!
@@ -668,7 +661,6 @@ type PigTypeEnumObject {
   ScraperP401: String!
   Scrapper: String!
   ScrapperP307: String!
-  Shutin: String!
   Stubby: String!
   Torpedo: String!
   bullet: String!

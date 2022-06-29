@@ -4,6 +4,7 @@ import { resolvePipelineAuthorized } from './Pipeline';
 import type { FlowCalculationDirectionEnum } from '@prisma/client';
 import { Context } from '../context';
 import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
+import { Prisma } from '@prisma/client'
 
 export const PipelineFlow = objectType({
   name: 'PipelineFlow',
@@ -90,9 +91,11 @@ export const totalPipelineFlowRawQuery = async ({ idList, flowCalculationDirecti
   const ids = idList.join("', '");
 
   // This raw query calls user defined custom function on PostgreSQL database.
-  // For it to work, sql function must first be created by executing file `/prisma/pipeline_flow_dynamic.sql` on database as the Administrator.
+  // For it to work, sql function must first be created by executing file `/prisma/pipeline_flow_dynamic.sql` on database.
+  // Before version 4.0.0, Prisma silently coerces Upstream/Downstream to flow_calculation_direction database type. From version 4.0.0, the query returns an error.
+  // The fix is to explicitly cast Upstream/Downstream to the flow_calculation_direction type
   const result = await ctx.prisma.$queryRaw<NexusGenObjects['PipelineFlow'][]>`
-      SELECT * FROM "ppl_db".pipeline_flow(${ids}, ${flowCalculationDirection});
+      SELECT * FROM "ppl_db".pipeline_flow(${ids}, ${flowCalculationDirection}::flow_calculation_direction);
       `
 
   return result;
