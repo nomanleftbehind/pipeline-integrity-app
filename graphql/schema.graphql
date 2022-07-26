@@ -405,6 +405,7 @@ type Mutation {
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
   editWell(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, name: String, oil: Float, pipelineId: String, water: Float): WellPayload
   editWellBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, productId: String): WellBatchPayload
+  forgotPassword(email: String!): Boolean
   login(email: String!, password: String!): AuthPayload
   logout: Boolean
   signup(userCreateInput: UserCreateInput!): AuthPayload

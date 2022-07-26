@@ -5,6 +5,8 @@ import { compare, genSalt, hash } from 'bcryptjs';
 import { setLoginSession } from '../../lib/auth';
 import { removeTokenCookie } from '../../lib/auth-cookies';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
+import nodemailer from 'nodemailer';
+import { v4 } from 'uuid';
 
 
 export const DateTime = asNexusMethod(DateTimeResolver, 'date');
@@ -300,7 +302,7 @@ export const AuthMutation = extendType({
           return {
             error: {
               field: 'email',
-              message: "Provided email and password don't correspond",
+              message: "Email and password don't match",
             },
 
           }
@@ -319,5 +321,68 @@ export const AuthMutation = extendType({
         return true;
       }
     })
+
+    t.boolean('forgotPassword', {
+      args: {
+        email: nonNull(stringArg()),
+      },
+      resolve: async (_, { email }, ctx: Context) => {
+
+        const user = await ctx.prisma.user.findUnique({
+          where: {
+            email
+          },
+          select: {
+            id: true,
+          }
+        });
+
+        // if (!user) {
+        //   return true;
+        // }
+
+        const token = v4();
+        await sendEmail(email, `http://localhost:3000/user/change-password/${token}`);
+
+        return true;
+      }
+    })
   }
 })
+
+
+
+export async function sendEmail(email: string, url: string) {
+  // Generate test SMTP service account from ethereal.email
+  // Only needed if you don't have a real mail account for testing
+  const account = await nodemailer.createTestAccount();
+
+  // create reusable transporter object using the default SMTP transport
+  const transporter = nodemailer.createTransport({
+    host: "smtp.ethereal.email",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: account.user, // generated ethereal user
+      pass: account.pass, // generated ethereal password
+    },
+  });
+
+  const mailOptions = {
+    from: '"Fred Foo 👻" <foo@example.com>', // sender address
+    to: email, // list of receivers
+    subject: "Hello ✔", // Subject line
+    text: "Hello world?", // plain text body
+    html: `<a href="${url}">${url}</a>`, // html body
+  }
+
+  // send mail with defined transport object
+  let info = await transporter.sendMail(mailOptions);
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+  // Preview only available when sending through an Ethereal account
+  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+}

@@ -28,9 +28,11 @@
     "@types/micro": "^7.3.6",
     "@types/micro-cors": "^0.1.2",
     "@types/mssql": "^7.1.5",
+    "@types/nodemailer": "^6.4.4",
     "@types/oracledb": "^5.2.3",
     "@types/react-dom": "^17.0.10",
     "@types/tedious": "^4.0.6",
+    "@types/uuid": "^8.3.4",
     "apollo-server-cache-redis": "^3.2.0",
     "apollo-server-express": "^3.9.0",
     "apollo-server-micro": "^3.4.0",
@@ -54,6 +56,7 @@
     "mssql": "^8.1.0",
     "next": "11.1.2",
     "nexus": "^1.1.0",
+    "nodemailer": "^6.7.7",
     "oracledb": "^5.3.0",
     "prisma": "^4.0.0",
     "react": "17.0.2",
@@ -61,6 +64,7 @@
     "redis": "^3.1.2",
     "swr": "^1.0.1",
     "tedious": "^14.1.0",
+    "uuid": "^8.3.2",
     "yup": "^0.32.11"
   },
   "devDependencies": {
