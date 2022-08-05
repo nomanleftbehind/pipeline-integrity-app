@@ -7,6 +7,11 @@ import { removeTokenCookie } from '../../lib/auth-cookies';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 import nodemailer from 'nodemailer';
 import { v4 } from 'uuid';
+import Redis from 'ioredis';
+import { forgotPasswordPrefix, confirmUserPrefix } from '../constants';
+
+
+const redis = new Redis();
 
 
 export const DateTime = asNexusMethod(DateTimeResolver, 'date');
@@ -242,8 +247,7 @@ export const AuthMutation = extendType({
       args: {
         userCreateInput: nonNull(arg({ type: 'UserCreateInput' })),
       },
-      resolve: async (_parent, { userCreateInput }, ctx: Context) => {
-        const { firstName, lastName, email, password, role } = userCreateInput;
+      resolve: async (_parent, { userCreateInput: { firstName, lastName, email, password, role } }, ctx: Context) => {
 
         const userExists = await ctx.prisma.user.findUnique({
           where: { email }
@@ -322,12 +326,11 @@ export const AuthMutation = extendType({
       }
     })
 
-    t.boolean('forgotPassword', {
+    t.nonNull.boolean('forgotPassword', {
       args: {
         email: nonNull(stringArg()),
       },
       resolve: async (_, { email }, ctx: Context) => {
-
         const user = await ctx.prisma.user.findUnique({
           where: {
             email
@@ -337,18 +340,76 @@ export const AuthMutation = extendType({
           }
         });
 
-        // if (!user) {
-        //   return true;
-        // }
+        if (!user) {
+          return true;
+        }
 
         const token = v4();
+        await redis.set(forgotPasswordPrefix + token, user.id, 'ex', 60 * 60 * 24); // 1 day expiration
         await sendEmail(email, `http://localhost:3000/user/change-password/${token}`);
 
         return true;
       }
     })
+
+    t.field('changePassword', {
+      type: 'AuthPayload',
+      args: {
+        token: nonNull(stringArg()),
+        password: nonNull(stringArg()),
+      },
+      resolve: async (_, { token, password }, ctx: Context) => {
+        const userId = await redis.get(forgotPasswordPrefix + token);
+        await redis.del(forgotPasswordPrefix + token);
+
+        if (!userId) {
+          return null;
+        }
+
+        if (password.length < 8) {
+          return {
+            error: {
+              field: 'password',
+              message: 'password must be at least 8 characters long'
+            }
+
+          }
+        }
+
+        const user = await ctx.prisma.user.findUnique({
+          where: {
+            id: userId,
+          }
+        });
+
+        if (!user) {
+          return null;
+        }
+
+        const salt = await genSalt(10);
+        const hashedPassword = await hash(password, salt);
+
+        const updatedUser = await ctx.prisma.user.update({
+          where: { id: userId },
+          data: {
+            password: hashedPassword,
+          }
+        });
+        // Log in upon successfully changing password
+        await setLoginSession(ctx.res, { id: updatedUser.id, email: updatedUser.email, firstName: updatedUser.firstName, lastName: updatedUser.lastName, role: updatedUser.role });
+
+        return { user: updatedUser };
+      }
+    })
   }
 })
+
+const createConfirmationUrl = async (userId: number) => {
+  const token = v4();
+  await redis.set(confirmUserPrefix + token, userId, 'ex', 60 * 60 * 24);
+
+  return `http://localhost:3000/user/confirm/${token}`;
+}
 
 
 
@@ -356,6 +417,9 @@ export async function sendEmail(email: string, url: string) {
   // Generate test SMTP service account from ethereal.email
   // Only needed if you don't have a real mail account for testing
   const account = await nodemailer.createTestAccount();
+
+  console.log('account', account);
+
 
   // create reusable transporter object using the default SMTP transport
   const transporter = nodemailer.createTransport({
@@ -369,7 +433,7 @@ export async function sendEmail(email: string, url: string) {
   });
 
   const mailOptions = {
-    from: '"Fred Foo 👻" <foo@example.com>', // sender address
+    from: '"Doma" <dsucic@bonterraenergy.com>', // sender address
     to: email, // list of receivers
     subject: "Hello ✔", // Subject line
     text: "Hello world?", // plain text body
