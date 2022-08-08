@@ -10,6 +10,7 @@ export default function ManuBar() {
   const links = [
     { href: '/', a: 'Home' },
     { href: 'pipelines', a: 'Pipelines' },
+    { href: 'forgot-password', a: 'Forgot Password' },
     // { href: 'pressuretests', a: 'Pressure Tests' },
     // { href: 'pigruns', a: 'Pig Runs' },
     { href: 'webassembly', a: 'WebAssembly' },

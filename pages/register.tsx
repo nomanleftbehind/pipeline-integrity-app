@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { prisma } from '../lib/prisma';
 import { Context } from '../graphql/context';
 import { UserNoPassword } from '../lib/auth';
@@ -13,7 +14,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
 import * as Yup from 'yup';
 import { useAuth } from '../context/AuthContext';
-import { useLoginMutation, useSignupMutation, UserCreateInput, UserRoleEnum, useValidatorUserRoleQuery } from '../graphql/generated/graphql';
+import { useLoginMutation, useSignupMutation, useForgotPasswordMutation, UserCreateInput, UserRoleEnum, useValidatorUserRoleQuery } from '../graphql/generated/graphql';
 import { getUser } from "../lib/user";
 
 type IInput = {
@@ -29,20 +30,23 @@ function Register({ userCount, user }: IServerSideProps) {
 
   const { setUser } = useAuth() || {};
 
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+
   const router = useRouter();
 
-  const isSignup = userCount === 0 || user?.role === 'ADMIN';
+  const registerAction = isForgotPassword && !user ? 'forgot-password' : userCount === 0 || user?.role === 'ADMIN' ? 'register' : 'login';
 
   const { data: dataUserRole } = useValidatorUserRoleQuery();
   const client = useApolloClient();
 
   const [login] = useLoginMutation();
-  const [signup] = useSignupMutation();
+  const [register] = useSignupMutation();
+  const [forgotPassword] = useForgotPasswordMutation();
 
   const emailYupSchema = Yup.string().email('Invalid email address').required('Required');
   const passwordYupSchema = Yup.string().required('Required').min(8, 'password must be at least 8 characters long');
 
-  const SignupSchema = Yup.object().shape({
+  const RegisterSchema = Yup.object().shape({
     firstName: Yup.string().required('Required'),
     lastName: Yup.string().required('Required'),
     email: emailYupSchema,
@@ -54,9 +58,13 @@ function Register({ userCount, user }: IServerSideProps) {
     password: passwordYupSchema,
   });
 
+  const ForgotPasswordSchema = Yup.object().shape({
+    email: emailYupSchema,
+  });
+
   return (
     <Box sx={{ minWidth: 500, margin: '0 auto' }}>
-      <h1>{isSignup ? 'Signup' : 'Login'}</h1>
+      <h1>{/*registerAction === 'register' ? 'Register' : registerAction === 'login' ? 'Login' : 'Forgot Password'*/registerAction}</h1>
       <Formik
         initialValues={{
           firstName: '',
@@ -65,14 +73,14 @@ function Register({ userCount, user }: IServerSideProps) {
           password: '',
           role: UserRoleEnum['Operator'],
         }}
-        validationSchema={isSignup ? SignupSchema : LoginSchema}
+        validationSchema={registerAction === 'register' ? RegisterSchema : registerAction === 'login' ? LoginSchema : ForgotPasswordSchema}
         onSubmit={async (
           values: UserCreateInput,
           { setFieldError }: FormikHelpers<UserCreateInput>
         ) => {
           try {
             await client.resetStore();
-            if (!isSignup) {
+            if (registerAction === 'login') {
               const { data, errors } = await login({
                 variables: {
                   email: values.email,
@@ -89,8 +97,8 @@ function Register({ userCount, user }: IServerSideProps) {
               if (errors) {
                 setFieldError('email', errors.map(error => error.message).join('; '));
               }
-            } else {
-              const { data, errors } = await signup({
+            } else if (registerAction === 'register') {
+              const { data, errors } = await register({
                 variables: {
                   userCreateInput: values
                 },
@@ -101,6 +109,16 @@ function Register({ userCount, user }: IServerSideProps) {
               if (data?.signup?.error) {
                 setFieldError(data.signup.error.field, data.signup.error.message);
               }
+              if (errors) {
+                setFieldError('email', errors.map(error => error.message).join('; '));
+              }
+            } else {
+              setIsForgotPassword(false);
+              const { errors } = await forgotPassword({
+                variables: {
+                  email: values.email,
+                },
+              });
               if (errors) {
                 setFieldError('email', errors.map(error => error.message).join('; '));
               }
@@ -118,14 +136,14 @@ function Register({ userCount, user }: IServerSideProps) {
 
           return (
             <Form className='register'>
-              {isSignup && <TextInput
+              {registerAction === 'register' && <TextInput
                 placeholder='First Name'
                 name='firstName'
                 type='text'
                 autoComplete='off'
               />}
 
-              {isSignup && <TextInput
+              {registerAction === 'register' && <TextInput
                 placeholder='Last Name'
                 name='lastName'
                 type='text'
@@ -139,14 +157,14 @@ function Register({ userCount, user }: IServerSideProps) {
                 autoComplete='off'
               />
 
-              <TextInput
+              {registerAction !== 'forgot-password' && <TextInput
                 placeholder='Password'
                 name='password'
                 type='password'
                 autoComplete='off'
-              />
+              />}
 
-              {isSignup && userCount > 0 && <DOMSelectInput label='Role' name='role'>
+              {registerAction === 'register' && userCount > 0 && <DOMSelectInput label='Role' name='role'>
                 {dataUserRole?.validators && Object
                   .entries(dataUserRole.validators.userRoleEnum)
                   .map(([roleServer, roleDatabase]) => <option
@@ -160,6 +178,7 @@ function Register({ userCount, user }: IServerSideProps) {
               <Button fullWidth color='primary' variant='contained' type='submit'>
                 Submit
               </Button>
+              {!user && <Button onClick={() => setIsForgotPassword(!isForgotPassword)}>{isForgotPassword ? 'Login' : 'Forgot Password'}</Button>}
             </Form>
           )
         }}

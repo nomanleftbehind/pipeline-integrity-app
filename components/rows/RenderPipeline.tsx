@@ -7,7 +7,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import { useEditPipelineMutation, useDeletePipelineMutation, PipelinesByIdDocument, useDuplicatePipelineMutation, PipelinesByIdQuery, GetValidatorsQuery, ValidatorsPipelineQuery, RiskByIdDocument } from '../../graphql/generated/graphql';
+import { useEditPipelineMutation, useDeletePipelineMutation, PipelinesByIdDocument, useDuplicatePipelineMutation, PipelinesByIdQuery, ValidatorsPipelineQuery, RiskByIdDocument } from '../../graphql/generated/graphql';
 import { IRecordEntryMap } from './LicenseChanges';
 
 export type IInferFromArray<T> = T extends (infer U)[] ? NonNullable<U> : never;

@@ -34,6 +34,22 @@ mutation Logout {
   logout
 }
 
+mutation ForgotPassword($email: String!) {
+  forgotPassword(email: $email)
+}
+
+mutation ChangePassword($token: String!, $password: String!) {
+  changePassword(token: $token, password: $password) {
+    user {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
 mutation DeletePipeline($id: String!) {
   deletePipeline(id: $id) {
     pipeline {
