@@ -5,13 +5,10 @@ import { compare, genSalt, hash } from 'bcryptjs';
 import { setLoginSession } from '../../lib/auth';
 import { removeTokenCookie } from '../../lib/auth-cookies';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
-import nodemailer from 'nodemailer';
 import { v4 } from 'uuid';
-import Redis from 'ioredis';
-import { forgotPasswordPrefix, confirmUserPrefix } from '../constants';
+import { forgotPasswordPrefix } from '../constants';
+import { redis, sendEmail } from '../utils/SendEmail';
 
-
-const redis = new Redis();
 
 
 export const DateTime = asNexusMethod(DateTimeResolver, 'date');
@@ -204,6 +201,16 @@ export const UserPipelines = extendType({
 });
 
 
+export const UserRegisterInput = inputObjectType({
+  name: 'UserRegisterInput',
+  definition(t) {
+    t.nonNull.string('firstName')
+    t.nonNull.string('lastName')
+    t.nonNull.string('email')
+    t.nonNull.field('role', { type: 'UserRoleEnum' })
+  },
+});
+
 export const UserCreateInput = inputObjectType({
   name: 'UserCreateInput',
   definition(t) {
@@ -211,7 +218,17 @@ export const UserCreateInput = inputObjectType({
     t.nonNull.string('lastName')
     t.nonNull.string('email')
     t.nonNull.string('password')
+    t.nonNull.string('confirmPassword')
     t.nonNull.field('role', { type: 'UserRoleEnum' })
+  },
+});
+
+export const ChangePasswordInput = inputObjectType({
+  name: 'ChangePasswordInput',
+  definition(t) {
+    t.nonNull.string('token')
+    t.nonNull.string('password')
+    t.nonNull.string('confirmPassword')
   },
 });
 
@@ -242,15 +259,16 @@ export const AuthPayload = objectType({
 export const AuthMutation = extendType({
   type: 'Mutation',
   definition(t) {
-    t.field('signup', {
+    t.nonNull.field('signup', {
       type: 'AuthPayload',
       args: {
-        userCreateInput: nonNull(arg({ type: 'UserCreateInput' })),
+        userRegisterInput: nonNull(arg({ type: 'UserRegisterInput' })),
       },
-      resolve: async (_parent, { userCreateInput: { firstName, lastName, email, password, role } }, ctx: Context) => {
+      resolve: async (_parent, { userRegisterInput: { firstName, lastName, email, role } }, ctx: Context) => {
 
         const userExists = await ctx.prisma.user.findUnique({
-          where: { email }
+          where: { email },
+          select: { id: true },
         });
 
         if (userExists) {
@@ -261,17 +279,14 @@ export const AuthMutation = extendType({
             }
           }
         }
-        if (password.length < 8) {
-          return {
-            error: {
-              field: 'password',
-              message: 'password must be at least 8 characters long'
-            }
 
-          }
-        }
         const userCount = await ctx.prisma.user.count();
 
+        // This app is intended to be used for comercial purposes.
+        // Only user with ADMIN privilages is able to add new users while not being able to know their password. 
+        // Newly added users will have initial randomly generated password.
+        // Once their account is registered, they will assign themselves their personal password through 'forgot password' tool.
+        const password = v4();
         const salt = await genSalt(10);
         const hashedPassword = await hash(password, salt);
         const user = await ctx.prisma.user.create({
@@ -280,6 +295,7 @@ export const AuthMutation = extendType({
             lastName,
             email,
             password: hashedPassword,
+            // First user ever registered is automatically made ADMIN
             role: userCount === 0 ? 'ADMIN' : databaseEnumToServerEnum(UserRoleEnumMembers, role) || undefined,
           },
         });
@@ -287,7 +303,7 @@ export const AuthMutation = extendType({
       },
     })
 
-    t.field('login', {
+    t.nonNull.field('login', {
       type: 'AuthPayload',
       args: {
         email: nonNull(stringArg()),
@@ -302,24 +318,23 @@ export const AuthMutation = extendType({
         });
 
         const passwordValid = user && await compare(password, user.password);
-        if (!passwordValid) {
-          return {
-            error: {
-              field: 'email',
-              message: "Email and password don't match",
-            },
 
-          }
+        if (passwordValid) {
+          const userNoPassword = { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role };
+          await setLoginSession(ctx.res, userNoPassword);
+          return { user };
         }
 
-        const userNoPassword = { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role };
-        await setLoginSession(ctx.res, userNoPassword);
-
-        return { user };
+        return {
+          error: {
+            field: 'password',
+            message: "email and password don't match",
+          },
+        }
       },
     })
 
-    t.boolean('logout', {
+    t.nonNull.boolean('logout', {
       resolve: async (_parent, _args, ctx: Context) => {
         removeTokenCookie(ctx.res);
         return true;
@@ -346,24 +361,35 @@ export const AuthMutation = extendType({
 
         const token = v4();
         await redis.set(forgotPasswordPrefix + token, user.id, 'ex', 60 * 60 * 24); // 1 day expiration
-        await sendEmail(email, `http://localhost:3000/user/change-password/${token}`);
+        await sendEmail(email, `http://localhost:3000/change-password/${token}`);
 
         return true;
       }
     })
 
-    t.field('changePassword', {
+    t.nonNull.field('changePassword', {
       type: 'AuthPayload',
       args: {
-        token: nonNull(stringArg()),
-        password: nonNull(stringArg()),
+        changePasswordInput: nonNull(arg({ type: 'ChangePasswordInput' })),
       },
-      resolve: async (_, { token, password }, ctx: Context) => {
-        const userId = await redis.get(forgotPasswordPrefix + token);
-        await redis.del(forgotPasswordPrefix + token);
+      resolve: async (_, { changePasswordInput: { token, password, confirmPassword } }, ctx: Context) => {
 
-        if (!userId) {
-          return null;
+        if (ctx.user) {
+          return {
+            error: {
+              field: 'confirmPassword',
+              message: 'please log out before changing password',
+            }
+          }
+        }
+
+        if (password !== confirmPassword) {
+          return {
+            error: {
+              field: 'confirmPassword',
+              message: 'password confirmation must match password'
+            }
+          }
         }
 
         if (password.length < 8) {
@@ -372,7 +398,19 @@ export const AuthMutation = extendType({
               field: 'password',
               message: 'password must be at least 8 characters long'
             }
+          }
+        }
 
+        const userId = await redis.get(forgotPasswordPrefix + token);
+
+        await redis.del(forgotPasswordPrefix + token);
+
+        if (!userId) {
+          return {
+            error: {
+              field: 'confirmPassword',
+              message: 'token expired'
+            }
           }
         }
 
@@ -383,7 +421,12 @@ export const AuthMutation = extendType({
         });
 
         if (!user) {
-          return null;
+          return {
+            error: {
+              field: 'confirmPassword',
+              message: 'password not changed',
+            }
+          };
         }
 
         const salt = await genSalt(10);
@@ -403,50 +446,3 @@ export const AuthMutation = extendType({
     })
   }
 })
-
-const createConfirmationUrl = async (userId: number) => {
-  const token = v4();
-  await redis.set(confirmUserPrefix + token, userId, 'ex', 60 * 60 * 24);
-
-  return `http://localhost:3000/user/confirm/${token}`;
-}
-
-
-
-export async function sendEmail(email: string, url: string) {
-  // Generate test SMTP service account from ethereal.email
-  // Only needed if you don't have a real mail account for testing
-  const account = await nodemailer.createTestAccount();
-
-  console.log('account', account);
-
-
-  // create reusable transporter object using the default SMTP transport
-  const transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: account.user, // generated ethereal user
-      pass: account.pass, // generated ethereal password
-    },
-  });
-
-  const mailOptions = {
-    from: '"Doma" <dsucic@bonterraenergy.com>', // sender address
-    to: email, // list of receivers
-    subject: "Hello ✔", // Subject line
-    text: "Hello world?", // plain text body
-    html: `<a href="${url}">${url}</a>`, // html body
-  }
-
-  // send mail with defined transport object
-  let info = await transporter.sendMail(mailOptions);
-
-  console.log("Message sent: %s", info.messageId);
-  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-  // Preview only available when sending through an Ethereal account
-  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-  // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-}

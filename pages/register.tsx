@@ -14,8 +14,8 @@ import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
 import * as Yup from 'yup';
 import { useAuth } from '../context/AuthContext';
-import { useLoginMutation, useSignupMutation, useForgotPasswordMutation, UserCreateInput, UserRoleEnum, useValidatorUserRoleQuery } from '../graphql/generated/graphql';
-import { getUser } from "../lib/user";
+import { useLoginMutation, useSignupMutation, useForgotPasswordMutation, useChangePasswordMutation, UserCreateInput, UserRoleEnum, useValidatorUserRoleQuery } from '../graphql/generated/graphql';
+import { getUser } from '../lib/user';
 
 type IInput = {
   label?: string;
@@ -26,15 +26,17 @@ export interface IServerSideProps {
   user: UserNoPassword | null;
 }
 
-function Register({ userCount, user }: IServerSideProps) {
+export function Register({ userCount, user }: IServerSideProps) {
 
   const { setUser } = useAuth() || {};
 
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   const router = useRouter();
+  // token string will only appear if current route is change-password/:token. That's how we will know that register form should be a 'Change Password' variant.
+  const { token } = router.query;
 
-  const registerAction = isForgotPassword && !user ? 'forgot-password' : userCount === 0 || user?.role === 'ADMIN' ? 'register' : 'login';
+  const formVariant = typeof token === 'string' && !user ? 'Change Password' : isForgotPassword && !user ? 'Forgot Password' : userCount === 0 || user?.role === 'ADMIN' ? 'Register' : 'Login';
 
   const { data: dataUserRole } = useValidatorUserRoleQuery();
   const client = useApolloClient();
@@ -42,6 +44,7 @@ function Register({ userCount, user }: IServerSideProps) {
   const [login] = useLoginMutation();
   const [register] = useSignupMutation();
   const [forgotPassword] = useForgotPasswordMutation();
+  const [changePassword] = useChangePasswordMutation();
 
   const emailYupSchema = Yup.string().email('Invalid email address').required('Required');
   const passwordYupSchema = Yup.string().required('Required').min(8, 'password must be at least 8 characters long');
@@ -50,7 +53,6 @@ function Register({ userCount, user }: IServerSideProps) {
     firstName: Yup.string().required('Required'),
     lastName: Yup.string().required('Required'),
     email: emailYupSchema,
-    password: passwordYupSchema,
   });
 
   const LoginSchema = Yup.object().shape({
@@ -62,45 +64,34 @@ function Register({ userCount, user }: IServerSideProps) {
     email: emailYupSchema,
   });
 
+  const ChangePasswordSchema = Yup.object().shape({
+    password: passwordYupSchema,
+    confirmPassword: passwordYupSchema//Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match'),
+  });
+
   return (
     <Box sx={{ minWidth: 500, margin: '0 auto' }}>
-      <h1>{/*registerAction === 'register' ? 'Register' : registerAction === 'login' ? 'Login' : 'Forgot Password'*/registerAction}</h1>
+      <h1>{formVariant}</h1>
       <Formik
         initialValues={{
           firstName: '',
           lastName: '',
           email: '',
           password: '',
+          confirmPassword: '',
           role: UserRoleEnum['Operator'],
         }}
-        validationSchema={registerAction === 'register' ? RegisterSchema : registerAction === 'login' ? LoginSchema : ForgotPasswordSchema}
+        validationSchema={formVariant === 'Register' ? RegisterSchema : formVariant === 'Login' ? LoginSchema : formVariant === 'Forgot Password' ? ForgotPasswordSchema : ChangePasswordSchema}
         onSubmit={async (
           values: UserCreateInput,
           { setFieldError }: FormikHelpers<UserCreateInput>
         ) => {
           try {
             await client.resetStore();
-            if (registerAction === 'login') {
-              const { data, errors } = await login({
-                variables: {
-                  email: values.email,
-                  password: values.password,
-                },
-              });
-              if (data?.login?.user && setUser) {
-                setUser(data.login.user);
-                await router.push('/');
-              }
-              if (data?.login?.error) {
-                setFieldError(data.login.error.field, data.login.error.message);
-              }
-              if (errors) {
-                setFieldError('email', errors.map(error => error.message).join('; '));
-              }
-            } else if (registerAction === 'register') {
+            if (formVariant === 'Register') {
               const { data, errors } = await register({
                 variables: {
-                  userCreateInput: values
+                  userRegisterInput: { firstName: values.firstName, lastName: values.lastName, email: values.email, role: values.role }
                 },
               });
               if (data?.signup?.user) {
@@ -112,7 +103,24 @@ function Register({ userCount, user }: IServerSideProps) {
               if (errors) {
                 setFieldError('email', errors.map(error => error.message).join('; '));
               }
-            } else {
+            } else if (formVariant === 'Login') {
+              const { data, errors } = await login({
+                variables: {
+                  email: values.email,
+                  password: values.password,
+                },
+              });
+              if (data?.login.user && setUser) {
+                setUser(data.login.user);
+                await router.push('/');
+              }
+              if (data?.login.error) {
+                setFieldError(data.login.error.field, data.login.error.message);
+              }
+              if (errors) {
+                setFieldError('email', errors.map(error => error.message).join('; '));
+              }
+            } else if (formVariant === 'Forgot Password') {
               setIsForgotPassword(false);
               const { errors } = await forgotPassword({
                 variables: {
@@ -122,6 +130,24 @@ function Register({ userCount, user }: IServerSideProps) {
               if (errors) {
                 setFieldError('email', errors.map(error => error.message).join('; '));
               }
+            } else if (typeof token === 'string') {
+              // We already know that token is of type string in this scenario because formVariant can only be 'Change Password' if token is of type string, but Typescript doesn't recognize this so we need to be explicit.
+              const { data, errors } = await changePassword({
+                variables: {
+                  changePasswordInput: { token, password: values.password, confirmPassword: values.confirmPassword }
+                },
+              });
+              if (data?.changePassword?.user && setUser) {
+                setUser(data.changePassword.user);
+                await router.push('/');
+              }
+              if (data?.changePassword?.error) {
+                setFieldError(data.changePassword.error.field, data.changePassword.error.message);
+              }
+              if (errors) {
+                setFieldError('confirmPassword', errors.map(error => error.message).join('; '));
+              }
+
             }
           } catch (e) {
             if (e instanceof ApolloError) {
@@ -136,35 +162,42 @@ function Register({ userCount, user }: IServerSideProps) {
 
           return (
             <Form className='register'>
-              {registerAction === 'register' && <TextInput
+              {formVariant === 'Register' && <TextInput
                 placeholder='First Name'
                 name='firstName'
                 type='text'
                 autoComplete='off'
               />}
 
-              {registerAction === 'register' && <TextInput
+              {formVariant === 'Register' && <TextInput
                 placeholder='Last Name'
                 name='lastName'
                 type='text'
                 autoComplete='off'
               />}
 
-              <TextInput
+              {formVariant !== 'Change Password' && <TextInput
                 placeholder='Email Address'
                 name='email'
                 type='email'
                 autoComplete='off'
-              />
+              />}
 
-              {registerAction !== 'forgot-password' && <TextInput
+              {(formVariant === 'Login' || formVariant === 'Change Password') && <TextInput
                 placeholder='Password'
                 name='password'
                 type='password'
                 autoComplete='off'
               />}
 
-              {registerAction === 'register' && userCount > 0 && <DOMSelectInput label='Role' name='role'>
+              {formVariant === 'Change Password' && <TextInput
+                placeholder='Confirm Password'
+                name='confirmPassword'
+                type='password'
+                autoComplete='off'
+              />}
+
+              {formVariant === 'Register' && userCount > 0 && <DOMSelectInput label='Role' name='role'>
                 {dataUserRole?.validators && Object
                   .entries(dataUserRole.validators.userRoleEnum)
                   .map(([roleServer, roleDatabase]) => <option
@@ -178,7 +211,7 @@ function Register({ userCount, user }: IServerSideProps) {
               <Button fullWidth color='primary' variant='contained' type='submit'>
                 Submit
               </Button>
-              {!user && <Button onClick={() => setIsForgotPassword(!isForgotPassword)}>{isForgotPassword ? 'Login' : 'Forgot Password'}</Button>}
+              {(formVariant === 'Login' || formVariant === 'Forgot Password') && <Button onClick={() => setIsForgotPassword(!isForgotPassword)}>{isForgotPassword ? 'Login' : 'Forgot Password'}</Button>}
             </Form>
           )
         }}

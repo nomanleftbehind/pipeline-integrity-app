@@ -14,8 +14,8 @@ mutation Login($email: String!, $password: String!) {
   }
 }
 
-mutation Signup($userCreateInput: UserCreateInput!) {
-  signup(userCreateInput: $userCreateInput) {
+mutation Signup($userRegisterInput: UserRegisterInput!) {
+  signup(userRegisterInput: $userRegisterInput) {
     user {
       id
       email
@@ -38,10 +38,14 @@ mutation ForgotPassword($email: String!) {
   forgotPassword(email: $email)
 }
 
-mutation ChangePassword($token: String!, $password: String!) {
-  changePassword(token: $token, password: $password) {
+mutation ChangePassword($changePasswordInput: ChangePasswordInput!) {
+  changePassword(changePasswordInput: $changePasswordInput) {
     user {
       id
+      email
+      firstName
+      lastName
+      role
     }
     error {
       field

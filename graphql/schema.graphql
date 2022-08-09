@@ -26,6 +26,12 @@ type BatchProduct {
   wellBatches: [WellBatch]
 }
 
+input ChangePasswordInput {
+  confirmPassword: String!
+  password: String!
+  token: String!
+}
+
 type Chemical {
   authorized: Boolean!
   bacteria: Boolean
@@ -376,7 +382,7 @@ type Mutation {
   addRisk(id: String!): RiskPayload
   addWellBatch(wellId: String!): WellBatchPayload
   allocateRisk: AllocationPayload
-  changePassword(password: String!, token: String!): AuthPayload
+  changePassword(changePasswordInput: ChangePasswordInput!): AuthPayload!
   connectPipeline(connectNewPipelineId: String!, connectedPipelineId: String, flowCalculationDirection: FlowCalculationDirectionEnum!, pipelineId: String!): PipelinesOnPipelinesPayload
   connectSalesPoint(id: String!, pipelineId: String!): SalesPointPayload
   connectWell(id: String!, pipelineId: String!): WellPayload
@@ -407,9 +413,9 @@ type Mutation {
   editWell(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, name: String, oil: Float, pipelineId: String, water: Float): WellPayload
   editWellBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, productId: String): WellBatchPayload
   forgotPassword(email: String!): Boolean!
-  login(email: String!, password: String!): AuthPayload
-  logout: Boolean
-  signup(userCreateInput: UserCreateInput!): AuthPayload
+  login(email: String!, password: String!): AuthPayload!
+  logout: Boolean!
+  signup(userRegisterInput: UserRegisterInput!): AuthPayload!
 }
 
 input NavigationInput {
@@ -1176,10 +1182,18 @@ type User {
 }
 
 input UserCreateInput {
+  confirmPassword: String!
   email: String!
   firstName: String!
   lastName: String!
   password: String!
+  role: UserRoleEnum!
+}
+
+input UserRegisterInput {
+  email: String!
+  firstName: String!
+  lastName: String!
   role: UserRoleEnum!
 }
 

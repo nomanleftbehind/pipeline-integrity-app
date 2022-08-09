@@ -40,6 +40,12 @@ export type BatchProduct = {
   wellBatches?: Maybe<Array<Maybe<WellBatch>>>;
 };
 
+export type ChangePasswordInput = {
+  confirmPassword: Scalars['String'];
+  password: Scalars['String'];
+  token: Scalars['String'];
+};
+
 export type Chemical = {
   authorized: Scalars['Boolean'];
   bacteria?: Maybe<Scalars['Boolean']>;
@@ -385,7 +391,7 @@ export type Mutation = {
   addRisk?: Maybe<RiskPayload>;
   addWellBatch?: Maybe<WellBatchPayload>;
   allocateRisk?: Maybe<AllocationPayload>;
-  changePassword?: Maybe<AuthPayload>;
+  changePassword: AuthPayload;
   connectPipeline?: Maybe<PipelinesOnPipelinesPayload>;
   connectSalesPoint?: Maybe<SalesPointPayload>;
   connectWell?: Maybe<WellPayload>;
@@ -416,9 +422,9 @@ export type Mutation = {
   editWell?: Maybe<WellPayload>;
   editWellBatch?: Maybe<WellBatchPayload>;
   forgotPassword: Scalars['Boolean'];
-  login?: Maybe<AuthPayload>;
-  logout?: Maybe<Scalars['Boolean']>;
-  signup?: Maybe<AuthPayload>;
+  login: AuthPayload;
+  logout: Scalars['Boolean'];
+  signup: AuthPayload;
 };
 
 
@@ -458,8 +464,7 @@ export type MutationAddWellBatchArgs = {
 
 
 export type MutationChangePasswordArgs = {
-  password: Scalars['String'];
-  token: Scalars['String'];
+  changePasswordInput: ChangePasswordInput;
 };
 
 
@@ -734,7 +739,7 @@ export type MutationLoginArgs = {
 
 
 export type MutationSignupArgs = {
-  userCreateInput: UserCreateInput;
+  userRegisterInput: UserRegisterInput;
 };
 
 export type NavigationInput = {
@@ -1608,10 +1613,18 @@ export type User = {
 };
 
 export type UserCreateInput = {
+  confirmPassword: Scalars['String'];
   email: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   password: Scalars['String'];
+  role: UserRoleEnum;
+};
+
+export type UserRegisterInput = {
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
   role: UserRoleEnum;
 };
 
@@ -1763,19 +1776,19 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { login?: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+export type LoginMutation = { login: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, error?: { field: string, message: string } | null | undefined } };
 
 export type SignupMutationVariables = Exact<{
-  userCreateInput: UserCreateInput;
+  userRegisterInput: UserRegisterInput;
 }>;
 
 
-export type SignupMutation = { signup?: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+export type SignupMutation = { signup: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, error?: { field: string, message: string } | null | undefined } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LogoutMutation = { logout?: boolean | null | undefined };
+export type LogoutMutation = { logout: boolean };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -1785,12 +1798,11 @@ export type ForgotPasswordMutationVariables = Exact<{
 export type ForgotPasswordMutation = { forgotPassword: boolean };
 
 export type ChangePasswordMutationVariables = Exact<{
-  token: Scalars['String'];
-  password: Scalars['String'];
+  changePasswordInput: ChangePasswordInput;
 }>;
 
 
-export type ChangePasswordMutation = { changePassword?: { user?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+export type ChangePasswordMutation = { changePassword: { user?: { id: string, email: string, firstName: string, lastName: string, role: UserRoleEnum } | null | undefined, error?: { field: string, message: string } | null | undefined } };
 
 export type DeletePipelineMutationVariables = Exact<{
   id: Scalars['String'];
@@ -2333,8 +2345,8 @@ export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const SignupDocument = gql`
-    mutation Signup($userCreateInput: UserCreateInput!) {
-  signup(userCreateInput: $userCreateInput) {
+    mutation Signup($userRegisterInput: UserRegisterInput!) {
+  signup(userRegisterInput: $userRegisterInput) {
     user {
       id
       email
@@ -2364,7 +2376,7 @@ export type SignupMutationFn = Apollo.MutationFunction<SignupMutation, SignupMut
  * @example
  * const [signupMutation, { data, loading, error }] = useSignupMutation({
  *   variables: {
- *      userCreateInput: // value for 'userCreateInput'
+ *      userRegisterInput: // value for 'userRegisterInput'
  *   },
  * });
  */
@@ -2437,10 +2449,14 @@ export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswo
 export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordMutation>;
 export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
 export const ChangePasswordDocument = gql`
-    mutation ChangePassword($token: String!, $password: String!) {
-  changePassword(token: $token, password: $password) {
+    mutation ChangePassword($changePasswordInput: ChangePasswordInput!) {
+  changePassword(changePasswordInput: $changePasswordInput) {
     user {
       id
+      email
+      firstName
+      lastName
+      role
     }
     error {
       field
@@ -2464,8 +2480,7 @@ export type ChangePasswordMutationFn = Apollo.MutationFunction<ChangePasswordMut
  * @example
  * const [changePasswordMutation, { data, loading, error }] = useChangePasswordMutation({
  *   variables: {
- *      token: // value for 'token'
- *      password: // value for 'password'
+ *      changePasswordInput: // value for 'changePasswordInput'
  *   },
  * });
  */
