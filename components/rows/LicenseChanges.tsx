@@ -1,7 +1,6 @@
 import { useState, Fragment } from 'react';
 import {
   useLicenseChangesByPipelineIdQuery,
-  useValidatorsLicenseChangeQuery,
   useEditLicenseChangeMutation,
   useAddLicenseChangeMutation,
   useDeleteLicenseChangeMutation,

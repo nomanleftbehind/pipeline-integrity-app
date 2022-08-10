@@ -1,4 +1,5 @@
 import { enumType, objectType, extendType, inputObjectType, stringArg, nonNull, arg, asNexusMethod } from 'nexus';
+import { NexusGenObjects } from 'nexus-typegen';
 import { DateTimeResolver } from 'graphql-scalars';
 import { Context } from '../context';
 import { compare, genSalt, hash } from 'bcryptjs';
@@ -148,6 +149,10 @@ export const UserRoleEnum = enumType({
   },
   name: 'UserRoleEnum',
   members: UserRoleEnumMembers
+});
+
+export const UserRoleEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(UserRoleEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
 });
 
 

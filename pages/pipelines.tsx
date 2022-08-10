@@ -4,6 +4,7 @@ import { getUser } from '../lib/user';
 
 import RenderPipeline from '../components/rows/RenderPipeline';
 import Navigation from '../components/navigation/Navigation';
+import { IValidatorsNavigation } from '../components/rows/PipelineData';
 
 import { IGetServerSideProps } from './register';
 import { usePipelinesByIdLazyQuery, useValidatorsPipelineQuery, PipelinesByIdQueryVariables } from '../graphql/generated/graphql';
@@ -22,6 +23,11 @@ function PipelineDatabase() {
 
   const [pipelinesById, { data, loading, error }] = usePipelinesByIdLazyQuery();
   const { data: validatorsData } = useValidatorsPipelineQuery();
+
+  const validatorsNavigation: IValidatorsNavigation = validatorsData?.validatorsPipeline && {
+    operationEnum: validatorsData.validatorsPipeline.operationEnum,
+    havingEnum: validatorsData.validatorsPipeline.havingEnum,
+  };
 
   const handleNavigation = ({ navigationInput: { hierarchy, search }, skip, take }: PipelinesByIdQueryVariables) => {
     if (hierarchy) {
@@ -50,6 +56,7 @@ function PipelineDatabase() {
           <Navigation
             onNavigationAction={handleNavigation}
             paginationCount={data?.pipelinesById.count || 0}
+            validators={validatorsNavigation}
           />
         </div>
       </div>

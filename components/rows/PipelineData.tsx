@@ -30,6 +30,7 @@ type PickNullable<T, K extends keyof T> = {
 } | null | undefined;
 
 
+export type IValidatorsUserRole = PickNullable<NonNullable<IValidators>, 'userRoleEnum'>;
 export type IValidatorsMechanicalProperties = PickNullable<NonNullable<IValidators>, 'lengthMatchPattern' | 'typeEnum' | 'gradeEnum' | 'yieldStrengthMatchPattern' | 'outsideDiameterMatchPattern' | 'wallThicknessMatchPattern' | 'materialEnum' | 'mopMatchPattern' | 'internalProtectionEnum'>;
 export type IValidatorsLicenseChanges = PickNullable<NonNullable<IValidators>, 'statusEnum' | 'substanceEnum'>;
 export type IValidatorsConnectedSources = PickNullable<NonNullable<IValidators>, 'flowCalculationDirectionEnum'>;
@@ -38,6 +39,7 @@ export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'environmen
 export type IValidatorsPigRuns = PickNullable<NonNullable<IValidators>, 'pigTypeEnum' | 'pigInspectionEnum' | 'operatorEnum'>;
 export type IValidatorsPipelineBatches = PickNullable<NonNullable<IValidators>, 'solubilityEnum' | 'batchProductEnum'>;
 export type IValidatorsChemical = PickNullable<NonNullable<IValidators>, 'chemicalSupplierEnum'>;
+export type IValidatorsNavigation = PickNullable<NonNullable<IValidators>, 'operationEnum' | 'havingEnum'>;
 
 type IView = 'license change' | 'connected source' | 'mechanical properties' | 'pressure test' | 'pig run' | 'pipeline batch' | 'risk' | 'chemical' | 'system fields';
 

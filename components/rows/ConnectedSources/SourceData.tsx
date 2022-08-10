@@ -88,7 +88,7 @@ export default function SourceData({ pipelineId, label, recordEntryProps, formId
               <div style={{ lineHeight: '38px', paddingLeft: '4px' }}>Pipelines</div>
             </div> : label}</th>
           <th>
-            <IconButton aria-label='add source' size='small' title='Connect new source' onClick={toggleShowOptionsForm}>
+            <IconButton aria-label='add source' size='small' title={showOptionsForm ? 'Cancel' : 'Connect new source'} onClick={toggleShowOptionsForm}>
               {showOptionsForm ? <BlockOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />}
             </IconButton>
           </th>

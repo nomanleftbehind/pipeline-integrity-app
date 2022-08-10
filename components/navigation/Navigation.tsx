@@ -17,6 +17,7 @@ import {
 import IconButton from '@mui/material/IconButton';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import { IValidatorsNavigation } from '../rows/PipelineData';
 
 
 type IOnNavigationAction = (arg: PipelinesByIdQueryVariables) => void;
@@ -26,12 +27,13 @@ export type IHandleSearchNavigationChange = { e: React.ChangeEvent<HTMLSelectEle
 export interface INavigationProps {
   onNavigationAction: IOnNavigationAction;
   paginationCount: number;
+  validators?: IValidatorsNavigation;
 };
 
 
 type INavigation = 'hierarchy' | 'search';
 
-const Navigation = ({ onNavigationAction, paginationCount }: INavigationProps) => {
+const Navigation = ({ onNavigationAction, paginationCount, validators }: INavigationProps) => {
 
 
   const [navigation, setNavigation] = useState<INavigation>('hierarchy');
@@ -198,6 +200,7 @@ const Navigation = ({ onNavigationAction, paginationCount }: INavigationProps) =
         handleClick={handleSearchNavigationClick}
         addFilter={addFilter}
         removeFilter={removeFilter}
+        validators={validators}
       />
     }
   }

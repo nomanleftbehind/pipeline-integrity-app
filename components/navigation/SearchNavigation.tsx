@@ -3,7 +3,6 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import {
-  useOperationAndHavingEnumQuery,
   TableEnum,
   OperationEnum,
   HavingEnum,
@@ -14,7 +13,7 @@ import {
 
 import { IHandleSearchNavigationChange } from './Navigation';
 import { prettifyColumnName } from '../Header';
-import { Table } from '@mui/material';
+import { IValidatorsNavigation } from '../rows/PipelineData';
 
 
 
@@ -28,13 +27,12 @@ interface ISearchNavigationProps {
   removeFilter: (index: number) => void;
   handleChange: ({ e, index, key }: IHandleSearchNavigationChange) => void;
   handleClick: () => void;
+  validators?: IValidatorsNavigation;
 }
 
-export default function SearchNavigation({ searchNavigationInputArray, searchEnumObjectArray, options, addFilter, removeFilter, handleChange, handleClick }: ISearchNavigationProps) {
+export default function SearchNavigation({ searchNavigationInputArray, searchEnumObjectArray, options, addFilter, removeFilter, handleChange, handleClick, validators }: ISearchNavigationProps) {
 
   const tableOptions = options?.map(({ table }) => table);
-
-  const { data: dataOperationAndHavingEnum } = useOperationAndHavingEnumQuery();
 
   return (
     <div className='search-navigation-form'>
@@ -74,21 +72,22 @@ export default function SearchNavigation({ searchNavigationInputArray, searchEnu
           {[TableEnum.LicenseChanges, TableEnum.Wells, TableEnum.SalesPoints, TableEnum.PigRuns, TableEnum.PressureTests, TableEnum.PipelineBatches, TableEnum.UpstreamPipelines, TableEnum.DownstreamPipelines].includes(table) && <>
             <div style={{ gridRow: 3, gridColumn: 2 }}>Having:</div>
             <select style={{ gridRow: 3, gridColumn: 3 }} value={having} onChange={(e) => handleChange({ e, index, key: 'having' })}>
-              {dataOperationAndHavingEnum?.validators && Object.values(dataOperationAndHavingEnum.validators.havingEnum).filter((operationDb) => {
+              {validators && validators.havingEnum.filter(({ serverEnum }) => {
+
                 // Special case when searching for Count of related fields, field is set to `id` and type is set to `Int` even though `id` is of type `String`
                 // We are never able to select `minimum` or `maximum` Having when type is String, but because in this special case, we have to add special condition when current Having is Count.
                 if (['Int', 'Float', 'DateTime'].includes(type) && having !== HavingEnum.Count && ![TableEnum.DownstreamPipelines, TableEnum.UpstreamPipelines].includes(table)) {
                   return true;
                 }
-                return [HavingEnum.Any, HavingEnum.Count].includes(operationDb);
+                return serverEnum === HavingEnum.Any || serverEnum === HavingEnum.Count;
 
-              }).map((operationDb) => {
+              }).map(({ serverEnum }) => {
 
-                const prettyHaving = prettifyColumnName(operationDb);
-                const customHaving = type === 'DateTime' ? operationDb === HavingEnum.Minimum ? 'First' : operationDb === HavingEnum.Maximum ? 'Last' : prettyHaving : prettyHaving;
+                const prettyHaving = prettifyColumnName(serverEnum);
+                const customHaving = type === 'DateTime' ? serverEnum === HavingEnum.Minimum ? 'First' : serverEnum === HavingEnum.Maximum ? 'Last' : prettyHaving : prettyHaving;
 
                 return (
-                  <option key={operationDb} value={operationDb}>{customHaving}</option>
+                  <option key={serverEnum} value={serverEnum}>{customHaving}</option>
                 );
               })}
             </select>
@@ -96,24 +95,24 @@ export default function SearchNavigation({ searchNavigationInputArray, searchEnu
 
           <div style={{ gridRow: 4, gridColumn: 2 }}>Operation:</div>
           <select style={{ gridRow: 4, gridColumn: 3 }} value={operation} onChange={(e) => handleChange({ e, index, key: 'operation' })}>
-            {dataOperationAndHavingEnum?.validators && Object.values(dataOperationAndHavingEnum.validators.operationEnum).filter((operationDb) => {
+            {validators && validators.operationEnum.filter(({ serverEnum }) => {
 
               if (['Int', 'Float', 'DateTime'].includes(type) || having === HavingEnum.Count) {
-                return [OperationEnum.Equals, OperationEnum.GreaterThan, OperationEnum.GreaterThanOrEqual, OperationEnum.LessThan, OperationEnum.LessThanOrEqual, OperationEnum.Not].includes(operationDb);
+                return [OperationEnum.Equals, OperationEnum.GreaterThan, OperationEnum.GreaterThanOrEqual, OperationEnum.LessThan, OperationEnum.LessThanOrEqual, OperationEnum.Not].includes(serverEnum as OperationEnum);
               }
               if (type === 'String') {
-                return [OperationEnum.Equals, OperationEnum.Contains, OperationEnum.StartsWith, OperationEnum.EndsWith, OperationEnum.Not].includes(operationDb);
+                return [OperationEnum.Equals, OperationEnum.Contains, OperationEnum.StartsWith, OperationEnum.EndsWith, OperationEnum.Not].includes(serverEnum as OperationEnum);
               }
               if (type === 'Boolean' || searchEnumObjectArray[index].length > 0) {
-                return [OperationEnum.Equals, OperationEnum.Not].includes(operationDb);
+                return [OperationEnum.Equals, OperationEnum.Not].includes(serverEnum as OperationEnum);
               }
 
-            }).map((operationDb) => {
+            }).map(({ serverEnum }) => {
 
-              const prettyOperation = prettifyColumnName(operationDb);
-              const customOperation = type === 'DateTime' ? operationDb === OperationEnum.GreaterThan ? 'After' : operationDb === OperationEnum.GreaterThanOrEqual ? 'After Or Equal' : operationDb === OperationEnum.LessThan ? 'Before' : operationDb === OperationEnum.LessThanOrEqual ? 'Before Or Equal' : prettyOperation : prettyOperation;
+              const prettyOperation = prettifyColumnName(serverEnum);
+              const customOperation = type === 'DateTime' ? serverEnum === OperationEnum.GreaterThan ? 'After' : serverEnum === OperationEnum.GreaterThanOrEqual ? 'After Or Equal' : serverEnum === OperationEnum.LessThan ? 'Before' : serverEnum === OperationEnum.LessThanOrEqual ? 'Before Or Equal' : prettyOperation : prettyOperation;
               return (
-                <option key={operationDb} value={operationDb}>{customOperation}</option>
+                <option key={serverEnum} value={serverEnum}>{customOperation}</option>
               );
             })}
           </select>

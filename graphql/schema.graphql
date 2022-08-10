@@ -96,17 +96,6 @@ enum EnvironmentProximityToEnum {
   WC4
 }
 
-type EnvironmentProximityToEnumObject {
-  WB1: String!
-  WB3: String!
-  WB4: String!
-  WB5: String!
-  WC1: String!
-  WC2: String!
-  WC3: String!
-  WC4: String!
-}
-
 type Facility {
   createdAt: DateTime!
   createdBy: User!
@@ -137,11 +126,6 @@ enum FlowCalculationDirectionEnum {
   Upstream
 }
 
-type FlowCalculationDirectionEnumObject {
-  Downstream: String!
-  Upstream: String!
-}
-
 enum FromToFeatureEnum {
   Battery
   BlindEnd
@@ -158,22 +142,6 @@ enum FromToFeatureEnum {
   Well
 }
 
-type FromToFeatureEnumObject {
-  Battery: String!
-  BlindEnd: String!
-  CompressorStation: String!
-  GasProcessingPlant: String!
-  Header: String!
-  InjectionPlant: String!
-  MeterStation: String!
-  Pipeline: String!
-  PumpStation: String!
-  Satellite: String!
-  StorageTank: String!
-  UndergroundCapOrTieIn: String!
-  Well: String!
-}
-
 enum GeotechnicalFacingEnum {
   E
   N
@@ -183,17 +151,6 @@ enum GeotechnicalFacingEnum {
   SE
   SW
   W
-}
-
-type GeotechnicalFacingEnumObject {
-  E: String!
-  N: String!
-  NE: String!
-  NW: String!
-  S: String!
-  SE: String!
-  SW: String!
-  W: String!
 }
 
 enum GradeEnum {
@@ -238,60 +195,11 @@ enum GradeEnum {
   GradeX52
 }
 
-type GradeEnumObject {
-  Grade5: String!
-  Grade9: String!
-  Grade11: String!
-  Grade17: String!
-  Grade25: String!
-  Grade35: String!
-  Grade150: String!
-  Grade155: String!
-  Grade200: String!
-  Grade241: String!
-  Grade300: String!
-  Grade800: String!
-  Grade810: String!
-  Grade900: String!
-  Grade1000: String!
-  Grade1103: String!
-  Grade1200: String!
-  Grade1250: String!
-  Grade2010: String!
-  Grade2250: String!
-  Grade2411: String!
-  Grade2413: String!
-  Grade2500: String!
-  Grade2750: String!
-  Grade2901: String!
-  Grade2902: String!
-  Grade3591: String!
-  Grade3592: String!
-  Grade3593: String!
-  GradeA: String!
-  GradeB: String!
-  GradeBW1: String!
-  GradeJ55: String!
-  GradeT1A: String!
-  GradeT1B: String!
-  GradeT4: String!
-  GradeT4A: String!
-  GradeX42: String!
-  GradeX52: String!
-}
-
 enum HavingEnum {
   any
   count
   maximum
   minimum
-}
-
-type HavingEnumObject {
-  _any: HavingEnum!
-  _count: HavingEnum!
-  _max: HavingEnum!
-  _min: HavingEnum!
 }
 
 input HierarchyInput {
@@ -306,15 +214,6 @@ enum InternalProtectionEnum {
   ThinFilm
   Uncoated
   Unknown
-}
-
-type InternalProtectionEnumObject {
-  Cement: String!
-  ExpandedPolyethylene: String!
-  FreeStandingSlipLined: String!
-  ThinFilm: String!
-  Uncoated: String!
-  Unknown: String!
 }
 
 type LicenseChange {
@@ -343,12 +242,6 @@ enum LimitingSpecEnum {
   ANSI600
 }
 
-type LimitingSpecEnumObject {
-  ANSI150: String!
-  ANSI300: String!
-  ANSI600: String!
-}
-
 enum MaterialEnum {
   Aluminum
   AsbestosCement
@@ -359,18 +252,6 @@ enum MaterialEnum {
   PolyvinylChloride
   Steel
   Unknown
-}
-
-type MaterialEnumObject {
-  Aluminum: String!
-  AsbestosCement: String!
-  CelluloseAcetateButyrate: String!
-  Composite: String!
-  Fiberglass: String!
-  Polyethylene: String!
-  PolyvinylChloride: String!
-  Steel: String!
-  Unknown: String!
 }
 
 type Mutation {
@@ -435,26 +316,9 @@ enum OperationEnum {
   startsWith
 }
 
-type OperationEnumObject {
-  contains: OperationEnum!
-  endsWith: OperationEnum!
-  equals: OperationEnum!
-  gt: OperationEnum!
-  gte: OperationEnum!
-  lt: OperationEnum!
-  lte: OperationEnum!
-  not: OperationEnum!
-  startsWith: OperationEnum!
-}
-
 enum PigInspectionEnum {
   Failed
   Good
-}
-
-type PigInspectionEnumObject {
-  Failed: String!
-  Good: String!
 }
 
 type PigRun {
@@ -576,104 +440,6 @@ enum PigTypeEnum {
   bullet
   disc
   redball
-}
-
-type PigTypeEnumObject {
-  Ball: String!
-  Black3inBall: String!
-  Blue3inScrapper: String!
-  BlueRibbed: String!
-  BlueinScraper: String!
-  Foam: String!
-  GSCR: String!
-  Highline: String!
-  M_D_Foamy: String!
-  PigType1inStubby: String!
-  PigType2green2disc: String!
-  PigType2inGSCR: String!
-  PigType2inGSCR_GFP: String!
-  PigType2inPSCR: String!
-  PigType2inPSCR_FLM: String!
-  PigType2inPurpleDisc: String!
-  PigType2inStubby: String!
-  PigType2ingscr: String!
-  PigType2inpurple: String!
-  PigType2purple2disc: String!
-  PigType3: String!
-  PigType3_scrapper: String!
-  PigType3in: String!
-  PigType3inArgus: String!
-  PigType3inBlueRibbed: String!
-  PigType3inBrownRibbed: String!
-  PigType3inGSCR: String!
-  PigType3inGreenDisc: String!
-  PigType3inGreenRibbed: String!
-  PigType3inPSCR: String!
-  PigType3inPurpleScraper: String!
-  PigType3inPurpleStubby: String!
-  PigType3inRscr: String!
-  PigType3inScrapper: String!
-  PigType3inStubby: String!
-  PigType3inWhite: String!
-  PigType3ingreendisc: String!
-  PigType3inpurple2disc: String!
-  PigType3inpurpledisc: String!
-  PigType3inpurplescraper: String!
-  PigType3inredscrape: String!
-  PigType3inscr: String!
-  PigType3inscrapper: String!
-  PigType4Green: String!
-  PigType4GreenStubby: String!
-  PigType4_GreenRibbed: String!
-  PigType4gree2disc: String!
-  PigType4green2disc: String!
-  PigType4in: String!
-  PigType4inArgus: String!
-  PigType4inBlueDisc: String!
-  PigType4inFoam: String!
-  PigType4inGSCR: String!
-  PigType4inGreenDisc: String!
-  PigType4inGreendisc: String!
-  PigType4inpurplescraper: String!
-  PigType4inscrapper: String!
-  PigType6inArgus: String!
-  PigType6inGreenDisc: String!
-  PigType6inGreenRibbed: String!
-  PigType6inargus: String!
-  PigType6ingreenscraper: String!
-  PigType6inscrapper: String!
-  PigType8inBlackDisc: String!
-  PigType8inFoam: String!
-  Purple3inDisc: String!
-  Red3inScrapper: String!
-  Red4inscraper: String!
-  RedStubby: String!
-  Redscraper: String!
-  SIMAY2018: String!
-  ScaperP314: String!
-  ScaperPP309: String!
-  ScraperP200: String!
-  ScraperP204: String!
-  ScraperP206: String!
-  ScraperP208: String!
-  ScraperP300: String!
-  ScraperP301: String!
-  ScraperP303: String!
-  ScraperP304: String!
-  ScraperP305: String!
-  ScraperP309: String!
-  ScraperP311: String!
-  ScraperP312: String!
-  ScraperP314: String!
-  ScraperP400: String!
-  ScraperP401: String!
-  Scrapper: String!
-  ScrapperP307: String!
-  Stubby: String!
-  Torpedo: String!
-  bullet: String!
-  disc: String!
-  redball: String!
 }
 
 type Pipeline {
@@ -866,7 +632,6 @@ type Query {
   searchNavigationOptions: [SearchNavigationObject!]!
   sideBar: [SideBar]
   userCount: Int
-  validators: Validator
   validatorsPipeline: ValidatorsPipeline
   wellBatchesByWellId(wellId: String!): [WellBatch]
   wellOptions(pipelineId: String!): [SourceOptions]
@@ -1016,11 +781,6 @@ enum SolubilityEnum {
   Water
 }
 
-type SolubilityEnumObject {
-  Oil: String!
-  Water: String!
-}
-
 type SourceGroupBy {
   firstInjection: DateTime
   firstProduction: DateTime
@@ -1053,18 +813,6 @@ enum StatusEnum {
   ToBeConstructed
 }
 
-type StatusEnumObject {
-  Abandoned: String!
-  Active: String!
-  Cancelled: String!
-  Discontinued: String!
-  New: String!
-  NotConstructed: String!
-  Operating: String!
-  Removed: String!
-  ToBeConstructed: String!
-}
-
 enum SubstanceEnum {
   CrudeOil
   FreshWater
@@ -1074,17 +822,6 @@ enum SubstanceEnum {
   OilWellEffluent
   SaltWater
   SourNaturalGas
-}
-
-type SubstanceEnumObject {
-  CrudeOil: String!
-  FreshWater: String!
-  FuelGas: String!
-  LVPProducts: String!
-  NaturalGas: String!
-  OilWellEffluent: String!
-  SaltWater: String!
-  SourNaturalGas: String!
 }
 
 enum TableEnum {
@@ -1130,35 +867,6 @@ enum TypeEnum {
   TypeWSLP
   TypeZ2451
   TypeZ2453
-}
-
-type TypeEnumObject {
-  Type5A: String!
-  Type5L: String!
-  Type5LX: String!
-  Type515: String!
-  Type2306: String!
-  Type3406: String!
-  Type3408: String!
-  Type6063: String!
-  Type6351: String!
-  TypeA53: String!
-  TypeA106: String!
-  TypeA120: String!
-  TypeAMERON: String!
-  TypeB5IS: String!
-  TypeB51S: String!
-  TypeB515: String!
-  TypeCENTRON: String!
-  TypeCIBA: String!
-  TypeFSLP: String!
-  TypeREDTHR: String!
-  TypeSMITH: String!
-  TypeSTAR: String!
-  TypeTBS: String!
-  TypeWSLP: String!
-  TypeZ2451: String!
-  TypeZ2453: String!
 }
 
 type User {
@@ -1207,48 +915,9 @@ enum UserRoleEnum {
   OPERATOR
 }
 
-type UserRoleEnumObject {
-  ADMIN: String!
-  CATHODIC: String!
-  CHEMICAL: String!
-  CONTRACTOR: String!
-  ENGINEER: String!
-  OFFICE: String!
-  OPERATOR: String!
-}
-
 input UserUniqueInput {
   email: String
   id: String
-}
-
-type Validator {
-  anyTextMatchPattern: String!
-  environmentProximityToEnum: EnvironmentProximityToEnumObject!
-  flowCalculationDirectionEnum: FlowCalculationDirectionEnumObject!
-  fromToFeatureEnum: FromToFeatureEnumObject!
-  fromToMatchPattern: String!
-  geotechnicalFacingEnum: GeotechnicalFacingEnumObject!
-  gradeEnum: GradeEnumObject!
-  havingEnum: HavingEnumObject!
-  internalProtectionEnum: InternalProtectionEnumObject!
-  lengthMatchPattern: String!
-  licenseMatchPattern: String!
-  limitingSpecEnum: LimitingSpecEnumObject!
-  materialEnum: MaterialEnumObject!
-  mopMatchPattern: String!
-  operationEnum: OperationEnumObject!
-  outsideDiameterMatchPattern: String!
-  pigInspectionEnum: PigInspectionEnumObject!
-  pigTypeEnum: PigTypeEnumObject!
-  segmentMatchPattern: String!
-  solubilityEnum: SolubilityEnumObject!
-  statusEnum: StatusEnumObject!
-  substanceEnum: SubstanceEnumObject!
-  typeEnum: TypeEnumObject!
-  userRoleEnum: UserRoleEnumObject!
-  wallThicknessMatchPattern: String!
-  yieldStrengthMatchPattern: String!
 }
 
 type ValidatorsPipeline {
@@ -1260,12 +929,14 @@ type ValidatorsPipeline {
   fromToMatchPattern: String!
   geotechnicalFacingEnum: [EnumObject!]!
   gradeEnum: [EnumObject!]!
+  havingEnum: [EnumObject!]!
   internalProtectionEnum: [EnumObject!]!
   lengthMatchPattern: String!
   licenseMatchPattern: String!
   limitingSpecEnum: [EnumObject!]!
   materialEnum: [EnumObject!]!
   mopMatchPattern: String!
+  operationEnum: [EnumObject!]!
   operatorEnum: [EnumObject!]!
   outsideDiameterMatchPattern: String!
   pigInspectionEnum: [EnumObject!]!
@@ -1275,6 +946,7 @@ type ValidatorsPipeline {
   statusEnum: [EnumObject!]!
   substanceEnum: [EnumObject!]!
   typeEnum: [EnumObject!]!
+  userRoleEnum: [EnumObject!]!
   wallThicknessMatchPattern: String!
   yieldStrengthMatchPattern: String!
 }

@@ -105,17 +105,6 @@ export enum EnvironmentProximityToEnum {
   Wc4 = 'WC4'
 }
 
-export type EnvironmentProximityToEnumObject = {
-  WB1: Scalars['String'];
-  WB3: Scalars['String'];
-  WB4: Scalars['String'];
-  WB5: Scalars['String'];
-  WC1: Scalars['String'];
-  WC2: Scalars['String'];
-  WC3: Scalars['String'];
-  WC4: Scalars['String'];
-};
-
 export type Facility = {
   createdAt: Scalars['DateTime'];
   createdBy: User;
@@ -146,11 +135,6 @@ export enum FlowCalculationDirectionEnum {
   Upstream = 'Upstream'
 }
 
-export type FlowCalculationDirectionEnumObject = {
-  Downstream: Scalars['String'];
-  Upstream: Scalars['String'];
-};
-
 export enum FromToFeatureEnum {
   Battery = 'Battery',
   BlindEnd = 'BlindEnd',
@@ -167,22 +151,6 @@ export enum FromToFeatureEnum {
   Well = 'Well'
 }
 
-export type FromToFeatureEnumObject = {
-  Battery: Scalars['String'];
-  BlindEnd: Scalars['String'];
-  CompressorStation: Scalars['String'];
-  GasProcessingPlant: Scalars['String'];
-  Header: Scalars['String'];
-  InjectionPlant: Scalars['String'];
-  MeterStation: Scalars['String'];
-  Pipeline: Scalars['String'];
-  PumpStation: Scalars['String'];
-  Satellite: Scalars['String'];
-  StorageTank: Scalars['String'];
-  UndergroundCapOrTieIn: Scalars['String'];
-  Well: Scalars['String'];
-};
-
 export enum GeotechnicalFacingEnum {
   E = 'E',
   N = 'N',
@@ -193,17 +161,6 @@ export enum GeotechnicalFacingEnum {
   Sw = 'SW',
   W = 'W'
 }
-
-export type GeotechnicalFacingEnumObject = {
-  E: Scalars['String'];
-  N: Scalars['String'];
-  NE: Scalars['String'];
-  NW: Scalars['String'];
-  S: Scalars['String'];
-  SE: Scalars['String'];
-  SW: Scalars['String'];
-  W: Scalars['String'];
-};
 
 export enum GradeEnum {
   Grade5 = 'Grade5',
@@ -247,61 +204,12 @@ export enum GradeEnum {
   GradeX52 = 'GradeX52'
 }
 
-export type GradeEnumObject = {
-  Grade5: Scalars['String'];
-  Grade9: Scalars['String'];
-  Grade11: Scalars['String'];
-  Grade17: Scalars['String'];
-  Grade25: Scalars['String'];
-  Grade35: Scalars['String'];
-  Grade150: Scalars['String'];
-  Grade155: Scalars['String'];
-  Grade200: Scalars['String'];
-  Grade241: Scalars['String'];
-  Grade300: Scalars['String'];
-  Grade800: Scalars['String'];
-  Grade810: Scalars['String'];
-  Grade900: Scalars['String'];
-  Grade1000: Scalars['String'];
-  Grade1103: Scalars['String'];
-  Grade1200: Scalars['String'];
-  Grade1250: Scalars['String'];
-  Grade2010: Scalars['String'];
-  Grade2250: Scalars['String'];
-  Grade2411: Scalars['String'];
-  Grade2413: Scalars['String'];
-  Grade2500: Scalars['String'];
-  Grade2750: Scalars['String'];
-  Grade2901: Scalars['String'];
-  Grade2902: Scalars['String'];
-  Grade3591: Scalars['String'];
-  Grade3592: Scalars['String'];
-  Grade3593: Scalars['String'];
-  GradeA: Scalars['String'];
-  GradeB: Scalars['String'];
-  GradeBW1: Scalars['String'];
-  GradeJ55: Scalars['String'];
-  GradeT1A: Scalars['String'];
-  GradeT1B: Scalars['String'];
-  GradeT4: Scalars['String'];
-  GradeT4A: Scalars['String'];
-  GradeX42: Scalars['String'];
-  GradeX52: Scalars['String'];
-};
-
 export enum HavingEnum {
   Any = 'any',
   Count = 'count',
   Maximum = 'maximum',
   Minimum = 'minimum'
 }
-
-export type HavingEnumObject = {
-  _any: HavingEnum;
-  _count: HavingEnum;
-  _max: HavingEnum;
-  _min: HavingEnum;
-};
 
 export type HierarchyInput = {
   id: Scalars['String'];
@@ -316,15 +224,6 @@ export enum InternalProtectionEnum {
   Uncoated = 'Uncoated',
   Unknown = 'Unknown'
 }
-
-export type InternalProtectionEnumObject = {
-  Cement: Scalars['String'];
-  ExpandedPolyethylene: Scalars['String'];
-  FreeStandingSlipLined: Scalars['String'];
-  ThinFilm: Scalars['String'];
-  Uncoated: Scalars['String'];
-  Unknown: Scalars['String'];
-};
 
 export type LicenseChange = {
   authorized: Scalars['Boolean'];
@@ -352,12 +251,6 @@ export enum LimitingSpecEnum {
   Ansi600 = 'ANSI600'
 }
 
-export type LimitingSpecEnumObject = {
-  ANSI150: Scalars['String'];
-  ANSI300: Scalars['String'];
-  ANSI600: Scalars['String'];
-};
-
 export enum MaterialEnum {
   Aluminum = 'Aluminum',
   AsbestosCement = 'AsbestosCement',
@@ -369,18 +262,6 @@ export enum MaterialEnum {
   Steel = 'Steel',
   Unknown = 'Unknown'
 }
-
-export type MaterialEnumObject = {
-  Aluminum: Scalars['String'];
-  AsbestosCement: Scalars['String'];
-  CelluloseAcetateButyrate: Scalars['String'];
-  Composite: Scalars['String'];
-  Fiberglass: Scalars['String'];
-  Polyethylene: Scalars['String'];
-  PolyvinylChloride: Scalars['String'];
-  Steel: Scalars['String'];
-  Unknown: Scalars['String'];
-};
 
 export type Mutation = {
   addChemical?: Maybe<ChemicalPayload>;
@@ -759,27 +640,10 @@ export enum OperationEnum {
   StartsWith = 'startsWith'
 }
 
-export type OperationEnumObject = {
-  contains: OperationEnum;
-  endsWith: OperationEnum;
-  equals: OperationEnum;
-  gt: OperationEnum;
-  gte: OperationEnum;
-  lt: OperationEnum;
-  lte: OperationEnum;
-  not: OperationEnum;
-  startsWith: OperationEnum;
-};
-
 export enum PigInspectionEnum {
   Failed = 'Failed',
   Good = 'Good'
 }
-
-export type PigInspectionEnumObject = {
-  Failed: Scalars['String'];
-  Good: Scalars['String'];
-};
 
 export type PigRun = {
   authorized: Scalars['Boolean'];
@@ -901,104 +765,6 @@ export enum PigTypeEnum {
   Disc = 'disc',
   Redball = 'redball'
 }
-
-export type PigTypeEnumObject = {
-  Ball: Scalars['String'];
-  Black3inBall: Scalars['String'];
-  Blue3inScrapper: Scalars['String'];
-  BlueRibbed: Scalars['String'];
-  BlueinScraper: Scalars['String'];
-  Foam: Scalars['String'];
-  GSCR: Scalars['String'];
-  Highline: Scalars['String'];
-  M_D_Foamy: Scalars['String'];
-  PigType1inStubby: Scalars['String'];
-  PigType2green2disc: Scalars['String'];
-  PigType2inGSCR: Scalars['String'];
-  PigType2inGSCR_GFP: Scalars['String'];
-  PigType2inPSCR: Scalars['String'];
-  PigType2inPSCR_FLM: Scalars['String'];
-  PigType2inPurpleDisc: Scalars['String'];
-  PigType2inStubby: Scalars['String'];
-  PigType2ingscr: Scalars['String'];
-  PigType2inpurple: Scalars['String'];
-  PigType2purple2disc: Scalars['String'];
-  PigType3: Scalars['String'];
-  PigType3_scrapper: Scalars['String'];
-  PigType3in: Scalars['String'];
-  PigType3inArgus: Scalars['String'];
-  PigType3inBlueRibbed: Scalars['String'];
-  PigType3inBrownRibbed: Scalars['String'];
-  PigType3inGSCR: Scalars['String'];
-  PigType3inGreenDisc: Scalars['String'];
-  PigType3inGreenRibbed: Scalars['String'];
-  PigType3inPSCR: Scalars['String'];
-  PigType3inPurpleScraper: Scalars['String'];
-  PigType3inPurpleStubby: Scalars['String'];
-  PigType3inRscr: Scalars['String'];
-  PigType3inScrapper: Scalars['String'];
-  PigType3inStubby: Scalars['String'];
-  PigType3inWhite: Scalars['String'];
-  PigType3ingreendisc: Scalars['String'];
-  PigType3inpurple2disc: Scalars['String'];
-  PigType3inpurpledisc: Scalars['String'];
-  PigType3inpurplescraper: Scalars['String'];
-  PigType3inredscrape: Scalars['String'];
-  PigType3inscr: Scalars['String'];
-  PigType3inscrapper: Scalars['String'];
-  PigType4Green: Scalars['String'];
-  PigType4GreenStubby: Scalars['String'];
-  PigType4_GreenRibbed: Scalars['String'];
-  PigType4gree2disc: Scalars['String'];
-  PigType4green2disc: Scalars['String'];
-  PigType4in: Scalars['String'];
-  PigType4inArgus: Scalars['String'];
-  PigType4inBlueDisc: Scalars['String'];
-  PigType4inFoam: Scalars['String'];
-  PigType4inGSCR: Scalars['String'];
-  PigType4inGreenDisc: Scalars['String'];
-  PigType4inGreendisc: Scalars['String'];
-  PigType4inpurplescraper: Scalars['String'];
-  PigType4inscrapper: Scalars['String'];
-  PigType6inArgus: Scalars['String'];
-  PigType6inGreenDisc: Scalars['String'];
-  PigType6inGreenRibbed: Scalars['String'];
-  PigType6inargus: Scalars['String'];
-  PigType6ingreenscraper: Scalars['String'];
-  PigType6inscrapper: Scalars['String'];
-  PigType8inBlackDisc: Scalars['String'];
-  PigType8inFoam: Scalars['String'];
-  Purple3inDisc: Scalars['String'];
-  Red3inScrapper: Scalars['String'];
-  Red4inscraper: Scalars['String'];
-  RedStubby: Scalars['String'];
-  Redscraper: Scalars['String'];
-  SIMAY2018: Scalars['String'];
-  ScaperP314: Scalars['String'];
-  ScaperPP309: Scalars['String'];
-  ScraperP200: Scalars['String'];
-  ScraperP204: Scalars['String'];
-  ScraperP206: Scalars['String'];
-  ScraperP208: Scalars['String'];
-  ScraperP300: Scalars['String'];
-  ScraperP301: Scalars['String'];
-  ScraperP303: Scalars['String'];
-  ScraperP304: Scalars['String'];
-  ScraperP305: Scalars['String'];
-  ScraperP309: Scalars['String'];
-  ScraperP311: Scalars['String'];
-  ScraperP312: Scalars['String'];
-  ScraperP314: Scalars['String'];
-  ScraperP400: Scalars['String'];
-  ScraperP401: Scalars['String'];
-  Scrapper: Scalars['String'];
-  ScrapperP307: Scalars['String'];
-  Stubby: Scalars['String'];
-  Torpedo: Scalars['String'];
-  bullet: Scalars['String'];
-  disc: Scalars['String'];
-  redball: Scalars['String'];
-};
 
 export type Pipeline = {
   authorized: Scalars['Boolean'];
@@ -1187,7 +953,6 @@ export type Query = {
   searchNavigationOptions: Array<SearchNavigationObject>;
   sideBar?: Maybe<Array<Maybe<SideBar>>>;
   userCount?: Maybe<Scalars['Int']>;
-  validators?: Maybe<Validator>;
   validatorsPipeline?: Maybe<ValidatorsPipeline>;
   wellBatchesByWellId?: Maybe<Array<Maybe<WellBatch>>>;
   wellOptions?: Maybe<Array<Maybe<SourceOptions>>>;
@@ -1447,11 +1212,6 @@ export enum SolubilityEnum {
   Water = 'Water'
 }
 
-export type SolubilityEnumObject = {
-  Oil: Scalars['String'];
-  Water: Scalars['String'];
-};
-
 export type SourceGroupBy = {
   firstInjection?: Maybe<Scalars['DateTime']>;
   firstProduction?: Maybe<Scalars['DateTime']>;
@@ -1484,18 +1244,6 @@ export enum StatusEnum {
   ToBeConstructed = 'ToBeConstructed'
 }
 
-export type StatusEnumObject = {
-  Abandoned: Scalars['String'];
-  Active: Scalars['String'];
-  Cancelled: Scalars['String'];
-  Discontinued: Scalars['String'];
-  New: Scalars['String'];
-  NotConstructed: Scalars['String'];
-  Operating: Scalars['String'];
-  Removed: Scalars['String'];
-  ToBeConstructed: Scalars['String'];
-};
-
 export enum SubstanceEnum {
   CrudeOil = 'CrudeOil',
   FreshWater = 'FreshWater',
@@ -1506,17 +1254,6 @@ export enum SubstanceEnum {
   SaltWater = 'SaltWater',
   SourNaturalGas = 'SourNaturalGas'
 }
-
-export type SubstanceEnumObject = {
-  CrudeOil: Scalars['String'];
-  FreshWater: Scalars['String'];
-  FuelGas: Scalars['String'];
-  LVPProducts: Scalars['String'];
-  NaturalGas: Scalars['String'];
-  OilWellEffluent: Scalars['String'];
-  SaltWater: Scalars['String'];
-  SourNaturalGas: Scalars['String'];
-};
 
 export enum TableEnum {
   Chemical = 'chemical',
@@ -1562,35 +1299,6 @@ export enum TypeEnum {
   TypeZ2451 = 'TypeZ2451',
   TypeZ2453 = 'TypeZ2453'
 }
-
-export type TypeEnumObject = {
-  Type5A: Scalars['String'];
-  Type5L: Scalars['String'];
-  Type5LX: Scalars['String'];
-  Type515: Scalars['String'];
-  Type2306: Scalars['String'];
-  Type3406: Scalars['String'];
-  Type3408: Scalars['String'];
-  Type6063: Scalars['String'];
-  Type6351: Scalars['String'];
-  TypeA53: Scalars['String'];
-  TypeA106: Scalars['String'];
-  TypeA120: Scalars['String'];
-  TypeAMERON: Scalars['String'];
-  TypeB5IS: Scalars['String'];
-  TypeB51S: Scalars['String'];
-  TypeB515: Scalars['String'];
-  TypeCENTRON: Scalars['String'];
-  TypeCIBA: Scalars['String'];
-  TypeFSLP: Scalars['String'];
-  TypeREDTHR: Scalars['String'];
-  TypeSMITH: Scalars['String'];
-  TypeSTAR: Scalars['String'];
-  TypeTBS: Scalars['String'];
-  TypeWSLP: Scalars['String'];
-  TypeZ2451: Scalars['String'];
-  TypeZ2453: Scalars['String'];
-};
 
 export type User = {
   email: Scalars['String'];
@@ -1638,48 +1346,9 @@ export enum UserRoleEnum {
   Operator = 'OPERATOR'
 }
 
-export type UserRoleEnumObject = {
-  ADMIN: Scalars['String'];
-  CATHODIC: Scalars['String'];
-  CHEMICAL: Scalars['String'];
-  CONTRACTOR: Scalars['String'];
-  ENGINEER: Scalars['String'];
-  OFFICE: Scalars['String'];
-  OPERATOR: Scalars['String'];
-};
-
 export type UserUniqueInput = {
   email?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
-};
-
-export type Validator = {
-  anyTextMatchPattern: Scalars['String'];
-  environmentProximityToEnum: EnvironmentProximityToEnumObject;
-  flowCalculationDirectionEnum: FlowCalculationDirectionEnumObject;
-  fromToFeatureEnum: FromToFeatureEnumObject;
-  fromToMatchPattern: Scalars['String'];
-  geotechnicalFacingEnum: GeotechnicalFacingEnumObject;
-  gradeEnum: GradeEnumObject;
-  havingEnum: HavingEnumObject;
-  internalProtectionEnum: InternalProtectionEnumObject;
-  lengthMatchPattern: Scalars['String'];
-  licenseMatchPattern: Scalars['String'];
-  limitingSpecEnum: LimitingSpecEnumObject;
-  materialEnum: MaterialEnumObject;
-  mopMatchPattern: Scalars['String'];
-  operationEnum: OperationEnumObject;
-  outsideDiameterMatchPattern: Scalars['String'];
-  pigInspectionEnum: PigInspectionEnumObject;
-  pigTypeEnum: PigTypeEnumObject;
-  segmentMatchPattern: Scalars['String'];
-  solubilityEnum: SolubilityEnumObject;
-  statusEnum: StatusEnumObject;
-  substanceEnum: SubstanceEnumObject;
-  typeEnum: TypeEnumObject;
-  userRoleEnum: UserRoleEnumObject;
-  wallThicknessMatchPattern: Scalars['String'];
-  yieldStrengthMatchPattern: Scalars['String'];
 };
 
 export type ValidatorsPipeline = {
@@ -1691,12 +1360,14 @@ export type ValidatorsPipeline = {
   fromToMatchPattern: Scalars['String'];
   geotechnicalFacingEnum: Array<EnumObject>;
   gradeEnum: Array<EnumObject>;
+  havingEnum: Array<EnumObject>;
   internalProtectionEnum: Array<EnumObject>;
   lengthMatchPattern: Scalars['String'];
   licenseMatchPattern: Scalars['String'];
   limitingSpecEnum: Array<EnumObject>;
   materialEnum: Array<EnumObject>;
   mopMatchPattern: Scalars['String'];
+  operationEnum: Array<EnumObject>;
   operatorEnum: Array<EnumObject>;
   outsideDiameterMatchPattern: Scalars['String'];
   pigInspectionEnum: Array<EnumObject>;
@@ -1706,6 +1377,7 @@ export type ValidatorsPipeline = {
   statusEnum: Array<EnumObject>;
   substanceEnum: Array<EnumObject>;
   typeEnum: Array<EnumObject>;
+  userRoleEnum: Array<EnumObject>;
   wallThicknessMatchPattern: Scalars['String'];
   yieldStrengthMatchPattern: Scalars['String'];
 };
@@ -2139,11 +1811,6 @@ export type SearchNavigationOptionsQueryVariables = Exact<{ [key: string]: never
 
 export type SearchNavigationOptionsQuery = { searchNavigationOptions: Array<{ table: TableEnum, field: string, nullable: boolean, type: string, enumObjectArray?: Array<{ serverEnum: string, databaseEnum: string }> | null | undefined }> };
 
-export type OperationAndHavingEnumQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type OperationAndHavingEnumQuery = { validators?: { operationEnum: { equals: OperationEnum, not: OperationEnum, gt: OperationEnum, gte: OperationEnum, lt: OperationEnum, lte: OperationEnum, contains: OperationEnum, startsWith: OperationEnum, endsWith: OperationEnum }, havingEnum: { _min: HavingEnum, _max: HavingEnum, _count: HavingEnum, _any: HavingEnum } } | null | undefined };
-
 export type PipelineBatchesByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
 }>;
@@ -2161,37 +1828,7 @@ export type WellBatchesByWellIdQuery = { wellBatchesByWellId?: Array<{ id: strin
 export type ValidatorsPipelineQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, typeEnum: Array<{ serverEnum: string, databaseEnum: string }>, gradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, materialEnum: Array<{ serverEnum: string, databaseEnum: string }>, internalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, environmentProximityToEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }>, chemicalSupplierEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
-
-export type ValidatorFlowCalculationDirectionQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ValidatorFlowCalculationDirectionQuery = { validators?: { flowCalculationDirectionEnum: { Upstream: string, Downstream: string } } | null | undefined };
-
-export type ValidatorsLicenseChangeQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ValidatorsLicenseChangeQuery = { validators?: { statusEnum: { Operating: string, Discontinued: string, Abandoned: string, Removed: string, ToBeConstructed: string, Active: string, Cancelled: string, New: string, NotConstructed: string }, substanceEnum: { NaturalGas: string, FreshWater: string, SaltWater: string, CrudeOil: string, OilWellEffluent: string, LVPProducts: string, FuelGas: string, SourNaturalGas: string } } | null | undefined };
-
-export type ValidatorsMechanicalPropertiesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ValidatorsMechanicalPropertiesQuery = { validators?: { yieldStrengthMatchPattern: string, lengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, gradeEnum: { GradeA: string, Grade3592: string, GradeB: string, GradeX42: string, GradeBW1: string, Grade2500: string, Grade3591: string, Grade2901: string, GradeT4: string, Grade300: string, Grade3593: string, Grade11: string, GradeJ55: string, Grade2250: string, GradeX52: string, Grade2750: string, Grade25: string, Grade2902: string, Grade241: string, Grade2413: string, Grade2411: string, Grade155: string, Grade150: string, Grade1000: string, Grade800: string, GradeT1A: string, Grade2010: string, GradeT4A: string, Grade1250: string, Grade17: string, Grade900: string, GradeT1B: string, Grade810: string, Grade35: string, Grade5: string, Grade9: string, Grade200: string, Grade1200: string, Grade1103: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string }, internalProtectionEnum: { Uncoated: string, FreeStandingSlipLined: string, Unknown: string, Cement: string, ExpandedPolyethylene: string, ThinFilm: string } } | null | undefined };
-
-export type ValidatorsPressureTestQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ValidatorsPressureTestQuery = { validators?: { limitingSpecEnum: { ANSI150: string, ANSI300: string, ANSI600: string } } | null | undefined };
-
-export type ValidatorsRiskQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ValidatorsRiskQuery = { validators?: { environmentProximityToEnum: { WB1: string, WB3: string, WB4: string, WB5: string, WC1: string, WC2: string, WC3: string, WC4: string }, geotechnicalFacingEnum: { N: string, NE: string, E: string, SE: string, S: string, SW: string, W: string, NW: string }, typeEnum: { Type515: string, Type2306: string, Type3406: string, Type3408: string, Type6063: string, Type6351: string, Type5A: string, Type5L: string, Type5LX: string, TypeA106: string, TypeA120: string, TypeA53: string, TypeAMERON: string, TypeB515: string, TypeB51S: string, TypeB5IS: string, TypeCENTRON: string, TypeCIBA: string, TypeFSLP: string, TypeREDTHR: string, TypeSMITH: string, TypeSTAR: string, TypeTBS: string, TypeWSLP: string, TypeZ2451: string, TypeZ2453: string }, materialEnum: { Steel: string, PolyvinylChloride: string, Composite: string, Fiberglass: string, Aluminum: string, Polyethylene: string, CelluloseAcetateButyrate: string, Unknown: string, AsbestosCement: string } } | null | undefined };
-
-export type ValidatorUserRoleQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ValidatorUserRoleQuery = { validators?: { userRoleEnum: { ADMIN: string, ENGINEER: string, OFFICE: string, OPERATOR: string, CHEMICAL: string, CATHODIC: string, CONTRACTOR: string } } | null | undefined };
+export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, userRoleEnum: Array<{ serverEnum: string, databaseEnum: string }>, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, typeEnum: Array<{ serverEnum: string, databaseEnum: string }>, gradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, materialEnum: Array<{ serverEnum: string, databaseEnum: string }>, internalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, environmentProximityToEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }>, chemicalSupplierEnum: Array<{ serverEnum: string, databaseEnum: string }>, operationEnum: Array<{ serverEnum: string, databaseEnum: string }>, havingEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
 
 export type LicenseChangesByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -4134,56 +3771,6 @@ export function useSearchNavigationOptionsLazyQuery(baseOptions?: Apollo.LazyQue
 export type SearchNavigationOptionsQueryHookResult = ReturnType<typeof useSearchNavigationOptionsQuery>;
 export type SearchNavigationOptionsLazyQueryHookResult = ReturnType<typeof useSearchNavigationOptionsLazyQuery>;
 export type SearchNavigationOptionsQueryResult = Apollo.QueryResult<SearchNavigationOptionsQuery, SearchNavigationOptionsQueryVariables>;
-export const OperationAndHavingEnumDocument = gql`
-    query OperationAndHavingEnum {
-  validators {
-    operationEnum {
-      equals
-      not
-      gt
-      gte
-      lt
-      lte
-      contains
-      startsWith
-      endsWith
-    }
-    havingEnum {
-      _min
-      _max
-      _count
-      _any
-    }
-  }
-}
-    `;
-
-/**
- * __useOperationAndHavingEnumQuery__
- *
- * To run a query within a React component, call `useOperationAndHavingEnumQuery` and pass it any options that fit your needs.
- * When your component renders, `useOperationAndHavingEnumQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useOperationAndHavingEnumQuery({
- *   variables: {
- *   },
- * });
- */
-export function useOperationAndHavingEnumQuery(baseOptions?: Apollo.QueryHookOptions<OperationAndHavingEnumQuery, OperationAndHavingEnumQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<OperationAndHavingEnumQuery, OperationAndHavingEnumQueryVariables>(OperationAndHavingEnumDocument, options);
-      }
-export function useOperationAndHavingEnumLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OperationAndHavingEnumQuery, OperationAndHavingEnumQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<OperationAndHavingEnumQuery, OperationAndHavingEnumQueryVariables>(OperationAndHavingEnumDocument, options);
-        }
-export type OperationAndHavingEnumQueryHookResult = ReturnType<typeof useOperationAndHavingEnumQuery>;
-export type OperationAndHavingEnumLazyQueryHookResult = ReturnType<typeof useOperationAndHavingEnumLazyQuery>;
-export type OperationAndHavingEnumQueryResult = Apollo.QueryResult<OperationAndHavingEnumQuery, OperationAndHavingEnumQueryVariables>;
 export const PipelineBatchesByPipelineIdDocument = gql`
     query PipelineBatchesByPipelineId($pipelineId: String!) {
   pipelineBatchesByPipelineId(pipelineId: $pipelineId) {
@@ -4301,6 +3888,10 @@ export type WellBatchesByWellIdQueryResult = Apollo.QueryResult<WellBatchesByWel
 export const ValidatorsPipelineDocument = gql`
     query ValidatorsPipeline {
   validatorsPipeline {
+    userRoleEnum {
+      serverEnum
+      databaseEnum
+    }
     licenseMatchPattern
     segmentMatchPattern
     fromToMatchPattern
@@ -4377,6 +3968,14 @@ export const ValidatorsPipelineDocument = gql`
       serverEnum
       databaseEnum
     }
+    operationEnum {
+      serverEnum
+      databaseEnum
+    }
+    havingEnum {
+      serverEnum
+      databaseEnum
+    }
   }
 }
     `;
@@ -4407,395 +4006,6 @@ export function useValidatorsPipelineLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type ValidatorsPipelineQueryHookResult = ReturnType<typeof useValidatorsPipelineQuery>;
 export type ValidatorsPipelineLazyQueryHookResult = ReturnType<typeof useValidatorsPipelineLazyQuery>;
 export type ValidatorsPipelineQueryResult = Apollo.QueryResult<ValidatorsPipelineQuery, ValidatorsPipelineQueryVariables>;
-export const ValidatorFlowCalculationDirectionDocument = gql`
-    query ValidatorFlowCalculationDirection {
-  validators {
-    flowCalculationDirectionEnum {
-      Upstream
-      Downstream
-    }
-  }
-}
-    `;
-
-/**
- * __useValidatorFlowCalculationDirectionQuery__
- *
- * To run a query within a React component, call `useValidatorFlowCalculationDirectionQuery` and pass it any options that fit your needs.
- * When your component renders, `useValidatorFlowCalculationDirectionQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useValidatorFlowCalculationDirectionQuery({
- *   variables: {
- *   },
- * });
- */
-export function useValidatorFlowCalculationDirectionQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorFlowCalculationDirectionQuery, ValidatorFlowCalculationDirectionQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ValidatorFlowCalculationDirectionQuery, ValidatorFlowCalculationDirectionQueryVariables>(ValidatorFlowCalculationDirectionDocument, options);
-      }
-export function useValidatorFlowCalculationDirectionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorFlowCalculationDirectionQuery, ValidatorFlowCalculationDirectionQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ValidatorFlowCalculationDirectionQuery, ValidatorFlowCalculationDirectionQueryVariables>(ValidatorFlowCalculationDirectionDocument, options);
-        }
-export type ValidatorFlowCalculationDirectionQueryHookResult = ReturnType<typeof useValidatorFlowCalculationDirectionQuery>;
-export type ValidatorFlowCalculationDirectionLazyQueryHookResult = ReturnType<typeof useValidatorFlowCalculationDirectionLazyQuery>;
-export type ValidatorFlowCalculationDirectionQueryResult = Apollo.QueryResult<ValidatorFlowCalculationDirectionQuery, ValidatorFlowCalculationDirectionQueryVariables>;
-export const ValidatorsLicenseChangeDocument = gql`
-    query ValidatorsLicenseChange {
-  validators {
-    statusEnum {
-      Operating
-      Discontinued
-      Abandoned
-      Removed
-      ToBeConstructed
-      Active
-      Cancelled
-      New
-      NotConstructed
-    }
-    substanceEnum {
-      NaturalGas
-      FreshWater
-      SaltWater
-      CrudeOil
-      OilWellEffluent
-      LVPProducts
-      FuelGas
-      SourNaturalGas
-    }
-  }
-}
-    `;
-
-/**
- * __useValidatorsLicenseChangeQuery__
- *
- * To run a query within a React component, call `useValidatorsLicenseChangeQuery` and pass it any options that fit your needs.
- * When your component renders, `useValidatorsLicenseChangeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useValidatorsLicenseChangeQuery({
- *   variables: {
- *   },
- * });
- */
-export function useValidatorsLicenseChangeQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorsLicenseChangeQuery, ValidatorsLicenseChangeQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ValidatorsLicenseChangeQuery, ValidatorsLicenseChangeQueryVariables>(ValidatorsLicenseChangeDocument, options);
-      }
-export function useValidatorsLicenseChangeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorsLicenseChangeQuery, ValidatorsLicenseChangeQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ValidatorsLicenseChangeQuery, ValidatorsLicenseChangeQueryVariables>(ValidatorsLicenseChangeDocument, options);
-        }
-export type ValidatorsLicenseChangeQueryHookResult = ReturnType<typeof useValidatorsLicenseChangeQuery>;
-export type ValidatorsLicenseChangeLazyQueryHookResult = ReturnType<typeof useValidatorsLicenseChangeLazyQuery>;
-export type ValidatorsLicenseChangeQueryResult = Apollo.QueryResult<ValidatorsLicenseChangeQuery, ValidatorsLicenseChangeQueryVariables>;
-export const ValidatorsMechanicalPropertiesDocument = gql`
-    query ValidatorsMechanicalProperties {
-  validators {
-    typeEnum {
-      Type515
-      Type2306
-      Type3406
-      Type3408
-      Type6063
-      Type6351
-      Type5A
-      Type5L
-      Type5LX
-      TypeA106
-      TypeA120
-      TypeA53
-      TypeAMERON
-      TypeB515
-      TypeB51S
-      TypeB5IS
-      TypeCENTRON
-      TypeCIBA
-      TypeFSLP
-      TypeREDTHR
-      TypeSMITH
-      TypeSTAR
-      TypeTBS
-      TypeWSLP
-      TypeZ2451
-      TypeZ2453
-    }
-    gradeEnum {
-      GradeA
-      Grade3592
-      GradeB
-      GradeX42
-      GradeBW1
-      Grade2500
-      Grade3591
-      Grade2901
-      GradeT4
-      Grade300
-      Grade3593
-      Grade11
-      GradeJ55
-      Grade2250
-      GradeX52
-      Grade2750
-      Grade25
-      Grade2902
-      Grade241
-      Grade2413
-      Grade2411
-      Grade155
-      Grade150
-      Grade1000
-      Grade800
-      GradeT1A
-      Grade2010
-      GradeT4A
-      Grade1250
-      Grade17
-      Grade900
-      GradeT1B
-      Grade810
-      Grade35
-      Grade5
-      Grade9
-      Grade200
-      Grade1200
-      Grade1103
-    }
-    yieldStrengthMatchPattern
-    lengthMatchPattern
-    outsideDiameterMatchPattern
-    wallThicknessMatchPattern
-    materialEnum {
-      Steel
-      PolyvinylChloride
-      Composite
-      Fiberglass
-      Aluminum
-      Polyethylene
-      CelluloseAcetateButyrate
-      Unknown
-      AsbestosCement
-    }
-    mopMatchPattern
-    internalProtectionEnum {
-      Uncoated
-      FreeStandingSlipLined
-      Unknown
-      Cement
-      ExpandedPolyethylene
-      ThinFilm
-    }
-  }
-}
-    `;
-
-/**
- * __useValidatorsMechanicalPropertiesQuery__
- *
- * To run a query within a React component, call `useValidatorsMechanicalPropertiesQuery` and pass it any options that fit your needs.
- * When your component renders, `useValidatorsMechanicalPropertiesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useValidatorsMechanicalPropertiesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useValidatorsMechanicalPropertiesQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorsMechanicalPropertiesQuery, ValidatorsMechanicalPropertiesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ValidatorsMechanicalPropertiesQuery, ValidatorsMechanicalPropertiesQueryVariables>(ValidatorsMechanicalPropertiesDocument, options);
-      }
-export function useValidatorsMechanicalPropertiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorsMechanicalPropertiesQuery, ValidatorsMechanicalPropertiesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ValidatorsMechanicalPropertiesQuery, ValidatorsMechanicalPropertiesQueryVariables>(ValidatorsMechanicalPropertiesDocument, options);
-        }
-export type ValidatorsMechanicalPropertiesQueryHookResult = ReturnType<typeof useValidatorsMechanicalPropertiesQuery>;
-export type ValidatorsMechanicalPropertiesLazyQueryHookResult = ReturnType<typeof useValidatorsMechanicalPropertiesLazyQuery>;
-export type ValidatorsMechanicalPropertiesQueryResult = Apollo.QueryResult<ValidatorsMechanicalPropertiesQuery, ValidatorsMechanicalPropertiesQueryVariables>;
-export const ValidatorsPressureTestDocument = gql`
-    query ValidatorsPressureTest {
-  validators {
-    limitingSpecEnum {
-      ANSI150
-      ANSI300
-      ANSI600
-    }
-  }
-}
-    `;
-
-/**
- * __useValidatorsPressureTestQuery__
- *
- * To run a query within a React component, call `useValidatorsPressureTestQuery` and pass it any options that fit your needs.
- * When your component renders, `useValidatorsPressureTestQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useValidatorsPressureTestQuery({
- *   variables: {
- *   },
- * });
- */
-export function useValidatorsPressureTestQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorsPressureTestQuery, ValidatorsPressureTestQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ValidatorsPressureTestQuery, ValidatorsPressureTestQueryVariables>(ValidatorsPressureTestDocument, options);
-      }
-export function useValidatorsPressureTestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorsPressureTestQuery, ValidatorsPressureTestQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ValidatorsPressureTestQuery, ValidatorsPressureTestQueryVariables>(ValidatorsPressureTestDocument, options);
-        }
-export type ValidatorsPressureTestQueryHookResult = ReturnType<typeof useValidatorsPressureTestQuery>;
-export type ValidatorsPressureTestLazyQueryHookResult = ReturnType<typeof useValidatorsPressureTestLazyQuery>;
-export type ValidatorsPressureTestQueryResult = Apollo.QueryResult<ValidatorsPressureTestQuery, ValidatorsPressureTestQueryVariables>;
-export const ValidatorsRiskDocument = gql`
-    query ValidatorsRisk {
-  validators {
-    environmentProximityToEnum {
-      WB1
-      WB3
-      WB4
-      WB5
-      WC1
-      WC2
-      WC3
-      WC4
-    }
-    geotechnicalFacingEnum {
-      N
-      NE
-      E
-      SE
-      S
-      SW
-      W
-      NW
-    }
-    typeEnum {
-      Type515
-      Type2306
-      Type3406
-      Type3408
-      Type6063
-      Type6351
-      Type5A
-      Type5L
-      Type5LX
-      TypeA106
-      TypeA120
-      TypeA53
-      TypeAMERON
-      TypeB515
-      TypeB51S
-      TypeB5IS
-      TypeCENTRON
-      TypeCIBA
-      TypeFSLP
-      TypeREDTHR
-      TypeSMITH
-      TypeSTAR
-      TypeTBS
-      TypeWSLP
-      TypeZ2451
-      TypeZ2453
-    }
-    materialEnum {
-      Steel
-      PolyvinylChloride
-      Composite
-      Fiberglass
-      Aluminum
-      Polyethylene
-      CelluloseAcetateButyrate
-      Unknown
-      AsbestosCement
-    }
-  }
-}
-    `;
-
-/**
- * __useValidatorsRiskQuery__
- *
- * To run a query within a React component, call `useValidatorsRiskQuery` and pass it any options that fit your needs.
- * When your component renders, `useValidatorsRiskQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useValidatorsRiskQuery({
- *   variables: {
- *   },
- * });
- */
-export function useValidatorsRiskQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorsRiskQuery, ValidatorsRiskQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ValidatorsRiskQuery, ValidatorsRiskQueryVariables>(ValidatorsRiskDocument, options);
-      }
-export function useValidatorsRiskLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorsRiskQuery, ValidatorsRiskQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ValidatorsRiskQuery, ValidatorsRiskQueryVariables>(ValidatorsRiskDocument, options);
-        }
-export type ValidatorsRiskQueryHookResult = ReturnType<typeof useValidatorsRiskQuery>;
-export type ValidatorsRiskLazyQueryHookResult = ReturnType<typeof useValidatorsRiskLazyQuery>;
-export type ValidatorsRiskQueryResult = Apollo.QueryResult<ValidatorsRiskQuery, ValidatorsRiskQueryVariables>;
-export const ValidatorUserRoleDocument = gql`
-    query ValidatorUserRole {
-  validators {
-    userRoleEnum {
-      ADMIN
-      ENGINEER
-      OFFICE
-      OPERATOR
-      CHEMICAL
-      CATHODIC
-      CONTRACTOR
-    }
-  }
-}
-    `;
-
-/**
- * __useValidatorUserRoleQuery__
- *
- * To run a query within a React component, call `useValidatorUserRoleQuery` and pass it any options that fit your needs.
- * When your component renders, `useValidatorUserRoleQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useValidatorUserRoleQuery({
- *   variables: {
- *   },
- * });
- */
-export function useValidatorUserRoleQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorUserRoleQuery, ValidatorUserRoleQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ValidatorUserRoleQuery, ValidatorUserRoleQueryVariables>(ValidatorUserRoleDocument, options);
-      }
-export function useValidatorUserRoleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorUserRoleQuery, ValidatorUserRoleQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ValidatorUserRoleQuery, ValidatorUserRoleQueryVariables>(ValidatorUserRoleDocument, options);
-        }
-export type ValidatorUserRoleQueryHookResult = ReturnType<typeof useValidatorUserRoleQuery>;
-export type ValidatorUserRoleLazyQueryHookResult = ReturnType<typeof useValidatorUserRoleLazyQuery>;
-export type ValidatorUserRoleQueryResult = Apollo.QueryResult<ValidatorUserRoleQuery, ValidatorUserRoleQueryVariables>;
 export const LicenseChangesByPipelineIdDocument = gql`
     query LicenseChangesByPipelineId($pipelineId: String!) {
   licenseChangesByPipelineId(pipelineId: $pipelineId) {

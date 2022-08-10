@@ -590,6 +590,8 @@ export const PipelineQuery = extendType({
         if (search) {
 
           const query = await Promise.all(search.map(async ({ table, field, having, operation, value, type }) => {
+            console.log({ table, field, having, operation, value, type });
+            
             const castValue =
               type === 'Int' ? parseInt(value) :
                 type === 'Float' ? Number(value) :

@@ -77,6 +77,10 @@ export const OperationEnum = enumType({
   members: OperationEnumMembers,
 });
 
+export const OperationEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(OperationEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
+});
+
 export const HavingEnumMembers: { [x: string]: NexusGenEnums['HavingEnum'] } = {
   any: '_any',
   minimum: '_min',
@@ -87,6 +91,10 @@ export const HavingEnumMembers: { [x: string]: NexusGenEnums['HavingEnum'] } = {
 export const HavingEnum = enumType({
   name: 'HavingEnum',
   members: HavingEnumMembers,
+});
+
+export const HavingEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(HavingEnumMembers).map(([serverEnum, databaseEnum]) => {
+  return { serverEnum, databaseEnum }
 });
 
 

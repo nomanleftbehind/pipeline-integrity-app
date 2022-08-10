@@ -90,27 +90,27 @@ query SearchNavigationOptions {
   }
 }
 
-query OperationAndHavingEnum {
-  validators {
-    operationEnum {
-      equals
-      not
-      gt
-      gte
-      lt
-      lte
-      contains
-      startsWith
-      endsWith
-    }
-    havingEnum {
-      _min
-      _max
-      _count
-      _any
-    }
-  }
-}
+# query OperationAndHavingEnum {
+#   validators {
+#     operationEnum {
+#       equals
+#       not
+#       gt
+#       gte
+#       lt
+#       lte
+#       contains
+#       startsWith
+#       endsWith
+#     }
+#     havingEnum {
+#       _min
+#       _max
+#       _count
+#       _any
+#     }
+#   }
+# }
 
 query PipelineBatchesByPipelineId($pipelineId: String!) {
   pipelineBatchesByPipelineId(pipelineId: $pipelineId) {
@@ -170,6 +170,10 @@ query WellBatchesByWellId($wellId: String!) {
 
 query ValidatorsPipeline {
   validatorsPipeline {
+    userRoleEnum {
+      serverEnum
+      databaseEnum
+    }
     licenseMatchPattern
     segmentMatchPattern
     fromToMatchPattern
@@ -246,229 +250,237 @@ query ValidatorsPipeline {
       serverEnum
       databaseEnum
     }
-  }
-}
-
-query ValidatorFlowCalculationDirection {
-  validators {
-    flowCalculationDirectionEnum {
-      Upstream
-      Downstream
+    operationEnum {
+      serverEnum
+      databaseEnum
+    }
+    havingEnum {
+      serverEnum
+      databaseEnum
     }
   }
 }
 
-query ValidatorsLicenseChange {
-  validators {
-    statusEnum {
-      Operating
-      Discontinued
-      Abandoned
-      Removed
-      ToBeConstructed
-      Active
-      Cancelled
-      New
-      NotConstructed
-    }
-    substanceEnum {
-      NaturalGas
-      FreshWater
-      SaltWater
-      CrudeOil
-      OilWellEffluent
-      LVPProducts
-      FuelGas
-      SourNaturalGas
-    }
-  }
-}
+# query ValidatorFlowCalculationDirection {
+#   validators {
+#     flowCalculationDirectionEnum {
+#       Upstream
+#       Downstream
+#     }
+#   }
+# }
 
-query ValidatorsMechanicalProperties {
-  validators {
-    typeEnum {
-      Type515
-      Type2306
-      Type3406
-      Type3408
-      Type6063
-      Type6351
-      Type5A
-      Type5L
-      Type5LX
-      TypeA106
-      TypeA120
-      TypeA53
-      TypeAMERON
-      TypeB515
-      TypeB51S
-      TypeB5IS
-      TypeCENTRON
-      TypeCIBA
-      TypeFSLP
-      TypeREDTHR
-      TypeSMITH
-      TypeSTAR
-      TypeTBS
-      TypeWSLP
-      TypeZ2451
-      TypeZ2453
-    }
-    gradeEnum {
-      GradeA
-      Grade3592
-      GradeB
-      GradeX42
-      GradeBW1
-      Grade2500
-      Grade3591
-      Grade2901
-      GradeT4
-      Grade300
-      Grade3593
-      Grade11
-      GradeJ55
-      Grade2250
-      GradeX52
-      Grade2750
-      Grade25
-      Grade2902
-      Grade241
-      Grade2413
-      Grade2411
-      Grade155
-      Grade150
-      Grade1000
-      Grade800
-      GradeT1A
-      Grade2010
-      GradeT4A
-      Grade1250
-      Grade17
-      Grade900
-      GradeT1B
-      Grade810
-      Grade35
-      Grade5
-      Grade9
-      Grade200
-      Grade1200
-      Grade1103
-    }
-    yieldStrengthMatchPattern
-    lengthMatchPattern
-    outsideDiameterMatchPattern
-    wallThicknessMatchPattern
-    materialEnum {
-      Steel
-      PolyvinylChloride
-      Composite
-      Fiberglass
-      Aluminum
-      Polyethylene
-      CelluloseAcetateButyrate
-      Unknown
-      AsbestosCement
-    }
-    mopMatchPattern
-    internalProtectionEnum {
-      Uncoated
-      FreeStandingSlipLined
-      Unknown
-      Cement
-      ExpandedPolyethylene
-      ThinFilm
-    }
-  }
-}
+# query ValidatorsLicenseChange {
+#   validators {
+#     statusEnum {
+#       Operating
+#       Discontinued
+#       Abandoned
+#       Removed
+#       ToBeConstructed
+#       Active
+#       Cancelled
+#       New
+#       NotConstructed
+#     }
+#     substanceEnum {
+#       NaturalGas
+#       FreshWater
+#       SaltWater
+#       CrudeOil
+#       OilWellEffluent
+#       LVPProducts
+#       FuelGas
+#       SourNaturalGas
+#     }
+#   }
+# }
 
-query ValidatorsPressureTest {
-  validators {
-    limitingSpecEnum {
-      ANSI150
-      ANSI300
-      ANSI600
-    }
-  }
-}
+# query ValidatorsMechanicalProperties {
+#   validators {
+#     typeEnum {
+#       Type515
+#       Type2306
+#       Type3406
+#       Type3408
+#       Type6063
+#       Type6351
+#       Type5A
+#       Type5L
+#       Type5LX
+#       TypeA106
+#       TypeA120
+#       TypeA53
+#       TypeAMERON
+#       TypeB515
+#       TypeB51S
+#       TypeB5IS
+#       TypeCENTRON
+#       TypeCIBA
+#       TypeFSLP
+#       TypeREDTHR
+#       TypeSMITH
+#       TypeSTAR
+#       TypeTBS
+#       TypeWSLP
+#       TypeZ2451
+#       TypeZ2453
+#     }
+#     gradeEnum {
+#       GradeA
+#       Grade3592
+#       GradeB
+#       GradeX42
+#       GradeBW1
+#       Grade2500
+#       Grade3591
+#       Grade2901
+#       GradeT4
+#       Grade300
+#       Grade3593
+#       Grade11
+#       GradeJ55
+#       Grade2250
+#       GradeX52
+#       Grade2750
+#       Grade25
+#       Grade2902
+#       Grade241
+#       Grade2413
+#       Grade2411
+#       Grade155
+#       Grade150
+#       Grade1000
+#       Grade800
+#       GradeT1A
+#       Grade2010
+#       GradeT4A
+#       Grade1250
+#       Grade17
+#       Grade900
+#       GradeT1B
+#       Grade810
+#       Grade35
+#       Grade5
+#       Grade9
+#       Grade200
+#       Grade1200
+#       Grade1103
+#     }
+#     yieldStrengthMatchPattern
+#     lengthMatchPattern
+#     outsideDiameterMatchPattern
+#     wallThicknessMatchPattern
+#     materialEnum {
+#       Steel
+#       PolyvinylChloride
+#       Composite
+#       Fiberglass
+#       Aluminum
+#       Polyethylene
+#       CelluloseAcetateButyrate
+#       Unknown
+#       AsbestosCement
+#     }
+#     mopMatchPattern
+#     internalProtectionEnum {
+#       Uncoated
+#       FreeStandingSlipLined
+#       Unknown
+#       Cement
+#       ExpandedPolyethylene
+#       ThinFilm
+#     }
+#   }
+# }
 
-query ValidatorsRisk {
-  validators {
-    environmentProximityToEnum {
-      WB1
-      WB3
-      WB4
-      WB5
-      WC1
-      WC2
-      WC3
-      WC4
-    }
-    geotechnicalFacingEnum {
-      N
-      NE
-      E
-      SE
-      S
-      SW
-      W
-      NW
-    }
-    typeEnum {
-      Type515
-      Type2306
-      Type3406
-      Type3408
-      Type6063
-      Type6351
-      Type5A
-      Type5L
-      Type5LX
-      TypeA106
-      TypeA120
-      TypeA53
-      TypeAMERON
-      TypeB515
-      TypeB51S
-      TypeB5IS
-      TypeCENTRON
-      TypeCIBA
-      TypeFSLP
-      TypeREDTHR
-      TypeSMITH
-      TypeSTAR
-      TypeTBS
-      TypeWSLP
-      TypeZ2451
-      TypeZ2453
-    }
-    materialEnum {
-      Steel
-      PolyvinylChloride
-      Composite
-      Fiberglass
-      Aluminum
-      Polyethylene
-      CelluloseAcetateButyrate
-      Unknown
-      AsbestosCement
-    }
-  }
-}
+# query ValidatorsPressureTest {
+#   validators {
+#     limitingSpecEnum {
+#       ANSI150
+#       ANSI300
+#       ANSI600
+#     }
+#   }
+# }
 
-query ValidatorUserRole {
-  validators {
-    userRoleEnum {
-      ADMIN
-      ENGINEER
-      OFFICE
-      OPERATOR
-      CHEMICAL
-      CATHODIC
-      CONTRACTOR
-    }
-  }
-}
+# query ValidatorsRisk {
+#   validators {
+#     environmentProximityToEnum {
+#       WB1
+#       WB3
+#       WB4
+#       WB5
+#       WC1
+#       WC2
+#       WC3
+#       WC4
+#     }
+#     geotechnicalFacingEnum {
+#       N
+#       NE
+#       E
+#       SE
+#       S
+#       SW
+#       W
+#       NW
+#     }
+#     typeEnum {
+#       Type515
+#       Type2306
+#       Type3406
+#       Type3408
+#       Type6063
+#       Type6351
+#       Type5A
+#       Type5L
+#       Type5LX
+#       TypeA106
+#       TypeA120
+#       TypeA53
+#       TypeAMERON
+#       TypeB515
+#       TypeB51S
+#       TypeB5IS
+#       TypeCENTRON
+#       TypeCIBA
+#       TypeFSLP
+#       TypeREDTHR
+#       TypeSMITH
+#       TypeSTAR
+#       TypeTBS
+#       TypeWSLP
+#       TypeZ2451
+#       TypeZ2453
+#     }
+#     materialEnum {
+#       Steel
+#       PolyvinylChloride
+#       Composite
+#       Fiberglass
+#       Aluminum
+#       Polyethylene
+#       CelluloseAcetateButyrate
+#       Unknown
+#       AsbestosCement
+#     }
+#   }
+# }
+
+# query ValidatorUserRole {
+#   validators {
+#     userRoleEnum {
+#       ADMIN
+#       ENGINEER
+#       OFFICE
+#       OPERATOR
+#       CHEMICAL
+#       CATHODIC
+#       CONTRACTOR
+#     }
+#   }
+# }
 
 query LicenseChangesByPipelineId($pipelineId: String!) {
   licenseChangesByPipelineId(pipelineId: $pipelineId) {

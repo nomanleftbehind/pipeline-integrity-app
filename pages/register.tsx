@@ -66,7 +66,7 @@ export function Register({ userCount, user }: IServerSideProps) {
 
   const ChangePasswordSchema = Yup.object().shape({
     password: passwordYupSchema,
-    confirmPassword: passwordYupSchema//Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match'),
+    confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match'),
   });
 
   return (
@@ -208,9 +208,7 @@ export function Register({ userCount, user }: IServerSideProps) {
                   </option>)}
               </DOMSelectInput>}
 
-              <Button fullWidth color='primary' variant='contained' type='submit'>
-                Submit
-              </Button>
+              <Button fullWidth color='primary' variant='contained' type='submit'>Submit</Button>
               {(formVariant === 'Login' || formVariant === 'Forgot Password') && <Button onClick={() => setIsForgotPassword(!isForgotPassword)}>{isForgotPassword ? 'Login' : 'Forgot Password'}</Button>}
             </Form>
           )
