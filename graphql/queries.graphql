@@ -170,10 +170,6 @@ query WellBatchesByWellId($wellId: String!) {
 
 query ValidatorsPipeline {
   validatorsPipeline {
-    userRoleEnum {
-      serverEnum
-      databaseEnum
-    }
     licenseMatchPattern
     segmentMatchPattern
     fromToMatchPattern
@@ -255,6 +251,15 @@ query ValidatorsPipeline {
       databaseEnum
     }
     havingEnum {
+      serverEnum
+      databaseEnum
+    }
+  }
+}
+
+query ValidatorsUserRole {
+  validators {
+    userRoleEnum {
       serverEnum
       databaseEnum
     }

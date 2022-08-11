@@ -14,7 +14,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
 import * as Yup from 'yup';
 import { useAuth } from '../context/AuthContext';
-import { useLoginMutation, useSignupMutation, useForgotPasswordMutation, useChangePasswordMutation, UserCreateInput, UserRoleEnum, useValidatorUserRoleQuery } from '../graphql/generated/graphql';
+import { useLoginMutation, useSignupMutation, useForgotPasswordMutation, useChangePasswordMutation, UserCreateInput, UserRoleEnum, useValidatorsUserRoleQuery } from '../graphql/generated/graphql';
 import { getUser } from '../lib/user';
 
 type IInput = {
@@ -38,7 +38,7 @@ export function Register({ userCount, user }: IServerSideProps) {
 
   const formVariant = typeof token === 'string' && !user ? 'Change Password' : isForgotPassword && !user ? 'Forgot Password' : userCount === 0 || user?.role === 'ADMIN' ? 'Register' : 'Login';
 
-  const { data: dataUserRole } = useValidatorUserRoleQuery();
+  const { data: dataValidatorsUserRole } = useValidatorsUserRoleQuery();
   const client = useApolloClient();
 
   const [login] = useLoginMutation();
@@ -198,13 +198,12 @@ export function Register({ userCount, user }: IServerSideProps) {
               />}
 
               {formVariant === 'Register' && userCount > 0 && <DOMSelectInput label='Role' name='role'>
-                {dataUserRole?.validators && Object
-                  .entries(dataUserRole.validators.userRoleEnum)
-                  .map(([roleServer, roleDatabase]) => <option
-                    key={roleServer}
-                    value={roleServer}
+                {dataValidatorsUserRole?.validators?.userRoleEnum && dataValidatorsUserRole.validators.userRoleEnum
+                  .map(({ serverEnum, databaseEnum }) => <option
+                    key={serverEnum}
+                    value={serverEnum}
                   >
-                    {roleDatabase}
+                    {databaseEnum}
                   </option>)}
               </DOMSelectInput>}
 

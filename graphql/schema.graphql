@@ -632,6 +632,7 @@ type Query {
   searchNavigationOptions: [SearchNavigationObject!]!
   sideBar: [SideBar]
   userCount: Int
+  validators: ValidatorsUserRole
   validatorsPipeline: ValidatorsPipeline
   wellBatchesByWellId(wellId: String!): [WellBatch]
   wellOptions(pipelineId: String!): [SourceOptions]
@@ -946,9 +947,12 @@ type ValidatorsPipeline {
   statusEnum: [EnumObject!]!
   substanceEnum: [EnumObject!]!
   typeEnum: [EnumObject!]!
-  userRoleEnum: [EnumObject!]!
   wallThicknessMatchPattern: String!
   yieldStrengthMatchPattern: String!
+}
+
+type ValidatorsUserRole {
+  userRoleEnum: [EnumObject!]!
 }
 
 type Well {

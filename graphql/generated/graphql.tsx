@@ -953,6 +953,7 @@ export type Query = {
   searchNavigationOptions: Array<SearchNavigationObject>;
   sideBar?: Maybe<Array<Maybe<SideBar>>>;
   userCount?: Maybe<Scalars['Int']>;
+  validators?: Maybe<ValidatorsUserRole>;
   validatorsPipeline?: Maybe<ValidatorsPipeline>;
   wellBatchesByWellId?: Maybe<Array<Maybe<WellBatch>>>;
   wellOptions?: Maybe<Array<Maybe<SourceOptions>>>;
@@ -1377,9 +1378,12 @@ export type ValidatorsPipeline = {
   statusEnum: Array<EnumObject>;
   substanceEnum: Array<EnumObject>;
   typeEnum: Array<EnumObject>;
-  userRoleEnum: Array<EnumObject>;
   wallThicknessMatchPattern: Scalars['String'];
   yieldStrengthMatchPattern: Scalars['String'];
+};
+
+export type ValidatorsUserRole = {
+  userRoleEnum: Array<EnumObject>;
 };
 
 export type Well = {
@@ -1828,7 +1832,12 @@ export type WellBatchesByWellIdQuery = { wellBatchesByWellId?: Array<{ id: strin
 export type ValidatorsPipelineQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, userRoleEnum: Array<{ serverEnum: string, databaseEnum: string }>, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, typeEnum: Array<{ serverEnum: string, databaseEnum: string }>, gradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, materialEnum: Array<{ serverEnum: string, databaseEnum: string }>, internalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, environmentProximityToEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }>, chemicalSupplierEnum: Array<{ serverEnum: string, databaseEnum: string }>, operationEnum: Array<{ serverEnum: string, databaseEnum: string }>, havingEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
+export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, typeEnum: Array<{ serverEnum: string, databaseEnum: string }>, gradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, materialEnum: Array<{ serverEnum: string, databaseEnum: string }>, internalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, environmentProximityToEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }>, chemicalSupplierEnum: Array<{ serverEnum: string, databaseEnum: string }>, operationEnum: Array<{ serverEnum: string, databaseEnum: string }>, havingEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
+
+export type ValidatorsUserRoleQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ValidatorsUserRoleQuery = { validators?: { userRoleEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
 
 export type LicenseChangesByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -3888,10 +3897,6 @@ export type WellBatchesByWellIdQueryResult = Apollo.QueryResult<WellBatchesByWel
 export const ValidatorsPipelineDocument = gql`
     query ValidatorsPipeline {
   validatorsPipeline {
-    userRoleEnum {
-      serverEnum
-      databaseEnum
-    }
     licenseMatchPattern
     segmentMatchPattern
     fromToMatchPattern
@@ -4006,6 +4011,43 @@ export function useValidatorsPipelineLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type ValidatorsPipelineQueryHookResult = ReturnType<typeof useValidatorsPipelineQuery>;
 export type ValidatorsPipelineLazyQueryHookResult = ReturnType<typeof useValidatorsPipelineLazyQuery>;
 export type ValidatorsPipelineQueryResult = Apollo.QueryResult<ValidatorsPipelineQuery, ValidatorsPipelineQueryVariables>;
+export const ValidatorsUserRoleDocument = gql`
+    query ValidatorsUserRole {
+  validators {
+    userRoleEnum {
+      serverEnum
+      databaseEnum
+    }
+  }
+}
+    `;
+
+/**
+ * __useValidatorsUserRoleQuery__
+ *
+ * To run a query within a React component, call `useValidatorsUserRoleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatorsUserRoleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatorsUserRoleQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useValidatorsUserRoleQuery(baseOptions?: Apollo.QueryHookOptions<ValidatorsUserRoleQuery, ValidatorsUserRoleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatorsUserRoleQuery, ValidatorsUserRoleQueryVariables>(ValidatorsUserRoleDocument, options);
+      }
+export function useValidatorsUserRoleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatorsUserRoleQuery, ValidatorsUserRoleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatorsUserRoleQuery, ValidatorsUserRoleQueryVariables>(ValidatorsUserRoleDocument, options);
+        }
+export type ValidatorsUserRoleQueryHookResult = ReturnType<typeof useValidatorsUserRoleQuery>;
+export type ValidatorsUserRoleLazyQueryHookResult = ReturnType<typeof useValidatorsUserRoleLazyQuery>;
+export type ValidatorsUserRoleQueryResult = Apollo.QueryResult<ValidatorsUserRoleQuery, ValidatorsUserRoleQueryVariables>;
 export const LicenseChangesByPipelineIdDocument = gql`
     query LicenseChangesByPipelineId($pipelineId: String!) {
   licenseChangesByPipelineId(pipelineId: $pipelineId) {

@@ -65,7 +65,6 @@ export const loadChemicalSupplierEnumObjectArray = async ({ ctx }: ILoadEnumObje
 export const ValidatorsPipeline = objectType({
 	name: 'ValidatorsPipeline',
 	definition: t => {
-		t.nonNull.list.nonNull.field('userRoleEnum', { type: 'EnumObject' })
 		t.nonNull.string('licenseMatchPattern')
 		t.nonNull.string('segmentMatchPattern')
 		t.nonNull.string('fromToMatchPattern')
@@ -96,7 +95,6 @@ export const ValidatorsPipeline = objectType({
 	}
 });
 
-
 export const ValidatorQuery = extendType({
 	type: 'Query',
 	definition(t) {
@@ -104,7 +102,6 @@ export const ValidatorQuery = extendType({
 			type: 'ValidatorsPipeline',
 			resolve: () => {
 				return {
-					userRoleEnum: UserRoleEnumArray,
 					licenseMatchPattern,
 					segmentMatchPattern,
 					fromToMatchPattern,
@@ -129,6 +126,28 @@ export const ValidatorQuery = extendType({
 					pigInspectionEnum: PigInspectionEnumArray,
 					operationEnum: OperationEnumArray,
 					havingEnum: HavingEnumArray,
+				};
+			}
+		})
+	},
+});
+
+
+export const ValidatorsUserRole = objectType({
+	name: 'ValidatorsUserRole',
+	definition: t => {
+		t.nonNull.list.nonNull.field('userRoleEnum', { type: 'EnumObject' })
+	}
+});
+
+export const ValidatorUserRoleQuery = extendType({
+	type: 'Query',
+	definition(t) {
+		t.field('validators', {
+			type: 'ValidatorsUserRole',
+			resolve: () => {
+				return {
+					userRoleEnum: UserRoleEnumArray,
 				};
 			}
 		})
