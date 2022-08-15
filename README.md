@@ -39,6 +39,13 @@ Prisma Client configures database to restrict deletion of records that are refer
 
 `npm run dev`
 
+Open [http://localhost:3000/api](http://localhost:3000/api) to view GraphQL schema and test your queries and mutations in Apollo Studio.
 Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-App will automatically make the first ever registered user an ADMIN. Only users with role of ADMIN can add new users.
+If you have populated the database, use these credentials to log in:
+```
+email: joe.smith@integritypro.com
+password: integrity-pro
+```
+
+If you haven't, app will automatically prompt you to register as the first user and make you an ADMIN. Only users with role of ADMIN can add new users.

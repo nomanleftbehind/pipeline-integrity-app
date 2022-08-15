@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 
 export const userData: Prisma.UserCreateInput[] = [
+{ email: 'joe.smith@integritypro.com', password: '$2a$10$OxJ4j5xT.HeXUp23Z.HG8.vzNTzSkxg7Ou876sm2lKfFZMT6KZJby', firstName: 'Joe', lastName: 'Smith', role: 'ADMIN' },
 { email: 'dsucic@bonterraenergy.com', password: '$2a$10$Yt7b6bsJIKwzhSdOG0tMl.3.ZUk0TnEwD36kGZ72DidUCenEsk7ke', firstName: 'Domagoj', lastName: 'Sucic', role: 'ADMIN' },
 { email: 'tkaiser@bonterraenergy.com', password: '$2a$10$etznKXJpAPanLEFTpHf3o.eDZj99XaWW.0GGqiPUKA4g4HUeKXKGO', firstName: 'Thomas', lastName: 'Kaiser', role: 'ADMIN' },
 { email: 'Teddy_Jason@bonterraenergy.com', password: '$2a$10$etznKXJpAPanLEFTpHf3o.eDZj99XaWW.0GGqiPUKA4g4HUeKXKGO', firstName: 'Teddy_Jason', lastName: 'Bonterra' },
