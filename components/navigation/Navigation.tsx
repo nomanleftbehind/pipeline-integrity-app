@@ -123,7 +123,7 @@ const Navigation = ({ onNavigationAction, paginationCount, validators }: INaviga
     } else if (key === 'field') {
       searchItem[key] = e.target.value;
       searchItem.having = HavingEnum.Any;
-      searchItem.value = '';
+      searchItem.operation = OperationEnum.Equals;
       const { type, enumObjectArray } = options?.find(({ table, field }) => table === searchItem.table && field === e.target.value) || {};
       searchItem.type = type || '';
       newSearchEnumObject = type === 'Boolean' ? [
@@ -131,6 +131,7 @@ const Navigation = ({ onNavigationAction, paginationCount, validators }: INaviga
         { serverEnum: 'false', databaseEnum: 'N', },
       ] : enumObjectArray ? enumObjectArray :
         [];
+      searchItem.value = newSearchEnumObject.length > 0 ? newSearchEnumObject[0].serverEnum : '';
 
     } else if (key === 'having') {
       searchItem[key] = e.target.value as HavingEnum;
@@ -139,7 +140,9 @@ const Navigation = ({ onNavigationAction, paginationCount, validators }: INaviga
         searchItem.value = '';
         searchItem.type = 'Int';
         searchItem.operation = OperationEnum.Equals;
+        newSearchEnumObject = [];
       } else {
+        searchItem.operation = OperationEnum.Equals;
         const { type } = options?.find(({ table, field }) => table === searchItem.table && field === searchItem.field) || {};
         searchItem.type = type || '';
       }

@@ -591,7 +591,7 @@ export const PipelineQuery = extendType({
 
           const query = await Promise.all(search.map(async ({ table, field, having, operation, value, type }) => {
             console.log({ table, field, having, operation, value, type });
-            
+
             const castValue =
               type === 'Int' ? parseInt(value) :
                 type === 'Float' ? Number(value) :
@@ -908,32 +908,6 @@ export const PipelineQuery = extendType({
           ));
 
           console.log(JSON.stringify(query));
-
-          const ara = await ctx.prisma.pipeline.findMany({
-            where: {
-              AND: [
-                {
-                  downstream: { some: {} }
-                },
-                {
-                  upstream: { none: {} }
-                },
-                // {
-                //   upstream: {
-                //     some: {
-                //       downstream: {
-                //         license: "AB57726"
-                //       }
-                //     }
-                //   }
-                // }
-              ]
-            },
-            skip: 0,
-            take: 50,
-          })
-
-          // return { pipelines: ara, count: ara.length }
 
           const where = { AND: query, };
           const count = await ctx.prisma.pipeline.count({ where });
