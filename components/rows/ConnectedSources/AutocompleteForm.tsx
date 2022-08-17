@@ -89,7 +89,9 @@ export default function AutocompleteForm({ pipelineId, sourceId, formId, options
         </form>
       </td>
       <td>
-        <button className='MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1pe4mpk-MuiButtonBase-root-MuiIconButton-root' type='submit' form={elementId} title='Submit' disabled={state === '' ? true : false}>
+        <button
+        /* MUI buttons don't support form prop so we are using DOM button with same class as MUI button so that styling is applied to it */ className='MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1pe4mpk-MuiButtonBase-root-MuiIconButton-root css-1j7qk7u'
+          type='submit' form={elementId} title='Submit' disabled={state === '' ? true : false}>
           <CheckCircleOutlineIcon />
         </ button>
       </td>
