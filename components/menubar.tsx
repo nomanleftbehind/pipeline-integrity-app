@@ -12,7 +12,6 @@ export default function ManuBar() {
     { href: '/pipelines', a: 'Pipelines' },
     // { href: 'pressuretests', a: 'Pressure Tests' },
     // { href: 'pigruns', a: 'Pig Runs' },
-    { href: '/webassembly', a: 'WebAssembly' },
     // { href: 'satellites', a: 'Satellites' },
     // { href: 'facilities', a: 'Facilities' },
   ]
