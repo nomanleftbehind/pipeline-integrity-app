@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { prisma } from '../lib/prisma';
 import { getUser } from '../lib/user';
 

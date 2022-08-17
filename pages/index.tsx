@@ -1,7 +1,3 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-
-import { useAuth } from '../context/AuthContext';
 import { prisma } from '../lib/prisma';
 import { getUser } from '../lib/user';
 import { IGetServerSideProps } from './register';
