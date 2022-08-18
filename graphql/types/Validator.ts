@@ -1,9 +1,6 @@
 import { objectType, extendType } from 'nexus';
 import { UserRoleEnumArray } from './User';
 import {
-	FromToFeatureEnumArray,
-	TypeEnumArray,
-	GradeEnumArray,
 	MaterialEnumArray,
 	InternalProtectionEnumArray,
 	FlowCalculationDirectionEnumArray,
@@ -11,7 +8,7 @@ import {
 import { Context } from '../context';
 
 import { StatusEnumArray, SubstanceEnumArray } from './LicenseChange';
-import { PigTypeEnumArray, PigInspectionEnumArray } from './PigRun';
+import { PigInspectionEnumArray } from './PigRun';
 import { LimitingSpecEnumArray } from './PressureTest';
 import { EnvironmentProximityToEnumArray, GeotechnicalFacingEnumArray } from './Risk';
 import { SolubilityEnumArray } from './BatchProduct';
@@ -31,6 +28,42 @@ export const outsideDiameterMatchPattern = "^4[3-9]$|^4[2-9]\\.[2-9]\\d?$|^([5-9
 
 interface ILoadEnumObjectArrayArgs {
 	ctx: Context;
+}
+
+export const loadPipelineTypeEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.pipelineType.findMany({
+		select: { id: true, type: true },
+		orderBy: { type: 'asc' },
+	})).map(({ id, type }) => {
+		return { databaseEnum: type, serverEnum: id };
+	});
+}
+
+export const loadPipelineGradeEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.pipelineGrade.findMany({
+		select: { id: true, grade: true },
+		orderBy: { grade: 'asc' },
+	})).map(({ id, grade }) => {
+		return { databaseEnum: grade, serverEnum: id };
+	});
+}
+
+export const loadPipelineFromToFeatureEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.pipelineFromToFeature.findMany({
+		select: { id: true, feature: true },
+		orderBy: { feature: 'asc' },
+	})).map(({ id, feature }) => {
+		return { databaseEnum: feature, serverEnum: id };
+	});
+}
+
+export const loadPigTypeEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.pigType.findMany({
+		select: { id: true, type: true },
+		orderBy: { type: 'asc' },
+	})).map(({ id, type }) => {
+		return { databaseEnum: type, serverEnum: id };
+	});
 }
 
 export const loadBatchProductEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
@@ -68,12 +101,12 @@ export const ValidatorsPipeline = objectType({
 		t.nonNull.string('licenseMatchPattern')
 		t.nonNull.string('segmentMatchPattern')
 		t.nonNull.string('fromToMatchPattern')
-		t.nonNull.list.nonNull.field('fromToFeatureEnum', { type: 'EnumObject' })
+		t.nonNull.list.nonNull.field('fromToFeatureEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadPipelineFromToFeatureEnumObjectArray({ ctx }) })
 		t.nonNull.list.nonNull.field('statusEnum', { type: 'EnumObject' })
 		t.nonNull.list.nonNull.field('substanceEnum', { type: 'EnumObject' })
 		t.nonNull.string('lengthMatchPattern')
-		t.nonNull.list.nonNull.field('typeEnum', { type: 'EnumObject' })
-		t.nonNull.list.nonNull.field('gradeEnum', { type: 'EnumObject' })
+		t.nonNull.list.nonNull.field('pipelineTypeEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadPipelineTypeEnumObjectArray({ ctx }) })
+		t.nonNull.list.nonNull.field('pipelineGradeEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadPipelineGradeEnumObjectArray({ ctx }) })
 		t.nonNull.string('yieldStrengthMatchPattern')
 		t.nonNull.string('outsideDiameterMatchPattern')
 		t.nonNull.string('wallThicknessMatchPattern')
@@ -86,7 +119,7 @@ export const ValidatorsPipeline = objectType({
 		t.nonNull.list.nonNull.field('geotechnicalFacingEnum', { type: 'EnumObject' })
 		t.nonNull.list.nonNull.field('solubilityEnum', { type: 'EnumObject' })
 		t.nonNull.list.nonNull.field('batchProductEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadBatchProductEnumObjectArray({ ctx }) })
-		t.nonNull.list.nonNull.field('pigTypeEnum', { type: 'EnumObject' })
+		t.nonNull.list.nonNull.field('pigTypeEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadPigTypeEnumObjectArray({ ctx }) })
 		t.nonNull.list.nonNull.field('pigInspectionEnum', { type: 'EnumObject' })
 		t.nonNull.list.nonNull.field('operatorEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadOperatorEnumObjectArray({ ctx }) })
 		t.nonNull.list.nonNull.field('chemicalSupplierEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadChemicalSupplierEnumObjectArray({ ctx }) })
@@ -105,12 +138,9 @@ export const ValidatorQuery = extendType({
 					licenseMatchPattern,
 					segmentMatchPattern,
 					fromToMatchPattern,
-					fromToFeatureEnum: FromToFeatureEnumArray,
 					statusEnum: StatusEnumArray,
 					substanceEnum: SubstanceEnumArray,
 					lengthMatchPattern,
-					typeEnum: TypeEnumArray,
-					gradeEnum: GradeEnumArray,
 					yieldStrengthMatchPattern,
 					outsideDiameterMatchPattern,
 					wallThicknessMatchPattern,
@@ -122,7 +152,6 @@ export const ValidatorQuery = extendType({
 					environmentProximityToEnum: EnvironmentProximityToEnumArray,
 					geotechnicalFacingEnum: GeotechnicalFacingEnumArray,
 					solubilityEnum: SolubilityEnumArray,
-					pigTypeEnum: PigTypeEnumArray,
 					pigInspectionEnum: PigInspectionEnumArray,
 					operationEnum: OperationEnumArray,
 					havingEnum: HavingEnumArray,

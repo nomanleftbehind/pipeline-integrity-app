@@ -8,55 +8,71 @@ datasource db {
 }
 
 model User {
-  id                            String                 @id @default(uuid())
-  email                         String                 @unique
-  password                      String
-  firstName                     String
-  lastName                      String
-  role                          UserRoleEnum           @default(OPERATOR)
-  facilitiesCreatedBy           Facility[]             @relation("facilityCreatedBy")
-  facilitiesUpdatedBy           Facility[]             @relation("facilityUpdatedBy")
-  satellitesCreatedBy           Satellite[]            @relation("satelliteCreatedBy")
-  satellitesUpdatedBy           Satellite[]            @relation("satelliteUpdatedBy")
-  pipelinesCreatedBy            Pipeline[]             @relation("pipelineCreatedBy")
-  pipelinesUpdatedBy            Pipeline[]             @relation("pipelineUpdatedBy")
-  pipelinesOnPipelinesCreatedBy PipelinesOnPipelines[] @relation("pipelinesOnPipelinesCreatedBy")
-  pipelinesOnPipelinesUpdatedBy PipelinesOnPipelines[] @relation("pipelinesOnPipelinesUpdatedBy")
-  licenseChangesCreatedBy       LicenseChange[]        @relation("licenseChangeCreatedBy")
-  licenseChangesUpdatedBy       LicenseChange[]        @relation("licenseChangeUpdatedBy")
-  wellsCreatedBy                Well[]                 @relation("wellCreatedBy")
-  wellsUpdatedBy                Well[]                 @relation("wellUpdatedBy")
-  salesPointsCreatedBy          SalesPoint[]           @relation("salesPointCreatedBy")
-  salesPointsUpdatedBy          SalesPoint[]           @relation("salesPointUpdatedBy")
-  pigRunsOperator               PigRun[]               @relation("pigRunOperator")
-  pigRunsCreatedBy              PigRun[]               @relation("pigRunCreatedBy")
-  pigRunsUpdatedBy              PigRun[]               @relation("pigRunUpdatedBy")
-  pressureTestsCreatedBy        PressureTest[]         @relation("pressureTestCreatedBy")
-  pressureTestsUpdatedBy        PressureTest[]         @relation("pressureTestUpdatedBy")
-  pipelineBatchesCreatedBy      PipelineBatch[]        @relation("pipelineBatchCreatedBy")
-  pipelineBatchesUpdatedBy      PipelineBatch[]        @relation("pipelineBatchUpdatedBy")
-  wellBatchesCreatedBy          WellBatch[]            @relation("wellBatchCreatedBy")
-  wellBatchesUpdatedBy          WellBatch[]            @relation("wellBatchUpdatedBy")
-  batchProductsCreatedBy        BatchProduct[]         @relation("batchProductCreatedBy")
-  batchProductsUpdatedBy        BatchProduct[]         @relation("batchProductUpdatedBy")
-  risksCreatedBy                Risk[]                 @relation("riskCreatedBy")
-  risksUpdatedBy                Risk[]                 @relation("riskUpdatedBy")
-  chemicalsCreatedBy            Chemical[]             @relation("chemicalCreatedBy")
-  chemicalsUpdatedBy            Chemical[]             @relation("chemicalUpdatedBy")
-  chemicalSuppliersCreatedBy    ChemicalSupplier[]     @relation("chemicalSupplierCreatedBy")
-  chemicalSuppliersUpdatedBy    ChemicalSupplier[]     @relation("chemicalSupplierUpdatedBy")
+  id                              String                  @id @default(uuid())
+  email                           String                  @unique
+  password                        String
+  firstName                       String
+  lastName                        String
+  role                            UserRoleEnum            @default(OPERATOR)
+  facilitiesCreatedBy             Facility[]              @relation("facilityCreatedBy")
+  facilitiesUpdatedBy             Facility[]              @relation("facilityUpdatedBy")
+  satellitesCreatedBy             Satellite[]             @relation("satelliteCreatedBy")
+  satellitesUpdatedBy             Satellite[]             @relation("satelliteUpdatedBy")
+  pipelinesCreatedBy              Pipeline[]              @relation("pipelineCreatedBy")
+  pipelinesUpdatedBy              Pipeline[]              @relation("pipelineUpdatedBy")
+  pipelineTypesCreatedBy          PipelineType[]          @relation("pipelineTypeCreatedBy")
+  pipelineTypesUpdatedBy          PipelineType[]          @relation("pipelineTypeUpdatedBy")
+  pipelineGradesCreatedBy         PipelineGrade[]         @relation("pipelineGradeCreatedBy")
+  pipelineGradesUpdatedBy         PipelineGrade[]         @relation("pipelineGradeUpdatedBy")
+  pipelineFromToFeaturesCreatedBy PipelineFromToFeature[] @relation("pipelineFromToFeatureCreatedBy")
+  pipelineFromToFeaturesUpdatedBy PipelineFromToFeature[] @relation("pipelineFromToFeatureUpdatedBy")
+  pipelinesOnPipelinesCreatedBy   PipelinesOnPipelines[]  @relation("pipelinesOnPipelinesCreatedBy")
+  pipelinesOnPipelinesUpdatedBy   PipelinesOnPipelines[]  @relation("pipelinesOnPipelinesUpdatedBy")
+  licenseChangesCreatedBy         LicenseChange[]         @relation("licenseChangeCreatedBy")
+  licenseChangesUpdatedBy         LicenseChange[]         @relation("licenseChangeUpdatedBy")
+  wellsCreatedBy                  Well[]                  @relation("wellCreatedBy")
+  wellsUpdatedBy                  Well[]                  @relation("wellUpdatedBy")
+  salesPointsCreatedBy            SalesPoint[]            @relation("salesPointCreatedBy")
+  salesPointsUpdatedBy            SalesPoint[]            @relation("salesPointUpdatedBy")
+  pigRunsOperator                 PigRun[]                @relation("pigRunOperator")
+  pigRunsCreatedBy                PigRun[]                @relation("pigRunCreatedBy")
+  pigRunsUpdatedBy                PigRun[]                @relation("pigRunUpdatedBy")
+  pressureTestsCreatedBy          PressureTest[]          @relation("pressureTestCreatedBy")
+  pressureTestsUpdatedBy          PressureTest[]          @relation("pressureTestUpdatedBy")
+  pipelineBatchesCreatedBy        PipelineBatch[]         @relation("pipelineBatchCreatedBy")
+  pipelineBatchesUpdatedBy        PipelineBatch[]         @relation("pipelineBatchUpdatedBy")
+  wellBatchesCreatedBy            WellBatch[]             @relation("wellBatchCreatedBy")
+  wellBatchesUpdatedBy            WellBatch[]             @relation("wellBatchUpdatedBy")
+  batchProductsCreatedBy          BatchProduct[]          @relation("batchProductCreatedBy")
+  batchProductsUpdatedBy          BatchProduct[]          @relation("batchProductUpdatedBy")
+  pigTypesCreatedBy               PigType[]               @relation("pigTypeCreatedBy")
+  pigTypesUpdatedBy               PigType[]               @relation("pigTypeUpdatedBy")
+  risksCreatedBy                  Risk[]                  @relation("riskCreatedBy")
+  risksUpdatedBy                  Risk[]                  @relation("riskUpdatedBy")
+  chemicalsCreatedBy              Chemical[]              @relation("chemicalCreatedBy")
+  chemicalsUpdatedBy              Chemical[]              @relation("chemicalUpdatedBy")
+  chemicalSuppliersCreatedBy      ChemicalSupplier[]      @relation("chemicalSupplierCreatedBy")
+  chemicalSuppliersUpdatedBy      ChemicalSupplier[]      @relation("chemicalSupplierUpdatedBy")
 }
 
 enum UserRoleEnum {
-  ADMIN       @map("Admin")
-  ENGINEER    @map("Engineer")
-  OFFICE      @map("Office")
-  OPERATOR    @map("Operator")
-  CHEMICAL    @map("Chemical")
-  CATHODIC    @map("Cathodic")
-  CONTRACTOR  @map("Contractor")
+  ADMIN      @map("Admin")
+  ENGINEER   @map("Engineer")
+  OFFICE     @map("Office")
+  OPERATOR   @map("Operator")
+  CHEMICAL   @map("Chemical")
+  CATHODIC   @map("Cathodic")
+  CONTRACTOR @map("Contractor")
 
   @@map("user_role")
+}
+
+model ChangePassword {
+  key       String
+  value     String
+  createdAt DateTime @default(now())
+
+  @@id([key, value])
 }
 
 model Facility {
@@ -69,7 +85,6 @@ model Facility {
   updatedBy   User        @relation("facilityUpdatedBy", fields: [updatedById], references: [id])
   updatedById String
   updatedAt   DateTime    @updatedAt
-
 }
 
 model Satellite {
@@ -84,7 +99,6 @@ model Satellite {
   updatedBy   User       @relation("satelliteUpdatedBy", fields: [updatedById], references: [id])
   updatedById String
   updatedAt   DateTime   @updatedAt
-
 }
 
 model Pipeline {
@@ -99,13 +113,17 @@ model Pipeline {
   license                  String
   segment                  String
   from                     String
-  fromFeature              FromToFeatureEnum?
+  fromFeature              PipelineFromToFeature?       @relation("fromFeature", fields: [fromFeatureId], references: [id])
+  fromFeatureId            String?
   to                       String
-  toFeature                FromToFeatureEnum?
+  toFeature                PipelineFromToFeature?       @relation("toFeature", fields: [toFeatureId], references: [id])
+  toFeatureId              String?
   licenseChanges           LicenseChange[]
   length                   Float
-  type                     TypeEnum?
-  grade                    GradeEnum?
+  pipelineType             PipelineType?                @relation(fields: [pipelineTypeId], references: [id])
+  pipelineTypeId           String?
+  pipelineGrade            PipelineGrade?               @relation(fields: [pipelineGradeId], references: [id])
+  pipelineGradeId          String?
   yieldStrength            Int?
   outsideDiameter          Float?
   wallThickness            Float?
@@ -127,6 +145,46 @@ model Pipeline {
   updatedAt                DateTime                     @updatedAt
 
   @@unique([license, segment])
+}
+
+model PipelineType {
+  id          String     @id @default(uuid())
+  pipelines   Pipeline[]
+  type        String     @unique
+  description String?
+  createdBy   User       @relation("pipelineTypeCreatedBy", fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime   @default(now())
+  updatedBy   User       @relation("pipelineTypeUpdatedBy", fields: [updatedById], references: [id])
+  updatedById String
+  updatedAt   DateTime   @updatedAt
+}
+
+model PipelineGrade {
+  id          String     @id @default(uuid())
+  pipelines   Pipeline[]
+  grade       String     @unique
+  description String?
+  createdBy   User       @relation("pipelineGradeCreatedBy", fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime   @default(now())
+  updatedBy   User       @relation("pipelineGradeUpdatedBy", fields: [updatedById], references: [id])
+  updatedById String
+  updatedAt   DateTime   @updatedAt
+}
+
+model PipelineFromToFeature {
+  id                   String     @id @default(uuid())
+  pipelinesFromFeature Pipeline[] @relation("fromFeature")
+  pipelinesToFeature   Pipeline[] @relation("toFeature")
+  feature              String     @unique
+  description          String?
+  createdBy            User       @relation("pipelineFromToFeatureCreatedBy", fields: [createdById], references: [id])
+  createdById          String
+  createdAt            DateTime   @default(now())
+  updatedBy            User       @relation("pipelineFromToFeatureUpdatedBy", fields: [updatedById], references: [id])
+  updatedById          String
+  updatedAt            DateTime   @updatedAt
 }
 
 model PipelinesOnPipelines {
@@ -167,7 +225,8 @@ model PigRun {
   id                          String             @id @default(uuid())
   pipeline                    Pipeline           @relation(fields: [pipelineId], references: [id])
   pipelineId                  String
-  pigType                     PigTypeEnum?
+  pigType                     PigType?           @relation(fields: [pigTypeId], references: [id])
+  pigTypeId                   String?
   dateIn                      DateTime
   dateOut                     DateTime?
   isolationValveFunctionTest  PigInspectionEnum?
@@ -181,6 +240,19 @@ model PigRun {
   updatedBy                   User               @relation("pigRunUpdatedBy", fields: [updatedById], references: [id])
   updatedById                 String
   updatedAt                   DateTime           @updatedAt
+}
+
+model PigType {
+  id          String   @id @default(uuid())
+  pigRuns     PigRun[]
+  type        String   @unique
+  description String?
+  createdBy   User     @relation("pigTypeCreatedBy", fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedBy   User     @relation("pigTypeUpdatedBy", fields: [updatedById], references: [id])
+  updatedById String
+  updatedAt   DateTime @updatedAt
 }
 
 model PressureTest {
@@ -284,7 +356,6 @@ model Chemical {
   updatedBy                 User              @relation("chemicalUpdatedBy", fields: [updatedById], references: [id])
   updatedById               String
   updatedAt                 DateTime          @updatedAt
-
 }
 
 model ChemicalSupplier {
@@ -298,7 +369,6 @@ model ChemicalSupplier {
   updatedBy   User       @relation("chemicalSupplierUpdatedBy", fields: [updatedById], references: [id])
   updatedById String
   updatedAt   DateTime   @updatedAt
-
 }
 
 model Well {
@@ -321,7 +391,6 @@ model Well {
   updatedBy       User        @relation("wellUpdatedBy", fields: [updatedById], references: [id])
   updatedById     String
   updatedAt       DateTime    @updatedAt
-
 }
 
 model SalesPoint {
@@ -343,7 +412,6 @@ model SalesPoint {
   updatedBy       User      @relation("salesPointUpdatedBy", fields: [updatedById], references: [id])
   updatedById     String
   updatedAt       DateTime  @updatedAt
-
 }
 
 model PipelineBatch {
@@ -363,7 +431,6 @@ model PipelineBatch {
   updatedBy      User         @relation("pipelineBatchUpdatedBy", fields: [updatedById], references: [id])
   updatedById    String
   updatedAt      DateTime     @updatedAt
-
 }
 
 model WellBatch {
@@ -383,7 +450,6 @@ model WellBatch {
   updatedBy      User         @relation("wellBatchUpdatedBy", fields: [updatedById], references: [id])
   updatedById    String
   updatedAt      DateTime     @updatedAt
-
 }
 
 model BatchProduct {
@@ -400,18 +466,17 @@ model BatchProduct {
   updatedBy       User            @relation("batchProductUpdatedBy", fields: [updatedById], references: [id])
   updatedById     String
   updatedAt       DateTime        @updatedAt
-
 }
 
 enum SubstanceEnum {
-  NaturalGas       @map("Natural Gas")
-  FreshWater       @map("Fresh Water")
-  SaltWater        @map("Salt Water")
-  CrudeOil         @map("Crude Oil")
-  OilWellEffluent  @map("Oil Well Effluent")
-  LVPProducts      @map("LVP Products")
-  FuelGas          @map("Fuel Gas")
-  SourNaturalGas   @map("Sour Natural Gas")
+  NaturalGas      @map("Natural Gas")
+  FreshWater      @map("Fresh Water")
+  SaltWater       @map("Salt Water")
+  CrudeOil        @map("Crude Oil")
+  OilWellEffluent @map("Oil Well Effluent")
+  LVPProducts     @map("LVP Products")
+  FuelGas         @map("Fuel Gas")
+  SourNaturalGas  @map("Sour Natural Gas")
 
   @@map("substance")
 }
@@ -423,134 +488,41 @@ enum SolubilityEnum {
   @@map("solubility")
 }
 
-enum FromToFeatureEnum {
-  BlindEnd               @map("Blind end")
-  Battery
-  Pipeline
-  Satellite
-  StorageTank            @map("Storage tank")
-  InjectionPlant         @map("Injection plant")
-  Well
-  CompressorStation      @map("Compressor station")
-  MeterStation           @map("Meter station")
-  PumpStation            @map("Pump station")
-  GasProcessingPlant     @map("Gas processing plant")
-  UndergroundCapOrTieIn  @map("Underground cap or tie-in")
-  Header
-
-  @@map("from_to_feature")
-}
-
 enum StatusEnum {
   Operating
   Discontinued
   Abandoned
   Removed
-  ToBeConstructed  @map("To Be Constructed")
+  ToBeConstructed @map("To Be Constructed")
   Active
   Cancelled
   New
-  NotConstructed   @map("Not Constructed")
+  NotConstructed  @map("Not Constructed")
 
   @@map("status")
 }
 
-enum TypeEnum {
-  Type515      @map("515")
-  Type2306     @map("2306")
-  Type3406     @map("3406")
-  Type3408     @map("3408")
-  Type6063     @map("6063")
-  Type6351     @map("6351")
-  Type5A       @map("5A")
-  Type5L       @map("5L")
-  Type5LX      @map("5LX")
-  TypeA106     @map("A106")
-  TypeA120     @map("A120")
-  TypeA53      @map("A53")
-  TypeAMERON   @map("AMERON")
-  TypeB515     @map("B515")
-  TypeB51S     @map("B51S")
-  TypeB5IS     @map("B5IS")
-  TypeCENTRON  @map("CENTRON")
-  TypeCIBA     @map("CIBA")
-  TypeFSLP     @map("FSLP")
-  TypeREDTHR   @map("REDTHR")
-  TypeSMITH    @map("SMITH")
-  TypeSTAR     @map("STAR")
-  TypeTBS      @map("TBS")
-  TypeWSLP     @map("WSLP")
-  TypeZ2451    @map("Z245.1")
-  TypeZ2453    @map("Z245.3")
-
-  @@map("type")
-}
-
-enum GradeEnum {
-  GradeA     @map("A")
-  Grade3592  @map("3592")
-  GradeB     @map("B")
-  GradeX42   @map("X42")
-  GradeBW1   @map("BW1")
-  Grade2500  @map("2500")
-  Grade3591  @map("3591")
-  Grade2901  @map("2901")
-  GradeT4    @map("T4")
-  Grade300   @map("300")
-  Grade3593  @map("3593")
-  Grade11    @map("11")
-  GradeJ55   @map("J55")
-  Grade2250  @map("2250")
-  GradeX52   @map("X52")
-  Grade2750  @map("2750")
-  Grade2902  @map("2902")
-  Grade25    @map("25")
-  Grade241   @map("241")
-  Grade2413  @map("2413")
-  Grade2411  @map("2411")
-  Grade155   @map("155")
-  Grade150   @map("150")
-  Grade1000  @map("1000")
-  Grade800   @map("800")
-  GradeT1A   @map("T1A")
-  Grade2010  @map("2010")
-  GradeT4A   @map("T4A")
-  Grade1250  @map("1250")
-  Grade17    @map("17")
-  Grade900   @map("900")
-  GradeT1B   @map("T1B")
-  Grade810   @map("810")
-  Grade35    @map("35")
-  Grade5     @map("5")
-  Grade9     @map("9")
-  Grade200   @map("200")
-  Grade1200  @map("1200")
-  Grade1103  @map("11.03")
-
-  @@map("grade")
-}
-
 enum MaterialEnum {
   Steel
-  PolyvinylChloride         @map("Polyvinyl Chloride")
+  PolyvinylChloride        @map("Polyvinyl Chloride")
   Composite
   Fiberglass
   Aluminum
   Polyethylene
-  CelluloseAcetateButyrate  @map("Cellulose Acetate Butyrate")
+  CelluloseAcetateButyrate @map("Cellulose Acetate Butyrate")
   Unknown
-  AsbestosCement            @map("Asbestos Cement")
+  AsbestosCement           @map("Asbestos Cement")
 
   @@map("material")
 }
 
 enum InternalProtectionEnum {
   Uncoated
-  FreeStandingSlipLined  @map("Free Standing (Slip Lined)")
+  FreeStandingSlipLined @map("Free Standing (Slip Lined)")
   Unknown
   Cement
-  ExpandedPolyethylene   @map("Expanded Polyethylene")
-  ThinFilm               @map("Thin Film")
+  ExpandedPolyethylene  @map("Expanded Polyethylene")
+  ThinFilm              @map("Thin Film")
 
   @@map("internal_protection")
 }
@@ -562,106 +534,6 @@ enum FlowCalculationDirectionEnum {
   @@map("flow_calculation_direction")
 }
 
-enum PigTypeEnum {
-  Scrapper                 @map("Scrapper")
-  PigType4inArgus          @map("4in Argus")
-  PigType6inargus          @map("6in argus")
-  PigType6inArgus          @map("6in Argus")
-  ScraperP400              @map("Scraper P400")
-  PigType3inPurpleScraper  @map("3in Purple Scraper")
-  ScraperP304              @map("Scraper P304")
-  PigType3inScrapper       @map("3in Scrapper")
-  PigType3inscrapper       @map("3inscrapper")
-  Foam                     @map("Foam")
-  RedStubby                @map("Red Stubby")
-  Redscraper               @map("Red scraper")
-  PigType3inGSCR           @map("3in GSCR")
-  PigType2inGSCR           @map("2in GSCR")
-  PigType2ingscr           @map("2ing scr")
-  PigType2inGSCR_GFP       @map("2in GSCR/GFP")
-  PigType4inGSCR           @map("4in GSCR")
-  PigType2inPSCR_FLM       @map("2in PSCR/FLM")
-  PigType3inPSCR           @map("3in PSCR")
-  Highline                 @map("High line")
-  PigType2inPSCR           @map("2in PSCR")
-  PigType3_scrapper        @map("3:scrapper")
-  ScraperP401              @map("Scraper P401")
-  ScraperP300              @map("Scraper P300")
-  ScraperP301              @map("Scraper P301")
-  ScraperP309              @map("Scraper P309")
-  ScraperP314              @map("Scraper P314")
-  ScaperP314               @map("Scaper P314")
-  ScaperPP309              @map("Scaper PP309")
-  ScraperP204              @map("Scraper P204")
-  ScraperP208              @map("Scraper P208")
-  PigType3inArgus          @map("3in Argus")
-  PigType2inpurple         @map("2in purple")
-  Ball                     @map("Ball")
-  Black3inBall             @map("Black 3in Ball")
-  PigType3inWhite          @map("3in White")
-  PigType3                 @map("3")
-  SIMAY2018                @map("SI MAY 2018")
-  ScraperP206              @map("Scraper P206")
-  ScraperP200              @map("Scraper P200")
-  PigType3inRscr           @map("3in R scr")
-  PigType3inPurpleStubby   @map("3in Purple Stubby")
-  Red3inScrapper           @map("Red 3in Scrapper")
-  PigType3inGreenDisc      @map("3in Green Disc")
-  PigType4inGreenDisc      @map("4in Green Disc")
-  PigType4green2disc       @map("4green 2 disc")
-  PigType4gree2disc        @map("4 gree 2 disc")
-  PigType3ingreendisc      @map("3in green disc")
-  PigType3inpurpledisc     @map("3in purple disc")
-  PigType2inPurpleDisc     @map("2in Purple Disc")
-  disc                     @map("disc")
-  PigType2purple2disc      @map("2 purple 2 disc")
-  PigType3inpurple2disc    @map("3in purple 2 disc")
-  PigType2green2disc       @map("2 green 2 disc")
-  bullet                   @map("bullet")
-  PigType8inFoam           @map("8in Foam")
-  PigType3inscr            @map("3in scr")
-  ScraperP305              @map("Scraper P305")
-  ScraperP312              @map("Scraper P312")
-  ScraperP303              @map("Scraper P303")
-  ScraperP311              @map("Scraper P311")
-  ScrapperP307             @map("Scrapper P307")
-  PigType4inpurplescraper  @map("4in  purple scraper")
-  Torpedo                  @map("Torpedo")
-  PigType4in               @map("4in")
-  PigType3inStubby         @map("3in Stubby")
-  Stubby                   @map("Stubby")
-  PigType3in               @map("3in")
-  redball                  @map("red ball")
-  PigType2inStubby         @map("2in Stubby")
-  PigType1inStubby         @map("1in Stubby")
-  PigType3inBrownRibbed    @map("3in Brown Ribbed")
-  PigType3inGreenRibbed    @map("3in Green Ribbed")
-  PigType3inBlueRibbed     @map("3in Blue Ribbed")
-  BlueRibbed               @map("Blue Ribbed")
-  M_D_Foamy                @map("M.D. Foamy")
-  PigType6inGreenRibbed    @map("6in Green Ribbed")
-  BlueinScraper            @map("Blue #in Scraper")
-  Red4inscraper            @map("Red 4in scraper")
-  Blue3inScrapper          @map("Blue 3in Scrapper")
-  PigType4inBlueDisc       @map("4inBlue Disc")
-  PigType8inBlackDisc      @map("8in Black Disc")
-  PigType4inGreendisc      @map("4in Green disc")
-  PigType6inGreenDisc      @map("6in Green Disc")
-  PigType6inscrapper       @map("6in scrapper")
-  PigType4inscrapper       @map("4inscrapper")
-  PigType4inFoam           @map("4in Foam")
-  PigType3inredscrape      @map("3in red scrape")
-  GSCR                     @map("GSCR")
-  PigType4GreenStubby      @map("4 Green Stubby")
-  PigType4_GreenRibbed     @map("4: Green Ribbed")
-  PigType4Green            @map("#4 Green")
-  PigType3inpurplescraper  @map("3in purple scraper")
-  PigType6ingreenscraper   @map("6in green scraper")
-  Purple3inDisc            @map("Purple 3in Disc")
-
-  @@map("pig_type")
-}
-
 enum PigInspectionEnum {
   Good
   Failed
@@ -670,9 +542,9 @@ enum PigInspectionEnum {
 }
 
 enum LimitingSpecEnum {
-  ANSI150  @map("ANSI 150")
-  ANSI300  @map("ANSI 300")
-  ANSI600  @map("ANSI 600")
+  ANSI150 @map("ANSI 150")
+  ANSI300 @map("ANSI 300")
+  ANSI600 @map("ANSI 600")
 
   @@map("limiting_spec")
 }

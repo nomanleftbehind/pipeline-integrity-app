@@ -126,22 +126,6 @@ enum FlowCalculationDirectionEnum {
   Upstream
 }
 
-enum FromToFeatureEnum {
-  Battery
-  BlindEnd
-  CompressorStation
-  GasProcessingPlant
-  Header
-  InjectionPlant
-  MeterStation
-  Pipeline
-  PumpStation
-  Satellite
-  StorageTank
-  UndergroundCapOrTieIn
-  Well
-}
-
 enum GeotechnicalFacingEnum {
   E
   N
@@ -151,48 +135,6 @@ enum GeotechnicalFacingEnum {
   SE
   SW
   W
-}
-
-enum GradeEnum {
-  Grade5
-  Grade9
-  Grade11
-  Grade17
-  Grade25
-  Grade35
-  Grade150
-  Grade155
-  Grade200
-  Grade241
-  Grade300
-  Grade800
-  Grade810
-  Grade900
-  Grade1000
-  Grade1103
-  Grade1200
-  Grade1250
-  Grade2010
-  Grade2250
-  Grade2411
-  Grade2413
-  Grade2500
-  Grade2750
-  Grade2901
-  Grade2902
-  Grade3591
-  Grade3592
-  Grade3593
-  GradeA
-  GradeB
-  GradeBW1
-  GradeJ55
-  GradeT1A
-  GradeT1B
-  GradeT4
-  GradeT4A
-  GradeX42
-  GradeX52
 }
 
 enum HavingEnum {
@@ -284,8 +226,8 @@ type Mutation {
   editChemical(bacteria: Boolean, bacteriaTreatment: Boolean, baselineFluidAnalysisDate: DateTime, batchFrequency: Int, chemicalSupplierId: String, co2: Boolean, comment: String, continuousInjection: Boolean, downholeBatch: Boolean, h2s: Boolean, id: String!, inhibitorPipelineBatch: Boolean, injectionRate: Float, o2: Boolean, scaleTreatment: Boolean, scaling: Boolean): ChemicalPayload
   editFacility(id: String!, name: String): Facility
   editLicenseChange(comment: String, date: DateTime, id: String!, linkToDocumentation: String, status: StatusEnum, substance: SubstanceEnum): LicenseChangePayload
-  editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigType: PigTypeEnum): PigRunPayload
-  editPipeline(flowCalculationDirection: FlowCalculationDirectionEnum, from: String, fromFeature: FromToFeatureEnum, grade: GradeEnum, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String, to: String, toFeature: FromToFeatureEnum, type: TypeEnum, wallThickness: Float, yieldStrength: Int): PipelinePayload
+  editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigTypeId: String): PigRunPayload
+  editPipeline(flowCalculationDirection: FlowCalculationDirectionEnum, from: String, fromFeatureId: String, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, pipelineGradeId: String, pipelineTypeId: String, satelliteId: String, segment: String, to: String, toFeatureId: String, wallThickness: Float, yieldStrength: Int): PipelinePayload
   editPipelineBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, productId: String): PipelineBatchPayload
   editPressureTest(comment: String, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pressureTestDate: DateTime, pressureTestReceivedDate: DateTime): PressureTestPayload
   editRisk(aerialReview: Boolean, comment: String, consequencePeople: Int, dateSlopeChecked: DateTime, environmentProximityTo: EnvironmentProximityToEnum, gasReleaseCost: Float, geotechnicalFacingS1: GeotechnicalFacingEnum, geotechnicalFacingS2: GeotechnicalFacingEnum, geotechnicalHeightS1: Int, geotechnicalHeightS2: Int, geotechnicalSlopeAngleS1: Int, geotechnicalSlopeAngleS2: Int, id: String!, oilReleaseCost: Float, probabilityGeo: Int, releaseTimeDays: Int, repairTimeDays: Int, safeguardExternalCoating: Int, safeguardInternalProtection: Int): RiskPayload
@@ -333,7 +275,7 @@ type PigRun {
   operator: User
   operatorId: String
   pigSenderReceiverInspection: PigInspectionEnum
-  pigType: PigTypeEnum
+  pigTypeId: String
   pipeline: Pipeline!
   updatedAt: DateTime!
   updatedBy: User!
@@ -342,104 +284,6 @@ type PigRun {
 type PigRunPayload {
   error: FieldError
   pigRun: PigRun
-}
-
-enum PigTypeEnum {
-  Ball
-  Black3inBall
-  Blue3inScrapper
-  BlueRibbed
-  BlueinScraper
-  Foam
-  GSCR
-  Highline
-  M_D_Foamy
-  PigType1inStubby
-  PigType2green2disc
-  PigType2inGSCR
-  PigType2inGSCR_GFP
-  PigType2inPSCR
-  PigType2inPSCR_FLM
-  PigType2inPurpleDisc
-  PigType2inStubby
-  PigType2ingscr
-  PigType2inpurple
-  PigType2purple2disc
-  PigType3
-  PigType3_scrapper
-  PigType3in
-  PigType3inArgus
-  PigType3inBlueRibbed
-  PigType3inBrownRibbed
-  PigType3inGSCR
-  PigType3inGreenDisc
-  PigType3inGreenRibbed
-  PigType3inPSCR
-  PigType3inPurpleScraper
-  PigType3inPurpleStubby
-  PigType3inRscr
-  PigType3inScrapper
-  PigType3inStubby
-  PigType3inWhite
-  PigType3ingreendisc
-  PigType3inpurple2disc
-  PigType3inpurpledisc
-  PigType3inpurplescraper
-  PigType3inredscrape
-  PigType3inscr
-  PigType3inscrapper
-  PigType4Green
-  PigType4GreenStubby
-  PigType4_GreenRibbed
-  PigType4gree2disc
-  PigType4green2disc
-  PigType4in
-  PigType4inArgus
-  PigType4inBlueDisc
-  PigType4inFoam
-  PigType4inGSCR
-  PigType4inGreenDisc
-  PigType4inGreendisc
-  PigType4inpurplescraper
-  PigType4inscrapper
-  PigType6inArgus
-  PigType6inGreenDisc
-  PigType6inGreenRibbed
-  PigType6inargus
-  PigType6ingreenscraper
-  PigType6inscrapper
-  PigType8inBlackDisc
-  PigType8inFoam
-  Purple3inDisc
-  Red3inScrapper
-  Red4inscraper
-  RedStubby
-  Redscraper
-  SIMAY2018
-  ScaperP314
-  ScaperPP309
-  ScraperP200
-  ScraperP204
-  ScraperP206
-  ScraperP208
-  ScraperP300
-  ScraperP301
-  ScraperP303
-  ScraperP304
-  ScraperP305
-  ScraperP309
-  ScraperP311
-  ScraperP312
-  ScraperP314
-  ScraperP400
-  ScraperP401
-  Scrapper
-  ScrapperP307
-  Stubby
-  Torpedo
-  bullet
-  disc
-  redball
 }
 
 type Pipeline {
@@ -452,8 +296,7 @@ type Pipeline {
   firstLicenseDate: DateTime
   flowCalculationDirection: FlowCalculationDirectionEnum!
   from: String!
-  fromFeature: FromToFeatureEnum
-  grade: GradeEnum
+  fromFeatureId: String
   id: String!
   internalProtection: InternalProtectionEnum
   length: Float!
@@ -465,14 +308,15 @@ type Pipeline {
   pigRuns: [PigRun]
   piggable: Boolean
   piggingFrequency: Int
+  pipelineGradeId: String
+  pipelineTypeId: String
   pressureTests: [PressureTest]
   risk: Risk
   salesPoints: [SalesPoint]
   satellite: Satellite
   segment: String!
   to: String!
-  toFeature: FromToFeatureEnum
-  type: TypeEnum
+  toFeatureId: String
   updatedAt: DateTime!
   updatedBy: User!
   upstream: [Pipeline]
@@ -506,8 +350,6 @@ type PipelineBatchPayload {
 input PipelineCreateInput {
   downstream: [PipelineCreateInput]
   from: String!
-  fromFeature: FromToFeatureEnum
-  grade: GradeEnum
   internalProtection: InternalProtectionEnum
   length: Float!
   license: String!
@@ -516,8 +358,6 @@ input PipelineCreateInput {
   outsideDiameter: Float
   segment: String!
   to: String!
-  toFeature: FromToFeatureEnum
-  type: TypeEnum
   upstream: [PipelineCreateInput]
   wallThickness: Float
   wells: [WellCreateInput]
@@ -841,35 +681,6 @@ enum TableEnum {
   wells
 }
 
-enum TypeEnum {
-  Type5A
-  Type5L
-  Type5LX
-  Type515
-  Type2306
-  Type3406
-  Type3408
-  Type6063
-  Type6351
-  TypeA53
-  TypeA106
-  TypeA120
-  TypeAMERON
-  TypeB5IS
-  TypeB51S
-  TypeB515
-  TypeCENTRON
-  TypeCIBA
-  TypeFSLP
-  TypeREDTHR
-  TypeSMITH
-  TypeSTAR
-  TypeTBS
-  TypeWSLP
-  TypeZ2451
-  TypeZ2453
-}
-
 type User {
   email: String!
   facilitiesCreated: [Facility]
@@ -929,7 +740,6 @@ type ValidatorsPipeline {
   fromToFeatureEnum: [EnumObject!]!
   fromToMatchPattern: String!
   geotechnicalFacingEnum: [EnumObject!]!
-  gradeEnum: [EnumObject!]!
   havingEnum: [EnumObject!]!
   internalProtectionEnum: [EnumObject!]!
   lengthMatchPattern: String!
@@ -942,11 +752,12 @@ type ValidatorsPipeline {
   outsideDiameterMatchPattern: String!
   pigInspectionEnum: [EnumObject!]!
   pigTypeEnum: [EnumObject!]!
+  pipelineGradeEnum: [EnumObject!]!
+  pipelineTypeEnum: [EnumObject!]!
   segmentMatchPattern: String!
   solubilityEnum: [EnumObject!]!
   statusEnum: [EnumObject!]!
   substanceEnum: [EnumObject!]!
-  typeEnum: [EnumObject!]!
   wallThicknessMatchPattern: String!
   yieldStrengthMatchPattern: String!
 }

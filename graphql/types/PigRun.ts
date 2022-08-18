@@ -8,120 +8,6 @@ import { ITableConstructObject } from './SearchNavigation';
 
 
 
-
-export const PigTypeEnumMembers = {
-	Scrapper: 'Scrapper',
-	PigType4inArgus: '4in Argus',
-	PigType6inargus: '6in argus',
-	PigType6inArgus: '6in Argus',
-	ScraperP400: 'Scraper P400',
-	PigType3inPurpleScraper: '3in Purple Scraper',
-	ScraperP304: 'Scraper P304',
-	PigType3inScrapper: '3in Scrapper',
-	PigType3inscrapper: '3inscrapper',
-	Foam: 'Foam',
-	RedStubby: 'Red Stubby',
-	Redscraper: 'Red scraper',
-	PigType3inGSCR: '3in GSCR',
-	PigType2inGSCR: '2in GSCR',
-	PigType2ingscr: '2ing scr',
-	PigType2inGSCR_GFP: '2in GSCR/GFP',
-	PigType4inGSCR: '4in GSCR',
-	PigType2inPSCR_FLM: '2in PSCR/FLM',
-	PigType3inPSCR: '3in PSCR',
-	Highline: 'High line',
-	PigType2inPSCR: '2in PSCR',
-	PigType3_scrapper: '3:scrapper',
-	ScraperP401: 'Scraper P401',
-	ScraperP300: 'Scraper P300',
-	ScraperP301: 'Scraper P301',
-	ScraperP309: 'Scraper P309',
-	ScraperP314: 'Scraper P314',
-	ScaperP314: 'Scaper P314',
-	ScaperPP309: 'Scaper PP309',
-	ScraperP204: 'Scraper P204',
-	ScraperP208: 'Scraper P208',
-	PigType3inArgus: '3in Argus',
-	PigType2inpurple: '2in purple',
-	Ball: 'Ball',
-	Black3inBall: 'Black 3in Ball',
-	PigType3inWhite: '3in White',
-	PigType3: '3',
-	SIMAY2018: 'SI MAY 2018',
-	ScraperP206: 'Scraper P206',
-	ScraperP200: 'Scraper P200',
-	PigType3inRscr: '3in R scr',
-	PigType3inPurpleStubby: '3in Purple Stubby',
-	Red3inScrapper: 'Red 3in Scrapper',
-	PigType3inGreenDisc: '3in Green Disc',
-	PigType4inGreenDisc: '4in Green Disc',
-	PigType4green2disc: '4green 2 disc',
-	PigType4gree2disc: '4 gree 2 disc',
-	PigType3ingreendisc: '3in green disc',
-	PigType3inpurpledisc: '3in purple disc',
-	PigType2inPurpleDisc: '2in Purple Disc',
-	disc: 'disc',
-	PigType2purple2disc: '2 purple 2 disc',
-	PigType3inpurple2disc: '3in purple 2 disc',
-	PigType2green2disc: '2 green 2 disc',
-	bullet: 'bullet',
-	PigType8inFoam: '8in Foam',
-	PigType3inscr: '3in scr',
-	ScraperP305: 'Scraper P305',
-	ScraperP312: 'Scraper P312',
-	ScraperP303: 'Scraper P303',
-	ScraperP311: 'Scraper P311',
-	ScrapperP307: 'Scrapper P307',
-	PigType4inpurplescraper: '4in  purple scraper',
-	Torpedo: 'Torpedo',
-	PigType4in: '4in',
-	PigType3inStubby: '3in Stubby',
-	Stubby: 'Stubby',
-	PigType3in: '3in',
-	redball: 'red ball',
-	PigType2inStubby: '2in Stubby',
-	PigType1inStubby: '1in Stubby',
-	PigType3inBrownRibbed: '3in Brown Ribbed',
-	PigType3inGreenRibbed: '3in Green Ribbed',
-	PigType3inBlueRibbed: '3in Blue Ribbed',
-	BlueRibbed: 'Blue Ribbed',
-	M_D_Foamy: 'M.D. Foamy',
-	PigType6inGreenRibbed: '6in Green Ribbed',
-	BlueinScraper: 'Blue #in Scraper',
-	Red4inscraper: 'Red 4in scraper',
-	Blue3inScrapper: 'Blue 3in Scrapper',
-	PigType4inBlueDisc: '4inBlue Disc',
-	PigType8inBlackDisc: '8in Black Disc',
-	PigType4inGreendisc: '4in Green disc',
-	PigType6inGreenDisc: '6in Green Disc',
-	PigType6inscrapper: '6in scrapper',
-	PigType4inscrapper: '4inscrapper',
-	PigType4inFoam: '4in Foam',
-	PigType3inredscrape: '3in red scrape',
-	GSCR: 'GSCR',
-	PigType4GreenStubby: '4 Green Stubby',
-	PigType4_GreenRibbed: '4: Green Ribbed',
-	PigType4Green: '#4 Green',
-	PigType3inpurplescraper: '3in purple scraper',
-	PigType6ingreenscraper: '6in green scraper',
-	Purple3inDisc: 'Purple 3in Disc',
-}
-
-export const PigTypeEnum = enumType({
-	sourceType: {
-		module: '@prisma/client',
-		export: 'PigTypeEnum',
-	},
-	name: 'PigTypeEnum',
-	members: PigTypeEnumMembers
-});
-
-
-export const PigTypeEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(PigTypeEnumMembers).map(([serverEnum, databaseEnum]) => {
-	return { serverEnum, databaseEnum }
-});
-
-
 export const PigInspectionEnumMembers = {
 	Good: 'Good',
 	Failed: 'Failed',
@@ -143,7 +29,7 @@ export const PigInspectionEnumArray: NexusGenObjects['EnumObject'][] = Object.en
 
 export const PigRunObjectFields: ITableConstructObject[] = [
 	{ field: 'id', nullable: false, type: 'String' },
-	{ field: 'pigType', nullable: true, type: 'PigTypeEnum', enumObjectArray: PigTypeEnumArray },
+	{ field: 'pigTypeId', nullable: true, type: 'String' },
 	{ field: 'dateIn', nullable: false, type: 'DateTime' },
 	{ field: 'dateOut', nullable: true, type: 'DateTime' },
 	{ field: 'isolationValveFunctionTest', nullable: true, type: 'PigInspectionEnum', enumObjectArray: PigInspectionEnumArray },
@@ -166,16 +52,7 @@ export const PigRun = objectType({
 		for (const { field, nullable, type } of PigRunObjectFields) {
 			const nullability = nullable ? 'nullable' : 'nonNull';
 
-			t[nullability].field(field, {
-				type,
-				resolve:
-					field === 'pigType' ?
-						async ({ pigType }) => {
-							const result = pigType && serverEnumToDatabaseEnum(PigTypeEnumMembers, pigType);
-							return result;
-						} :
-						undefined,
-			})
+			t[nullability].field(field, { type })
 		}
 	}
 });
@@ -277,7 +154,7 @@ export const PigRunMutation = extendType({
 			type: 'PigRunPayload',
 			args: {
 				id: nonNull(stringArg()),
-				pigType: arg({ type: 'PigTypeEnum' }),
+				pigTypeId: stringArg(),
 				dateIn: arg({ type: 'DateTime' }),
 				dateOut: arg({ type: 'DateTime' }),
 				isolationValveFunctionTest: arg({ type: 'PigInspectionEnum' }),
@@ -338,7 +215,7 @@ export const PigRunMutation = extendType({
 							const pigRun = await ctx.prisma.pigRun.update({
 								where: { id: args.id },
 								data: {
-									pigType: databaseEnumToServerEnum(PigTypeEnumMembers, args.pigType),
+									pigTypeId: args.pigTypeId,
 									dateIn: args.dateIn || undefined,
 									dateOut: args.dateOut,
 									isolationValveFunctionTest: args.isolationValveFunctionTest,

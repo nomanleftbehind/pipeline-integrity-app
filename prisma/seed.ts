@@ -1,14 +1,19 @@
 import { PrismaClient } from '@prisma/client';
+
+import { pipelineTypeData } from './SeedPipelineTypeData';
+import { pipelineGradeData } from './SeedPipelineGradeData';
+import { pipelineFromToFeatureData1 } from './SeedPipelineFromToFeatureData';
+import { pigTypeData } from './SeedPigTypeData';
+
 import {
   userData,
   facilityData,
   satelliteData,
-  pipelineData,
-  pipelineData2,
   pressureTestData,
   riskData,
 } from './SeedData';
 
+import { pipelineData1, pipelineData2 } from './SeedPipelineData';
 import { pipelinesOnPipelinesData1 } from './SeedPipelinesOnPipelinesData';
 
 import { batchProductData } from './SeedBatchProductData';
@@ -26,6 +31,7 @@ import {
   pigRunData10,
   pigRunData11,
   pigRunData12,
+  pigRunData13,
 } from './SeedPigRunData';
 
 import {
@@ -99,11 +105,39 @@ async function main() {
     console.log(`Created user with id: ${user.id}`)
   }
 
+  for (const u of pipelineTypeData) {
+    const pipelineType = await prisma.pipelineType.create({
+      data: u,
+    })
+    console.log(`Created pipeline type with id: ${pipelineType.id}`)
+  }
+
+  for (const u of pipelineGradeData) {
+    const pipelineGrade = await prisma.pipelineGrade.create({
+      data: u,
+    })
+    console.log(`Created pipeline grade with id: ${pipelineGrade.grade}`)
+  }
+
+  for (const u of pipelineFromToFeatureData1) {
+    const pipelineFromToFeature = await prisma.pipelineFromToFeature.create({
+      data: u,
+    })
+    console.log(`Created pipeline from-to feature with id: ${pipelineFromToFeature.id}`)
+  }
+
+  for (const u of pigTypeData) {
+    const pigType = await prisma.pigType.create({
+      data: u,
+    })
+    console.log(`Created pig type with id: ${pigType.id}`)
+  }
+
   for (const u of batchProductData) {
     const batchProduct = await prisma.batchProduct.create({
       data: u,
     })
-    console.log(`Created user with id: ${batchProduct.id}`)
+    console.log(`Created batchProduct with id: ${batchProduct.id}`)
   }
 
   for (const u of facilityData) {
@@ -120,7 +154,7 @@ async function main() {
     console.log(`Created satellite with id: ${satellite.id}`)
   }
 
-  for (const u of pipelineData) {
+  for (const u of pipelineData1) {
     const pipeline = await prisma.pipeline.create({
       data: u,
     })
@@ -262,6 +296,13 @@ async function main() {
   }
 
   for (const u of pigRunData12) {
+    const pigRun = await prisma.pigRun.create({
+      data: u,
+    })
+    console.log(`Created pig run with id: ${pigRun.id}`)
+  }
+
+  for (const u of pigRunData13) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })

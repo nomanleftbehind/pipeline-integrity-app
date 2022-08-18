@@ -1,4 +1,4 @@
-import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg, booleanArg, subscriptionType } from 'nexus';
+import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg, booleanArg } from 'nexus';
 import { NexusGenObjects } from 'nexus-typegen';
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
@@ -8,133 +8,6 @@ import { Prisma, User as IUser } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
 
 
-
-
-export const FromToFeatureEnumMembers = {
-  BlindEnd: "Blind end",
-  Battery: "Battery",
-  Pipeline: "Pipeline",
-  Satellite: "Satellite",
-  StorageTank: "Storage tank",
-  InjectionPlant: "Injection plant",
-  Well: "Well",
-  CompressorStation: "Compressor station",
-  MeterStation: "Meter station",
-  PumpStation: "Pump station",
-  GasProcessingPlant: "Gas processing plant",
-  UndergroundCapOrTieIn: "Underground cap or tie-in",
-  Header: "Header"
-}
-
-export const FromToFeatureEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'FromToFeatureEnum',
-  },
-  name: 'FromToFeatureEnum',
-  members: FromToFeatureEnumMembers
-});
-
-export const FromToFeatureEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(FromToFeatureEnumMembers).map(([serverEnum, databaseEnum]) => {
-  return { serverEnum, databaseEnum }
-});
-
-export const TypeEnumMembers = {
-  Type515: "515",
-  Type2306: "2306",
-  Type3406: "3406",
-  Type3408: "3408",
-  Type6063: "6063",
-  Type6351: "6351",
-  Type5A: "5A",
-  Type5L: "5L",
-  Type5LX: "5LX",
-  TypeA106: "A106",
-  TypeA120: "A120",
-  TypeA53: "A53",
-  TypeAMERON: "AMERON",
-  TypeB515: "B515",
-  TypeB51S: "B51S",
-  TypeB5IS: "B5IS",
-  TypeCENTRON: "CENTRON",
-  TypeCIBA: "CIBA",
-  TypeFSLP: "FSLP",
-  TypeREDTHR: "REDTHR",
-  TypeSMITH: "SMITH",
-  TypeSTAR: "STAR",
-  TypeTBS: "TBS",
-  TypeWSLP: "WSLP",
-  TypeZ2451: "Z245.1",
-  TypeZ2453: "Z245.3",
-}
-
-export const TypeEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'TypeEnum',
-  },
-  name: 'TypeEnum',
-  members: TypeEnumMembers
-});
-
-export const TypeEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(TypeEnumMembers).map(([serverEnum, databaseEnum]) => {
-  return { serverEnum, databaseEnum }
-});
-
-export const GradeEnumMembers = {
-  GradeA: "A",
-  Grade3592: "3592",
-  GradeB: "B",
-  GradeX42: "X42",
-  GradeBW1: "BW1",
-  Grade2500: "2500",
-  Grade3591: "3591",
-  Grade2901: "2901",
-  GradeT4: "T4",
-  Grade300: "300",
-  Grade3593: "3593",
-  Grade11: "11",
-  GradeJ55: "J55",
-  Grade2250: "2250",
-  GradeX52: "X52",
-  Grade2750: "2750",
-  Grade2902: "2902",
-  Grade25: "25",
-  Grade241: "241",
-  Grade2413: "2413",
-  Grade2411: "2411",
-  Grade155: "155",
-  Grade150: "150",
-  Grade1000: "1000",
-  Grade800: "800",
-  GradeT1A: "T1A",
-  Grade2010: "2010",
-  GradeT4A: "T4A",
-  Grade1250: "1250",
-  Grade17: "17",
-  Grade900: "900",
-  GradeT1B: "T1B",
-  Grade810: "810",
-  Grade35: "35",
-  Grade5: "5",
-  Grade9: "9",
-  Grade200: "200",
-  Grade1200: "1200",
-  Grade1103: "11.03",
-}
-
-export const GradeEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'GradeEnum',
-  },
-  name: 'GradeEnum',
-  members: GradeEnumMembers
-});
-
-export const GradeEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(GradeEnumMembers).map(([serverEnum, databaseEnum]) => {
-  return { serverEnum, databaseEnum }
-});
 
 export const MaterialEnumMembers = {
   Steel: "Steel",
@@ -208,11 +81,11 @@ export const PipelineObjectFields: ITableConstructObject[] = [
   { field: 'segment', nullable: false, type: 'String' },
   { field: 'flowCalculationDirection', nullable: false, type: 'FlowCalculationDirectionEnum', enumObjectArray: FlowCalculationDirectionEnumArray },
   { field: 'from', nullable: false, type: 'String' },
-  { field: 'fromFeature', nullable: true, type: 'FromToFeatureEnum', enumObjectArray: FromToFeatureEnumArray },
+  { field: 'fromFeatureId', nullable: true, type: 'String' },
   { field: 'to', nullable: false, type: 'String' },
-  { field: 'toFeature', nullable: true, type: 'FromToFeatureEnum', enumObjectArray: FromToFeatureEnumArray },
-  { field: 'type', nullable: true, type: 'TypeEnum', enumObjectArray: TypeEnumArray },
-  { field: 'grade', nullable: true, type: 'GradeEnum', enumObjectArray: GradeEnumArray },
+  { field: 'toFeatureId', nullable: true, type: 'String' },
+  { field: 'pipelineTypeId', nullable: true, type: 'String' },
+  { field: 'pipelineGradeId', nullable: true, type: 'String' },
   { field: 'material', nullable: true, type: 'MaterialEnum', enumObjectArray: MaterialEnumArray },
   { field: 'internalProtection', nullable: true, type: 'InternalProtectionEnum', enumObjectArray: InternalProtectionEnumArray },
   { field: 'currentStatus', nullable: true, type: 'StatusEnum', enumObjectArray: StatusEnumArray },
@@ -244,66 +117,46 @@ export const Pipeline = objectType({
       t[nullability].field(field, {
         type,
         resolve:
-          field === 'fromFeature' ?
-            ({ fromFeature }) => {
-              const result = fromFeature && serverEnumToDatabaseEnum(FromToFeatureEnumMembers, fromFeature);
+          field === 'currentStatus' ?
+            async ({ id }, _args, ctx: Context) => {
+              const { status } = await ctx.prisma.licenseChange.findFirst({
+                where: { pipelineId: id },
+                orderBy: { date: 'desc' },
+                select: { status: true },
+              }) || {};
+              const result = status && serverEnumToDatabaseEnum(StatusEnumMembers, status) || null;
               return result;
             } :
-            field === 'toFeature' ?
-              ({ toFeature }) => {
-                const result = toFeature && serverEnumToDatabaseEnum(FromToFeatureEnumMembers, toFeature);
+            field === 'currentSubstance' ?
+              async ({ id }, _args, ctx: Context) => {
+                const { substance } = await ctx.prisma.licenseChange.findFirst({
+                  where: { pipelineId: id },
+                  orderBy: { date: 'desc' },
+                  select: { substance: true },
+                }) || {};
+                const result = substance && serverEnumToDatabaseEnum(SubstanceEnumMembers, substance) || null;
                 return result;
               } :
-              field === 'currentStatus' ?
+              field === 'firstLicenseDate' ?
                 async ({ id }, _args, ctx: Context) => {
-                  const { status } = await ctx.prisma.licenseChange.findFirst({
+                  const { date } = await ctx.prisma.licenseChange.findFirst({
                     where: { pipelineId: id },
-                    orderBy: { date: 'desc' },
-                    select: { status: true },
+                    orderBy: { date: 'asc' },
+                    select: { date: true },
                   }) || {};
-                  const result = status && serverEnumToDatabaseEnum(StatusEnumMembers, status) || null;
-                  return result;
+                  return date || null;
                 } :
-                field === 'currentSubstance' ?
-                  async ({ id }, _args, ctx: Context) => {
-                    const { substance } = await ctx.prisma.licenseChange.findFirst({
-                      where: { pipelineId: id },
-                      orderBy: { date: 'desc' },
-                      select: { substance: true },
-                    }) || {};
-                    const result = substance && serverEnumToDatabaseEnum(SubstanceEnumMembers, substance) || null;
+                field === 'material' ?
+                  ({ material }) => {
+                    const result = material && serverEnumToDatabaseEnum(MaterialEnumMembers, material);
                     return result;
                   } :
-                  field === 'firstLicenseDate' ?
-                    async ({ id }, _args, ctx: Context) => {
-                      const { date } = await ctx.prisma.licenseChange.findFirst({
-                        where: { pipelineId: id },
-                        orderBy: { date: 'asc' },
-                        select: { date: true },
-                      }) || {};
-                      return date || null;
+                  field === 'internalProtection' ?
+                    ({ internalProtection }) => {
+                      const result = internalProtection && serverEnumToDatabaseEnum(InternalProtectionEnumMembers, internalProtection);
+                      return result;
                     } :
-                    field === 'type' ?
-                      ({ type }) => {
-                        const result = type && serverEnumToDatabaseEnum(TypeEnumMembers, type);
-                        return result;
-                      } :
-                      field === 'grade' ?
-                        ({ grade }) => {
-                          const result = grade && serverEnumToDatabaseEnum(GradeEnumMembers, grade);
-                          return result;
-                        } :
-                        field === 'material' ?
-                          ({ material }) => {
-                            const result = material && serverEnumToDatabaseEnum(MaterialEnumMembers, material);
-                            return result;
-                          } :
-                          field === 'internalProtection' ?
-                            ({ internalProtection }) => {
-                              const result = internalProtection && serverEnumToDatabaseEnum(InternalProtectionEnumMembers, internalProtection);
-                              return result;
-                            } :
-                            undefined,
+                    undefined,
       });
     }
   }
@@ -961,12 +814,8 @@ export const PipelineCreateInput = inputObjectType({
     t.nonNull.string('license')
     t.nonNull.string('segment')
     t.nonNull.string('from')
-    t.field('fromFeature', { type: 'FromToFeatureEnum' })
     t.nonNull.string('to')
-    t.field('toFeature', { type: 'FromToFeatureEnum' })
     t.nonNull.float('length')
-    t.field('type', { type: 'TypeEnum' })
-    t.field('grade', { type: 'GradeEnum' })
     t.float('outsideDiameter')
     t.float('wallThickness')
     t.field('material', { type: 'MaterialEnum' })
@@ -1017,13 +866,13 @@ export const PipelineMutation = extendType({
         segment: stringArg(),
         flowCalculationDirection: arg({ type: 'FlowCalculationDirectionEnum' }),
         from: stringArg(),
-        fromFeature: arg({ type: 'FromToFeatureEnum' }),
+        fromFeatureId: stringArg(),
         to: stringArg(),
-        toFeature: arg({ type: 'FromToFeatureEnum' }),
+        toFeatureId: stringArg(),
         licenseDate: arg({ type: 'DateTime' }),
         length: floatArg(),
-        type: arg({ type: 'TypeEnum' }),
-        grade: arg({ type: 'GradeEnum' }),
+        pipelineTypeId: stringArg(),
+        pipelineGradeId: stringArg(),
         yieldStrength: intArg(),
         outsideDiameter: floatArg(),
         wallThickness: floatArg(),
@@ -1116,17 +965,17 @@ export const PipelineMutation = extendType({
             const pipeline = await ctx.prisma.pipeline.update({
               where: { id: args.id },
               data: {
-                satelliteId: args.satelliteId || undefined,
+                satelliteId: args.satelliteId,
                 license: args.license || undefined,
                 segment: args.segment || undefined,
                 flowCalculationDirection: args.flowCalculationDirection || undefined,
                 from: args.from || undefined,
-                fromFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.fromFeature),
+                fromFeatureId: args.fromFeatureId,
                 to: args.to || undefined,
-                toFeature: databaseEnumToServerEnum(FromToFeatureEnumMembers, args.toFeature),
+                toFeatureId: args.toFeatureId,
                 length: args.length || undefined,
-                type: databaseEnumToServerEnum(TypeEnumMembers, args.type),
-                grade: databaseEnumToServerEnum(GradeEnumMembers, args.grade),
+                pipelineTypeId: args.pipelineTypeId,
+                pipelineGradeId: args.pipelineGradeId,
                 yieldStrength: args.yieldStrength,
                 outsideDiameter: args.outsideDiameter,
                 wallThickness: args.wallThickness,
