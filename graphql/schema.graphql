@@ -149,15 +149,6 @@ input HierarchyInput {
   table: TableEnum!
 }
 
-enum InternalProtectionEnum {
-  Cement
-  ExpandedPolyethylene
-  FreeStandingSlipLined
-  ThinFilm
-  Uncoated
-  Unknown
-}
-
 type LicenseChange {
   authorized: Boolean!
   comment: String
@@ -167,8 +158,8 @@ type LicenseChange {
   id: String!
   linkToDocumentation: String
   pipeline: Pipeline!
-  status: StatusEnum!
-  substance: SubstanceEnum!
+  statusId: String!
+  substanceId: String!
   updatedAt: DateTime!
   updatedBy: User!
 }
@@ -182,18 +173,6 @@ enum LimitingSpecEnum {
   ANSI150
   ANSI300
   ANSI600
-}
-
-enum MaterialEnum {
-  Aluminum
-  AsbestosCement
-  CelluloseAcetateButyrate
-  Composite
-  Fiberglass
-  Polyethylene
-  PolyvinylChloride
-  Steel
-  Unknown
 }
 
 type Mutation {
@@ -225,9 +204,9 @@ type Mutation {
   duplicatePipeline(id: String!): PipelinePayload
   editChemical(bacteria: Boolean, bacteriaTreatment: Boolean, baselineFluidAnalysisDate: DateTime, batchFrequency: Int, chemicalSupplierId: String, co2: Boolean, comment: String, continuousInjection: Boolean, downholeBatch: Boolean, h2s: Boolean, id: String!, inhibitorPipelineBatch: Boolean, injectionRate: Float, o2: Boolean, scaleTreatment: Boolean, scaling: Boolean): ChemicalPayload
   editFacility(id: String!, name: String): Facility
-  editLicenseChange(comment: String, date: DateTime, id: String!, linkToDocumentation: String, status: StatusEnum, substance: SubstanceEnum): LicenseChangePayload
+  editLicenseChange(comment: String, date: DateTime, id: String!, linkToDocumentation: String, statusId: String, substanceId: String): LicenseChangePayload
   editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigTypeId: String): PigRunPayload
-  editPipeline(flowCalculationDirection: FlowCalculationDirectionEnum, from: String, fromFeatureId: String, id: String!, internalProtection: InternalProtectionEnum, length: Float, license: String, licenseDate: DateTime, material: MaterialEnum, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, pipelineGradeId: String, pipelineTypeId: String, satelliteId: String, segment: String, to: String, toFeatureId: String, wallThickness: Float, yieldStrength: Int): PipelinePayload
+  editPipeline(flowCalculationDirection: FlowCalculationDirectionEnum, from: String, fromFeatureId: String, id: String!, length: Float, license: String, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, pipelineGradeId: String, pipelineInternalProtectionId: String, pipelineMaterialId: String, pipelineTypeId: String, satelliteId: String, segment: String, to: String, toFeatureId: String, wallThickness: Float, yieldStrength: Int): PipelinePayload
   editPipelineBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, productId: String): PipelineBatchPayload
   editPressureTest(comment: String, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pressureTestDate: DateTime, pressureTestReceivedDate: DateTime): PressureTestPayload
   editRisk(aerialReview: Boolean, comment: String, consequencePeople: Int, dateSlopeChecked: DateTime, environmentProximityTo: EnvironmentProximityToEnum, gasReleaseCost: Float, geotechnicalFacingS1: GeotechnicalFacingEnum, geotechnicalFacingS2: GeotechnicalFacingEnum, geotechnicalHeightS1: Int, geotechnicalHeightS2: Int, geotechnicalSlopeAngleS1: Int, geotechnicalSlopeAngleS2: Int, id: String!, oilReleaseCost: Float, probabilityGeo: Int, releaseTimeDays: Int, repairTimeDays: Int, safeguardExternalCoating: Int, safeguardInternalProtection: Int): RiskPayload
@@ -290,25 +269,25 @@ type Pipeline {
   authorized: Boolean!
   createdAt: DateTime!
   createdBy: User!
-  currentStatus: StatusEnum
-  currentSubstance: SubstanceEnum
+  currentStatus: String
+  currentSubstance: String
   downstream: [Pipeline]
   firstLicenseDate: DateTime
   flowCalculationDirection: FlowCalculationDirectionEnum!
   from: String!
   fromFeatureId: String
   id: String!
-  internalProtection: InternalProtectionEnum
   length: Float!
   license: String!
   licenseChanges: [LicenseChange]
-  material: MaterialEnum
   mop: Int
   outsideDiameter: Float
   pigRuns: [PigRun]
   piggable: Boolean
   piggingFrequency: Int
   pipelineGradeId: String
+  pipelineInternalProtectionId: String
+  pipelineMaterialId: String
   pipelineTypeId: String
   pressureTests: [PressureTest]
   risk: Risk
@@ -350,10 +329,8 @@ type PipelineBatchPayload {
 input PipelineCreateInput {
   downstream: [PipelineCreateInput]
   from: String!
-  internalProtection: InternalProtectionEnum
   length: Float!
   license: String!
-  material: MaterialEnum
   mop: Int
   outsideDiameter: Float
   segment: String!
@@ -642,29 +619,6 @@ type SourceOptions {
   source: String!
 }
 
-enum StatusEnum {
-  Abandoned
-  Active
-  Cancelled
-  Discontinued
-  New
-  NotConstructed
-  Operating
-  Removed
-  ToBeConstructed
-}
-
-enum SubstanceEnum {
-  CrudeOil
-  FreshWater
-  FuelGas
-  LVPProducts
-  NaturalGas
-  OilWellEffluent
-  SaltWater
-  SourNaturalGas
-}
-
 enum TableEnum {
   chemical
   downstreamPipelines
@@ -741,11 +695,9 @@ type ValidatorsPipeline {
   fromToMatchPattern: String!
   geotechnicalFacingEnum: [EnumObject!]!
   havingEnum: [EnumObject!]!
-  internalProtectionEnum: [EnumObject!]!
   lengthMatchPattern: String!
   licenseMatchPattern: String!
   limitingSpecEnum: [EnumObject!]!
-  materialEnum: [EnumObject!]!
   mopMatchPattern: String!
   operationEnum: [EnumObject!]!
   operatorEnum: [EnumObject!]!
@@ -753,6 +705,8 @@ type ValidatorsPipeline {
   pigInspectionEnum: [EnumObject!]!
   pigTypeEnum: [EnumObject!]!
   pipelineGradeEnum: [EnumObject!]!
+  pipelineInternalProtectionEnum: [EnumObject!]!
+  pipelineMaterialEnum: [EnumObject!]!
   pipelineTypeEnum: [EnumObject!]!
   segmentMatchPattern: String!
   solubilityEnum: [EnumObject!]!

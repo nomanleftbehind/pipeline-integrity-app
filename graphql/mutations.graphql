@@ -152,8 +152,8 @@ mutation DisconnectSalesPoint($id: String!) {
   }
 }
 
-mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $from: String, $fromFeatureId: String, $to: String, $toFeatureId: String, $licenseDate: DateTime, $length: Float, $pipelineTypeId: String, $pipelineGradeId: String, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
-  editPipeline(id: $id, satelliteId: $satelliteId, license: $license, segment: $segment, flowCalculationDirection: $flowCalculationDirection, from: $from, fromFeatureId: $fromFeatureId, to: $to, toFeatureId: $toFeatureId, licenseDate: $licenseDate, length: $length, pipelineTypeId: $pipelineTypeId, pipelineGradeId: $pipelineGradeId, yieldStrength: $yieldStrength, outsideDiameter: $outsideDiameter, wallThickness: $wallThickness, material: $material, mop: $mop, internalProtection: $internalProtection, piggable: $piggable, piggingFrequency: $piggingFrequency) {
+mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $from: String, $fromFeatureId: String, $to: String, $toFeatureId: String, $length: Float, $pipelineTypeId: String, $pipelineGradeId: String, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $pipelineMaterialId: String, $mop: Int, $pipelineInternalProtectionId: String, $piggable: Boolean, $piggingFrequency: Int) {
+  editPipeline(id: $id, satelliteId: $satelliteId, license: $license, segment: $segment, flowCalculationDirection: $flowCalculationDirection, from: $from, fromFeatureId: $fromFeatureId, to: $to, toFeatureId: $toFeatureId, length: $length, pipelineTypeId: $pipelineTypeId, pipelineGradeId: $pipelineGradeId, yieldStrength: $yieldStrength, outsideDiameter: $outsideDiameter, wallThickness: $wallThickness, pipelineMaterialId: $pipelineMaterialId, mop: $mop, pipelineInternalProtectionId: $pipelineInternalProtectionId, piggable: $piggable, piggingFrequency: $piggingFrequency) {
     pipeline {
       id
     }
@@ -164,8 +164,8 @@ mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $seg
   }
 }
 
-mutation EditLicenseChange($id: String!, $status: StatusEnum, $substance: SubstanceEnum, $date: DateTime, $linkToDocumentation: String) {
-  editLicenseChange(id: $id, status: $status, substance: $substance, date: $date, linkToDocumentation: $linkToDocumentation) {
+mutation EditLicenseChange($id: String!, $statusId: String, $substanceId: String, $date: DateTime, $comment: String, $linkToDocumentation: String) {
+  editLicenseChange(id: $id, statusId: $statusId, substanceId: $substanceId, date: $date, comment: $comment, linkToDocumentation: $linkToDocumentation) {
     licenseChange {
       id
     }

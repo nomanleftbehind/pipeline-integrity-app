@@ -30,11 +30,11 @@ type PickNullable<T, K extends keyof T> = {
 } | null | undefined;
 
 
-export type IValidatorsMechanicalProperties = PickNullable<NonNullable<IValidators>, 'lengthMatchPattern' | 'pipelineTypeEnum' | 'pipelineGradeEnum' | 'yieldStrengthMatchPattern' | 'outsideDiameterMatchPattern' | 'wallThicknessMatchPattern' | 'materialEnum' | 'mopMatchPattern' | 'internalProtectionEnum'>;
+export type IValidatorsMechanicalProperties = PickNullable<NonNullable<IValidators>, 'lengthMatchPattern' | 'pipelineTypeEnum' | 'pipelineGradeEnum' | 'yieldStrengthMatchPattern' | 'outsideDiameterMatchPattern' | 'wallThicknessMatchPattern' | 'pipelineMaterialEnum' | 'mopMatchPattern' | 'pipelineInternalProtectionEnum'>;
 export type IValidatorsLicenseChanges = PickNullable<NonNullable<IValidators>, 'statusEnum' | 'substanceEnum'>;
 export type IValidatorsConnectedSources = PickNullable<NonNullable<IValidators>, 'flowCalculationDirectionEnum'>;
 export type IValidatorsPressureTests = PickNullable<NonNullable<IValidators>, 'limitingSpecEnum'>;
-export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'environmentProximityToEnum' | 'geotechnicalFacingEnum' | 'pipelineTypeEnum' | 'materialEnum'>;
+export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'environmentProximityToEnum' | 'geotechnicalFacingEnum' | 'pipelineTypeEnum' | 'pipelineMaterialEnum'>;
 export type IValidatorsPigRuns = PickNullable<NonNullable<IValidators>, 'pigTypeEnum' | 'pigInspectionEnum' | 'operatorEnum'>;
 export type IValidatorsPipelineBatches = PickNullable<NonNullable<IValidators>, 'solubilityEnum' | 'batchProductEnum'>;
 export type IValidatorsChemical = PickNullable<NonNullable<IValidators>, 'chemicalSupplierEnum'>;
@@ -55,7 +55,7 @@ interface ITabPanelProps extends ITabPanelMap {
 export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editPipeline, authorized, validators }: IPipelineDataProps) {
   const [view, setView] = useState<IView>('license change');
 
-  const { id, license, segment, currentSubstance, flowCalculationDirection, currentStatus, length, pipelineTypeId, pipelineGradeId, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, firstLicenseDate, piggable, piggingFrequency } = pipeline;
+  const { id, license, segment, currentSubstance, flowCalculationDirection, currentStatus, length, pipelineTypeId, pipelineGradeId, yieldStrength, outsideDiameter, wallThickness, pipelineMaterialId, mop, pipelineInternalProtectionId, firstLicenseDate, piggable, piggingFrequency } = pipeline;
 
   const validatorsMechanicalProperties: IValidatorsMechanicalProperties = validators && {
     lengthMatchPattern: validators.lengthMatchPattern,
@@ -64,9 +64,9 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
     yieldStrengthMatchPattern: validators.yieldStrengthMatchPattern,
     outsideDiameterMatchPattern: validators.outsideDiameterMatchPattern,
     wallThicknessMatchPattern: validators.wallThicknessMatchPattern,
-    materialEnum: validators.materialEnum,
+    pipelineMaterialEnum: validators.pipelineMaterialEnum,
     mopMatchPattern: validators.mopMatchPattern,
-    internalProtectionEnum: validators.internalProtectionEnum,
+    pipelineInternalProtectionEnum: validators.pipelineInternalProtectionEnum,
   };
 
   const validatorsLicenseChanges: IValidatorsLicenseChanges = validators && {
@@ -86,7 +86,7 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
     environmentProximityToEnum: validators.environmentProximityToEnum,
     geotechnicalFacingEnum: validators.geotechnicalFacingEnum,
     pipelineTypeEnum: validators.pipelineTypeEnum,
-    materialEnum: validators.materialEnum,
+    pipelineMaterialEnum: validators.pipelineMaterialEnum,
   };
 
   const validatorsPigRuns: IValidatorsPigRuns = validators && {
@@ -142,9 +142,9 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
         yieldStrength={yieldStrength}
         outsideDiameter={outsideDiameter}
         wallThickness={wallThickness}
-        material={material}
+        pipelineMaterialId={pipelineMaterialId}
         mop={mop}
-        internalProtection={internalProtection}
+        pipelineInternalProtectionId={pipelineInternalProtectionId}
         piggable={piggable}
         piggingFrequency={piggingFrequency}
         authorized={authorized}
@@ -180,7 +180,7 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
         currentStatus={currentStatus}
         editPipeline={editPipeline}
         pipelineTypeId={pipelineTypeId}
-        material={material}
+        pipelineMaterialId={pipelineMaterialId}
         firstLicenseDate={firstLicenseDate}
         validators={validatorsRisk}
       />

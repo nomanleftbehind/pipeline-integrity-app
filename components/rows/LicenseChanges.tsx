@@ -139,11 +139,11 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
         const isLastRow = data.licenseChangesByPipelineId?.length === gridRow + 1;
         gridRow += 2;
         if (licenseChange) {
-          const { id, date, status, substance, linkToDocumentation, comment, createdBy, createdAt, updatedBy, updatedAt, authorized } = licenseChange;
+          const { id, date, statusId, substanceId, linkToDocumentation, comment, createdBy, createdAt, updatedBy, updatedAt, authorized } = licenseChange;
           const licenseChangeColumns: IRecordEntryMap[] = [
             { columnName: 'date', columnType: 'date', nullable: false, record: date, editRecord },
-            { columnName: 'status', columnType: 'string', nullable: false, record: status, validator: statusEnum, editRecord },
-            { columnName: 'substance', columnType: 'string', nullable: false, record: substance, validator: substanceEnum, editRecord },
+            { columnName: 'statusId', columnType: 'string', nullable: false, record: statusId, validator: statusEnum, editRecord },
+            { columnName: 'substanceId', columnType: 'string', nullable: false, record: substanceId, validator: substanceEnum, editRecord },
             { columnName: 'linkToDocumentation', columnType: 'link', nullable: true, record: linkToDocumentation, editRecord },
             { columnName: 'comment', columnType: 'string', nullable: true, record: comment, editRecord },
             { columnName: 'createdBy', columnType: 'string', nullable: false, record: createdBy.email },

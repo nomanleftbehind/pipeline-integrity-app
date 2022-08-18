@@ -2,19 +2,10 @@
 CREATE TYPE "user_role" AS ENUM ('Admin', 'Engineer', 'Office', 'Operator', 'Chemical', 'Cathodic', 'Contractor');
 
 -- CreateEnum
-CREATE TYPE "substance" AS ENUM ('Natural Gas', 'Fresh Water', 'Salt Water', 'Crude Oil', 'Oil Well Effluent', 'LVP Products', 'Fuel Gas', 'Sour Natural Gas');
-
--- CreateEnum
 CREATE TYPE "solubility" AS ENUM ('Oil', 'Water');
 
 -- CreateEnum
 CREATE TYPE "status" AS ENUM ('Operating', 'Discontinued', 'Abandoned', 'Removed', 'To Be Constructed', 'Active', 'Cancelled', 'New', 'Not Constructed');
-
--- CreateEnum
-CREATE TYPE "material" AS ENUM ('Steel', 'Polyvinyl Chloride', 'Composite', 'Fiberglass', 'Aluminum', 'Polyethylene', 'Cellulose Acetate Butyrate', 'Unknown', 'Asbestos Cement');
-
--- CreateEnum
-CREATE TYPE "internal_protection" AS ENUM ('Uncoated', 'Free Standing (Slip Lined)', 'Unknown', 'Cement', 'Expanded Polyethylene', 'Thin Film');
 
 -- CreateEnum
 CREATE TYPE "flow_calculation_direction" AS ENUM ('Upstream', 'Downstream');
@@ -93,12 +84,13 @@ CREATE TABLE "Pipeline" (
     "yieldStrength" INTEGER,
     "outsideDiameter" DOUBLE PRECISION,
     "wallThickness" DOUBLE PRECISION,
-    "material" "material",
+    "pipelineMaterialId" TEXT,
     "mop" INTEGER,
-    "internalProtection" "internal_protection",
+    "pipelineInternalProtectionId" TEXT,
     "piggable" BOOLEAN,
     "piggingFrequency" INTEGER,
     "flowCalculationDirection" "flow_calculation_direction" NOT NULL,
+    "comment" TEXT,
     "createdById" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedById" TEXT NOT NULL,
@@ -147,6 +139,32 @@ CREATE TABLE "PipelineFromToFeature" (
 );
 
 -- CreateTable
+CREATE TABLE "PipelineMaterial" (
+    "id" TEXT NOT NULL,
+    "material" TEXT NOT NULL,
+    "description" TEXT,
+    "createdById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedById" TEXT NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "PipelineMaterial_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "PipelineInternalProtection" (
+    "id" TEXT NOT NULL,
+    "internalProtection" TEXT NOT NULL,
+    "description" TEXT,
+    "createdById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedById" TEXT NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "PipelineInternalProtection_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "PipelinesOnPipelines" (
     "upstreamId" TEXT NOT NULL,
     "downstreamId" TEXT NOT NULL,
@@ -162,8 +180,8 @@ CREATE TABLE "PipelinesOnPipelines" (
 CREATE TABLE "LicenseChange" (
     "id" TEXT NOT NULL,
     "pipelineId" TEXT NOT NULL,
-    "status" "status" NOT NULL DEFAULT 'Operating',
-    "substance" "substance" NOT NULL DEFAULT 'Oil Well Effluent',
+    "statusId" TEXT NOT NULL,
+    "substanceId" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
     "comment" TEXT,
     "linkToDocumentation" TEXT,
@@ -173,6 +191,32 @@ CREATE TABLE "LicenseChange" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "LicenseChange_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "LicenseChangeStatus" (
+    "id" TEXT NOT NULL,
+    "status" TEXT NOT NULL,
+    "description" TEXT,
+    "createdById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedById" TEXT NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "LicenseChangeStatus_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "LicenseChangeSubstance" (
+    "id" TEXT NOT NULL,
+    "substance" TEXT NOT NULL,
+    "description" TEXT,
+    "createdById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedById" TEXT NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "LicenseChangeSubstance_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -432,7 +476,19 @@ CREATE UNIQUE INDEX "PipelineGrade_grade_key" ON "PipelineGrade"("grade");
 CREATE UNIQUE INDEX "PipelineFromToFeature_feature_key" ON "PipelineFromToFeature"("feature");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "PipelineMaterial_material_key" ON "PipelineMaterial"("material");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "PipelineInternalProtection_internalProtection_key" ON "PipelineInternalProtection"("internalProtection");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "LicenseChange_pipelineId_date_key" ON "LicenseChange"("pipelineId", "date");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "LicenseChangeStatus_status_key" ON "LicenseChangeStatus"("status");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "LicenseChangeSubstance_substance_key" ON "LicenseChangeSubstance"("substance");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "PigType_type_key" ON "PigType"("type");
@@ -486,6 +542,12 @@ ALTER TABLE "Pipeline" ADD CONSTRAINT "Pipeline_pipelineTypeId_fkey" FOREIGN KEY
 ALTER TABLE "Pipeline" ADD CONSTRAINT "Pipeline_pipelineGradeId_fkey" FOREIGN KEY ("pipelineGradeId") REFERENCES "PipelineGrade"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Pipeline" ADD CONSTRAINT "Pipeline_pipelineMaterialId_fkey" FOREIGN KEY ("pipelineMaterialId") REFERENCES "PipelineMaterial"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Pipeline" ADD CONSTRAINT "Pipeline_pipelineInternalProtectionId_fkey" FOREIGN KEY ("pipelineInternalProtectionId") REFERENCES "PipelineInternalProtection"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Pipeline" ADD CONSTRAINT "Pipeline_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -510,6 +572,18 @@ ALTER TABLE "PipelineFromToFeature" ADD CONSTRAINT "PipelineFromToFeature_create
 ALTER TABLE "PipelineFromToFeature" ADD CONSTRAINT "PipelineFromToFeature_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "PipelineMaterial" ADD CONSTRAINT "PipelineMaterial_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PipelineMaterial" ADD CONSTRAINT "PipelineMaterial_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PipelineInternalProtection" ADD CONSTRAINT "PipelineInternalProtection_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PipelineInternalProtection" ADD CONSTRAINT "PipelineInternalProtection_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "PipelinesOnPipelines" ADD CONSTRAINT "PipelinesOnPipelines_upstreamId_fkey" FOREIGN KEY ("upstreamId") REFERENCES "Pipeline"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -525,10 +599,28 @@ ALTER TABLE "PipelinesOnPipelines" ADD CONSTRAINT "PipelinesOnPipelines_updatedB
 ALTER TABLE "LicenseChange" ADD CONSTRAINT "LicenseChange_pipelineId_fkey" FOREIGN KEY ("pipelineId") REFERENCES "Pipeline"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "LicenseChange" ADD CONSTRAINT "LicenseChange_statusId_fkey" FOREIGN KEY ("statusId") REFERENCES "LicenseChangeStatus"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LicenseChange" ADD CONSTRAINT "LicenseChange_substanceId_fkey" FOREIGN KEY ("substanceId") REFERENCES "LicenseChangeSubstance"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "LicenseChange" ADD CONSTRAINT "LicenseChange_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "LicenseChange" ADD CONSTRAINT "LicenseChange_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LicenseChangeStatus" ADD CONSTRAINT "LicenseChangeStatus_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LicenseChangeStatus" ADD CONSTRAINT "LicenseChangeStatus_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LicenseChangeSubstance" ADD CONSTRAINT "LicenseChangeSubstance_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LicenseChangeSubstance" ADD CONSTRAINT "LicenseChangeSubstance_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "PigRun" ADD CONSTRAINT "PigRun_pipelineId_fkey" FOREIGN KEY ("pipelineId") REFERENCES "Pipeline"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

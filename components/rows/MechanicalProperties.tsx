@@ -6,14 +6,14 @@ import { IValidatorsMechanicalProperties } from './PipelineData';
 
 export type IMechanicalPropertyRecordEntryMap = IRecordEntryMap & { label: string };
 
-type IMechanicalPropertiesProps = Pick<IPipeline, 'id' | 'length' | 'pipelineTypeId' | 'pipelineGradeId' | 'yieldStrength' | 'outsideDiameter' | 'wallThickness' | 'material' | 'mop' | 'internalProtection' | 'piggable' | 'piggingFrequency' | 'authorized'> & {
+type IMechanicalPropertiesProps = Pick<IPipeline, 'id' | 'length' | 'pipelineTypeId' | 'pipelineGradeId' | 'yieldStrength' | 'outsideDiameter' | 'wallThickness' | 'pipelineMaterialId' | 'mop' | 'pipelineInternalProtectionId' | 'piggable' | 'piggingFrequency' | 'authorized'> & {
   editPipeline: IEditRecordFunction;
   validators?: IValidatorsMechanicalProperties;
 };
 
-export default function MechanicalProperties({ id, length, pipelineTypeId, pipelineGradeId, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, piggable, piggingFrequency, authorized, editPipeline: editRecord, validators }: IMechanicalPropertiesProps) {
+export default function MechanicalProperties({ id, length, pipelineTypeId, pipelineGradeId, yieldStrength, outsideDiameter, wallThickness, pipelineMaterialId, mop, pipelineInternalProtectionId, piggable, piggingFrequency, authorized, editPipeline: editRecord, validators }: IMechanicalPropertiesProps) {
 
-  const { lengthMatchPattern, pipelineTypeEnum, pipelineGradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
+  const { lengthMatchPattern, pipelineTypeEnum, pipelineGradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, pipelineMaterialEnum, mopMatchPattern, pipelineInternalProtectionEnum } = validators || {};
 
   const mechanicalProperties: IMechanicalPropertyRecordEntryMap[] = [
     { columnName: 'length', record: length, label: 'Length (km)', columnType: 'number', nullable: false, validator: lengthMatchPattern, editRecord },
@@ -22,9 +22,9 @@ export default function MechanicalProperties({ id, length, pipelineTypeId, pipel
     { columnName: 'yieldStrength', record: yieldStrength, label: 'Yield Strength (Mpa)', columnType: 'number', nullable: true, validator: yieldStrengthMatchPattern, editRecord },
     { columnName: 'outsideDiameter', record: outsideDiameter, label: 'Outside Diameter (mm)', columnType: 'number', nullable: true, validator: outsideDiameterMatchPattern, editRecord },
     { columnName: 'wallThickness', record: wallThickness, label: 'Wall Thickness (mm)', columnType: 'number', nullable: true, validator: wallThicknessMatchPattern, editRecord },
-    { columnName: 'material', record: material, label: 'Material', columnType: 'string', nullable: true, validator: materialEnum, editRecord },
+    { columnName: 'pipelineMaterialId', record: pipelineMaterialId, label: 'Material', columnType: 'string', nullable: true, validator: pipelineMaterialEnum, editRecord },
     { columnName: 'mop', record: mop, label: 'MOP (kPa)', columnType: 'number', nullable: true, validator: mopMatchPattern, editRecord },
-    { columnName: 'internalProtection', record: internalProtection, label: 'Internal Protection', columnType: 'string', nullable: true, validator: internalProtectionEnum, editRecord },
+    { columnName: 'pipelineInternalProtectionId', record: pipelineInternalProtectionId, label: 'Internal Protection', columnType: 'string', nullable: true, validator: pipelineInternalProtectionEnum, editRecord },
     { columnName: 'piggable', record: piggable, label: 'Piggable', columnType: 'boolean', nullable: true, editRecord },
     { columnName: 'piggingFrequency', record: piggingFrequency, label: 'Pigging Frequency (#/year)', columnType: 'number', nullable: true, editRecord },
   ];

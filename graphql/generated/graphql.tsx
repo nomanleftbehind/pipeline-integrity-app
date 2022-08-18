@@ -158,15 +158,6 @@ export type HierarchyInput = {
   table: TableEnum;
 };
 
-export enum InternalProtectionEnum {
-  Cement = 'Cement',
-  ExpandedPolyethylene = 'ExpandedPolyethylene',
-  FreeStandingSlipLined = 'FreeStandingSlipLined',
-  ThinFilm = 'ThinFilm',
-  Uncoated = 'Uncoated',
-  Unknown = 'Unknown'
-}
-
 export type LicenseChange = {
   authorized: Scalars['Boolean'];
   comment?: Maybe<Scalars['String']>;
@@ -176,8 +167,8 @@ export type LicenseChange = {
   id: Scalars['String'];
   linkToDocumentation?: Maybe<Scalars['String']>;
   pipeline: Pipeline;
-  status: StatusEnum;
-  substance: SubstanceEnum;
+  statusId: Scalars['String'];
+  substanceId: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
 };
@@ -191,18 +182,6 @@ export enum LimitingSpecEnum {
   Ansi150 = 'ANSI150',
   Ansi300 = 'ANSI300',
   Ansi600 = 'ANSI600'
-}
-
-export enum MaterialEnum {
-  Aluminum = 'Aluminum',
-  AsbestosCement = 'AsbestosCement',
-  CelluloseAcetateButyrate = 'CelluloseAcetateButyrate',
-  Composite = 'Composite',
-  Fiberglass = 'Fiberglass',
-  Polyethylene = 'Polyethylene',
-  PolyvinylChloride = 'PolyvinylChloride',
-  Steel = 'Steel',
-  Unknown = 'Unknown'
 }
 
 export type Mutation = {
@@ -414,8 +393,8 @@ export type MutationEditLicenseChangeArgs = {
   date?: Maybe<Scalars['DateTime']>;
   id: Scalars['String'];
   linkToDocumentation?: Maybe<Scalars['String']>;
-  status?: Maybe<StatusEnum>;
-  substance?: Maybe<SubstanceEnum>;
+  statusId?: Maybe<Scalars['String']>;
+  substanceId?: Maybe<Scalars['String']>;
 };
 
 
@@ -436,16 +415,15 @@ export type MutationEditPipelineArgs = {
   from?: Maybe<Scalars['String']>;
   fromFeatureId?: Maybe<Scalars['String']>;
   id: Scalars['String'];
-  internalProtection?: Maybe<InternalProtectionEnum>;
   length?: Maybe<Scalars['Float']>;
   license?: Maybe<Scalars['String']>;
-  licenseDate?: Maybe<Scalars['DateTime']>;
-  material?: Maybe<MaterialEnum>;
   mop?: Maybe<Scalars['Int']>;
   outsideDiameter?: Maybe<Scalars['Float']>;
   piggable?: Maybe<Scalars['Boolean']>;
   piggingFrequency?: Maybe<Scalars['Int']>;
   pipelineGradeId?: Maybe<Scalars['String']>;
+  pipelineInternalProtectionId?: Maybe<Scalars['String']>;
+  pipelineMaterialId?: Maybe<Scalars['String']>;
   pipelineTypeId?: Maybe<Scalars['String']>;
   satelliteId?: Maybe<Scalars['String']>;
   segment?: Maybe<Scalars['String']>;
@@ -614,25 +592,25 @@ export type Pipeline = {
   authorized: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   createdBy: User;
-  currentStatus?: Maybe<StatusEnum>;
-  currentSubstance?: Maybe<SubstanceEnum>;
+  currentStatus?: Maybe<Scalars['String']>;
+  currentSubstance?: Maybe<Scalars['String']>;
   downstream?: Maybe<Array<Maybe<Pipeline>>>;
   firstLicenseDate?: Maybe<Scalars['DateTime']>;
   flowCalculationDirection: FlowCalculationDirectionEnum;
   from: Scalars['String'];
   fromFeatureId?: Maybe<Scalars['String']>;
   id: Scalars['String'];
-  internalProtection?: Maybe<InternalProtectionEnum>;
   length: Scalars['Float'];
   license: Scalars['String'];
   licenseChanges?: Maybe<Array<Maybe<LicenseChange>>>;
-  material?: Maybe<MaterialEnum>;
   mop?: Maybe<Scalars['Int']>;
   outsideDiameter?: Maybe<Scalars['Float']>;
   pigRuns?: Maybe<Array<Maybe<PigRun>>>;
   piggable?: Maybe<Scalars['Boolean']>;
   piggingFrequency?: Maybe<Scalars['Int']>;
   pipelineGradeId?: Maybe<Scalars['String']>;
+  pipelineInternalProtectionId?: Maybe<Scalars['String']>;
+  pipelineMaterialId?: Maybe<Scalars['String']>;
   pipelineTypeId?: Maybe<Scalars['String']>;
   pressureTests?: Maybe<Array<Maybe<PressureTest>>>;
   risk?: Maybe<Risk>;
@@ -674,10 +652,8 @@ export type PipelineBatchPayload = {
 export type PipelineCreateInput = {
   downstream?: Maybe<Array<Maybe<PipelineCreateInput>>>;
   from: Scalars['String'];
-  internalProtection?: Maybe<InternalProtectionEnum>;
   length: Scalars['Float'];
   license: Scalars['String'];
-  material?: Maybe<MaterialEnum>;
   mop?: Maybe<Scalars['Int']>;
   outsideDiameter?: Maybe<Scalars['Float']>;
   segment: Scalars['String'];
@@ -1073,29 +1049,6 @@ export type SourceOptions = {
   source: Scalars['String'];
 };
 
-export enum StatusEnum {
-  Abandoned = 'Abandoned',
-  Active = 'Active',
-  Cancelled = 'Cancelled',
-  Discontinued = 'Discontinued',
-  New = 'New',
-  NotConstructed = 'NotConstructed',
-  Operating = 'Operating',
-  Removed = 'Removed',
-  ToBeConstructed = 'ToBeConstructed'
-}
-
-export enum SubstanceEnum {
-  CrudeOil = 'CrudeOil',
-  FreshWater = 'FreshWater',
-  FuelGas = 'FuelGas',
-  LvpProducts = 'LVPProducts',
-  NaturalGas = 'NaturalGas',
-  OilWellEffluent = 'OilWellEffluent',
-  SaltWater = 'SaltWater',
-  SourNaturalGas = 'SourNaturalGas'
-}
-
 export enum TableEnum {
   Chemical = 'chemical',
   DownstreamPipelines = 'downstreamPipelines',
@@ -1172,11 +1125,9 @@ export type ValidatorsPipeline = {
   fromToMatchPattern: Scalars['String'];
   geotechnicalFacingEnum: Array<EnumObject>;
   havingEnum: Array<EnumObject>;
-  internalProtectionEnum: Array<EnumObject>;
   lengthMatchPattern: Scalars['String'];
   licenseMatchPattern: Scalars['String'];
   limitingSpecEnum: Array<EnumObject>;
-  materialEnum: Array<EnumObject>;
   mopMatchPattern: Scalars['String'];
   operationEnum: Array<EnumObject>;
   operatorEnum: Array<EnumObject>;
@@ -1184,6 +1135,8 @@ export type ValidatorsPipeline = {
   pigInspectionEnum: Array<EnumObject>;
   pigTypeEnum: Array<EnumObject>;
   pipelineGradeEnum: Array<EnumObject>;
+  pipelineInternalProtectionEnum: Array<EnumObject>;
+  pipelineMaterialEnum: Array<EnumObject>;
   pipelineTypeEnum: Array<EnumObject>;
   segmentMatchPattern: Scalars['String'];
   solubilityEnum: Array<EnumObject>;
@@ -1364,16 +1317,15 @@ export type EditPipelineMutationVariables = Exact<{
   fromFeatureId?: Maybe<Scalars['String']>;
   to?: Maybe<Scalars['String']>;
   toFeatureId?: Maybe<Scalars['String']>;
-  licenseDate?: Maybe<Scalars['DateTime']>;
   length?: Maybe<Scalars['Float']>;
   pipelineTypeId?: Maybe<Scalars['String']>;
   pipelineGradeId?: Maybe<Scalars['String']>;
   yieldStrength?: Maybe<Scalars['Int']>;
   outsideDiameter?: Maybe<Scalars['Float']>;
   wallThickness?: Maybe<Scalars['Float']>;
-  material?: Maybe<MaterialEnum>;
+  pipelineMaterialId?: Maybe<Scalars['String']>;
   mop?: Maybe<Scalars['Int']>;
-  internalProtection?: Maybe<InternalProtectionEnum>;
+  pipelineInternalProtectionId?: Maybe<Scalars['String']>;
   piggable?: Maybe<Scalars['Boolean']>;
   piggingFrequency?: Maybe<Scalars['Int']>;
 }>;
@@ -1383,9 +1335,10 @@ export type EditPipelineMutation = { editPipeline?: { pipeline?: { id: string } 
 
 export type EditLicenseChangeMutationVariables = Exact<{
   id: Scalars['String'];
-  status?: Maybe<StatusEnum>;
-  substance?: Maybe<SubstanceEnum>;
+  statusId?: Maybe<Scalars['String']>;
+  substanceId?: Maybe<Scalars['String']>;
   date?: Maybe<Scalars['DateTime']>;
+  comment?: Maybe<Scalars['String']>;
   linkToDocumentation?: Maybe<Scalars['String']>;
 }>;
 
@@ -1612,7 +1565,7 @@ export type PipelinesByIdQueryVariables = Exact<{
 }>;
 
 
-export type PipelinesByIdQuery = { pipelinesById: { count: number, pipelines?: Array<{ id: string, license: string, segment: string, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeatureId?: string | null | undefined, to: string, toFeatureId?: string | null | undefined, currentStatus?: StatusEnum | null | undefined, currentSubstance?: SubstanceEnum | null | undefined, firstLicenseDate?: string | null | undefined, length: number, pipelineTypeId?: string | null | undefined, pipelineGradeId?: string | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined } };
+export type PipelinesByIdQuery = { pipelinesById: { count: number, pipelines?: Array<{ id: string, license: string, segment: string, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeatureId?: string | null | undefined, to: string, toFeatureId?: string | null | undefined, currentStatus?: string | null | undefined, currentSubstance?: string | null | undefined, firstLicenseDate?: string | null | undefined, length: number, pipelineTypeId?: string | null | undefined, pipelineGradeId?: string | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, pipelineMaterialId?: string | null | undefined, mop?: number | null | undefined, pipelineInternalProtectionId?: string | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined } };
 
 export type PigRunsByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -1643,7 +1596,7 @@ export type WellBatchesByWellIdQuery = { wellBatchesByWellId?: Array<{ id: strin
 export type ValidatorsPipelineQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineGradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, materialEnum: Array<{ serverEnum: string, databaseEnum: string }>, internalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, environmentProximityToEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }>, chemicalSupplierEnum: Array<{ serverEnum: string, databaseEnum: string }>, operationEnum: Array<{ serverEnum: string, databaseEnum: string }>, havingEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
+export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineGradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineMaterialEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineInternalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, environmentProximityToEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }>, chemicalSupplierEnum: Array<{ serverEnum: string, databaseEnum: string }>, operationEnum: Array<{ serverEnum: string, databaseEnum: string }>, havingEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
 
 export type ValidatorsUserRoleQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1655,7 +1608,7 @@ export type LicenseChangesByPipelineIdQueryVariables = Exact<{
 }>;
 
 
-export type LicenseChangesByPipelineIdQuery = { licenseChangesByPipelineId?: Array<{ id: string, status: StatusEnum, substance: SubstanceEnum, date: string, comment?: string | null | undefined, linkToDocumentation?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type LicenseChangesByPipelineIdQuery = { licenseChangesByPipelineId?: Array<{ id: string, statusId: string, substanceId: string, date: string, comment?: string | null | undefined, linkToDocumentation?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type PressureTestsByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -2279,7 +2232,7 @@ export type DisconnectSalesPointMutationHookResult = ReturnType<typeof useDiscon
 export type DisconnectSalesPointMutationResult = Apollo.MutationResult<DisconnectSalesPointMutation>;
 export type DisconnectSalesPointMutationOptions = Apollo.BaseMutationOptions<DisconnectSalesPointMutation, DisconnectSalesPointMutationVariables>;
 export const EditPipelineDocument = gql`
-    mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $from: String, $fromFeatureId: String, $to: String, $toFeatureId: String, $licenseDate: DateTime, $length: Float, $pipelineTypeId: String, $pipelineGradeId: String, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
+    mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $from: String, $fromFeatureId: String, $to: String, $toFeatureId: String, $length: Float, $pipelineTypeId: String, $pipelineGradeId: String, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $pipelineMaterialId: String, $mop: Int, $pipelineInternalProtectionId: String, $piggable: Boolean, $piggingFrequency: Int) {
   editPipeline(
     id: $id
     satelliteId: $satelliteId
@@ -2290,16 +2243,15 @@ export const EditPipelineDocument = gql`
     fromFeatureId: $fromFeatureId
     to: $to
     toFeatureId: $toFeatureId
-    licenseDate: $licenseDate
     length: $length
     pipelineTypeId: $pipelineTypeId
     pipelineGradeId: $pipelineGradeId
     yieldStrength: $yieldStrength
     outsideDiameter: $outsideDiameter
     wallThickness: $wallThickness
-    material: $material
+    pipelineMaterialId: $pipelineMaterialId
     mop: $mop
-    internalProtection: $internalProtection
+    pipelineInternalProtectionId: $pipelineInternalProtectionId
     piggable: $piggable
     piggingFrequency: $piggingFrequency
   ) {
@@ -2337,16 +2289,15 @@ export type EditPipelineMutationFn = Apollo.MutationFunction<EditPipelineMutatio
  *      fromFeatureId: // value for 'fromFeatureId'
  *      to: // value for 'to'
  *      toFeatureId: // value for 'toFeatureId'
- *      licenseDate: // value for 'licenseDate'
  *      length: // value for 'length'
  *      pipelineTypeId: // value for 'pipelineTypeId'
  *      pipelineGradeId: // value for 'pipelineGradeId'
  *      yieldStrength: // value for 'yieldStrength'
  *      outsideDiameter: // value for 'outsideDiameter'
  *      wallThickness: // value for 'wallThickness'
- *      material: // value for 'material'
+ *      pipelineMaterialId: // value for 'pipelineMaterialId'
  *      mop: // value for 'mop'
- *      internalProtection: // value for 'internalProtection'
+ *      pipelineInternalProtectionId: // value for 'pipelineInternalProtectionId'
  *      piggable: // value for 'piggable'
  *      piggingFrequency: // value for 'piggingFrequency'
  *   },
@@ -2360,12 +2311,13 @@ export type EditPipelineMutationHookResult = ReturnType<typeof useEditPipelineMu
 export type EditPipelineMutationResult = Apollo.MutationResult<EditPipelineMutation>;
 export type EditPipelineMutationOptions = Apollo.BaseMutationOptions<EditPipelineMutation, EditPipelineMutationVariables>;
 export const EditLicenseChangeDocument = gql`
-    mutation EditLicenseChange($id: String!, $status: StatusEnum, $substance: SubstanceEnum, $date: DateTime, $linkToDocumentation: String) {
+    mutation EditLicenseChange($id: String!, $statusId: String, $substanceId: String, $date: DateTime, $comment: String, $linkToDocumentation: String) {
   editLicenseChange(
     id: $id
-    status: $status
-    substance: $substance
+    statusId: $statusId
+    substanceId: $substanceId
     date: $date
+    comment: $comment
     linkToDocumentation: $linkToDocumentation
   ) {
     licenseChange {
@@ -2394,9 +2346,10 @@ export type EditLicenseChangeMutationFn = Apollo.MutationFunction<EditLicenseCha
  * const [editLicenseChangeMutation, { data, loading, error }] = useEditLicenseChangeMutation({
  *   variables: {
  *      id: // value for 'id'
- *      status: // value for 'status'
- *      substance: // value for 'substance'
+ *      statusId: // value for 'statusId'
+ *      substanceId: // value for 'substanceId'
  *      date: // value for 'date'
+ *      comment: // value for 'comment'
  *      linkToDocumentation: // value for 'linkToDocumentation'
  *   },
  * });
@@ -3446,9 +3399,9 @@ export const PipelinesByIdDocument = gql`
       yieldStrength
       outsideDiameter
       wallThickness
-      material
+      pipelineMaterialId
       mop
-      internalProtection
+      pipelineInternalProtectionId
       piggable
       piggingFrequency
       createdBy {
@@ -3735,12 +3688,12 @@ export const ValidatorsPipelineDocument = gql`
     yieldStrengthMatchPattern
     outsideDiameterMatchPattern
     wallThicknessMatchPattern
-    materialEnum {
+    pipelineMaterialEnum {
       serverEnum
       databaseEnum
     }
     mopMatchPattern
-    internalProtectionEnum {
+    pipelineInternalProtectionEnum {
       serverEnum
       databaseEnum
     }
@@ -3863,8 +3816,8 @@ export const LicenseChangesByPipelineIdDocument = gql`
     query LicenseChangesByPipelineId($pipelineId: String!) {
   licenseChangesByPipelineId(pipelineId: $pipelineId) {
     id
-    status
-    substance
+    statusId
+    substanceId
     date
     comment
     linkToDocumentation

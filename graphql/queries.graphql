@@ -32,9 +32,9 @@ query PipelinesById($navigationInput: NavigationInput!, $skip: Int!, $take: Int!
       yieldStrength
       outsideDiameter
       wallThickness
-      material
+      pipelineMaterialId
       mop
-      internalProtection
+      pipelineInternalProtectionId
       piggable
       piggingFrequency
       createdBy {
@@ -197,12 +197,12 @@ query ValidatorsPipeline {
     yieldStrengthMatchPattern
     outsideDiameterMatchPattern
     wallThicknessMatchPattern
-    materialEnum {
+    pipelineMaterialEnum {
       serverEnum
       databaseEnum
     }
     mopMatchPattern
-    internalProtectionEnum {
+    pipelineInternalProtectionEnum {
       serverEnum
       databaseEnum
     }
@@ -269,8 +269,8 @@ query ValidatorsUserRole {
 query LicenseChangesByPipelineId($pipelineId: String!) {
   licenseChangesByPipelineId(pipelineId: $pipelineId) {
     id
-    status
-    substance
+    statusId
+    substanceId
     date
     comment
     linkToDocumentation

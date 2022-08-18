@@ -119,8 +119,8 @@ export default function RenderPipeline({ gridRow, rowIsEven, pipeline, validator
     { columnName: 'fromFeatureId', columnType: 'string', nullable: true, record: fromFeatureId, validator: fromToFeatureEnum, editRecord },
     { columnName: 'to', columnType: 'string', nullable: false, record: to, validator: fromToMatchPattern, editRecord },
     { columnName: 'toFeatureId', columnType: 'string', nullable: true, record: toFeatureId, validator: fromToFeatureEnum, editRecord },
-    { columnName: 'currentStatus', columnType: 'string', nullable: false, record: currentStatus, validator: statusEnum },
-    { columnName: 'currentSubstance', columnType: 'string', nullable: false, record: currentSubstance, validator: substanceEnum },
+    { columnName: 'currentStatus', columnType: 'string', nullable: false, record: currentStatus, },
+    { columnName: 'currentSubstance', columnType: 'string', nullable: false, record: currentSubstance, },
   ];
 
   const backgroundColor = rowIsEven ? '#abeaff' : undefined;

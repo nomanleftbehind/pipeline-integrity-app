@@ -18,13 +18,13 @@ import {
 } from '../../graphql/generated/graphql';
 
 
-type IRiskProps = Pick<IPipeline, 'id' | 'license' | 'segment' | 'flowCalculationDirection' | 'currentSubstance' | 'currentStatus' | 'pipelineTypeId' | 'material' | 'firstLicenseDate'> & {
+type IRiskProps = Pick<IPipeline, 'id' | 'license' | 'segment' | 'flowCalculationDirection' | 'currentSubstance' | 'currentStatus' | 'pipelineTypeId' | 'pipelineMaterialId' | 'firstLicenseDate'> & {
   editPipeline: IEditRecordFunction;
   validators?: IValidatorsRisk;
 };
 
 
-export default function Risk({ id, license, segment, flowCalculationDirection, currentSubstance, currentStatus, pipelineTypeId, material, firstLicenseDate, editPipeline, validators }: IRiskProps) {
+export default function Risk({ id, license, segment, flowCalculationDirection, currentSubstance, currentStatus, pipelineTypeId, pipelineMaterialId, firstLicenseDate, editPipeline, validators }: IRiskProps) {
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
@@ -123,7 +123,7 @@ export default function Risk({ id, license, segment, flowCalculationDirection, c
         oilReleaseCost, gasReleaseCost, repairTimeDays, releaseTimeDays, costPerM3Released,
         safeguardExternalCoating, safeguardCathodic, probabilityExteriorWithSafeguards, riskPotentialExternalWithSafeguards,
         createdBy, createdAt, updatedBy, updatedAt, comment, authorized } = data.riskById;
-      const { environmentProximityToEnum, geotechnicalFacingEnum, pipelineTypeEnum, materialEnum } = validators || {};
+      const { environmentProximityToEnum, geotechnicalFacingEnum, pipelineTypeEnum, pipelineMaterialEnum } = validators || {};
 
       const riskProperties: IRiskPropertyRecordEntryMap[] = [
         { columnName: 'aerialReview', record: aerialReview, columnType: 'boolean', label: 'Aerial Review', nullable: true, editRecord },
@@ -155,7 +155,7 @@ export default function Risk({ id, license, segment, flowCalculationDirection, c
 
       const probabilityInteriorFields: IRiskPropertyRecordEntryMap[] = [
         { columnName: 'pipelineTypeId', record: pipelineTypeId, columnType: 'string', label: 'Pipeline Type', nullable: true, validator: pipelineTypeEnum, editRecord: editPipeline },
-        { columnName: 'material', record: material, columnType: 'string', label: 'Pipeline Material', nullable: true, validator: materialEnum, editRecord: editPipeline },
+        { columnName: 'pipelineMaterialId', record: pipelineMaterialId, columnType: 'string', label: 'Pipeline Material', nullable: true, validator: pipelineMaterialEnum, editRecord: editPipeline },
         { columnName: 'safeguardInternalProtection', record: safeguardInternalProtection, columnType: 'number', label: 'Internal Protection Safeguard', nullable: true, editRecord },
         { columnName: 'safeguardPigging', record: safeguardPigging, columnType: 'number', label: 'Pigging Safeguard', nullable: true },
         { columnName: 'safeguardChemicalInhibition', record: safeguardChemicalInhibition, columnType: 'number', label: 'Chemical Inhibition Safeguard', nullable: true },

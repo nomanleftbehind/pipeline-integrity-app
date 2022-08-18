@@ -37,7 +37,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).pipelinesCreatedBy();
+        }).pipelineCreatedBy();
       },
     })
     t.list.field('pipelinesUpdated', {
@@ -45,7 +45,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).pipelinesUpdatedBy();
+        }).pipelineUpdatedBy();
       },
     })
     t.list.field('licenseChangesCreated', {
@@ -53,7 +53,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).licenseChangesCreatedBy();
+        }).licenseChangeCreatedBy();
       },
     })
     t.list.field('licenseChangesUpdated', {
@@ -61,7 +61,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).licenseChangesUpdatedBy();
+        }).licenseChangeUpdatedBy();
       },
     })
     t.list.field('facilitiesCreated', {
@@ -69,7 +69,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).facilitiesCreatedBy();
+        }).facilitiyCreatedBy();
       },
     })
     t.list.field('facilitiesUpdated', {
@@ -77,7 +77,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).facilitiesUpdatedBy();
+        }).facilitiyUpdatedBy();
       },
     })
     t.list.field('satellitesCreated', {
@@ -85,7 +85,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).satellitesCreatedBy();
+        }).satellityCreatedBy();
       },
     })
     t.list.field('satellitesUpdated', {
@@ -93,7 +93,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).satellitesUpdatedBy();
+        }).satellityUpdatedBy();
       },
     })
     t.list.field('wellsCreated', {
@@ -101,7 +101,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).wellsCreatedBy();
+        }).wellCreatedBy();
       },
     })
     t.list.field('wellsUpdated', {
@@ -109,7 +109,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).wellsUpdatedBy();
+        }).wellUpdatedBy();
       },
     })
     t.list.field('risksCreated', {
@@ -117,7 +117,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).risksCreatedBy();
+        }).riskCreatedBy();
       }
     })
     t.list.field('risksUpdated', {
@@ -125,7 +125,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).risksUpdatedBy();
+        }).riskUpdatedBy();
       }
     })
   },
@@ -199,7 +199,7 @@ export const UserPipelines = extendType({
             email: userUniqueInput.email || undefined,
           },
         })
-        return user.pipelinesCreatedBy();
+        return user.pipelineCreatedBy();
       },
     })
   },

@@ -16,6 +16,10 @@ import {
   loadPipelineGradeEnumObjectArray,
   loadPipelineFromToFeatureEnumObjectArray,
   loadPigTypeEnumObjectArray,
+  loadPipelineMaterialEnumObjectArray,
+  loadPipelineInternalProtectionEnumObjectArray,
+  loadLicenseChangeStatusEnumObjectArray,
+  loadLicenseChangeSubstanceEnumObjectArray,
 } from './Validator';
 import type { GetGen } from 'nexus/dist/typegenTypeHelpers';
 import type { AllNexusOutputTypeDefs } from 'nexus/dist/definitions/wrapping';
@@ -151,12 +155,6 @@ const searchNavigationObjectSalesPoint = SalesPointObjectFields
     return newObj;
   });
 
-const searchNavigationObjectLicenseChange = LicenseChangeObjectFields
-  .map((obj) => {
-    const newObj: ITableObjectExtend = { table: 'licenseChanges', ...obj };
-    return newObj;
-  });
-
 const searchNavigationObjectPressureTest = PressureTestObjectFields
   .map((obj) => {
     const newObj: ITableObjectExtend = { table: 'pressureTests', ...obj };
@@ -176,12 +174,31 @@ export const SearchNavigationQuery = extendType({
             const pipelineTypeIdEnumObjectArray = await loadPipelineTypeEnumObjectArray({ ctx });
             const pipelineGradeIdEnumObjectArray = await loadPipelineGradeEnumObjectArray({ ctx });
             const pipelineFromToFeatureIdEnumObjectArray = await loadPipelineFromToFeatureEnumObjectArray({ ctx });
+            const pipelineMaterialIdEnumObjectArray = await loadPipelineMaterialEnumObjectArray({ ctx });
+            const pipelineInternalProtectionIdEnumObjectArray = await loadPipelineInternalProtectionEnumObjectArray({ ctx });
 
             const newObj: ITableObjectExtend = {
               table: 'pipeline', field, nullable, type,
               enumObjectArray: field === 'pipelineTypeId' ? pipelineTypeIdEnumObjectArray :
                 field === 'pipelineGradeId' ? pipelineGradeIdEnumObjectArray :
-                  ['fromFeatureId', 'toFeatureId'].includes(field) ? pipelineFromToFeatureIdEnumObjectArray : enumObjectArray
+                  ['fromFeatureId', 'toFeatureId'].includes(field) ? pipelineFromToFeatureIdEnumObjectArray :
+                    field === 'pipelineMaterialId' ? pipelineMaterialIdEnumObjectArray :
+                      field === 'pipelineInternalProtectionId' ? pipelineInternalProtectionIdEnumObjectArray :
+                        enumObjectArray
+            };
+            return newObj;
+          })
+        );
+
+        const searchNavigationObjectLicenseChange = await Promise.all(LicenseChangeObjectFields
+          .map(async ({ field, nullable, type, enumObjectArray }) => {
+            const statusIdEnumObjectArray = await loadLicenseChangeStatusEnumObjectArray({ ctx });
+            const substanceIdEnumObjectArray = await loadLicenseChangeSubstanceEnumObjectArray({ ctx });
+
+            const newObj: ITableObjectExtend = {
+              table: 'licenseChanges', field, nullable, type,
+              enumObjectArray: field === 'statusId' ? statusIdEnumObjectArray :
+                field === 'substanceId' ? substanceIdEnumObjectArray : enumObjectArray
             };
             return newObj;
           })

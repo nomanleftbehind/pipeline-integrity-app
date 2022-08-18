@@ -2,59 +2,14 @@ import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, n
 import { NexusGenObjects } from 'nexus-typegen';
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
-import { StatusEnumMembers, SubstanceEnumMembers, StatusEnumArray, SubstanceEnumArray } from './LicenseChange';
+// import { StatusEnumMembers, SubstanceEnumMembers, StatusEnumArray, SubstanceEnumArray } from './LicenseChange';
 import { totalPipelineFlowRawQuery } from './PipelineFlow';
 import { Prisma, User as IUser } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
 
 
 
-export const MaterialEnumMembers = {
-  Steel: "Steel",
-  PolyvinylChloride: "Polyvinyl Chloride",
-  Composite: "Composite",
-  Fiberglass: "Fiberglass",
-  Aluminum: "Aluminum",
-  Polyethylene: "Polyethylene",
-  CelluloseAcetateButyrate: "Cellulose Acetate Butyrate",
-  Unknown: "Unknown",
-  AsbestosCement: "Asbestos Cement"
-}
 
-export const MaterialEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'MaterialEnum',
-  },
-  name: 'MaterialEnum',
-  members: MaterialEnumMembers
-});
-
-export const MaterialEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(MaterialEnumMembers).map(([serverEnum, databaseEnum]) => {
-  return { serverEnum, databaseEnum }
-});
-
-export const InternalProtectionEnumMembers = {
-  Uncoated: "Uncoated",
-  FreeStandingSlipLined: "Free Standing (Slip Lined)",
-  Unknown: "Unknown",
-  Cement: "Cement",
-  ExpandedPolyethylene: "Expanded Polyethylene",
-  ThinFilm: "Thin Film",
-}
-
-export const InternalProtectionEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'InternalProtectionEnum',
-  },
-  name: 'InternalProtectionEnum',
-  members: InternalProtectionEnumMembers
-});
-
-export const InternalProtectionEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(InternalProtectionEnumMembers).map(([serverEnum, databaseEnum]) => {
-  return { serverEnum, databaseEnum }
-});
 
 export const FlowCalculationDirectionEnumMembers = {
   Upstream: 'Upstream',
@@ -86,11 +41,11 @@ export const PipelineObjectFields: ITableConstructObject[] = [
   { field: 'toFeatureId', nullable: true, type: 'String' },
   { field: 'pipelineTypeId', nullable: true, type: 'String' },
   { field: 'pipelineGradeId', nullable: true, type: 'String' },
-  { field: 'material', nullable: true, type: 'MaterialEnum', enumObjectArray: MaterialEnumArray },
-  { field: 'internalProtection', nullable: true, type: 'InternalProtectionEnum', enumObjectArray: InternalProtectionEnumArray },
-  { field: 'currentStatus', nullable: true, type: 'StatusEnum', enumObjectArray: StatusEnumArray },
-  { field: 'currentSubstance', nullable: true, type: 'SubstanceEnum', enumObjectArray: SubstanceEnumArray },
-  { field: 'firstLicenseDate', nullable: true, type: 'DateTime' },
+  { field: 'pipelineMaterialId', nullable: true, type: 'String' },
+  { field: 'pipelineInternalProtectionId', nullable: true, type: 'String' },
+  // { field: 'currentStatus', nullable: true, type: 'StatusEnum' },
+  // { field: 'currentSubstance', nullable: true, type: 'SubstanceEnum' },
+  // { field: 'firstLicenseDate', nullable: true, type: 'DateTime' },
   { field: 'length', nullable: false, type: 'Float' },
   { field: 'yieldStrength', nullable: true, type: 'Int' },
   { field: 'outsideDiameter', nullable: true, type: 'Float' },
@@ -115,7 +70,7 @@ export const Pipeline = objectType({
       const nullability = nullable ? 'nullable' : 'nonNull';
 
       t[nullability].field(field, {
-        type,
+        type/*,
         resolve:
           field === 'currentStatus' ?
             async ({ id }, _args, ctx: Context) => {
@@ -146,18 +101,8 @@ export const Pipeline = objectType({
                   }) || {};
                   return date || null;
                 } :
-                field === 'material' ?
-                  ({ material }) => {
-                    const result = material && serverEnumToDatabaseEnum(MaterialEnumMembers, material);
-                    return result;
-                  } :
-                  field === 'internalProtection' ?
-                    ({ internalProtection }) => {
-                      const result = internalProtection && serverEnumToDatabaseEnum(InternalProtectionEnumMembers, internalProtection);
-                      return result;
-                    } :
-                    undefined,
-      });
+                undefined,
+              */});
     }
   }
 });
@@ -166,6 +111,41 @@ export const Pipeline = objectType({
 export const PipelineExtendObject = extendType({
   type: 'Pipeline',
   definition: t => {
+    t.field('currentStatus', {
+      type: 'String',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const { status } = await ctx.prisma.licenseChange.findFirst({
+          where: { pipelineId: id },
+          orderBy: { date: 'desc' },
+          select: { status: { select: { status: true } } },
+        }) || {};
+        const result = status?.status || null;
+        return result;
+      },
+    })
+    t.field('currentSubstance', {
+      type: 'String',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const { substance } = await ctx.prisma.licenseChange.findFirst({
+          where: { pipelineId: id },
+          orderBy: { date: 'desc' },
+          select: { substance: { select: { substance: true } } },
+        }) || {};
+        const result = substance?.substance || null;
+        return result;
+      },
+    })
+    t.field('firstLicenseDate', {
+      type: 'DateTime',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const { date } = await ctx.prisma.licenseChange.findFirst({
+          where: { pipelineId: id },
+          orderBy: { date: 'asc' },
+          select: { date: true },
+        }) || {};
+        return date || null;
+      },
+    })
     t.field('satellite', {
       type: 'Satellite',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -818,9 +798,7 @@ export const PipelineCreateInput = inputObjectType({
     t.nonNull.float('length')
     t.float('outsideDiameter')
     t.float('wallThickness')
-    t.field('material', { type: 'MaterialEnum' })
     t.int('mop')
-    t.field('internalProtection', { type: 'InternalProtectionEnum' })
     t.list.field('upstream', { type: 'PipelineCreateInput' })
     t.list.field('downstream', { type: 'PipelineCreateInput' })
   },
@@ -869,16 +847,15 @@ export const PipelineMutation = extendType({
         fromFeatureId: stringArg(),
         to: stringArg(),
         toFeatureId: stringArg(),
-        licenseDate: arg({ type: 'DateTime' }),
         length: floatArg(),
         pipelineTypeId: stringArg(),
         pipelineGradeId: stringArg(),
         yieldStrength: intArg(),
         outsideDiameter: floatArg(),
         wallThickness: floatArg(),
-        material: arg({ type: 'MaterialEnum' }),
+        pipelineMaterialId: stringArg(),
         mop: intArg(),
-        internalProtection: arg({ type: 'InternalProtectionEnum' }),
+        pipelineInternalProtectionId: stringArg(),
         piggable: booleanArg(),
         piggingFrequency: intArg(),
       },
@@ -979,9 +956,9 @@ export const PipelineMutation = extendType({
                 yieldStrength: args.yieldStrength,
                 outsideDiameter: args.outsideDiameter,
                 wallThickness: args.wallThickness,
-                material: databaseEnumToServerEnum(MaterialEnumMembers, args.material),
+                pipelineMaterialId: args.pipelineMaterialId,
                 mop: args.mop,
-                internalProtection: databaseEnumToServerEnum(InternalProtectionEnumMembers, args.internalProtection),
+                pipelineInternalProtectionId: args.pipelineInternalProtectionId,
                 piggable: args.piggable,
                 piggingFrequency: args.piggingFrequency,
                 updatedById: userId,

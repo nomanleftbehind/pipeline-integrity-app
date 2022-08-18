@@ -8,61 +8,10 @@ import { ITableConstructObject } from './SearchNavigation';
 
 
 
-export const StatusEnumMembers = {
-  Operating: "Operating",
-  Discontinued: "Discontinued",
-  Abandoned: "Abandoned",
-  Removed: "Removed",
-  ToBeConstructed: "To Be Constructed",
-  Active: "Active",
-  Cancelled: "Cancelled",
-  New: "New",
-  NotConstructed: "Not Constructed"
-}
-
-export const StatusEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'StatusEnum',
-  },
-  name: 'StatusEnum',
-  members: StatusEnumMembers
-});
-
-export const StatusEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(StatusEnumMembers).map(([serverEnum, databaseEnum]) => {
-  return { serverEnum, databaseEnum }
-});
-
-
-export const SubstanceEnumMembers = {
-  NaturalGas: "Natural Gas",
-  FreshWater: "Fresh Water",
-  SaltWater: "Salt Water",
-  CrudeOil: "Crude Oil",
-  OilWellEffluent: "Oil Well Effluent",
-  LVPProducts: "LVP Products",
-  FuelGas: "Fuel Gas",
-  SourNaturalGas: "Sour Natural Gas",
-}
-
-export const SubstanceEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'SubstanceEnum',
-  },
-  name: 'SubstanceEnum',
-  members: SubstanceEnumMembers
-});
-
-export const SubstanceEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(SubstanceEnumMembers).map(([serverEnum, databaseEnum]) => {
-  return { serverEnum, databaseEnum }
-});
-
-
 export const LicenseChangeObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
-  { field: 'status', nullable: false, type: 'StatusEnum', enumObjectArray: StatusEnumArray },
-  { field: 'substance', nullable: false, type: 'SubstanceEnum', enumObjectArray: SubstanceEnumArray },
+  { field: 'statusId', nullable: false, type: 'String' },
+  { field: 'substanceId', nullable: false, type: 'String' },
   { field: 'date', nullable: false, type: 'DateTime', },
   { field: 'comment', nullable: true, type: 'String' },
   { field: 'linkToDocumentation', nullable: true, type: 'String', },
@@ -80,21 +29,7 @@ export const LicenseChange = objectType({
     for (const { field, nullable, type } of LicenseChangeObjectFields) {
       const nullability = nullable ? 'nullable' : 'nonNull';
 
-      t[nullability].field(field, {
-        type,
-        resolve:
-          field === 'status' ?
-            ({ status }) => {
-              const result = serverEnumToDatabaseEnum(StatusEnumMembers, status);
-              return result;
-            } :
-            field === 'substance' ?
-              ({ substance }) => {
-                const result = serverEnumToDatabaseEnum(SubstanceEnumMembers, substance);
-                return result;
-              } :
-              undefined,
-      })
+      t[nullability].field(field, { type })
     }
   }
 })
@@ -187,8 +122,8 @@ export const LicenseChangeMutation = extendType({
       type: 'LicenseChangePayload',
       args: {
         id: nonNull(stringArg()),
-        status: arg({ type: 'StatusEnum' }),
-        substance: arg({ type: 'SubstanceEnum' }),
+        statusId: stringArg(),
+        substanceId: stringArg(),
         date: arg({ type: 'DateTime' }),
         comment: stringArg(),
         linkToDocumentation: stringArg(),
@@ -240,8 +175,8 @@ export const LicenseChangeMutation = extendType({
             const licenseChange = await ctx.prisma.licenseChange.update({
               where: { id: args.id },
               data: {
-                status: databaseEnumToServerEnum(StatusEnumMembers, args.status) || undefined,
-                substance: databaseEnumToServerEnum(SubstanceEnumMembers, args.substance) || undefined,
+                statusId: args.statusId || undefined,
+                substanceId: args.substanceId || undefined,
                 date: args.date || undefined,
                 linkToDocumentation: args.linkToDocumentation,
                 comment: args.comment,
@@ -300,10 +235,12 @@ export const LicenseChangeMutation = extendType({
 
             const licenseChange = await ctx.prisma.licenseChange.create({
               data: {
-                pipelineId,
+                pipeline: { connect: { id: pipelineId } },
                 date: today,
-                createdById: userId,
-                updatedById: userId,
+                status: { connect: { status: 'Operating' } },
+                substance: { connect: { substance: 'Oil Well Effluent' } },
+                createdBy: { connect: { id: userId } },
+                updatedBy: { connect: { id: userId } },
               }
             });
             return { licenseChange };

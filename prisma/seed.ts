@@ -4,6 +4,11 @@ import { pipelineTypeData } from './SeedPipelineTypeData';
 import { pipelineGradeData } from './SeedPipelineGradeData';
 import { pipelineFromToFeatureData1 } from './SeedPipelineFromToFeatureData';
 import { pigTypeData } from './SeedPigTypeData';
+import { pipelineMaterialData } from './SeedPipelineMaterialData';
+import { pipelineInternalProtectionData } from './SeedPipelineInternalProtectionData';
+
+import { licenseChangeStatusData } from './SeedLicenseChangeStatusData';
+import { licenseChangeSubstanceData } from './SeedLicenseChangeSubstanceData';
 
 import {
   userData,
@@ -124,6 +129,34 @@ async function main() {
       data: u,
     })
     console.log(`Created pipeline from-to feature with id: ${pipelineFromToFeature.id}`)
+  }
+
+  for (const u of pipelineMaterialData) {
+    const pipelineMaterial = await prisma.pipelineMaterial.create({
+      data: u,
+    })
+    console.log(`Created pipeline material with id: ${pipelineMaterial.id}`)
+  }
+
+  for (const u of pipelineInternalProtectionData) {
+    const pipelineInternalProtection = await prisma.pipelineInternalProtection.create({
+      data: u,
+    })
+    console.log(`Created pipeline internal protection with id: ${pipelineInternalProtection.id}`)
+  }
+
+  for (const u of licenseChangeStatusData) {
+    const licenseChangeStatus = await prisma.licenseChangeStatus.create({
+      data: u,
+    })
+    console.log(`Created license change status with id: ${licenseChangeStatus.id}`)
+  }
+
+  for (const u of licenseChangeSubstanceData) {
+    const licenseChangeSubstance = await prisma.licenseChangeSubstance.create({
+      data: u,
+    })
+    console.log(`Created license change substance with id: ${licenseChangeSubstance.id}`)
   }
 
   for (const u of pigTypeData) {
