@@ -30,11 +30,11 @@ type PickNullable<T, K extends keyof T> = {
 } | null | undefined;
 
 
-export type IValidatorsMechanicalProperties = PickNullable<NonNullable<IValidators>, 'lengthMatchPattern' | 'typeEnum' | 'gradeEnum' | 'yieldStrengthMatchPattern' | 'outsideDiameterMatchPattern' | 'wallThicknessMatchPattern' | 'materialEnum' | 'mopMatchPattern' | 'internalProtectionEnum'>;
+export type IValidatorsMechanicalProperties = PickNullable<NonNullable<IValidators>, 'lengthMatchPattern' | 'pipelineTypeEnum' | 'pipelineGradeEnum' | 'yieldStrengthMatchPattern' | 'outsideDiameterMatchPattern' | 'wallThicknessMatchPattern' | 'materialEnum' | 'mopMatchPattern' | 'internalProtectionEnum'>;
 export type IValidatorsLicenseChanges = PickNullable<NonNullable<IValidators>, 'statusEnum' | 'substanceEnum'>;
 export type IValidatorsConnectedSources = PickNullable<NonNullable<IValidators>, 'flowCalculationDirectionEnum'>;
 export type IValidatorsPressureTests = PickNullable<NonNullable<IValidators>, 'limitingSpecEnum'>;
-export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'environmentProximityToEnum' | 'geotechnicalFacingEnum' | 'typeEnum' | 'materialEnum'>;
+export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'environmentProximityToEnum' | 'geotechnicalFacingEnum' | 'pipelineTypeEnum' | 'materialEnum'>;
 export type IValidatorsPigRuns = PickNullable<NonNullable<IValidators>, 'pigTypeEnum' | 'pigInspectionEnum' | 'operatorEnum'>;
 export type IValidatorsPipelineBatches = PickNullable<NonNullable<IValidators>, 'solubilityEnum' | 'batchProductEnum'>;
 export type IValidatorsChemical = PickNullable<NonNullable<IValidators>, 'chemicalSupplierEnum'>;
@@ -55,12 +55,12 @@ interface ITabPanelProps extends ITabPanelMap {
 export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editPipeline, authorized, validators }: IPipelineDataProps) {
   const [view, setView] = useState<IView>('license change');
 
-  const { id, license, segment, currentSubstance, flowCalculationDirection, currentStatus, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, firstLicenseDate, piggable, piggingFrequency } = pipeline;
+  const { id, license, segment, currentSubstance, flowCalculationDirection, currentStatus, length, pipelineTypeId, pipelineGradeId, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, firstLicenseDate, piggable, piggingFrequency } = pipeline;
 
   const validatorsMechanicalProperties: IValidatorsMechanicalProperties = validators && {
     lengthMatchPattern: validators.lengthMatchPattern,
-    typeEnum: validators.typeEnum,
-    gradeEnum: validators.gradeEnum,
+    pipelineTypeEnum: validators.pipelineTypeEnum,
+    pipelineGradeEnum: validators.pipelineGradeEnum,
     yieldStrengthMatchPattern: validators.yieldStrengthMatchPattern,
     outsideDiameterMatchPattern: validators.outsideDiameterMatchPattern,
     wallThicknessMatchPattern: validators.wallThicknessMatchPattern,
@@ -85,7 +85,7 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
   const validatorsRisk: IValidatorsRisk = validators && {
     environmentProximityToEnum: validators.environmentProximityToEnum,
     geotechnicalFacingEnum: validators.geotechnicalFacingEnum,
-    typeEnum: validators.typeEnum,
+    pipelineTypeEnum: validators.pipelineTypeEnum,
     materialEnum: validators.materialEnum,
   };
 
@@ -137,8 +137,8 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
       return <MechanicalProperties
         id={id}
         length={length}
-        type={type}
-        grade={grade}
+        pipelineTypeId={pipelineTypeId}
+        pipelineGradeId={pipelineGradeId}
         yieldStrength={yieldStrength}
         outsideDiameter={outsideDiameter}
         wallThickness={wallThickness}
@@ -179,7 +179,7 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
         currentSubstance={currentSubstance}
         currentStatus={currentStatus}
         editPipeline={editPipeline}
-        type={type}
+        pipelineTypeId={pipelineTypeId}
         material={material}
         firstLicenseDate={firstLicenseDate}
         validators={validatorsRisk}

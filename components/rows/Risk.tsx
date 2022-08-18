@@ -18,13 +18,13 @@ import {
 } from '../../graphql/generated/graphql';
 
 
-type IRiskProps = Pick<IPipeline, 'id' | 'license' | 'segment' | 'flowCalculationDirection' | 'currentSubstance' | 'currentStatus' | 'type' | 'material' | 'firstLicenseDate'> & {
+type IRiskProps = Pick<IPipeline, 'id' | 'license' | 'segment' | 'flowCalculationDirection' | 'currentSubstance' | 'currentStatus' | 'pipelineTypeId' | 'material' | 'firstLicenseDate'> & {
   editPipeline: IEditRecordFunction;
   validators?: IValidatorsRisk;
 };
 
 
-export default function Risk({ id, license, segment, flowCalculationDirection, currentSubstance, currentStatus, type, material, firstLicenseDate, editPipeline, validators }: IRiskProps) {
+export default function Risk({ id, license, segment, flowCalculationDirection, currentSubstance, currentStatus, pipelineTypeId, material, firstLicenseDate, editPipeline, validators }: IRiskProps) {
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
@@ -123,7 +123,7 @@ export default function Risk({ id, license, segment, flowCalculationDirection, c
         oilReleaseCost, gasReleaseCost, repairTimeDays, releaseTimeDays, costPerM3Released,
         safeguardExternalCoating, safeguardCathodic, probabilityExteriorWithSafeguards, riskPotentialExternalWithSafeguards,
         createdBy, createdAt, updatedBy, updatedAt, comment, authorized } = data.riskById;
-      const { environmentProximityToEnum, geotechnicalFacingEnum, typeEnum, materialEnum } = validators || {};
+      const { environmentProximityToEnum, geotechnicalFacingEnum, pipelineTypeEnum, materialEnum } = validators || {};
 
       const riskProperties: IRiskPropertyRecordEntryMap[] = [
         { columnName: 'aerialReview', record: aerialReview, columnType: 'boolean', label: 'Aerial Review', nullable: true, editRecord },
@@ -154,7 +154,7 @@ export default function Risk({ id, license, segment, flowCalculationDirection, c
       ];
 
       const probabilityInteriorFields: IRiskPropertyRecordEntryMap[] = [
-        { columnName: 'type', record: type, columnType: 'string', label: 'Pipeline Type', nullable: true, validator: typeEnum, editRecord: editPipeline },
+        { columnName: 'pipelineTypeId', record: pipelineTypeId, columnType: 'string', label: 'Pipeline Type', nullable: true, validator: pipelineTypeEnum, editRecord: editPipeline },
         { columnName: 'material', record: material, columnType: 'string', label: 'Pipeline Material', nullable: true, validator: materialEnum, editRecord: editPipeline },
         { columnName: 'safeguardInternalProtection', record: safeguardInternalProtection, columnType: 'number', label: 'Internal Protection Safeguard', nullable: true, editRecord },
         { columnName: 'safeguardPigging', record: safeguardPigging, columnType: 'number', label: 'Pigging Safeguard', nullable: true },

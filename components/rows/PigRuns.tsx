@@ -139,9 +139,9 @@ export default function PigRuns({ pipelineId, validators }: IPigRunsProps) {
         const isLastRow = data.pigRunsByPipelineId?.length === gridRow + 1;
         gridRow += 2;
         if (pigRun) {
-          const { id, pigType, dateIn, dateOut, operatorId, isolationValveFunctionTest, pigSenderReceiverInspection, comment, createdBy, createdAt, updatedBy, updatedAt, authorized } = pigRun;
+          const { id, pigTypeId, dateIn, dateOut, operatorId, isolationValveFunctionTest, pigSenderReceiverInspection, comment, createdBy, createdAt, updatedBy, updatedAt, authorized } = pigRun;
           const pigRunColumns: IRecordEntryMap[] = [
-            { columnName: 'pigType', columnType: 'string', nullable: true, record: pigType, validator: pigTypeEnum, editRecord },
+            { columnName: 'pigTypeId', columnType: 'string', nullable: true, record: pigTypeId, validator: pigTypeEnum, editRecord },
             { columnName: 'dateIn', columnType: 'date', nullable: false, record: dateIn, editRecord },
             { columnName: 'dateOut', columnType: 'date', nullable: true, record: dateOut, editRecord },
             { columnName: 'operatorId', columnType: 'string', nullable: true, record: operatorId, validator: operatorEnum, editRecord },

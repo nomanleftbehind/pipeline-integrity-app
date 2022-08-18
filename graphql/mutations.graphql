@@ -152,8 +152,8 @@ mutation DisconnectSalesPoint($id: String!) {
   }
 }
 
-mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $from: String, $fromFeature: FromToFeatureEnum, $to: String, $toFeature: FromToFeatureEnum, $licenseDate: DateTime, $length: Float, $type: TypeEnum, $grade: GradeEnum, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
-  editPipeline(id: $id, satelliteId: $satelliteId, license: $license, segment: $segment, flowCalculationDirection: $flowCalculationDirection, from: $from, fromFeature: $fromFeature, to: $to, toFeature: $toFeature, licenseDate: $licenseDate, length: $length, type: $type, grade: $grade, yieldStrength: $yieldStrength, outsideDiameter: $outsideDiameter, wallThickness: $wallThickness, material: $material, mop: $mop, internalProtection: $internalProtection, piggable: $piggable, piggingFrequency: $piggingFrequency) {
+mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $from: String, $fromFeatureId: String, $to: String, $toFeatureId: String, $licenseDate: DateTime, $length: Float, $pipelineTypeId: String, $pipelineGradeId: String, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
+  editPipeline(id: $id, satelliteId: $satelliteId, license: $license, segment: $segment, flowCalculationDirection: $flowCalculationDirection, from: $from, fromFeatureId: $fromFeatureId, to: $to, toFeatureId: $toFeatureId, licenseDate: $licenseDate, length: $length, pipelineTypeId: $pipelineTypeId, pipelineGradeId: $pipelineGradeId, yieldStrength: $yieldStrength, outsideDiameter: $outsideDiameter, wallThickness: $wallThickness, material: $material, mop: $mop, internalProtection: $internalProtection, piggable: $piggable, piggingFrequency: $piggingFrequency) {
     pipeline {
       id
     }
@@ -236,8 +236,8 @@ mutation DeletePressureTest($id: String!) {
   }
 }
 
-mutation EditPigRun($id: String!, $pigType: PigTypeEnum, $dateIn: DateTime, $dateOut: DateTime, $isolationValveFunctionTest: PigInspectionEnum, $pigSenderReceiverInspection: PigInspectionEnum, $comment: String, $operatorId: String) {
-  editPigRun(id: $id, pigType: $pigType, dateIn: $dateIn, dateOut: $dateOut, isolationValveFunctionTest: $isolationValveFunctionTest, pigSenderReceiverInspection: $pigSenderReceiverInspection, comment: $comment, operatorId: $operatorId) {
+mutation EditPigRun($id: String!, $pigTypeId: String, $dateIn: DateTime, $dateOut: DateTime, $isolationValveFunctionTest: PigInspectionEnum, $pigSenderReceiverInspection: PigInspectionEnum, $comment: String, $operatorId: String) {
+  editPigRun(id: $id, pigTypeId: $pigTypeId, dateIn: $dateIn, dateOut: $dateOut, isolationValveFunctionTest: $isolationValveFunctionTest, pigSenderReceiverInspection: $pigSenderReceiverInspection, comment: $comment, operatorId: $operatorId) {
     pigRun {
       id
     }

@@ -11,7 +11,11 @@ import { PipelineBatchObjectFields } from './PipelineBatch';
 import {
   loadOperatorEnumObjectArray,
   loadBatchProductEnumObjectArray,
-  loadChemicalSupplierEnumObjectArray
+  loadChemicalSupplierEnumObjectArray,
+  loadPipelineTypeEnumObjectArray,
+  loadPipelineGradeEnumObjectArray,
+  loadPipelineFromToFeatureEnumObjectArray,
+  loadPigTypeEnumObjectArray,
 } from './Validator';
 import type { GetGen } from 'nexus/dist/typegenTypeHelpers';
 import type { AllNexusOutputTypeDefs } from 'nexus/dist/definitions/wrapping';
@@ -117,12 +121,6 @@ export const SearchNavigationObject = objectType({
   }
 });
 
-const searchNavigationObjectPipeline = PipelineObjectFields
-  .map((obj) => {
-    const newObj: ITableObjectExtend = { table: 'pipeline', ...obj };
-    return newObj;
-  });
-
 const searchNavigationObjectUpstreamPipeline = PipelineObjectFields
   .map((obj) => {
     const newObj: ITableObjectExtend = { table: 'upstream', ...obj };
@@ -173,12 +171,31 @@ export const SearchNavigationQuery = extendType({
       type: 'SearchNavigationObject',
       resolve: async (_, _args, ctx: Context) => {
 
+        const searchNavigationObjectPipeline = await Promise.all(PipelineObjectFields
+          .map(async ({ field, nullable, type, enumObjectArray }) => {
+            const pipelineTypeIdEnumObjectArray = await loadPipelineTypeEnumObjectArray({ ctx });
+            const pipelineGradeIdEnumObjectArray = await loadPipelineGradeEnumObjectArray({ ctx });
+            const pipelineFromToFeatureIdEnumObjectArray = await loadPipelineFromToFeatureEnumObjectArray({ ctx });
+
+            const newObj: ITableObjectExtend = {
+              table: 'pipeline', field, nullable, type,
+              enumObjectArray: field === 'pipelineTypeId' ? pipelineTypeIdEnumObjectArray :
+                field === 'pipelineGradeId' ? pipelineGradeIdEnumObjectArray :
+                  ['fromFeatureId', 'toFeatureId'].includes(field) ? pipelineFromToFeatureIdEnumObjectArray : enumObjectArray
+            };
+            return newObj;
+          })
+        );
+
         const searchNavigationObjectPigRun = await Promise.all(PigRunObjectFields
           .map(async ({ field, nullable, type, enumObjectArray }) => {
             const operatorIdEnumObjectArray = await loadOperatorEnumObjectArray({ ctx });
+            const pigTypeIdEnumObjectArray = await loadPigTypeEnumObjectArray({ ctx });
 
             const newObj: ITableObjectExtend = {
-              table: 'pigRuns', field, nullable, type, enumObjectArray: field === 'operatorId' ? operatorIdEnumObjectArray : enumObjectArray
+              table: 'pigRuns', field, nullable, type,
+              enumObjectArray: field === 'operatorId' ? operatorIdEnumObjectArray :
+                field === 'pigTypeId' ? pigTypeIdEnumObjectArray : enumObjectArray
             };
             return newObj;
           })

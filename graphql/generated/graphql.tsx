@@ -135,22 +135,6 @@ export enum FlowCalculationDirectionEnum {
   Upstream = 'Upstream'
 }
 
-export enum FromToFeatureEnum {
-  Battery = 'Battery',
-  BlindEnd = 'BlindEnd',
-  CompressorStation = 'CompressorStation',
-  GasProcessingPlant = 'GasProcessingPlant',
-  Header = 'Header',
-  InjectionPlant = 'InjectionPlant',
-  MeterStation = 'MeterStation',
-  Pipeline = 'Pipeline',
-  PumpStation = 'PumpStation',
-  Satellite = 'Satellite',
-  StorageTank = 'StorageTank',
-  UndergroundCapOrTieIn = 'UndergroundCapOrTieIn',
-  Well = 'Well'
-}
-
 export enum GeotechnicalFacingEnum {
   E = 'E',
   N = 'N',
@@ -160,48 +144,6 @@ export enum GeotechnicalFacingEnum {
   Se = 'SE',
   Sw = 'SW',
   W = 'W'
-}
-
-export enum GradeEnum {
-  Grade5 = 'Grade5',
-  Grade9 = 'Grade9',
-  Grade11 = 'Grade11',
-  Grade17 = 'Grade17',
-  Grade25 = 'Grade25',
-  Grade35 = 'Grade35',
-  Grade150 = 'Grade150',
-  Grade155 = 'Grade155',
-  Grade200 = 'Grade200',
-  Grade241 = 'Grade241',
-  Grade300 = 'Grade300',
-  Grade800 = 'Grade800',
-  Grade810 = 'Grade810',
-  Grade900 = 'Grade900',
-  Grade1000 = 'Grade1000',
-  Grade1103 = 'Grade1103',
-  Grade1200 = 'Grade1200',
-  Grade1250 = 'Grade1250',
-  Grade2010 = 'Grade2010',
-  Grade2250 = 'Grade2250',
-  Grade2411 = 'Grade2411',
-  Grade2413 = 'Grade2413',
-  Grade2500 = 'Grade2500',
-  Grade2750 = 'Grade2750',
-  Grade2901 = 'Grade2901',
-  Grade2902 = 'Grade2902',
-  Grade3591 = 'Grade3591',
-  Grade3592 = 'Grade3592',
-  Grade3593 = 'Grade3593',
-  GradeA = 'GradeA',
-  GradeB = 'GradeB',
-  GradeBw1 = 'GradeBW1',
-  GradeJ55 = 'GradeJ55',
-  GradeT1A = 'GradeT1A',
-  GradeT1B = 'GradeT1B',
-  GradeT4 = 'GradeT4',
-  GradeT4A = 'GradeT4A',
-  GradeX42 = 'GradeX42',
-  GradeX52 = 'GradeX52'
 }
 
 export enum HavingEnum {
@@ -485,15 +427,14 @@ export type MutationEditPigRunArgs = {
   isolationValveFunctionTest?: Maybe<PigInspectionEnum>;
   operatorId?: Maybe<Scalars['String']>;
   pigSenderReceiverInspection?: Maybe<PigInspectionEnum>;
-  pigType?: Maybe<PigTypeEnum>;
+  pigTypeId?: Maybe<Scalars['String']>;
 };
 
 
 export type MutationEditPipelineArgs = {
   flowCalculationDirection?: Maybe<FlowCalculationDirectionEnum>;
   from?: Maybe<Scalars['String']>;
-  fromFeature?: Maybe<FromToFeatureEnum>;
-  grade?: Maybe<GradeEnum>;
+  fromFeatureId?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   internalProtection?: Maybe<InternalProtectionEnum>;
   length?: Maybe<Scalars['Float']>;
@@ -504,11 +445,12 @@ export type MutationEditPipelineArgs = {
   outsideDiameter?: Maybe<Scalars['Float']>;
   piggable?: Maybe<Scalars['Boolean']>;
   piggingFrequency?: Maybe<Scalars['Int']>;
+  pipelineGradeId?: Maybe<Scalars['String']>;
+  pipelineTypeId?: Maybe<Scalars['String']>;
   satelliteId?: Maybe<Scalars['String']>;
   segment?: Maybe<Scalars['String']>;
   to?: Maybe<Scalars['String']>;
-  toFeature?: Maybe<FromToFeatureEnum>;
-  type?: Maybe<TypeEnum>;
+  toFeatureId?: Maybe<Scalars['String']>;
   wallThickness?: Maybe<Scalars['Float']>;
   yieldStrength?: Maybe<Scalars['Int']>;
 };
@@ -657,7 +599,7 @@ export type PigRun = {
   operator?: Maybe<User>;
   operatorId?: Maybe<Scalars['String']>;
   pigSenderReceiverInspection?: Maybe<PigInspectionEnum>;
-  pigType?: Maybe<PigTypeEnum>;
+  pigTypeId?: Maybe<Scalars['String']>;
   pipeline: Pipeline;
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
@@ -667,104 +609,6 @@ export type PigRunPayload = {
   error?: Maybe<FieldError>;
   pigRun?: Maybe<PigRun>;
 };
-
-export enum PigTypeEnum {
-  Ball = 'Ball',
-  Black3inBall = 'Black3inBall',
-  Blue3inScrapper = 'Blue3inScrapper',
-  BlueRibbed = 'BlueRibbed',
-  BlueinScraper = 'BlueinScraper',
-  Foam = 'Foam',
-  Gscr = 'GSCR',
-  Highline = 'Highline',
-  MDFoamy = 'M_D_Foamy',
-  PigType1inStubby = 'PigType1inStubby',
-  PigType2green2disc = 'PigType2green2disc',
-  PigType2inGscr = 'PigType2inGSCR',
-  PigType2inGscrGfp = 'PigType2inGSCR_GFP',
-  PigType2inPscr = 'PigType2inPSCR',
-  PigType2inPscrFlm = 'PigType2inPSCR_FLM',
-  PigType2inPurpleDisc = 'PigType2inPurpleDisc',
-  PigType2inStubby = 'PigType2inStubby',
-  PigType2ingscr = 'PigType2ingscr',
-  PigType2inpurple = 'PigType2inpurple',
-  PigType2purple2disc = 'PigType2purple2disc',
-  PigType3 = 'PigType3',
-  PigType3Scrapper = 'PigType3_scrapper',
-  PigType3in = 'PigType3in',
-  PigType3inArgus = 'PigType3inArgus',
-  PigType3inBlueRibbed = 'PigType3inBlueRibbed',
-  PigType3inBrownRibbed = 'PigType3inBrownRibbed',
-  PigType3inGscr = 'PigType3inGSCR',
-  PigType3inGreenDisc = 'PigType3inGreenDisc',
-  PigType3inGreenRibbed = 'PigType3inGreenRibbed',
-  PigType3inPscr = 'PigType3inPSCR',
-  PigType3inPurpleScraper = 'PigType3inPurpleScraper',
-  PigType3inPurpleStubby = 'PigType3inPurpleStubby',
-  PigType3inRscr = 'PigType3inRscr',
-  PigType3inScrapper = 'PigType3inScrapper',
-  PigType3inStubby = 'PigType3inStubby',
-  PigType3inWhite = 'PigType3inWhite',
-  PigType3ingreendisc = 'PigType3ingreendisc',
-  PigType3inpurple2disc = 'PigType3inpurple2disc',
-  PigType3inpurpledisc = 'PigType3inpurpledisc',
-  PigType3inpurplescraper = 'PigType3inpurplescraper',
-  PigType3inredscrape = 'PigType3inredscrape',
-  PigType3inscr = 'PigType3inscr',
-  PigType3inscrapper = 'PigType3inscrapper',
-  PigType4Green = 'PigType4Green',
-  PigType4GreenStubby = 'PigType4GreenStubby',
-  PigType4GreenRibbed = 'PigType4_GreenRibbed',
-  PigType4gree2disc = 'PigType4gree2disc',
-  PigType4green2disc = 'PigType4green2disc',
-  PigType4in = 'PigType4in',
-  PigType4inArgus = 'PigType4inArgus',
-  PigType4inBlueDisc = 'PigType4inBlueDisc',
-  PigType4inFoam = 'PigType4inFoam',
-  PigType4inGscr = 'PigType4inGSCR',
-  PigType4inGreenDisc = 'PigType4inGreenDisc',
-  PigType4inGreendisc = 'PigType4inGreendisc',
-  PigType4inpurplescraper = 'PigType4inpurplescraper',
-  PigType4inscrapper = 'PigType4inscrapper',
-  PigType6inArgus = 'PigType6inArgus',
-  PigType6inGreenDisc = 'PigType6inGreenDisc',
-  PigType6inGreenRibbed = 'PigType6inGreenRibbed',
-  PigType6inargus = 'PigType6inargus',
-  PigType6ingreenscraper = 'PigType6ingreenscraper',
-  PigType6inscrapper = 'PigType6inscrapper',
-  PigType8inBlackDisc = 'PigType8inBlackDisc',
-  PigType8inFoam = 'PigType8inFoam',
-  Purple3inDisc = 'Purple3inDisc',
-  Red3inScrapper = 'Red3inScrapper',
-  Red4inscraper = 'Red4inscraper',
-  RedStubby = 'RedStubby',
-  Redscraper = 'Redscraper',
-  Simay2018 = 'SIMAY2018',
-  ScaperP314 = 'ScaperP314',
-  ScaperPp309 = 'ScaperPP309',
-  ScraperP200 = 'ScraperP200',
-  ScraperP204 = 'ScraperP204',
-  ScraperP206 = 'ScraperP206',
-  ScraperP208 = 'ScraperP208',
-  ScraperP300 = 'ScraperP300',
-  ScraperP301 = 'ScraperP301',
-  ScraperP303 = 'ScraperP303',
-  ScraperP304 = 'ScraperP304',
-  ScraperP305 = 'ScraperP305',
-  ScraperP309 = 'ScraperP309',
-  ScraperP311 = 'ScraperP311',
-  ScraperP312 = 'ScraperP312',
-  ScraperP314 = 'ScraperP314',
-  ScraperP400 = 'ScraperP400',
-  ScraperP401 = 'ScraperP401',
-  Scrapper = 'Scrapper',
-  ScrapperP307 = 'ScrapperP307',
-  Stubby = 'Stubby',
-  Torpedo = 'Torpedo',
-  Bullet = 'bullet',
-  Disc = 'disc',
-  Redball = 'redball'
-}
 
 export type Pipeline = {
   authorized: Scalars['Boolean'];
@@ -776,8 +620,7 @@ export type Pipeline = {
   firstLicenseDate?: Maybe<Scalars['DateTime']>;
   flowCalculationDirection: FlowCalculationDirectionEnum;
   from: Scalars['String'];
-  fromFeature?: Maybe<FromToFeatureEnum>;
-  grade?: Maybe<GradeEnum>;
+  fromFeatureId?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   internalProtection?: Maybe<InternalProtectionEnum>;
   length: Scalars['Float'];
@@ -789,14 +632,15 @@ export type Pipeline = {
   pigRuns?: Maybe<Array<Maybe<PigRun>>>;
   piggable?: Maybe<Scalars['Boolean']>;
   piggingFrequency?: Maybe<Scalars['Int']>;
+  pipelineGradeId?: Maybe<Scalars['String']>;
+  pipelineTypeId?: Maybe<Scalars['String']>;
   pressureTests?: Maybe<Array<Maybe<PressureTest>>>;
   risk?: Maybe<Risk>;
   salesPoints?: Maybe<Array<Maybe<SalesPoint>>>;
   satellite?: Maybe<Satellite>;
   segment: Scalars['String'];
   to: Scalars['String'];
-  toFeature?: Maybe<FromToFeatureEnum>;
-  type?: Maybe<TypeEnum>;
+  toFeatureId?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
   upstream?: Maybe<Array<Maybe<Pipeline>>>;
@@ -830,8 +674,6 @@ export type PipelineBatchPayload = {
 export type PipelineCreateInput = {
   downstream?: Maybe<Array<Maybe<PipelineCreateInput>>>;
   from: Scalars['String'];
-  fromFeature?: Maybe<FromToFeatureEnum>;
-  grade?: Maybe<GradeEnum>;
   internalProtection?: Maybe<InternalProtectionEnum>;
   length: Scalars['Float'];
   license: Scalars['String'];
@@ -840,8 +682,6 @@ export type PipelineCreateInput = {
   outsideDiameter?: Maybe<Scalars['Float']>;
   segment: Scalars['String'];
   to: Scalars['String'];
-  toFeature?: Maybe<FromToFeatureEnum>;
-  type?: Maybe<TypeEnum>;
   upstream?: Maybe<Array<Maybe<PipelineCreateInput>>>;
   wallThickness?: Maybe<Scalars['Float']>;
   wells?: Maybe<Array<Maybe<WellCreateInput>>>;
@@ -1272,35 +1112,6 @@ export enum TableEnum {
   Wells = 'wells'
 }
 
-export enum TypeEnum {
-  Type5A = 'Type5A',
-  Type5L = 'Type5L',
-  Type5Lx = 'Type5LX',
-  Type515 = 'Type515',
-  Type2306 = 'Type2306',
-  Type3406 = 'Type3406',
-  Type3408 = 'Type3408',
-  Type6063 = 'Type6063',
-  Type6351 = 'Type6351',
-  TypeA53 = 'TypeA53',
-  TypeA106 = 'TypeA106',
-  TypeA120 = 'TypeA120',
-  TypeAmeron = 'TypeAMERON',
-  TypeB5Is = 'TypeB5IS',
-  TypeB51S = 'TypeB51S',
-  TypeB515 = 'TypeB515',
-  TypeCentron = 'TypeCENTRON',
-  TypeCiba = 'TypeCIBA',
-  TypeFslp = 'TypeFSLP',
-  TypeRedthr = 'TypeREDTHR',
-  TypeSmith = 'TypeSMITH',
-  TypeStar = 'TypeSTAR',
-  TypeTbs = 'TypeTBS',
-  TypeWslp = 'TypeWSLP',
-  TypeZ2451 = 'TypeZ2451',
-  TypeZ2453 = 'TypeZ2453'
-}
-
 export type User = {
   email: Scalars['String'];
   facilitiesCreated?: Maybe<Array<Maybe<Facility>>>;
@@ -1360,7 +1171,6 @@ export type ValidatorsPipeline = {
   fromToFeatureEnum: Array<EnumObject>;
   fromToMatchPattern: Scalars['String'];
   geotechnicalFacingEnum: Array<EnumObject>;
-  gradeEnum: Array<EnumObject>;
   havingEnum: Array<EnumObject>;
   internalProtectionEnum: Array<EnumObject>;
   lengthMatchPattern: Scalars['String'];
@@ -1373,11 +1183,12 @@ export type ValidatorsPipeline = {
   outsideDiameterMatchPattern: Scalars['String'];
   pigInspectionEnum: Array<EnumObject>;
   pigTypeEnum: Array<EnumObject>;
+  pipelineGradeEnum: Array<EnumObject>;
+  pipelineTypeEnum: Array<EnumObject>;
   segmentMatchPattern: Scalars['String'];
   solubilityEnum: Array<EnumObject>;
   statusEnum: Array<EnumObject>;
   substanceEnum: Array<EnumObject>;
-  typeEnum: Array<EnumObject>;
   wallThicknessMatchPattern: Scalars['String'];
   yieldStrengthMatchPattern: Scalars['String'];
 };
@@ -1550,13 +1361,13 @@ export type EditPipelineMutationVariables = Exact<{
   segment?: Maybe<Scalars['String']>;
   flowCalculationDirection?: Maybe<FlowCalculationDirectionEnum>;
   from?: Maybe<Scalars['String']>;
-  fromFeature?: Maybe<FromToFeatureEnum>;
+  fromFeatureId?: Maybe<Scalars['String']>;
   to?: Maybe<Scalars['String']>;
-  toFeature?: Maybe<FromToFeatureEnum>;
+  toFeatureId?: Maybe<Scalars['String']>;
   licenseDate?: Maybe<Scalars['DateTime']>;
   length?: Maybe<Scalars['Float']>;
-  type?: Maybe<TypeEnum>;
-  grade?: Maybe<GradeEnum>;
+  pipelineTypeId?: Maybe<Scalars['String']>;
+  pipelineGradeId?: Maybe<Scalars['String']>;
   yieldStrength?: Maybe<Scalars['Int']>;
   outsideDiameter?: Maybe<Scalars['Float']>;
   wallThickness?: Maybe<Scalars['Float']>;
@@ -1625,7 +1436,7 @@ export type DeletePressureTestMutation = { deletePressureTest?: { pressureTest?:
 
 export type EditPigRunMutationVariables = Exact<{
   id: Scalars['String'];
-  pigType?: Maybe<PigTypeEnum>;
+  pigTypeId?: Maybe<Scalars['String']>;
   dateIn?: Maybe<Scalars['DateTime']>;
   dateOut?: Maybe<Scalars['DateTime']>;
   isolationValveFunctionTest?: Maybe<PigInspectionEnum>;
@@ -1801,14 +1612,14 @@ export type PipelinesByIdQueryVariables = Exact<{
 }>;
 
 
-export type PipelinesByIdQuery = { pipelinesById: { count: number, pipelines?: Array<{ id: string, license: string, segment: string, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeature?: FromToFeatureEnum | null | undefined, to: string, toFeature?: FromToFeatureEnum | null | undefined, currentStatus?: StatusEnum | null | undefined, currentSubstance?: SubstanceEnum | null | undefined, firstLicenseDate?: string | null | undefined, length: number, type?: TypeEnum | null | undefined, grade?: GradeEnum | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined } };
+export type PipelinesByIdQuery = { pipelinesById: { count: number, pipelines?: Array<{ id: string, license: string, segment: string, flowCalculationDirection: FlowCalculationDirectionEnum, from: string, fromFeatureId?: string | null | undefined, to: string, toFeatureId?: string | null | undefined, currentStatus?: StatusEnum | null | undefined, currentSubstance?: SubstanceEnum | null | undefined, firstLicenseDate?: string | null | undefined, length: number, pipelineTypeId?: string | null | undefined, pipelineGradeId?: string | null | undefined, yieldStrength?: number | null | undefined, outsideDiameter?: number | null | undefined, wallThickness?: number | null | undefined, material?: MaterialEnum | null | undefined, mop?: number | null | undefined, internalProtection?: InternalProtectionEnum | null | undefined, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined } };
 
 export type PigRunsByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
 }>;
 
 
-export type PigRunsByPipelineIdQuery = { pigRunsByPipelineId?: Array<{ id: string, pigType?: PigTypeEnum | null | undefined, dateIn: string, dateOut?: string | null | undefined, isolationValveFunctionTest?: PigInspectionEnum | null | undefined, pigSenderReceiverInspection?: PigInspectionEnum | null | undefined, comment?: string | null | undefined, operatorId?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
+export type PigRunsByPipelineIdQuery = { pigRunsByPipelineId?: Array<{ id: string, pigTypeId?: string | null | undefined, dateIn: string, dateOut?: string | null | undefined, isolationValveFunctionTest?: PigInspectionEnum | null | undefined, pigSenderReceiverInspection?: PigInspectionEnum | null | undefined, comment?: string | null | undefined, operatorId?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type SearchNavigationOptionsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1832,7 +1643,7 @@ export type WellBatchesByWellIdQuery = { wellBatchesByWellId?: Array<{ id: strin
 export type ValidatorsPipelineQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, typeEnum: Array<{ serverEnum: string, databaseEnum: string }>, gradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, materialEnum: Array<{ serverEnum: string, databaseEnum: string }>, internalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, environmentProximityToEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }>, chemicalSupplierEnum: Array<{ serverEnum: string, databaseEnum: string }>, operationEnum: Array<{ serverEnum: string, databaseEnum: string }>, havingEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
+export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineGradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, materialEnum: Array<{ serverEnum: string, databaseEnum: string }>, internalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, environmentProximityToEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }>, chemicalSupplierEnum: Array<{ serverEnum: string, databaseEnum: string }>, operationEnum: Array<{ serverEnum: string, databaseEnum: string }>, havingEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
 
 export type ValidatorsUserRoleQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2468,7 +2279,7 @@ export type DisconnectSalesPointMutationHookResult = ReturnType<typeof useDiscon
 export type DisconnectSalesPointMutationResult = Apollo.MutationResult<DisconnectSalesPointMutation>;
 export type DisconnectSalesPointMutationOptions = Apollo.BaseMutationOptions<DisconnectSalesPointMutation, DisconnectSalesPointMutationVariables>;
 export const EditPipelineDocument = gql`
-    mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $from: String, $fromFeature: FromToFeatureEnum, $to: String, $toFeature: FromToFeatureEnum, $licenseDate: DateTime, $length: Float, $type: TypeEnum, $grade: GradeEnum, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
+    mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $from: String, $fromFeatureId: String, $to: String, $toFeatureId: String, $licenseDate: DateTime, $length: Float, $pipelineTypeId: String, $pipelineGradeId: String, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $material: MaterialEnum, $mop: Int, $internalProtection: InternalProtectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
   editPipeline(
     id: $id
     satelliteId: $satelliteId
@@ -2476,13 +2287,13 @@ export const EditPipelineDocument = gql`
     segment: $segment
     flowCalculationDirection: $flowCalculationDirection
     from: $from
-    fromFeature: $fromFeature
+    fromFeatureId: $fromFeatureId
     to: $to
-    toFeature: $toFeature
+    toFeatureId: $toFeatureId
     licenseDate: $licenseDate
     length: $length
-    type: $type
-    grade: $grade
+    pipelineTypeId: $pipelineTypeId
+    pipelineGradeId: $pipelineGradeId
     yieldStrength: $yieldStrength
     outsideDiameter: $outsideDiameter
     wallThickness: $wallThickness
@@ -2523,13 +2334,13 @@ export type EditPipelineMutationFn = Apollo.MutationFunction<EditPipelineMutatio
  *      segment: // value for 'segment'
  *      flowCalculationDirection: // value for 'flowCalculationDirection'
  *      from: // value for 'from'
- *      fromFeature: // value for 'fromFeature'
+ *      fromFeatureId: // value for 'fromFeatureId'
  *      to: // value for 'to'
- *      toFeature: // value for 'toFeature'
+ *      toFeatureId: // value for 'toFeatureId'
  *      licenseDate: // value for 'licenseDate'
  *      length: // value for 'length'
- *      type: // value for 'type'
- *      grade: // value for 'grade'
+ *      pipelineTypeId: // value for 'pipelineTypeId'
+ *      pipelineGradeId: // value for 'pipelineGradeId'
  *      yieldStrength: // value for 'yieldStrength'
  *      outsideDiameter: // value for 'outsideDiameter'
  *      wallThickness: // value for 'wallThickness'
@@ -2809,10 +2620,10 @@ export type DeletePressureTestMutationHookResult = ReturnType<typeof useDeletePr
 export type DeletePressureTestMutationResult = Apollo.MutationResult<DeletePressureTestMutation>;
 export type DeletePressureTestMutationOptions = Apollo.BaseMutationOptions<DeletePressureTestMutation, DeletePressureTestMutationVariables>;
 export const EditPigRunDocument = gql`
-    mutation EditPigRun($id: String!, $pigType: PigTypeEnum, $dateIn: DateTime, $dateOut: DateTime, $isolationValveFunctionTest: PigInspectionEnum, $pigSenderReceiverInspection: PigInspectionEnum, $comment: String, $operatorId: String) {
+    mutation EditPigRun($id: String!, $pigTypeId: String, $dateIn: DateTime, $dateOut: DateTime, $isolationValveFunctionTest: PigInspectionEnum, $pigSenderReceiverInspection: PigInspectionEnum, $comment: String, $operatorId: String) {
   editPigRun(
     id: $id
-    pigType: $pigType
+    pigTypeId: $pigTypeId
     dateIn: $dateIn
     dateOut: $dateOut
     isolationValveFunctionTest: $isolationValveFunctionTest
@@ -2846,7 +2657,7 @@ export type EditPigRunMutationFn = Apollo.MutationFunction<EditPigRunMutation, E
  * const [editPigRunMutation, { data, loading, error }] = useEditPigRunMutation({
  *   variables: {
  *      id: // value for 'id'
- *      pigType: // value for 'pigType'
+ *      pigTypeId: // value for 'pigTypeId'
  *      dateIn: // value for 'dateIn'
  *      dateOut: // value for 'dateOut'
  *      isolationValveFunctionTest: // value for 'isolationValveFunctionTest'
@@ -3623,15 +3434,15 @@ export const PipelinesByIdDocument = gql`
       segment
       flowCalculationDirection
       from
-      fromFeature
+      fromFeatureId
       to
-      toFeature
+      toFeatureId
       currentStatus
       currentSubstance
       firstLicenseDate
       length
-      type
-      grade
+      pipelineTypeId
+      pipelineGradeId
       yieldStrength
       outsideDiameter
       wallThickness
@@ -3690,7 +3501,7 @@ export const PigRunsByPipelineIdDocument = gql`
     query PigRunsByPipelineId($pipelineId: String!) {
   pigRunsByPipelineId(pipelineId: $pipelineId) {
     id
-    pigType
+    pigTypeId
     dateIn
     dateOut
     isolationValveFunctionTest
@@ -3913,11 +3724,11 @@ export const ValidatorsPipelineDocument = gql`
       databaseEnum
     }
     lengthMatchPattern
-    typeEnum {
+    pipelineTypeEnum {
       serverEnum
       databaseEnum
     }
-    gradeEnum {
+    pipelineGradeEnum {
       serverEnum
       databaseEnum
     }

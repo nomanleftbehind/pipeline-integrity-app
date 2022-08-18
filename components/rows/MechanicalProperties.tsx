@@ -6,19 +6,19 @@ import { IValidatorsMechanicalProperties } from './PipelineData';
 
 export type IMechanicalPropertyRecordEntryMap = IRecordEntryMap & { label: string };
 
-type IMechanicalPropertiesProps = Pick<IPipeline, 'id' | 'length' | 'type' | 'grade' | 'yieldStrength' | 'outsideDiameter' | 'wallThickness' | 'material' | 'mop' | 'internalProtection' | 'piggable' | 'piggingFrequency' | 'authorized'> & {
+type IMechanicalPropertiesProps = Pick<IPipeline, 'id' | 'length' | 'pipelineTypeId' | 'pipelineGradeId' | 'yieldStrength' | 'outsideDiameter' | 'wallThickness' | 'material' | 'mop' | 'internalProtection' | 'piggable' | 'piggingFrequency' | 'authorized'> & {
   editPipeline: IEditRecordFunction;
   validators?: IValidatorsMechanicalProperties;
 };
 
-export default function MechanicalProperties({ id, length, type, grade, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, piggable, piggingFrequency, authorized, editPipeline: editRecord, validators }: IMechanicalPropertiesProps) {
+export default function MechanicalProperties({ id, length, pipelineTypeId, pipelineGradeId, yieldStrength, outsideDiameter, wallThickness, material, mop, internalProtection, piggable, piggingFrequency, authorized, editPipeline: editRecord, validators }: IMechanicalPropertiesProps) {
 
-  const { lengthMatchPattern, typeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
+  const { lengthMatchPattern, pipelineTypeEnum, pipelineGradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum } = validators || {};
 
   const mechanicalProperties: IMechanicalPropertyRecordEntryMap[] = [
     { columnName: 'length', record: length, label: 'Length (km)', columnType: 'number', nullable: false, validator: lengthMatchPattern, editRecord },
-    { columnName: 'type', record: type, label: 'Type', columnType: 'string', nullable: true, validator: typeEnum, editRecord },
-    { columnName: 'grade', record: grade, label: 'Grade', columnType: 'string', nullable: true, validator: gradeEnum, editRecord },
+    { columnName: 'pipelineTypeId', record: pipelineTypeId, label: 'Type', columnType: 'string', nullable: true, validator: pipelineTypeEnum, editRecord },
+    { columnName: 'pipelineGradeId', record: pipelineGradeId, label: 'Grade', columnType: 'string', nullable: true, validator: pipelineGradeEnum, editRecord },
     { columnName: 'yieldStrength', record: yieldStrength, label: 'Yield Strength (Mpa)', columnType: 'number', nullable: true, validator: yieldStrengthMatchPattern, editRecord },
     { columnName: 'outsideDiameter', record: outsideDiameter, label: 'Outside Diameter (mm)', columnType: 'number', nullable: true, validator: outsideDiameterMatchPattern, editRecord },
     { columnName: 'wallThickness', record: wallThickness, label: 'Wall Thickness (mm)', columnType: 'number', nullable: true, validator: wallThicknessMatchPattern, editRecord },

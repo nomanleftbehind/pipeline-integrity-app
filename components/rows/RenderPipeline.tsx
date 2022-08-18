@@ -109,16 +109,16 @@ export default function RenderPipeline({ gridRow, rowIsEven, pipeline, validator
 
   const isModalOpen = openModal(fieldError);
 
-  const { id, license, segment, from, fromFeature, to, toFeature, currentStatus, currentSubstance, authorized } = pipeline;
+  const { id, license, segment, from, fromFeatureId, to, toFeatureId, currentStatus, currentSubstance, authorized } = pipeline;
   const { licenseMatchPattern, segmentMatchPattern, fromToMatchPattern, fromToFeatureEnum, statusEnum, substanceEnum } = validators || {};
 
   const pipelineColumns: IRecordEntryMap[] = [
     { columnName: 'license', columnType: 'string', nullable: false, record: license, validator: licenseMatchPattern, editRecord },
     { columnName: 'segment', columnType: 'string', nullable: false, record: segment, validator: segmentMatchPattern, editRecord },
     { columnName: 'from', columnType: 'string', nullable: false, record: from, validator: fromToMatchPattern, editRecord },
-    { columnName: 'fromFeature', columnType: 'string', nullable: true, record: fromFeature, validator: fromToFeatureEnum, editRecord },
+    { columnName: 'fromFeatureId', columnType: 'string', nullable: true, record: fromFeatureId, validator: fromToFeatureEnum, editRecord },
     { columnName: 'to', columnType: 'string', nullable: false, record: to, validator: fromToMatchPattern, editRecord },
-    { columnName: 'toFeature', columnType: 'string', nullable: true, record: toFeature, validator: fromToFeatureEnum, editRecord },
+    { columnName: 'toFeatureId', columnType: 'string', nullable: true, record: toFeatureId, validator: fromToFeatureEnum, editRecord },
     { columnName: 'currentStatus', columnType: 'string', nullable: false, record: currentStatus, validator: statusEnum },
     { columnName: 'currentSubstance', columnType: 'string', nullable: false, record: currentSubstance, validator: substanceEnum },
   ];
