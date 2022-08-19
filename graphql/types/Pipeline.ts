@@ -10,6 +10,27 @@ import { ITableConstructObject } from './SearchNavigation';
 
 
 
+export const fromToMatchPattern = "^((\\d{2}-\\d{2}-\\d{3}-\\d{2}W\\d{1})|([A-Z]{1}-\\d{3}-[A-Z]{1} \\d{3}-[A-Z]{1}-\\d{2}))$";
+export const wallThicknessMatchPattern = "^(\\d|1\\d|2[0-5])(\\.\\d{1,2})?$";
+
+interface IValidateRegex {
+  field: string;
+  matchPattern: string;
+  prettyMatchPattern: string;
+}
+
+export const validateRegex = ({ field, matchPattern, prettyMatchPattern }: IValidateRegex) => {
+  const validator = new RegExp(matchPattern);
+  const isValid = validator.test(field);
+  if (!isValid) {
+    return {
+      error: {
+        field: 'Field',
+        message: `Format needs to match ${prettyMatchPattern}`,
+      }
+    }
+  }
+}
 
 export const FlowCalculationDirectionEnumMembers = {
   Upstream: 'Upstream',
@@ -69,40 +90,7 @@ export const Pipeline = objectType({
     for (const { field, nullable, type } of PipelineObjectFields) {
       const nullability = nullable ? 'nullable' : 'nonNull';
 
-      t[nullability].field(field, {
-        type/*,
-        resolve:
-          field === 'currentStatus' ?
-            async ({ id }, _args, ctx: Context) => {
-              const { status } = await ctx.prisma.licenseChange.findFirst({
-                where: { pipelineId: id },
-                orderBy: { date: 'desc' },
-                select: { status: true },
-              }) || {};
-              const result = status && serverEnumToDatabaseEnum(StatusEnumMembers, status) || null;
-              return result;
-            } :
-            field === 'currentSubstance' ?
-              async ({ id }, _args, ctx: Context) => {
-                const { substance } = await ctx.prisma.licenseChange.findFirst({
-                  where: { pipelineId: id },
-                  orderBy: { date: 'desc' },
-                  select: { substance: true },
-                }) || {};
-                const result = substance && serverEnumToDatabaseEnum(SubstanceEnumMembers, substance) || null;
-                return result;
-              } :
-              field === 'firstLicenseDate' ?
-                async ({ id }, _args, ctx: Context) => {
-                  const { date } = await ctx.prisma.licenseChange.findFirst({
-                    where: { pipelineId: id },
-                    orderBy: { date: 'asc' },
-                    select: { date: true },
-                  }) || {};
-                  return date || null;
-                } :
-                undefined,
-              */});
+      t[nullability].field(field, { type });
     }
   }
 });
@@ -937,6 +925,18 @@ export const PipelineMutation = extendType({
                     }
                   }
                 }
+              }
+            }
+            if (args.from || args.to) {
+              const error = validateRegex({ field: (args.from || args.to)!, matchPattern: fromToMatchPattern, prettyMatchPattern: '##-##-###-##W# or X-###-X ###-X-##' });
+              if (error) {
+                return error;
+              }
+            }
+            if (args.wallThickness) {
+              const error = validateRegex({ field: String(args.wallThickness), matchPattern: wallThicknessMatchPattern, prettyMatchPattern: 'number between 0 and 25.99' });
+              if (error) {
+                return error;
               }
             }
             const pipeline = await ctx.prisma.pipeline.update({

@@ -540,20 +540,6 @@ enum SolubilityEnum {
   @@map("solubility")
 }
 
-enum StatusEnum {
-  Operating
-  Discontinued
-  Abandoned
-  Removed
-  ToBeConstructed @map("To Be Constructed")
-  Active
-  Cancelled
-  New
-  NotConstructed  @map("Not Constructed")
-
-  @@map("status")
-}
-
 enum FlowCalculationDirectionEnum {
   Upstream
   Downstream

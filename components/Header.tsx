@@ -31,6 +31,33 @@ export const prettifyColumnName = (columnName: string) => {
   if (columnName === 'operatorId') {
     return 'Operator'
   }
+  if (columnName === 'pipelineTypeId') {
+    return 'Type'
+  }
+  if (columnName === 'pipelineGradeId') {
+    return 'Grade'
+  }
+  if (columnName === 'fromFeatureId') {
+    return 'From Feature'
+  }
+  if (columnName === 'toFeatureId') {
+    return 'To Feature'
+  }
+  if (columnName === 'pipelineMaterialId') {
+    return 'Material'
+  }
+  if (columnName === 'pipelineInternalProtectionId') {
+    return 'Internal Protection'
+  }
+  if (columnName === 'statusId') {
+    return 'Status'
+  }
+  if (columnName === 'substanceId') {
+    return 'Substance'
+  }
+  if (columnName === 'pigTypeId') {
+    return 'Pig Type'
+  }
   return columnName
     .split(/(?=[A-Z])/)
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))

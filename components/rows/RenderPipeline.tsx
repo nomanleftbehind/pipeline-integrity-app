@@ -110,7 +110,7 @@ export default function RenderPipeline({ gridRow, rowIsEven, pipeline, validator
   const isModalOpen = openModal(fieldError);
 
   const { id, license, segment, from, fromFeatureId, to, toFeatureId, currentStatus, currentSubstance, authorized } = pipeline;
-  const { licenseMatchPattern, segmentMatchPattern, fromToMatchPattern, fromToFeatureEnum, statusEnum, substanceEnum } = validators || {};
+  const { licenseMatchPattern, segmentMatchPattern, fromToMatchPattern, fromToFeatureEnum } = validators || {};
 
   const pipelineColumns: IRecordEntryMap[] = [
     { columnName: 'license', columnType: 'string', nullable: false, record: license, validator: licenseMatchPattern, editRecord },
