@@ -14,10 +14,10 @@ model User {
   firstName                           String
   lastName                            String
   role                                UserRoleEnum                 @default(OPERATOR)
-  facilitiyCreatedBy                  Facility[]                   @relation("facilityCreatedBy")
-  facilitiyUpdatedBy                  Facility[]                   @relation("facilityUpdatedBy")
-  satellityCreatedBy                  Satellite[]                  @relation("satelliteCreatedBy")
-  satellityUpdatedBy                  Satellite[]                  @relation("satelliteUpdatedBy")
+  facilityCreatedBy                   Facility[]                   @relation("facilityCreatedBy")
+  facilityUpdatedBy                   Facility[]                   @relation("facilityUpdatedBy")
+  satelliteCreatedBy                  Satellite[]                  @relation("satelliteCreatedBy")
+  satelliteUpdatedBy                  Satellite[]                  @relation("satelliteUpdatedBy")
   pipelineCreatedBy                   Pipeline[]                   @relation("pipelineCreatedBy")
   pipelineUpdatedBy                   Pipeline[]                   @relation("pipelineUpdatedBy")
   pipelineTypeCreatedBy               PipelineType[]               @relation("pipelineTypeCreatedBy")
@@ -57,6 +57,10 @@ model User {
   pigTypeUpdatedBy                    PigType[]                    @relation("pigTypeUpdatedBy")
   riskCreatedBy                       Risk[]                       @relation("riskCreatedBy")
   riskUpdatedBy                       Risk[]                       @relation("riskUpdatedBy")
+  geotechnicalCreatedBy               Geotechnical[]               @relation("geotechnicalCreatedBy")
+  geotechnicalUpdatedBy               Geotechnical[]               @relation("geotechnicalUpdatedBy")
+  riskEnvironmentCreatedBy            RiskEnvironment[]            @relation("riskEnvironmentCreatedBy")
+  riskEnvironmentUpdatedBy            RiskEnvironment[]            @relation("riskEnvironmentUpdatedBy")
   chemicalCreatedBy                   Chemical[]                   @relation("chemicalCreatedBy")
   chemicalUpdatedBy                   Chemical[]                   @relation("chemicalUpdatedBy")
   chemicalSupplierCreatedBy           ChemicalSupplier[]           @relation("chemicalSupplierCreatedBy")
@@ -66,6 +70,7 @@ model User {
 enum UserRoleEnum {
   ADMIN      @map("Admin")
   ENGINEER   @map("Engineer")
+  REGULATORY @map("Regulatory")
   OFFICE     @map("Office")
   OPERATOR   @map("Operator")
   CHEMICAL   @map("Chemical")
@@ -117,6 +122,7 @@ model Pipeline {
   salesPoints                  SalesPoint[]
   pigRuns                      PigRun[]
   risk                         Risk?
+  geotechnicals                Geotechnical[]
   chemical                     Chemical?
   license                      String
   segment                      String
@@ -349,17 +355,11 @@ model PressureTest {
 }
 
 model Risk {
-  pipeline                            Pipeline                    @relation(fields: [id], references: [id])
-  id                                  String                      @id
+  pipeline                            Pipeline         @relation(fields: [id], references: [id])
+  id                                  String           @id
   aerialReview                        Boolean?
-  environmentProximityTo              EnvironmentProximityToEnum?
-  geotechnicalSlopeAngleS1            Int?
-  geotechnicalFacingS1                GeotechnicalFacingEnum?
-  geotechnicalHeightS1                Int?
-  geotechnicalSlopeAngleS2            Int?
-  geotechnicalFacingS2                GeotechnicalFacingEnum?
-  geotechnicalHeightS2                Int?
-  dateSlopeChecked                    DateTime?
+  environment                         RiskEnvironment? @relation(fields: [environmentId], references: [id])
+  environmentId                       String?
   repairTimeDays                      Int?
   releaseTimeDays                     Int?
   oilReleaseCost                      Float?
@@ -369,12 +369,12 @@ model Risk {
   safeguardInternalProtection         Int?
   safeguardExternalCoating            Int?
   comment                             String?
-  createdBy                           User                        @relation("riskCreatedBy", fields: [createdById], references: [id])
+  createdBy                           User             @relation("riskCreatedBy", fields: [createdById], references: [id])
   createdById                         String
-  createdAt                           DateTime                    @default(now())
-  updatedBy                           User                        @relation("riskUpdatedBy", fields: [updatedById], references: [id])
+  createdAt                           DateTime         @default(now())
+  updatedBy                           User             @relation("riskUpdatedBy", fields: [updatedById], references: [id])
   updatedById                         String
-  updatedAt                           DateTime                    @updatedAt
+  updatedAt                           DateTime         @updatedAt
   // Below are calculated fields.
   // Normaly we wouldn't have to define them in schema as we could just calculate them inside resolvers.
   // But because we want to easily be able to search pipelines by risk potential, we want to store calculated values inside database.
@@ -394,6 +394,39 @@ model Risk {
   safeguardCathodic                   Int?
   probabilityExteriorWithSafeguards   Int?
   riskPotentialExternalWithSafeguards Int?
+}
+
+model Geotechnical {
+  id               String                  @id @default(uuid())
+  pipeline         Pipeline                @relation(fields: [pipelineId], references: [id])
+  pipelineId       String
+  slopeAngleS1     Int?
+  facingS1         GeotechnicalFacingEnum?
+  heightS1         Int?
+  slopeAngleS2     Int?
+  facingS2         GeotechnicalFacingEnum?
+  heightS2         Int?
+  dateSlopeChecked DateTime?
+  comment          String?
+  createdBy        User                    @relation("geotechnicalCreatedBy", fields: [createdById], references: [id])
+  createdById      String
+  createdAt        DateTime                @default(now())
+  updatedBy        User                    @relation("geotechnicalUpdatedBy", fields: [updatedById], references: [id])
+  updatedById      String
+  updatedAt        DateTime                @updatedAt
+}
+
+model RiskEnvironment {
+  id          String   @id @default(uuid())
+  risks       Risk[]
+  environment String   @unique
+  description String?
+  createdBy   User     @relation("riskEnvironmentCreatedBy", fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedBy   User     @relation("riskEnvironmentUpdatedBy", fields: [updatedById], references: [id])
+  updatedById String
+  updatedAt   DateTime @updatedAt
 }
 
 model Chemical {
@@ -560,19 +593,6 @@ enum LimitingSpecEnum {
   ANSI600 @map("ANSI 600")
 
   @@map("limiting_spec")
-}
-
-enum EnvironmentProximityToEnum {
-  WB1
-  WB3
-  WB4
-  WB5
-  WC1
-  WC2
-  WC3
-  WC4
-
-  @@map("environment_proximity_to")
 }
 
 enum GeotechnicalFacingEnum {

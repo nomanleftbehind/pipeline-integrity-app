@@ -1,11 +1,8 @@
 -- CreateEnum
-CREATE TYPE "user_role" AS ENUM ('Admin', 'Engineer', 'Office', 'Operator', 'Chemical', 'Cathodic', 'Contractor');
+CREATE TYPE "user_role" AS ENUM ('Admin', 'Engineer', 'Regulatory', 'Office', 'Operator', 'Chemical', 'Cathodic', 'Contractor');
 
 -- CreateEnum
 CREATE TYPE "solubility" AS ENUM ('Oil', 'Water');
-
--- CreateEnum
-CREATE TYPE "status" AS ENUM ('Operating', 'Discontinued', 'Abandoned', 'Removed', 'To Be Constructed', 'Active', 'Cancelled', 'New', 'Not Constructed');
 
 -- CreateEnum
 CREATE TYPE "flow_calculation_direction" AS ENUM ('Upstream', 'Downstream');
@@ -15,9 +12,6 @@ CREATE TYPE "pig_inspection" AS ENUM ('Good', 'Failed');
 
 -- CreateEnum
 CREATE TYPE "limiting_spec" AS ENUM ('ANSI 150', 'ANSI 300', 'ANSI 600');
-
--- CreateEnum
-CREATE TYPE "environment_proximity_to" AS ENUM ('WB1', 'WB3', 'WB4', 'WB5', 'WC1', 'WC2', 'WC3', 'WC4');
 
 -- CreateEnum
 CREATE TYPE "geotechnical_facing" AS ENUM ('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW');
@@ -281,14 +275,7 @@ CREATE TABLE "PressureTest" (
 CREATE TABLE "Risk" (
     "id" TEXT NOT NULL,
     "aerialReview" BOOLEAN,
-    "environmentProximityTo" "environment_proximity_to",
-    "geotechnicalSlopeAngleS1" INTEGER,
-    "geotechnicalFacingS1" "geotechnical_facing",
-    "geotechnicalHeightS1" INTEGER,
-    "geotechnicalSlopeAngleS2" INTEGER,
-    "geotechnicalFacingS2" "geotechnical_facing",
-    "geotechnicalHeightS2" INTEGER,
-    "dateSlopeChecked" TIMESTAMP(3),
+    "environmentId" TEXT,
     "repairTimeDays" INTEGER,
     "releaseTimeDays" INTEGER,
     "oilReleaseCost" DOUBLE PRECISION,
@@ -320,6 +307,39 @@ CREATE TABLE "Risk" (
     "riskPotentialExternalWithSafeguards" INTEGER,
 
     CONSTRAINT "Risk_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Geotechnical" (
+    "id" TEXT NOT NULL,
+    "pipelineId" TEXT NOT NULL,
+    "slopeAngleS1" INTEGER,
+    "facingS1" "geotechnical_facing",
+    "heightS1" INTEGER,
+    "slopeAngleS2" INTEGER,
+    "facingS2" "geotechnical_facing",
+    "heightS2" INTEGER,
+    "dateSlopeChecked" TIMESTAMP(3),
+    "comment" TEXT,
+    "createdById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedById" TEXT NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Geotechnical_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "RiskEnvironment" (
+    "id" TEXT NOT NULL,
+    "environment" TEXT NOT NULL,
+    "description" TEXT,
+    "createdById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedById" TEXT NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "RiskEnvironment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -494,6 +514,9 @@ CREATE UNIQUE INDEX "LicenseChangeSubstance_substance_key" ON "LicenseChangeSubs
 CREATE UNIQUE INDEX "PigType_type_key" ON "PigType"("type");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "RiskEnvironment_environment_key" ON "RiskEnvironment"("environment");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "ChemicalSupplier_name_key" ON "ChemicalSupplier"("name");
 
 -- CreateIndex
@@ -656,10 +679,28 @@ ALTER TABLE "PressureTest" ADD CONSTRAINT "PressureTest_updatedById_fkey" FOREIG
 ALTER TABLE "Risk" ADD CONSTRAINT "Risk_id_fkey" FOREIGN KEY ("id") REFERENCES "Pipeline"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Risk" ADD CONSTRAINT "Risk_environmentId_fkey" FOREIGN KEY ("environmentId") REFERENCES "RiskEnvironment"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Risk" ADD CONSTRAINT "Risk_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Risk" ADD CONSTRAINT "Risk_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Geotechnical" ADD CONSTRAINT "Geotechnical_pipelineId_fkey" FOREIGN KEY ("pipelineId") REFERENCES "Pipeline"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Geotechnical" ADD CONSTRAINT "Geotechnical_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Geotechnical" ADD CONSTRAINT "Geotechnical_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "RiskEnvironment" ADD CONSTRAINT "RiskEnvironment_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "RiskEnvironment" ADD CONSTRAINT "RiskEnvironment_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Chemical" ADD CONSTRAINT "Chemical_id_fkey" FOREIGN KEY ("id") REFERENCES "Pipeline"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

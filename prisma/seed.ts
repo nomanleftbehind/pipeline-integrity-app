@@ -6,17 +6,18 @@ import { pipelineFromToFeatureData1 } from './SeedPipelineFromToFeatureData';
 import { pigTypeData } from './SeedPigTypeData';
 import { pipelineMaterialData } from './SeedPipelineMaterialData';
 import { pipelineInternalProtectionData } from './SeedPipelineInternalProtectionData';
-
 import { licenseChangeStatusData } from './SeedLicenseChangeStatusData';
 import { licenseChangeSubstanceData } from './SeedLicenseChangeSubstanceData';
+import { riskEnvironmentData } from './SeedRiskEnvironmentData';
 
 import {
   userData,
   facilityData,
   satelliteData,
   pressureTestData,
-  riskData,
 } from './SeedData';
+
+import { riskData1, riskData2 } from './SeedRiskData';
 
 import { pipelineData1, pipelineData2 } from './SeedPipelineData';
 import { pipelinesOnPipelinesData1 } from './SeedPipelinesOnPipelinesData';
@@ -157,6 +158,13 @@ async function main() {
       data: u,
     })
     console.log(`Created license change substance with id: ${licenseChangeSubstance.id}`)
+  }
+
+  for (const u of riskEnvironmentData) {
+    const riskEnvironment = await prisma.riskEnvironment.create({
+      data: u,
+    })
+    console.log(`Created risk environment with id: ${riskEnvironment.id}`)
   }
 
   for (const u of pigTypeData) {
@@ -405,7 +413,13 @@ async function main() {
     console.log(`Created pressure test run with id: ${pressureTest.id}`)
   }
 
-  for (const u of riskData) {
+  for (const u of riskData1) {
+    const risk = await prisma.risk.create({
+      data: u,
+    })
+    console.log(`Created risk with id: ${risk.id}`)
+  }
+  for (const u of riskData2) {
     const risk = await prisma.risk.create({
       data: u,
     })
