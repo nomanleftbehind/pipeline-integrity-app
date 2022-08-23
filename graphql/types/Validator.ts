@@ -8,7 +8,7 @@ import { Context } from '../context';
 import { fromToMatchPattern, wallThicknessMatchPattern } from './Pipeline';
 import { PigInspectionEnumArray } from './PigRun';
 import { LimitingSpecEnumArray } from './PressureTest';
-import { EnvironmentProximityToEnumArray, GeotechnicalFacingEnumArray } from './Risk';
+import { GeotechnicalFacingEnumArray } from './Geotechnical';
 import { SolubilityEnumArray } from './BatchProduct';
 import { OperationEnumArray, HavingEnumArray } from './SearchNavigation';
 
@@ -107,6 +107,16 @@ export const loadBatchProductEnumObjectArray = async ({ ctx }: ILoadEnumObjectAr
 	});
 }
 
+
+export const loadUserEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.user.findMany({
+		select: { id: true, firstName: true, lastName: true },
+		orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }],
+	})).map(({ id, firstName, lastName }) => {
+		return { databaseEnum: `${firstName} ${lastName}`, serverEnum: id };
+	});
+}
+
 export const loadOperatorEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
 	return (await ctx.prisma.user.findMany({
 		where: { role: 'OPERATOR' },
@@ -123,6 +133,15 @@ export const loadChemicalSupplierEnumObjectArray = async ({ ctx }: ILoadEnumObje
 		orderBy: { name: 'asc' },
 	})).map(({ id, name }) => {
 		return { databaseEnum: name, serverEnum: id };
+	});
+}
+
+export const loadRiskEnvironmentEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.riskEnvironment.findMany({
+		select: { id: true, environment: true, },
+		orderBy: { environment: 'asc' },
+	})).map(({ id, environment }) => {
+		return { databaseEnum: environment, serverEnum: id };
 	});
 }
 
@@ -147,7 +166,7 @@ export const ValidatorsPipeline = objectType({
 		t.nonNull.list.nonNull.field('pipelineInternalProtectionEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadPipelineInternalProtectionEnumObjectArray({ ctx }) })
 		t.nonNull.list.nonNull.field('flowCalculationDirectionEnum', { type: 'EnumObject' })
 		t.nonNull.list.nonNull.field('limitingSpecEnum', { type: 'EnumObject' })
-		t.nonNull.list.nonNull.field('environmentProximityToEnum', { type: 'EnumObject' })
+		t.nonNull.list.nonNull.field('riskEnvironmentEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadRiskEnvironmentEnumObjectArray({ ctx }) })
 		t.nonNull.list.nonNull.field('geotechnicalFacingEnum', { type: 'EnumObject' })
 		t.nonNull.list.nonNull.field('solubilityEnum', { type: 'EnumObject' })
 		t.nonNull.list.nonNull.field('batchProductEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadBatchProductEnumObjectArray({ ctx }) })
@@ -177,7 +196,6 @@ export const ValidatorQuery = extendType({
 					mopMatchPattern,
 					flowCalculationDirectionEnum: FlowCalculationDirectionEnumArray,
 					limitingSpecEnum: LimitingSpecEnumArray,
-					environmentProximityToEnum: EnvironmentProximityToEnumArray,
 					geotechnicalFacingEnum: GeotechnicalFacingEnumArray,
 					solubilityEnum: SolubilityEnumArray,
 					pigInspectionEnum: PigInspectionEnumArray,

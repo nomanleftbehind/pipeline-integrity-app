@@ -1,4 +1,4 @@
-import { enumType, objectType, stringArg, extendType, nonNull, arg, intArg, floatArg } from 'nexus';
+import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
 import { NexusGenObjects } from 'nexus-typegen';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 import { Context } from '../context';
@@ -51,7 +51,9 @@ export const PressureTestObjectFields: ITableConstructObject[] = [
   { field: 'requiredWTForTestPressure', nullable: true, type: 'Float' },
   { field: 'pressureTestCorrosionAllowance', nullable: true, type: 'Float' },
   { field: 'waterForPigging', nullable: true, type: 'Float' },
+  { field: 'createdById', nullable: false, type: 'String' },
   { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedById', nullable: false, type: 'String' },
   { field: 'updatedAt', nullable: false, type: 'DateTime' },
 ];
 

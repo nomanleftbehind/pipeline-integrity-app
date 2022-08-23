@@ -2,7 +2,6 @@ import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, n
 import { NexusGenObjects } from 'nexus-typegen';
 import { Context } from '../context';
 import { Pipeline as IPipeline } from '@prisma/client';
-// import { StatusEnumMembers, SubstanceEnumMembers, StatusEnumArray, SubstanceEnumArray } from './LicenseChange';
 import { totalPipelineFlowRawQuery } from './PipelineFlow';
 import { Prisma, User as IUser } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
@@ -64,9 +63,6 @@ export const PipelineObjectFields: ITableConstructObject[] = [
   { field: 'pipelineGradeId', nullable: true, type: 'String' },
   { field: 'pipelineMaterialId', nullable: true, type: 'String' },
   { field: 'pipelineInternalProtectionId', nullable: true, type: 'String' },
-  // { field: 'currentStatus', nullable: true, type: 'StatusEnum' },
-  // { field: 'currentSubstance', nullable: true, type: 'SubstanceEnum' },
-  // { field: 'firstLicenseDate', nullable: true, type: 'DateTime' },
   { field: 'length', nullable: false, type: 'Float' },
   { field: 'yieldStrength', nullable: true, type: 'Int' },
   { field: 'outsideDiameter', nullable: true, type: 'Float' },
@@ -75,7 +71,9 @@ export const PipelineObjectFields: ITableConstructObject[] = [
   { field: 'piggable', nullable: true, type: 'Boolean' },
   { field: 'piggingFrequency', nullable: true, type: 'Int' },
   { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'createdById', nullable: false, type: 'String' },
   { field: 'updatedAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedById', nullable: false, type: 'String' },
 ];
 
 
@@ -505,6 +503,8 @@ export const PipelineQuery = extendType({
                   }
                 }
               } else {
+                console.log('HI');
+
                 // TODO implement search navigation for _min and _max 'Having' for numeric and date fields of upstream and downstream pipelines
               }
             } else if (table !== 'facility' && table !== 'satellite') {
@@ -705,6 +705,34 @@ export const PipelineQuery = extendType({
                     }
                   } else {
                     for (const { pipelineId } of await ctx.prisma.pipelineBatch.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        [field]: {
+                          [having]: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(pipelineId);
+                    }
+                  }
+                } else if (table === 'geotechnicals') {
+                  if (having === '_count') {
+                    for (const { pipelineId } of await ctx.prisma.geotechnical.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        id: {
+                          _count: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(pipelineId);
+                    }
+                  } else {
+                    for (const { pipelineId } of await ctx.prisma.geotechnical.groupBy({
                       by: ['pipelineId'],
                       having: {
                         [field]: {

@@ -1,0 +1,11 @@
+.geotechnical {
+  display: grid;
+  grid-template-columns: 30px var(--date-width) repeat(6, 100px) var(--comment-width) auto;
+  row-gap: 2px;
+  column-gap: 4px;
+  grid-auto-rows: minmax(20px, auto);
+}
+
+.geotechnical-row {
+  padding: 2px;
+}

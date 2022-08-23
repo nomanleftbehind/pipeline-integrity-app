@@ -22,7 +22,9 @@ export const ChemicalObjectFields: ITableConstructObject[] = [
   { field: 'scaleTreatment', nullable: true, type: 'Boolean' },
   { field: 'batchFrequency', nullable: true, type: 'Int' },
   { field: 'comment', nullable: true, type: 'String' },
+  { field: 'createdById', nullable: false, type: 'String' },
   { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedById', nullable: false, type: 'String' },
   { field: 'updatedAt', nullable: false, type: 'DateTime' },
 ];
 
@@ -158,7 +160,7 @@ export const ChemicalMutation = extendType({
           const authorized = resolveChemicalAuthorized(user);
           if (authorized) {
             console.log('chemical supplier:', args);
-            
+
             const chemical = await ctx.prisma.chemical.update({
               where: { id: args.id },
               data: {

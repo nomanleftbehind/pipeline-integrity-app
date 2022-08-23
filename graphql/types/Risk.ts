@@ -1,74 +1,16 @@
-import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
-import { NexusGenObjects } from 'nexus-typegen';
-import { databaseEnumToServerEnum } from './Pipeline';
+import { enumType, objectType, stringArg, extendType, nonNull, inputObjectType, arg } from 'nexus';
 import { Context } from '../context';
 import { User as IUser } from '@prisma/client';
 import { allocateRisk } from './RiskCalcs';
 import { ITableConstructObject } from './SearchNavigation';
 
 
-export const EnvironmentProximityToEnumMembers = {
-  WB1: 'WB1',
-  WB3: 'WB3',
-  WB4: 'WB4',
-  WB5: 'WB5',
-  WC1: 'WC1',
-  WC2: 'WC2',
-  WC3: 'WC3',
-  WC4: 'WC4',
-}
-
-export const EnvironmentProximityToEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'EnvironmentProximityToEnum',
-  },
-  name: 'EnvironmentProximityToEnum',
-  members: EnvironmentProximityToEnumMembers
-});
-
-export const EnvironmentProximityToEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(EnvironmentProximityToEnumMembers).map(([serverEnum, databaseEnum]) => {
-  return { serverEnum, databaseEnum }
-});
-
-
-export const GeotechnicalFacingEnumMembers = {
-  N: 'N',
-  NE: 'NE',
-  E: 'E',
-  SE: 'SE',
-  S: 'S',
-  SW: 'SW',
-  W: 'W',
-  NW: 'NW',
-}
-
-export const GeotechnicalFacingEnum = enumType({
-  sourceType: {
-    module: '@prisma/client',
-    export: 'GeotechnicalFacingEnum',
-  },
-  name: 'GeotechnicalFacingEnum',
-  members: GeotechnicalFacingEnumMembers
-});
-
-export const GeotechnicalFacingEnumArray: NexusGenObjects['EnumObject'][] = Object.entries(GeotechnicalFacingEnumMembers).map(([serverEnum, databaseEnum]) => {
-  return { serverEnum, databaseEnum }
-});
-
 
 
 export const RiskObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
   { field: 'aerialReview', nullable: true, type: 'Boolean' },
-  { field: 'environmentProximityTo', nullable: true, type: 'EnvironmentProximityToEnum', enumObjectArray: EnvironmentProximityToEnumArray },
-  { field: 'geotechnicalSlopeAngleS1', nullable: true, type: 'Int' },
-  { field: 'geotechnicalFacingS1', nullable: true, type: 'GeotechnicalFacingEnum', enumObjectArray: GeotechnicalFacingEnumArray },
-  { field: 'geotechnicalHeightS1', nullable: true, type: 'Int' },
-  { field: 'geotechnicalSlopeAngleS2', nullable: true, type: 'Int' },
-  { field: 'geotechnicalFacingS2', nullable: true, type: 'GeotechnicalFacingEnum', enumObjectArray: GeotechnicalFacingEnumArray },
-  { field: 'geotechnicalHeightS2', nullable: true, type: 'Int' },
-  { field: 'dateSlopeChecked', nullable: true, type: 'DateTime' },
+  { field: 'environmentId', nullable: true, type: 'String' },
   { field: 'repairTimeDays', nullable: true, type: 'Int' },
   { field: 'releaseTimeDays', nullable: true, type: 'Int' },
   { field: 'costPerM3Released', nullable: true, type: 'Float' },
@@ -94,7 +36,9 @@ export const RiskObjectFields: ITableConstructObject[] = [
   { field: 'probabilityExteriorWithSafeguards', nullable: true, type: 'Int' },
   { field: 'riskPotentialExternalWithSafeguards', nullable: true, type: 'Int' },
   { field: 'comment', nullable: true, type: 'String' },
+  { field: 'createdById', nullable: false, type: 'String' },
   { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedById', nullable: false, type: 'String' },
   { field: 'updatedAt', nullable: false, type: 'DateTime' },
 ];
 
@@ -185,34 +129,34 @@ export const RiskPayload = objectType({
   },
 });
 
+export const EditRiskInput = inputObjectType({
+  name: 'EditRiskInput',
+  definition(t) {
+    t.nonNull.string('id')
+    t.boolean('aerialReview')
+    t.string('environmentId')
+    t.int('repairTimeDays')
+    t.int('releaseTimeDays')
+    t.float('oilReleaseCost')
+    t.float('gasReleaseCost')
+    t.int('consequencePeople')
+    t.int('probabilityGeo')
+    t.int('safeguardInternalProtection')
+    t.int('safeguardExternalCoating')
+    t.string('comment')
+  },
+});
+
 
 export const RiskMutation = extendType({
   type: 'Mutation',
   definition: t => {
     t.field('editRisk', {
       type: 'RiskPayload',
-      args: {
-        id: nonNull(stringArg()),
-        aerialReview: booleanArg(),
-        environmentProximityTo: arg({ type: 'EnvironmentProximityToEnum' }),
-        geotechnicalSlopeAngleS1: intArg(),
-        geotechnicalFacingS1: arg({ type: 'GeotechnicalFacingEnum' }),
-        geotechnicalHeightS1: intArg(),
-        geotechnicalSlopeAngleS2: intArg(),
-        geotechnicalFacingS2: arg({ type: 'GeotechnicalFacingEnum' }),
-        geotechnicalHeightS2: intArg(),
-        dateSlopeChecked: arg({ type: 'DateTime' }),
-        repairTimeDays: intArg(),
-        releaseTimeDays: intArg(),
-        oilReleaseCost: floatArg(),
-        gasReleaseCost: floatArg(),
-        consequencePeople: intArg(),
-        probabilityGeo: intArg(),
-        safeguardInternalProtection: intArg(),
-        safeguardExternalCoating: intArg(),
-        comment: stringArg(),
-      },
-      resolve: async (_, args, ctx: Context) => {
+      args: { data: nonNull(arg({ type: 'EditRiskInput' })) },
+      resolve: async (_, { data: {
+        id, aerialReview, environmentId, repairTimeDays, releaseTimeDays, oilReleaseCost, gasReleaseCost, consequencePeople, probabilityGeo, safeguardInternalProtection, safeguardExternalCoating, comment
+      } }, ctx: Context) => {
 
         const user = ctx.user;
 
@@ -221,26 +165,19 @@ export const RiskMutation = extendType({
           const authorized = resolveRiskAuthorized(user);
           if (authorized) {
             const risk = await ctx.prisma.risk.update({
-              where: { id: args.id },
+              where: { id },
               data: {
-                aerialReview: args.aerialReview,
-                environmentProximityTo: databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, args.environmentProximityTo),
-                geotechnicalSlopeAngleS1: args.geotechnicalSlopeAngleS1,
-                geotechnicalFacingS1: databaseEnumToServerEnum(GeotechnicalFacingEnumMembers, args.geotechnicalFacingS1),
-                geotechnicalHeightS1: args.geotechnicalHeightS1,
-                geotechnicalSlopeAngleS2: args.geotechnicalSlopeAngleS2,
-                geotechnicalFacingS2: databaseEnumToServerEnum(GeotechnicalFacingEnumMembers, args.geotechnicalFacingS2),
-                geotechnicalHeightS2: args.geotechnicalHeightS2,
-                dateSlopeChecked: args.dateSlopeChecked,
-                repairTimeDays: args.repairTimeDays,
-                releaseTimeDays: args.releaseTimeDays,
-                oilReleaseCost: args.oilReleaseCost,
-                gasReleaseCost: args.gasReleaseCost,
-                consequencePeople: args.consequencePeople,
-                probabilityGeo: args.probabilityGeo,
-                safeguardInternalProtection: args.safeguardInternalProtection,
-                safeguardExternalCoating: args.safeguardExternalCoating,
-                comment: args.comment,
+                aerialReview,
+                environmentId,
+                repairTimeDays,
+                releaseTimeDays,
+                oilReleaseCost,
+                gasReleaseCost,
+                consequencePeople,
+                probabilityGeo,
+                safeguardInternalProtection,
+                safeguardExternalCoating,
+                comment,
                 updatedById: userId,
               },
             });

@@ -1,6 +1,4 @@
-import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
-import { NexusGenObjects } from 'nexus-typegen';
-import { databaseEnumToServerEnum, serverEnumToDatabaseEnum } from './Pipeline';
+import { objectType, stringArg, extendType, nonNull, arg } from 'nexus';
 import { Context } from '../context';
 import { User as IUser, LicenseChange as ILicenseChange } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
@@ -15,7 +13,9 @@ export const LicenseChangeObjectFields: ITableConstructObject[] = [
   { field: 'date', nullable: false, type: 'DateTime', },
   { field: 'comment', nullable: true, type: 'String' },
   { field: 'linkToDocumentation', nullable: true, type: 'String', },
+  { field: 'createdById', nullable: false, type: 'String' },
   { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedById', nullable: false, type: 'String' },
   { field: 'updatedAt', nullable: false, type: 'DateTime' },
 ];
 

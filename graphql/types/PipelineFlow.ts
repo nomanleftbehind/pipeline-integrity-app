@@ -4,7 +4,6 @@ import { resolvePipelineAuthorized } from './Pipeline';
 import type { FlowCalculationDirectionEnum } from '@prisma/client';
 import { Context } from '../context';
 import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
-import { Prisma } from '@prisma/client'
 
 export const PipelineFlow = objectType({
   name: 'PipelineFlow',

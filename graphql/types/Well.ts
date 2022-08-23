@@ -16,7 +16,9 @@ export const WellObjectFields: ITableConstructObject[] = [
   { field: 'firstInjection', nullable: true, type: 'DateTime' },
   { field: 'lastInjection', nullable: true, type: 'DateTime' },
   { field: 'fdcRecId', nullable: true, type: 'String' },
+  { field: 'createdById', nullable: false, type: 'String' },
   { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedById', nullable: false, type: 'String' },
   { field: 'updatedAt', nullable: false, type: 'DateTime' },
 ];
 

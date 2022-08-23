@@ -90,28 +90,6 @@ query SearchNavigationOptions {
   }
 }
 
-# query OperationAndHavingEnum {
-#   validators {
-#     operationEnum {
-#       equals
-#       not
-#       gt
-#       gte
-#       lt
-#       lte
-#       contains
-#       startsWith
-#       endsWith
-#     }
-#     havingEnum {
-#       _min
-#       _max
-#       _count
-#       _any
-#     }
-#   }
-# }
-
 query PipelineBatchesByPipelineId($pipelineId: String!) {
   pipelineBatchesByPipelineId(pipelineId: $pipelineId) {
     id
@@ -214,7 +192,7 @@ query ValidatorsPipeline {
       serverEnum
       databaseEnum
     }
-    environmentProximityToEnum {
+    riskEnvironmentEnum {
       serverEnum
       databaseEnum
     }
@@ -491,14 +469,7 @@ query RiskById($id: String!) {
   riskById(id: $id) {
     id
     aerialReview
-    environmentProximityTo
-    geotechnicalSlopeAngleS1
-    geotechnicalFacingS1
-    geotechnicalHeightS1
-    geotechnicalSlopeAngleS2
-    geotechnicalFacingS2
-    geotechnicalHeightS2
-    dateSlopeChecked
+    environmentId
     repairTimeDays
     releaseTimeDays
     costPerM3Released
@@ -534,6 +505,31 @@ query RiskById($id: String!) {
       email
     }
     updatedAt
+    authorized
+  }
+}
+
+query GeotechnicalsByPipelineId($pipelineId: String!) {
+  geotechnicalsByPipelineId(pipelineId: $pipelineId) {
+    id
+    slopeAngleS1
+    facingS1
+    heightS1
+    slopeAngleS2
+    facingS2
+    heightS2
+    dateSlopeChecked
+    comment
+    createdAt
+    updatedAt
+    createdBy {
+      id
+      email
+    }
+    updatedBy {
+      id
+      email
+    }
     authorized
   }
 }

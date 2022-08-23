@@ -45,6 +45,7 @@ type Chemical {
   continuousInjection: Boolean
   createdAt: DateTime!
   createdBy: User!
+  createdById: String!
   downholeBatch: Boolean
   h2s: Boolean
   id: String!
@@ -56,6 +57,7 @@ type Chemical {
   scaling: Boolean
   updatedAt: DateTime!
   updatedBy: User!
+  updatedById: String!
 }
 
 type ChemicalPayload {
@@ -80,20 +82,36 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
+input EditGeotechnicalInput {
+  comment: String
+  dateSlopeChecked: DateTime
+  facingS1: GeotechnicalFacingEnum
+  facingS2: GeotechnicalFacingEnum
+  heightS1: Int
+  heightS2: Int
+  id: String!
+  slopeAngleS1: Int
+  slopeAngleS2: Int
+}
+
+input EditRiskInput {
+  aerialReview: Boolean
+  comment: String
+  consequencePeople: Int
+  environmentId: String
+  gasReleaseCost: Float
+  id: String!
+  oilReleaseCost: Float
+  probabilityGeo: Int
+  releaseTimeDays: Int
+  repairTimeDays: Int
+  safeguardExternalCoating: Int
+  safeguardInternalProtection: Int
+}
+
 type EnumObject {
   databaseEnum: String!
   serverEnum: String!
-}
-
-enum EnvironmentProximityToEnum {
-  WB1
-  WB3
-  WB4
-  WB5
-  WC1
-  WC2
-  WC3
-  WC4
 }
 
 type Facility {
@@ -126,6 +144,26 @@ enum FlowCalculationDirectionEnum {
   Upstream
 }
 
+type Geotechnical {
+  authorized: Boolean!
+  comment: String
+  createdAt: DateTime!
+  createdBy: User!
+  createdById: String!
+  dateSlopeChecked: DateTime
+  facingS1: GeotechnicalFacingEnum
+  facingS2: GeotechnicalFacingEnum
+  heightS1: Int
+  heightS2: Int
+  id: String!
+  pipeline: Pipeline!
+  slopeAngleS1: Int
+  slopeAngleS2: Int
+  updatedAt: DateTime!
+  updatedBy: User!
+  updatedById: String!
+}
+
 enum GeotechnicalFacingEnum {
   E
   N
@@ -135,6 +173,11 @@ enum GeotechnicalFacingEnum {
   SE
   SW
   W
+}
+
+type GeotechnicalPayload {
+  error: FieldError
+  geotechnical: Geotechnical
 }
 
 enum HavingEnum {
@@ -154,6 +197,7 @@ type LicenseChange {
   comment: String
   createdAt: DateTime!
   createdBy: User!
+  createdById: String!
   date: DateTime!
   id: String!
   linkToDocumentation: String
@@ -162,6 +206,7 @@ type LicenseChange {
   substanceId: String!
   updatedAt: DateTime!
   updatedBy: User!
+  updatedById: String!
 }
 
 type LicenseChangePayload {
@@ -177,6 +222,7 @@ enum LimitingSpecEnum {
 
 type Mutation {
   addChemical(id: String!): ChemicalPayload
+  addGeotechnical(pipelineId: String!): GeotechnicalPayload
   addLicenseChange(pipelineId: String!): LicenseChangePayload
   addPigRun(pipelineId: String!): PigRunPayload
   addPipelineBatch(pipelineId: String!): PipelineBatchPayload
@@ -190,6 +236,7 @@ type Mutation {
   connectWell(id: String!, pipelineId: String!): WellPayload
   createFacility(data: FacilityCreateInput!): Facility
   deleteChemical(id: String!): ChemicalPayload
+  deleteGeotechnical(id: String!): GeotechnicalPayload
   deleteLicenseChange(id: String!): LicenseChangePayload
   deletePigRun(id: String!): PigRunPayload
   deletePipeline(id: String!): PipelinePayload
@@ -204,12 +251,13 @@ type Mutation {
   duplicatePipeline(id: String!): PipelinePayload
   editChemical(bacteria: Boolean, bacteriaTreatment: Boolean, baselineFluidAnalysisDate: DateTime, batchFrequency: Int, chemicalSupplierId: String, co2: Boolean, comment: String, continuousInjection: Boolean, downholeBatch: Boolean, h2s: Boolean, id: String!, inhibitorPipelineBatch: Boolean, injectionRate: Float, o2: Boolean, scaleTreatment: Boolean, scaling: Boolean): ChemicalPayload
   editFacility(id: String!, name: String): Facility
+  editGeotechnical(data: EditGeotechnicalInput!): GeotechnicalPayload
   editLicenseChange(comment: String, date: DateTime, id: String!, linkToDocumentation: String, statusId: String, substanceId: String): LicenseChangePayload
   editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigTypeId: String): PigRunPayload
   editPipeline(flowCalculationDirection: FlowCalculationDirectionEnum, from: String, fromFeatureId: String, id: String!, length: Float, license: String, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, pipelineGradeId: String, pipelineInternalProtectionId: String, pipelineMaterialId: String, pipelineTypeId: String, satelliteId: String, segment: String, to: String, toFeatureId: String, wallThickness: Float, yieldStrength: Int): PipelinePayload
   editPipelineBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, productId: String): PipelineBatchPayload
   editPressureTest(comment: String, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pressureTestDate: DateTime, pressureTestReceivedDate: DateTime): PressureTestPayload
-  editRisk(aerialReview: Boolean, comment: String, consequencePeople: Int, dateSlopeChecked: DateTime, environmentProximityTo: EnvironmentProximityToEnum, gasReleaseCost: Float, geotechnicalFacingS1: GeotechnicalFacingEnum, geotechnicalFacingS2: GeotechnicalFacingEnum, geotechnicalHeightS1: Int, geotechnicalHeightS2: Int, geotechnicalSlopeAngleS1: Int, geotechnicalSlopeAngleS2: Int, id: String!, oilReleaseCost: Float, probabilityGeo: Int, releaseTimeDays: Int, repairTimeDays: Int, safeguardExternalCoating: Int, safeguardInternalProtection: Int): RiskPayload
+  editRisk(data: EditRiskInput!): RiskPayload
   editSalesPoint(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, name: String, oil: Float, pipelineId: String, water: Float): SalesPointPayload
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
   editWell(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, name: String, oil: Float, pipelineId: String, water: Float): WellPayload
@@ -247,6 +295,7 @@ type PigRun {
   comment: String
   createdAt: DateTime!
   createdBy: User!
+  createdById: String!
   dateIn: DateTime!
   dateOut: DateTime
   id: String!
@@ -258,6 +307,7 @@ type PigRun {
   pipeline: Pipeline!
   updatedAt: DateTime!
   updatedBy: User!
+  updatedById: String!
 }
 
 type PigRunPayload {
@@ -269,6 +319,7 @@ type Pipeline {
   authorized: Boolean!
   createdAt: DateTime!
   createdBy: User!
+  createdById: String!
   currentStatus: String
   currentSubstance: String
   downstream: [Pipeline]
@@ -298,6 +349,7 @@ type Pipeline {
   toFeatureId: String
   updatedAt: DateTime!
   updatedBy: User!
+  updatedById: String!
   upstream: [Pipeline]
   wallThickness: Float
   wells: [Well]
@@ -311,6 +363,7 @@ type PipelineBatch {
   cost: Float
   createdAt: DateTime!
   createdBy: User!
+  createdById: String!
   date: DateTime!
   diluentVolume: Float
   id: String!
@@ -319,6 +372,7 @@ type PipelineBatch {
   productId: String!
   updatedAt: DateTime!
   updatedBy: User!
+  updatedById: String!
 }
 
 type PipelineBatchPayload {
@@ -400,6 +454,7 @@ type PressureTest {
   comment: String
   createdAt: DateTime!
   createdBy: User!
+  createdById: String!
   ddsDate: DateTime
   id: String!
   infoSentOutDate: DateTime
@@ -416,6 +471,7 @@ type PressureTest {
   requiredWTForTestPressure: Float
   updatedAt: DateTime!
   updatedBy: User!
+  updatedById: String!
   waterForPigging: Float
 }
 
@@ -430,6 +486,7 @@ type Query {
   allUsers: [User]
   chemicalById(id: String!): Chemical
   connectedPipelinesByPipelineId(flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): PipelinesFlowAndSourceGroupBy
+  geotechnicalsByPipelineId(pipelineId: String!): [Geotechnical]
   licenseChangesByPipelineId(pipelineId: String!): [LicenseChange]
   me: User
   pigRunsByPipelineId(pipelineId: String!): [PigRun]
@@ -468,15 +525,9 @@ type Risk {
   costPerM3Released: Float
   createdAt: DateTime!
   createdBy: User!
-  dateSlopeChecked: DateTime
-  environmentProximityTo: EnvironmentProximityToEnum
+  createdById: String!
+  environmentId: String
   gasReleaseCost: Float
-  geotechnicalFacingS1: GeotechnicalFacingEnum
-  geotechnicalFacingS2: GeotechnicalFacingEnum
-  geotechnicalHeightS1: Int
-  geotechnicalHeightS2: Int
-  geotechnicalSlopeAngleS1: Int
-  geotechnicalSlopeAngleS2: Int
   id: String!
   oilReleaseCost: Float
   pipeline: Pipeline!
@@ -499,6 +550,7 @@ type Risk {
   safeguardPigging: Int
   updatedAt: DateTime!
   updatedBy: User!
+  updatedById: String!
 }
 
 type RiskPayload {
@@ -510,6 +562,7 @@ type SalesPoint {
   authorized: Boolean!
   createdAt: DateTime!
   createdBy: User!
+  createdById: String!
   fdcRecId: String
   firstInjection: DateTime
   firstProduction: DateTime
@@ -524,6 +577,7 @@ type SalesPoint {
   totalFluids: Float!
   updatedAt: DateTime!
   updatedBy: User!
+  updatedById: String!
   water: Float!
 }
 
@@ -623,6 +677,7 @@ enum TableEnum {
   chemical
   downstreamPipelines
   facility
+  geotechnicalParameters
   licenseChanges
   pigRuns
   pipeline
@@ -679,6 +734,7 @@ enum UserRoleEnum {
   ENGINEER
   OFFICE
   OPERATOR
+  REGULATORY
 }
 
 input UserUniqueInput {
@@ -689,7 +745,6 @@ input UserUniqueInput {
 type ValidatorsPipeline {
   batchProductEnum: [EnumObject!]!
   chemicalSupplierEnum: [EnumObject!]!
-  environmentProximityToEnum: [EnumObject!]!
   flowCalculationDirectionEnum: [EnumObject!]!
   fromToFeatureEnum: [EnumObject!]!
   fromToMatchPattern: String!
@@ -708,6 +763,7 @@ type ValidatorsPipeline {
   pipelineInternalProtectionEnum: [EnumObject!]!
   pipelineMaterialEnum: [EnumObject!]!
   pipelineTypeEnum: [EnumObject!]!
+  riskEnvironmentEnum: [EnumObject!]!
   segmentMatchPattern: String!
   solubilityEnum: [EnumObject!]!
   statusEnum: [EnumObject!]!
@@ -724,6 +780,7 @@ type Well {
   authorized: Boolean!
   createdAt: DateTime!
   createdBy: User!
+  createdById: String!
   fdcRecId: String
   firstInjection: DateTime
   firstProduction: DateTime
@@ -738,6 +795,7 @@ type Well {
   totalFluids: Float!
   updatedAt: DateTime!
   updatedBy: User!
+  updatedById: String!
   water: Float!
   wellBatches: [WellBatch]
 }

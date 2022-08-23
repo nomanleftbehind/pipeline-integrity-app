@@ -69,7 +69,7 @@ export default function SearchNavigation({ searchNavigationInputArray, searchEnu
             </select>
           </>}
 
-          {[TableEnum.LicenseChanges, TableEnum.Wells, TableEnum.SalesPoints, TableEnum.PigRuns, TableEnum.PressureTests, TableEnum.PipelineBatches, TableEnum.UpstreamPipelines, TableEnum.DownstreamPipelines].includes(table) && <>
+          {[TableEnum.LicenseChanges, TableEnum.Geotechnicals, TableEnum.Wells, TableEnum.SalesPoints, TableEnum.PigRuns, TableEnum.PressureTests, TableEnum.PipelineBatches, TableEnum.UpstreamPipelines, TableEnum.DownstreamPipelines].includes(table) && <>
             <div style={{ gridRow: 3, gridColumn: 2 }}>Having:</div>
             <select style={{ gridRow: 3, gridColumn: 3 }} value={having} onChange={(e) => handleChange({ e, index, key: 'having' })}>
               {validators && validators.havingEnum.filter(({ serverEnum }) => {

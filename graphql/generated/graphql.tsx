@@ -89,21 +89,37 @@ export type ChemicalSupplier = {
   updatedBy: User;
 };
 
+export type EditGeotechnicalInput = {
+  comment?: Maybe<Scalars['String']>;
+  dateSlopeChecked?: Maybe<Scalars['DateTime']>;
+  facingS1?: Maybe<GeotechnicalFacingEnum>;
+  facingS2?: Maybe<GeotechnicalFacingEnum>;
+  heightS1?: Maybe<Scalars['Int']>;
+  heightS2?: Maybe<Scalars['Int']>;
+  id: Scalars['String'];
+  slopeAngleS1?: Maybe<Scalars['Int']>;
+  slopeAngleS2?: Maybe<Scalars['Int']>;
+};
+
+export type EditRiskInput = {
+  aerialReview?: Maybe<Scalars['Boolean']>;
+  comment?: Maybe<Scalars['String']>;
+  consequencePeople?: Maybe<Scalars['Int']>;
+  environmentId?: Maybe<Scalars['String']>;
+  gasReleaseCost?: Maybe<Scalars['Float']>;
+  id: Scalars['String'];
+  oilReleaseCost?: Maybe<Scalars['Float']>;
+  probabilityGeo?: Maybe<Scalars['Int']>;
+  releaseTimeDays?: Maybe<Scalars['Int']>;
+  repairTimeDays?: Maybe<Scalars['Int']>;
+  safeguardExternalCoating?: Maybe<Scalars['Int']>;
+  safeguardInternalProtection?: Maybe<Scalars['Int']>;
+};
+
 export type EnumObject = {
   databaseEnum: Scalars['String'];
   serverEnum: Scalars['String'];
 };
-
-export enum EnvironmentProximityToEnum {
-  Wb1 = 'WB1',
-  Wb3 = 'WB3',
-  Wb4 = 'WB4',
-  Wb5 = 'WB5',
-  Wc1 = 'WC1',
-  Wc2 = 'WC2',
-  Wc3 = 'WC3',
-  Wc4 = 'WC4'
-}
 
 export type Facility = {
   createdAt: Scalars['DateTime'];
@@ -135,6 +151,26 @@ export enum FlowCalculationDirectionEnum {
   Upstream = 'Upstream'
 }
 
+export type Geotechnical = {
+  authorized: Scalars['Boolean'];
+  comment?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  createdBy: User;
+  createdById: Scalars['String'];
+  dateSlopeChecked?: Maybe<Scalars['DateTime']>;
+  facingS1?: Maybe<GeotechnicalFacingEnum>;
+  facingS2?: Maybe<GeotechnicalFacingEnum>;
+  heightS1?: Maybe<Scalars['Int']>;
+  heightS2?: Maybe<Scalars['Int']>;
+  id: Scalars['String'];
+  pipeline: Pipeline;
+  slopeAngleS1?: Maybe<Scalars['Int']>;
+  slopeAngleS2?: Maybe<Scalars['Int']>;
+  updatedAt: Scalars['DateTime'];
+  updatedBy: User;
+  updatedById: Scalars['String'];
+};
+
 export enum GeotechnicalFacingEnum {
   E = 'E',
   N = 'N',
@@ -145,6 +181,11 @@ export enum GeotechnicalFacingEnum {
   Sw = 'SW',
   W = 'W'
 }
+
+export type GeotechnicalPayload = {
+  error?: Maybe<FieldError>;
+  geotechnical?: Maybe<Geotechnical>;
+};
 
 export enum HavingEnum {
   Any = 'any',
@@ -186,6 +227,7 @@ export enum LimitingSpecEnum {
 
 export type Mutation = {
   addChemical?: Maybe<ChemicalPayload>;
+  addGeotechnical?: Maybe<GeotechnicalPayload>;
   addLicenseChange?: Maybe<LicenseChangePayload>;
   addPigRun?: Maybe<PigRunPayload>;
   addPipelineBatch?: Maybe<PipelineBatchPayload>;
@@ -199,6 +241,7 @@ export type Mutation = {
   connectWell?: Maybe<WellPayload>;
   createFacility?: Maybe<Facility>;
   deleteChemical?: Maybe<ChemicalPayload>;
+  deleteGeotechnical?: Maybe<GeotechnicalPayload>;
   deleteLicenseChange?: Maybe<LicenseChangePayload>;
   deletePigRun?: Maybe<PigRunPayload>;
   deletePipeline?: Maybe<PipelinePayload>;
@@ -213,6 +256,7 @@ export type Mutation = {
   duplicatePipeline?: Maybe<PipelinePayload>;
   editChemical?: Maybe<ChemicalPayload>;
   editFacility?: Maybe<Facility>;
+  editGeotechnical?: Maybe<GeotechnicalPayload>;
   editLicenseChange?: Maybe<LicenseChangePayload>;
   editPigRun?: Maybe<PigRunPayload>;
   editPipeline?: Maybe<PipelinePayload>;
@@ -232,6 +276,11 @@ export type Mutation = {
 
 export type MutationAddChemicalArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationAddGeotechnicalArgs = {
+  pipelineId: Scalars['String'];
 };
 
 
@@ -296,6 +345,11 @@ export type MutationCreateFacilityArgs = {
 
 
 export type MutationDeleteChemicalArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteGeotechnicalArgs = {
   id: Scalars['String'];
 };
 
@@ -388,6 +442,11 @@ export type MutationEditFacilityArgs = {
 };
 
 
+export type MutationEditGeotechnicalArgs = {
+  data: EditGeotechnicalInput;
+};
+
+
 export type MutationEditLicenseChangeArgs = {
   comment?: Maybe<Scalars['String']>;
   date?: Maybe<Scalars['DateTime']>;
@@ -458,25 +517,7 @@ export type MutationEditPressureTestArgs = {
 
 
 export type MutationEditRiskArgs = {
-  aerialReview?: Maybe<Scalars['Boolean']>;
-  comment?: Maybe<Scalars['String']>;
-  consequencePeople?: Maybe<Scalars['Int']>;
-  dateSlopeChecked?: Maybe<Scalars['DateTime']>;
-  environmentProximityTo?: Maybe<EnvironmentProximityToEnum>;
-  gasReleaseCost?: Maybe<Scalars['Float']>;
-  geotechnicalFacingS1?: Maybe<GeotechnicalFacingEnum>;
-  geotechnicalFacingS2?: Maybe<GeotechnicalFacingEnum>;
-  geotechnicalHeightS1?: Maybe<Scalars['Int']>;
-  geotechnicalHeightS2?: Maybe<Scalars['Int']>;
-  geotechnicalSlopeAngleS1?: Maybe<Scalars['Int']>;
-  geotechnicalSlopeAngleS2?: Maybe<Scalars['Int']>;
-  id: Scalars['String'];
-  oilReleaseCost?: Maybe<Scalars['Float']>;
-  probabilityGeo?: Maybe<Scalars['Int']>;
-  releaseTimeDays?: Maybe<Scalars['Int']>;
-  repairTimeDays?: Maybe<Scalars['Int']>;
-  safeguardExternalCoating?: Maybe<Scalars['Int']>;
-  safeguardInternalProtection?: Maybe<Scalars['Int']>;
+  data: EditRiskInput;
 };
 
 
@@ -592,6 +633,7 @@ export type Pipeline = {
   authorized: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   createdBy: User;
+  createdById: Scalars['String'];
   currentStatus?: Maybe<Scalars['String']>;
   currentSubstance?: Maybe<Scalars['String']>;
   downstream?: Maybe<Array<Maybe<Pipeline>>>;
@@ -621,6 +663,7 @@ export type Pipeline = {
   toFeatureId?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
+  updatedById: Scalars['String'];
   upstream?: Maybe<Array<Maybe<Pipeline>>>;
   wallThickness?: Maybe<Scalars['Float']>;
   wells?: Maybe<Array<Maybe<Well>>>;
@@ -750,6 +793,7 @@ export type Query = {
   allUsers?: Maybe<Array<Maybe<User>>>;
   chemicalById?: Maybe<Chemical>;
   connectedPipelinesByPipelineId?: Maybe<PipelinesFlowAndSourceGroupBy>;
+  geotechnicalsByPipelineId?: Maybe<Array<Maybe<Geotechnical>>>;
   licenseChangesByPipelineId?: Maybe<Array<Maybe<LicenseChange>>>;
   me?: Maybe<User>;
   pigRunsByPipelineId?: Maybe<Array<Maybe<PigRun>>>;
@@ -786,6 +830,11 @@ export type QueryChemicalByIdArgs = {
 export type QueryConnectedPipelinesByPipelineIdArgs = {
   flowCalculationDirection: FlowCalculationDirectionEnum;
   id: Scalars['String'];
+};
+
+
+export type QueryGeotechnicalsByPipelineIdArgs = {
+  pipelineId: Scalars['String'];
 };
 
 
@@ -898,15 +947,8 @@ export type Risk = {
   costPerM3Released?: Maybe<Scalars['Float']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
-  dateSlopeChecked?: Maybe<Scalars['DateTime']>;
-  environmentProximityTo?: Maybe<EnvironmentProximityToEnum>;
+  environmentId?: Maybe<Scalars['String']>;
   gasReleaseCost?: Maybe<Scalars['Float']>;
-  geotechnicalFacingS1?: Maybe<GeotechnicalFacingEnum>;
-  geotechnicalFacingS2?: Maybe<GeotechnicalFacingEnum>;
-  geotechnicalHeightS1?: Maybe<Scalars['Int']>;
-  geotechnicalHeightS2?: Maybe<Scalars['Int']>;
-  geotechnicalSlopeAngleS1?: Maybe<Scalars['Int']>;
-  geotechnicalSlopeAngleS2?: Maybe<Scalars['Int']>;
   id: Scalars['String'];
   oilReleaseCost?: Maybe<Scalars['Float']>;
   pipeline: Pipeline;
@@ -1053,6 +1095,7 @@ export enum TableEnum {
   Chemical = 'chemical',
   DownstreamPipelines = 'downstreamPipelines',
   Facility = 'facility',
+  Geotechnicals = 'geotechnicals',
   LicenseChanges = 'licenseChanges',
   PigRuns = 'pigRuns',
   Pipeline = 'pipeline',
@@ -1108,7 +1151,8 @@ export enum UserRoleEnum {
   Contractor = 'CONTRACTOR',
   Engineer = 'ENGINEER',
   Office = 'OFFICE',
-  Operator = 'OPERATOR'
+  Operator = 'OPERATOR',
+  Regulatory = 'REGULATORY'
 }
 
 export type UserUniqueInput = {
@@ -1119,7 +1163,6 @@ export type UserUniqueInput = {
 export type ValidatorsPipeline = {
   batchProductEnum: Array<EnumObject>;
   chemicalSupplierEnum: Array<EnumObject>;
-  environmentProximityToEnum: Array<EnumObject>;
   flowCalculationDirectionEnum: Array<EnumObject>;
   fromToFeatureEnum: Array<EnumObject>;
   fromToMatchPattern: Scalars['String'];
@@ -1138,6 +1181,7 @@ export type ValidatorsPipeline = {
   pipelineInternalProtectionEnum: Array<EnumObject>;
   pipelineMaterialEnum: Array<EnumObject>;
   pipelineTypeEnum: Array<EnumObject>;
+  riskEnvironmentEnum: Array<EnumObject>;
   segmentMatchPattern: Scalars['String'];
   solubilityEnum: Array<EnumObject>;
   statusEnum: Array<EnumObject>;
@@ -1470,24 +1514,7 @@ export type DeleteWellBatchMutationVariables = Exact<{
 export type DeleteWellBatchMutation = { deleteWellBatch?: { wellBatch?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type EditRiskMutationVariables = Exact<{
-  id: Scalars['String'];
-  aerialReview?: Maybe<Scalars['Boolean']>;
-  environmentProximityTo?: Maybe<EnvironmentProximityToEnum>;
-  geotechnicalSlopeAngleS1?: Maybe<Scalars['Int']>;
-  geotechnicalFacingS1?: Maybe<GeotechnicalFacingEnum>;
-  geotechnicalHeightS1?: Maybe<Scalars['Int']>;
-  geotechnicalSlopeAngleS2?: Maybe<Scalars['Int']>;
-  geotechnicalFacingS2?: Maybe<GeotechnicalFacingEnum>;
-  geotechnicalHeightS2?: Maybe<Scalars['Int']>;
-  dateSlopeChecked?: Maybe<Scalars['DateTime']>;
-  repairTimeDays?: Maybe<Scalars['Int']>;
-  releaseTimeDays?: Maybe<Scalars['Int']>;
-  oilReleaseCost?: Maybe<Scalars['Float']>;
-  gasReleaseCost?: Maybe<Scalars['Float']>;
-  consequencePeople?: Maybe<Scalars['Int']>;
-  probabilityGeo?: Maybe<Scalars['Int']>;
-  safeguardInternalProtection?: Maybe<Scalars['Int']>;
-  safeguardExternalCoating?: Maybe<Scalars['Int']>;
+  data: EditRiskInput;
 }>;
 
 
@@ -1506,6 +1533,27 @@ export type DeleteRiskMutationVariables = Exact<{
 
 
 export type DeleteRiskMutation = { deleteRisk?: { risk?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type EditGeotechnicalMutationVariables = Exact<{
+  data: EditGeotechnicalInput;
+}>;
+
+
+export type EditGeotechnicalMutation = { editGeotechnical?: { geotechnical?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type AddGeotechnicalMutationVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type AddGeotechnicalMutation = { addGeotechnical?: { geotechnical?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type DeleteGeotechnicalMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteGeotechnicalMutation = { deleteGeotechnical?: { geotechnical?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type AllocateRiskMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1596,7 +1644,7 @@ export type WellBatchesByWellIdQuery = { wellBatchesByWellId?: Array<{ id: strin
 export type ValidatorsPipelineQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineGradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineMaterialEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineInternalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, environmentProximityToEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }>, chemicalSupplierEnum: Array<{ serverEnum: string, databaseEnum: string }>, operationEnum: Array<{ serverEnum: string, databaseEnum: string }>, havingEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
+export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineGradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineMaterialEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineInternalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, riskEnvironmentEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }>, chemicalSupplierEnum: Array<{ serverEnum: string, databaseEnum: string }>, operationEnum: Array<{ serverEnum: string, databaseEnum: string }>, havingEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
 
 export type ValidatorsUserRoleQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1687,7 +1735,14 @@ export type RiskByIdQueryVariables = Exact<{
 }>;
 
 
-export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentProximityTo?: EnvironmentProximityToEnum | null | undefined, geotechnicalSlopeAngleS1?: number | null | undefined, geotechnicalFacingS1?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS1?: number | null | undefined, geotechnicalSlopeAngleS2?: number | null | undefined, geotechnicalFacingS2?: GeotechnicalFacingEnum | null | undefined, geotechnicalHeightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, consequenceEnviro?: number | null | undefined, consequenceAsset?: number | null | undefined, probabilityInterior?: number | null | undefined, probabilityExterior?: number | null | undefined, consequenceMax?: number | null | undefined, riskPotentialGeo?: number | null | undefined, riskPotentialInternal?: number | null | undefined, riskPotentialExternal?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, consequencePeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: number | null | undefined, safeguardPigging?: number | null | undefined, safeguardChemicalInhibition?: number | null | undefined, probabilityInteriorWithSafeguards?: number | null | undefined, riskPotentialInternalWithSafeguards?: number | null | undefined, safeguardExternalCoating?: number | null | undefined, safeguardCathodic?: number | null | undefined, probabilityExteriorWithSafeguards?: number | null | undefined, riskPotentialExternalWithSafeguards?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
+export type RiskByIdQuery = { riskById?: { id: string, aerialReview?: boolean | null | undefined, environmentId?: string | null | undefined, repairTimeDays?: number | null | undefined, releaseTimeDays?: number | null | undefined, costPerM3Released?: number | null | undefined, consequenceEnviro?: number | null | undefined, consequenceAsset?: number | null | undefined, probabilityInterior?: number | null | undefined, probabilityExterior?: number | null | undefined, consequenceMax?: number | null | undefined, riskPotentialGeo?: number | null | undefined, riskPotentialInternal?: number | null | undefined, riskPotentialExternal?: number | null | undefined, oilReleaseCost?: number | null | undefined, gasReleaseCost?: number | null | undefined, consequencePeople?: number | null | undefined, probabilityGeo?: number | null | undefined, safeguardInternalProtection?: number | null | undefined, safeguardPigging?: number | null | undefined, safeguardChemicalInhibition?: number | null | undefined, probabilityInteriorWithSafeguards?: number | null | undefined, riskPotentialInternalWithSafeguards?: number | null | undefined, safeguardExternalCoating?: number | null | undefined, safeguardCathodic?: number | null | undefined, probabilityExteriorWithSafeguards?: number | null | undefined, riskPotentialExternalWithSafeguards?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
+
+export type GeotechnicalsByPipelineIdQueryVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type GeotechnicalsByPipelineIdQuery = { geotechnicalsByPipelineId?: Array<{ id: string, slopeAngleS1?: number | null | undefined, facingS1?: GeotechnicalFacingEnum | null | undefined, heightS1?: number | null | undefined, slopeAngleS2?: number | null | undefined, facingS2?: GeotechnicalFacingEnum | null | undefined, heightS2?: number | null | undefined, dateSlopeChecked?: string | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type ChemicalByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -2968,27 +3023,8 @@ export type DeleteWellBatchMutationHookResult = ReturnType<typeof useDeleteWellB
 export type DeleteWellBatchMutationResult = Apollo.MutationResult<DeleteWellBatchMutation>;
 export type DeleteWellBatchMutationOptions = Apollo.BaseMutationOptions<DeleteWellBatchMutation, DeleteWellBatchMutationVariables>;
 export const EditRiskDocument = gql`
-    mutation EditRisk($id: String!, $aerialReview: Boolean, $environmentProximityTo: EnvironmentProximityToEnum, $geotechnicalSlopeAngleS1: Int, $geotechnicalFacingS1: GeotechnicalFacingEnum, $geotechnicalHeightS1: Int, $geotechnicalSlopeAngleS2: Int, $geotechnicalFacingS2: GeotechnicalFacingEnum, $geotechnicalHeightS2: Int, $dateSlopeChecked: DateTime, $repairTimeDays: Int, $releaseTimeDays: Int, $oilReleaseCost: Float, $gasReleaseCost: Float, $consequencePeople: Int, $probabilityGeo: Int, $safeguardInternalProtection: Int, $safeguardExternalCoating: Int) {
-  editRisk(
-    id: $id
-    aerialReview: $aerialReview
-    environmentProximityTo: $environmentProximityTo
-    geotechnicalSlopeAngleS1: $geotechnicalSlopeAngleS1
-    geotechnicalFacingS1: $geotechnicalFacingS1
-    geotechnicalHeightS1: $geotechnicalHeightS1
-    geotechnicalSlopeAngleS2: $geotechnicalSlopeAngleS2
-    geotechnicalFacingS2: $geotechnicalFacingS2
-    geotechnicalHeightS2: $geotechnicalHeightS2
-    dateSlopeChecked: $dateSlopeChecked
-    repairTimeDays: $repairTimeDays
-    releaseTimeDays: $releaseTimeDays
-    oilReleaseCost: $oilReleaseCost
-    gasReleaseCost: $gasReleaseCost
-    consequencePeople: $consequencePeople
-    probabilityGeo: $probabilityGeo
-    safeguardInternalProtection: $safeguardInternalProtection
-    safeguardExternalCoating: $safeguardExternalCoating
-  ) {
+    mutation EditRisk($data: EditRiskInput!) {
+  editRisk(data: $data) {
     risk {
       id
     }
@@ -3014,24 +3050,7 @@ export type EditRiskMutationFn = Apollo.MutationFunction<EditRiskMutation, EditR
  * @example
  * const [editRiskMutation, { data, loading, error }] = useEditRiskMutation({
  *   variables: {
- *      id: // value for 'id'
- *      aerialReview: // value for 'aerialReview'
- *      environmentProximityTo: // value for 'environmentProximityTo'
- *      geotechnicalSlopeAngleS1: // value for 'geotechnicalSlopeAngleS1'
- *      geotechnicalFacingS1: // value for 'geotechnicalFacingS1'
- *      geotechnicalHeightS1: // value for 'geotechnicalHeightS1'
- *      geotechnicalSlopeAngleS2: // value for 'geotechnicalSlopeAngleS2'
- *      geotechnicalFacingS2: // value for 'geotechnicalFacingS2'
- *      geotechnicalHeightS2: // value for 'geotechnicalHeightS2'
- *      dateSlopeChecked: // value for 'dateSlopeChecked'
- *      repairTimeDays: // value for 'repairTimeDays'
- *      releaseTimeDays: // value for 'releaseTimeDays'
- *      oilReleaseCost: // value for 'oilReleaseCost'
- *      gasReleaseCost: // value for 'gasReleaseCost'
- *      consequencePeople: // value for 'consequencePeople'
- *      probabilityGeo: // value for 'probabilityGeo'
- *      safeguardInternalProtection: // value for 'safeguardInternalProtection'
- *      safeguardExternalCoating: // value for 'safeguardExternalCoating'
+ *      data: // value for 'data'
  *   },
  * });
  */
@@ -3120,6 +3139,123 @@ export function useDeleteRiskMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteRiskMutationHookResult = ReturnType<typeof useDeleteRiskMutation>;
 export type DeleteRiskMutationResult = Apollo.MutationResult<DeleteRiskMutation>;
 export type DeleteRiskMutationOptions = Apollo.BaseMutationOptions<DeleteRiskMutation, DeleteRiskMutationVariables>;
+export const EditGeotechnicalDocument = gql`
+    mutation EditGeotechnical($data: EditGeotechnicalInput!) {
+  editGeotechnical(data: $data) {
+    geotechnical {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type EditGeotechnicalMutationFn = Apollo.MutationFunction<EditGeotechnicalMutation, EditGeotechnicalMutationVariables>;
+
+/**
+ * __useEditGeotechnicalMutation__
+ *
+ * To run a mutation, you first call `useEditGeotechnicalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditGeotechnicalMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editGeotechnicalMutation, { data, loading, error }] = useEditGeotechnicalMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useEditGeotechnicalMutation(baseOptions?: Apollo.MutationHookOptions<EditGeotechnicalMutation, EditGeotechnicalMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditGeotechnicalMutation, EditGeotechnicalMutationVariables>(EditGeotechnicalDocument, options);
+      }
+export type EditGeotechnicalMutationHookResult = ReturnType<typeof useEditGeotechnicalMutation>;
+export type EditGeotechnicalMutationResult = Apollo.MutationResult<EditGeotechnicalMutation>;
+export type EditGeotechnicalMutationOptions = Apollo.BaseMutationOptions<EditGeotechnicalMutation, EditGeotechnicalMutationVariables>;
+export const AddGeotechnicalDocument = gql`
+    mutation AddGeotechnical($pipelineId: String!) {
+  addGeotechnical(pipelineId: $pipelineId) {
+    geotechnical {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type AddGeotechnicalMutationFn = Apollo.MutationFunction<AddGeotechnicalMutation, AddGeotechnicalMutationVariables>;
+
+/**
+ * __useAddGeotechnicalMutation__
+ *
+ * To run a mutation, you first call `useAddGeotechnicalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddGeotechnicalMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addGeotechnicalMutation, { data, loading, error }] = useAddGeotechnicalMutation({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useAddGeotechnicalMutation(baseOptions?: Apollo.MutationHookOptions<AddGeotechnicalMutation, AddGeotechnicalMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddGeotechnicalMutation, AddGeotechnicalMutationVariables>(AddGeotechnicalDocument, options);
+      }
+export type AddGeotechnicalMutationHookResult = ReturnType<typeof useAddGeotechnicalMutation>;
+export type AddGeotechnicalMutationResult = Apollo.MutationResult<AddGeotechnicalMutation>;
+export type AddGeotechnicalMutationOptions = Apollo.BaseMutationOptions<AddGeotechnicalMutation, AddGeotechnicalMutationVariables>;
+export const DeleteGeotechnicalDocument = gql`
+    mutation DeleteGeotechnical($id: String!) {
+  deleteGeotechnical(id: $id) {
+    geotechnical {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type DeleteGeotechnicalMutationFn = Apollo.MutationFunction<DeleteGeotechnicalMutation, DeleteGeotechnicalMutationVariables>;
+
+/**
+ * __useDeleteGeotechnicalMutation__
+ *
+ * To run a mutation, you first call `useDeleteGeotechnicalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteGeotechnicalMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteGeotechnicalMutation, { data, loading, error }] = useDeleteGeotechnicalMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteGeotechnicalMutation(baseOptions?: Apollo.MutationHookOptions<DeleteGeotechnicalMutation, DeleteGeotechnicalMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteGeotechnicalMutation, DeleteGeotechnicalMutationVariables>(DeleteGeotechnicalDocument, options);
+      }
+export type DeleteGeotechnicalMutationHookResult = ReturnType<typeof useDeleteGeotechnicalMutation>;
+export type DeleteGeotechnicalMutationResult = Apollo.MutationResult<DeleteGeotechnicalMutation>;
+export type DeleteGeotechnicalMutationOptions = Apollo.BaseMutationOptions<DeleteGeotechnicalMutation, DeleteGeotechnicalMutationVariables>;
 export const AllocateRiskDocument = gql`
     mutation AllocateRisk {
   allocateRisk {
@@ -3705,7 +3841,7 @@ export const ValidatorsPipelineDocument = gql`
       serverEnum
       databaseEnum
     }
-    environmentProximityToEnum {
+    riskEnvironmentEnum {
       serverEnum
       databaseEnum
     }
@@ -4362,14 +4498,7 @@ export const RiskByIdDocument = gql`
   riskById(id: $id) {
     id
     aerialReview
-    environmentProximityTo
-    geotechnicalSlopeAngleS1
-    geotechnicalFacingS1
-    geotechnicalHeightS1
-    geotechnicalSlopeAngleS2
-    geotechnicalFacingS2
-    geotechnicalHeightS2
-    dateSlopeChecked
+    environmentId
     repairTimeDays
     releaseTimeDays
     costPerM3Released
@@ -4437,6 +4566,60 @@ export function useRiskByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<R
 export type RiskByIdQueryHookResult = ReturnType<typeof useRiskByIdQuery>;
 export type RiskByIdLazyQueryHookResult = ReturnType<typeof useRiskByIdLazyQuery>;
 export type RiskByIdQueryResult = Apollo.QueryResult<RiskByIdQuery, RiskByIdQueryVariables>;
+export const GeotechnicalsByPipelineIdDocument = gql`
+    query GeotechnicalsByPipelineId($pipelineId: String!) {
+  geotechnicalsByPipelineId(pipelineId: $pipelineId) {
+    id
+    slopeAngleS1
+    facingS1
+    heightS1
+    slopeAngleS2
+    facingS2
+    heightS2
+    dateSlopeChecked
+    comment
+    createdAt
+    updatedAt
+    createdBy {
+      id
+      email
+    }
+    updatedBy {
+      id
+      email
+    }
+    authorized
+  }
+}
+    `;
+
+/**
+ * __useGeotechnicalsByPipelineIdQuery__
+ *
+ * To run a query within a React component, call `useGeotechnicalsByPipelineIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGeotechnicalsByPipelineIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGeotechnicalsByPipelineIdQuery({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useGeotechnicalsByPipelineIdQuery(baseOptions: Apollo.QueryHookOptions<GeotechnicalsByPipelineIdQuery, GeotechnicalsByPipelineIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GeotechnicalsByPipelineIdQuery, GeotechnicalsByPipelineIdQueryVariables>(GeotechnicalsByPipelineIdDocument, options);
+      }
+export function useGeotechnicalsByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GeotechnicalsByPipelineIdQuery, GeotechnicalsByPipelineIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GeotechnicalsByPipelineIdQuery, GeotechnicalsByPipelineIdQueryVariables>(GeotechnicalsByPipelineIdDocument, options);
+        }
+export type GeotechnicalsByPipelineIdQueryHookResult = ReturnType<typeof useGeotechnicalsByPipelineIdQuery>;
+export type GeotechnicalsByPipelineIdLazyQueryHookResult = ReturnType<typeof useGeotechnicalsByPipelineIdLazyQuery>;
+export type GeotechnicalsByPipelineIdQueryResult = Apollo.QueryResult<GeotechnicalsByPipelineIdQuery, GeotechnicalsByPipelineIdQueryVariables>;
 export const ChemicalByIdDocument = gql`
     query ChemicalById($id: String!) {
   chemicalById(id: $id) {

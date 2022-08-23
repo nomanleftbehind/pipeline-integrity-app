@@ -1,7 +1,6 @@
-import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
+import { objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
 import { User as IUser, WellBatch as IWellBatch } from '@prisma/client';
-import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 
 
 export const WellBatch = objectType({

@@ -18,6 +18,7 @@ import {
 } from './SeedData';
 
 import { riskData1, riskData2 } from './SeedRiskData';
+import { geotechnicalData1 } from './SeedGeotechnicalData';
 
 import { pipelineData1, pipelineData2 } from './SeedPipelineData';
 import { pipelinesOnPipelinesData1 } from './SeedPipelinesOnPipelinesData';
@@ -424,6 +425,13 @@ async function main() {
       data: u,
     })
     console.log(`Created risk with id: ${risk.id}`)
+  }
+
+  for (const u of geotechnicalData1) {
+    const geotechnical = await prisma.geotechnical.create({
+      data: u,
+    })
+    console.log(`Created geotechnical with id: ${geotechnical.id}`)
   }
 
   for (const u of chemicalSupplierData) {

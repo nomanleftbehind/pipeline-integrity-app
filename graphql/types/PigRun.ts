@@ -2,7 +2,6 @@ import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus
 import { NexusGenObjects } from 'nexus-typegen';
 import { Context } from '../context';
 import { Prisma, User as IUser, PigRun as IPigRun } from '@prisma/client';
-import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
 import { ITableConstructObject } from './SearchNavigation';
 
 
@@ -36,7 +35,9 @@ export const PigRunObjectFields: ITableConstructObject[] = [
 	{ field: 'pigSenderReceiverInspection', nullable: true, type: 'PigInspectionEnum', enumObjectArray: PigInspectionEnumArray },
 	{ field: 'comment', nullable: true, type: 'String' },
 	{ field: 'operatorId', nullable: true, type: 'String' },
+	{ field: 'createdById', nullable: false, type: 'String' },
 	{ field: 'createdAt', nullable: false, type: 'DateTime' },
+	{ field: 'updatedById', nullable: false, type: 'String' },
 	{ field: 'updatedAt', nullable: false, type: 'DateTime' },
 ];
 

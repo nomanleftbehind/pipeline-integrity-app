@@ -58,6 +58,12 @@ export const prettifyColumnName = (columnName: string) => {
   if (columnName === 'pigTypeId') {
     return 'Pig Type'
   }
+  if (columnName === 'createdById') {
+    return 'Created By'
+  }
+  if (columnName === 'updatedById') {
+    return 'Updated By'
+  }
   return columnName
     .split(/(?=[A-Z])/)
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))

@@ -69,7 +69,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).facilitiyCreatedBy();
+        }).facilityCreatedBy();
       },
     })
     t.list.field('facilitiesUpdated', {
@@ -77,7 +77,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).facilitiyUpdatedBy();
+        }).facilityUpdatedBy();
       },
     })
     t.list.field('satellitesCreated', {
@@ -85,7 +85,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).satellityCreatedBy();
+        }).satelliteCreatedBy();
       },
     })
     t.list.field('satellitesUpdated', {
@@ -93,7 +93,7 @@ export const User = objectType({
       resolve: ({ id }, _args, ctx: Context) => {
         return ctx.prisma.user.findUnique({
           where: { id },
-        }).satellityUpdatedBy();
+        }).satelliteUpdatedBy();
       },
     })
     t.list.field('wellsCreated', {
@@ -135,6 +135,7 @@ export const User = objectType({
 export const UserRoleEnumMembers = {
   ADMIN: 'Admin',
   ENGINEER: 'Engineer',
+  REGULATORY: 'Regulatory',
   OFFICE: 'Office',
   OPERATOR: 'Operator',
   CHEMICAL: 'Chemical',

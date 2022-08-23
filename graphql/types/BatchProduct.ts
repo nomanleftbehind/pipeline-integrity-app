@@ -1,7 +1,7 @@
-import { enumType, objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
+import { enumType, objectType } from 'nexus';
 import { NexusGenObjects } from 'nexus-typegen';
 import { Context } from '../context';
-import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
+import { serverEnumToDatabaseEnum } from './Pipeline';
 
 
 export const BatchProduct = objectType({

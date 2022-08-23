@@ -4,9 +4,7 @@ import {
   LicenseChangeStatus as ILicenseChangeStatus,
   LicenseChangeSubstance as ILicenseChangeSubstance,
   Pipeline as IPipeline,
-  PipelineMaterial as IPipelineMaterial,
-  PipelineType as IPipelineType,
-  Chemical as IChemical
+  Chemical as IChemical,
 } from '@prisma/client';
 import { Context } from '../context';
 import { totalFluidsCalc } from './Well';
@@ -15,39 +13,37 @@ import { pipelineFlow } from './PipelineFlow';
 
 
 interface IConsequenceEnviroCalcArgs {
-  environmentProximityTo: IRisk['environmentProximityTo'];
-  currentSubstance: ILicenseChangeSubstance['substance'];
-  currentStatus: ILicenseChangeStatus['status'];
+  environment: IRisk['environmentId'];
+  currentSubstance: ILicenseChange['substanceId'];
+  currentStatus: ILicenseChange['statusId'];
   totalFluids: number;
 }
 
-export const consequenceEnviroCalc = async ({ environmentProximityTo, currentSubstance, currentStatus, totalFluids }: IConsequenceEnviroCalcArgs) => {
-
-  // environmentProximityTo = databaseEnumToServerEnum(EnvironmentProximityToEnumMembers, environmentProximityTo) || null;
+export const consequenceEnviroCalc = async ({ environment, currentSubstance, currentStatus, totalFluids }: IConsequenceEnviroCalcArgs) => {
 
   if (currentStatus === 'Discontinued' || currentStatus === 'Abandoned' || currentSubstance === 'Fresh Water') {
     return 1;
   } else if (currentSubstance === 'Natural Gas' || currentSubstance === 'Fuel Gas' || currentSubstance === 'Sour Natural Gas') {
 
-    if (environmentProximityTo === null) {
+    if (environment === null) {
       // no water body and no crossing.  (eg. middle of field)
       return totalFluids >= 1 ? 2 : 1;
-    } else if (['WC1', 'WB3'].includes(environmentProximityTo)) {
+    } else if (['WC1', 'WB3'].includes(environment)) {
       // WC1 = Ephemeral, WB3 = non-permanent seasonal/temporary wetlands; Fens; Bogs;
       return totalFluids >= 1 ? 3 : 2;
-    } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WC3' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB5' || environmentProximityTo === 'WB4') {
+    } else if (environment === 'WC4' || environment === 'WC3' || environment === 'WC2' || environment === 'WB5' || environment === 'WB4') {
       return totalFluids >= 1 ? 4 : 3;
     } else {
       return null;
     }
   } else if (currentSubstance === 'Oil Well Effluent' || currentSubstance === 'Crude Oil' || currentSubstance === 'Salt Water' /*|| currentSubstance === 'Sour Crude'*/) {
-    if (environmentProximityTo === null || environmentProximityTo === 'WB1') {
+    if (environment === null || environment === 'WB1') {
       return 2;
-    } else if (environmentProximityTo === 'WC1' || environmentProximityTo === 'WC2' || environmentProximityTo === 'WB3') {
+    } else if (environment === 'WC1' || environment === 'WC2' || environment === 'WB3') {
       return 3;
-    } else if (environmentProximityTo === 'WC3' || environmentProximityTo === 'WB4') {
+    } else if (environment === 'WC3' || environment === 'WB4') {
       return 4;
-    } else if (environmentProximityTo === 'WC4' || environmentProximityTo === 'WB5') {
+    } else if (environment === 'WC4' || environment === 'WB5') {
       return 5;
     } else {
       return null;
@@ -310,7 +306,7 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
   const risk = await ctx.prisma.risk.findUnique({
     where: { id },
     select: {
-      environmentProximityTo: true,
+      environment: { select: { environment: true } },
       repairTimeDays: true,
       oilReleaseCost: true,
       gasReleaseCost: true,
@@ -358,12 +354,13 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
 
   if (risk && lastLicenseChange && firstLicenseChange && pipeline && chemical) {
 
-    const { environmentProximityTo, oilReleaseCost, gasReleaseCost, repairTimeDays, consequencePeople, probabilityGeo, safeguardInternalProtection, safeguardExternalCoating } = risk;
+    const { environment: environmentObject, oilReleaseCost, gasReleaseCost, repairTimeDays, consequencePeople, probabilityGeo, safeguardInternalProtection, safeguardExternalCoating } = risk;
     const { substance: { substance: currentSubstance }, status: { status: currentStatus } } = lastLicenseChange;
     const { date: firstLicenseDate } = firstLicenseChange;
     const { flowCalculationDirection, pipelineType, pipelineMaterial, piggable } = pipeline;
     const type = pipelineType?.type || null;
     const material = pipelineMaterial?.material || null;
+    const environment = environmentObject?.environment || null;
     const { downholeBatch, inhibitorPipelineBatch, bacteriaTreatment, scaleTreatment } = chemical;
 
     const { oil, water, gas } = (await pipelineFlow({ id, flowCalculationDirection, ctx })) || { oil: 0, water: 0, gas: 0 };
@@ -372,7 +369,7 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
 
     const costPerM3Released = currentSubstance === 'Fresh Water' ? 0 : 25000 * water + 1000 * gas + 15000 * oil;
 
-    const consequenceEnviro = await consequenceEnviroCalc({ environmentProximityTo, currentSubstance, currentStatus, totalFluids });
+    const consequenceEnviro = await consequenceEnviroCalc({ environment, currentSubstance, currentStatus, totalFluids });
 
     const consequenceAsset = await consequenceAssetCalc({ repairTimeDays, oilReleaseCost, gasReleaseCost, oil, gas, totalFluids });
 

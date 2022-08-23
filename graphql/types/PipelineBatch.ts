@@ -12,7 +12,9 @@ export const PipelineBatchObjectFields: ITableConstructObject[] = [
   { field: 'chemicalVolume', nullable: true, type: 'Float' },
   { field: 'diluentVolume', nullable: true, type: 'Float' },
   { field: 'comment', nullable: true, type: 'String' },
+  { field: 'createdById', nullable: false, type: 'String' },
   { field: 'createdAt', nullable: false, type: 'DateTime' },
+  { field: 'updatedById', nullable: false, type: 'String' },
   { field: 'updatedAt', nullable: false, type: 'DateTime' },
 ];
 
