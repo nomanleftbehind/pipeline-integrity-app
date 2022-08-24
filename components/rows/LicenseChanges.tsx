@@ -28,6 +28,8 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
+  const [confirmDeleteLicenseChangeModal, setConfirmDeleteLicenseChangeModal] = useState(false);
+  const [toDeleteLicenseChange, setToDeleteLicenseChange] = useState({ id: '', friendlyName: '' });
 
   const { data, loading, error } = useLicenseChangesByPipelineIdQuery({ variables: { pipelineId } });
   const [editLicenseChange] = useEditLicenseChangeMutation({
@@ -93,8 +95,9 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
     addLicenseChange();
   }
 
-  const deleteRecord = (id: string) => {
-    deleteLicenseChange({ variables: { id } });
+  const deleteRecord = () => {
+    setConfirmDeleteLicenseChangeModal(false);
+    deleteLicenseChange({ variables: { id: toDeleteLicenseChange.id } });
   }
 
   const hideFieldErrorModal = () => {
@@ -125,6 +128,11 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>
+      {confirmDeleteLicenseChangeModal && <ModalFieldError
+        fieldError={{ field: 'License Change', message: `Are you sure you want to delete license change from ${toDeleteLicenseChange.friendlyName}?` }}
+        hideFieldError={() => setConfirmDeleteLicenseChangeModal(false)}
+        executeFunction={deleteRecord}
+      />}
       {isModalOpen && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
@@ -157,7 +165,11 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
               <div className={`license-change-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   className='button-container'
-                  aria-label='delete row' size='small' title='Delete license change' disabled={!authorized} onClick={() => deleteRecord(id)}>
+                  aria-label='delete row' size='small' title='Delete license change' disabled={!authorized}
+                  onClick={() => {
+                    setToDeleteLicenseChange({ id, friendlyName: date.split('T')[0] });
+                    setConfirmDeleteLicenseChangeModal(true);
+                  }}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </div>

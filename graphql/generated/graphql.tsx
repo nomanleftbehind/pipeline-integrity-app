@@ -59,6 +59,7 @@ export type Chemical = {
   continuousInjection?: Maybe<Scalars['Boolean']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
+  createdById: Scalars['String'];
   downholeBatch?: Maybe<Scalars['Boolean']>;
   h2s?: Maybe<Scalars['Boolean']>;
   id: Scalars['String'];
@@ -70,6 +71,7 @@ export type Chemical = {
   scaling?: Maybe<Scalars['Boolean']>;
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
+  updatedById: Scalars['String'];
 };
 
 export type ChemicalPayload = {
@@ -204,6 +206,7 @@ export type LicenseChange = {
   comment?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
+  createdById: Scalars['String'];
   date: Scalars['DateTime'];
   id: Scalars['String'];
   linkToDocumentation?: Maybe<Scalars['String']>;
@@ -212,6 +215,7 @@ export type LicenseChange = {
   substanceId: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
+  updatedById: Scalars['String'];
 };
 
 export type LicenseChangePayload = {
@@ -611,6 +615,7 @@ export type PigRun = {
   comment?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
+  createdById: Scalars['String'];
   dateIn: Scalars['DateTime'];
   dateOut?: Maybe<Scalars['DateTime']>;
   id: Scalars['String'];
@@ -622,6 +627,7 @@ export type PigRun = {
   pipeline: Pipeline;
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
+  updatedById: Scalars['String'];
 };
 
 export type PigRunPayload = {
@@ -677,6 +683,7 @@ export type PipelineBatch = {
   cost?: Maybe<Scalars['Float']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
+  createdById: Scalars['String'];
   date: Scalars['DateTime'];
   diluentVolume?: Maybe<Scalars['Float']>;
   id: Scalars['String'];
@@ -685,6 +692,7 @@ export type PipelineBatch = {
   productId: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
+  updatedById: Scalars['String'];
 };
 
 export type PipelineBatchPayload = {
@@ -763,6 +771,7 @@ export type PressureTest = {
   comment?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
+  createdById: Scalars['String'];
   ddsDate?: Maybe<Scalars['DateTime']>;
   id: Scalars['String'];
   infoSentOutDate?: Maybe<Scalars['DateTime']>;
@@ -779,6 +788,7 @@ export type PressureTest = {
   requiredWTForTestPressure?: Maybe<Scalars['Float']>;
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
+  updatedById: Scalars['String'];
   waterForPigging?: Maybe<Scalars['Float']>;
 };
 
@@ -947,6 +957,7 @@ export type Risk = {
   costPerM3Released?: Maybe<Scalars['Float']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
+  createdById: Scalars['String'];
   environmentId?: Maybe<Scalars['String']>;
   gasReleaseCost?: Maybe<Scalars['Float']>;
   id: Scalars['String'];
@@ -971,6 +982,7 @@ export type Risk = {
   safeguardPigging?: Maybe<Scalars['Int']>;
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
+  updatedById: Scalars['String'];
 };
 
 export type RiskPayload = {
@@ -982,6 +994,7 @@ export type SalesPoint = {
   authorized: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   createdBy: User;
+  createdById: Scalars['String'];
   fdcRecId?: Maybe<Scalars['String']>;
   firstInjection?: Maybe<Scalars['DateTime']>;
   firstProduction?: Maybe<Scalars['DateTime']>;
@@ -996,6 +1009,7 @@ export type SalesPoint = {
   totalFluids: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
+  updatedById: Scalars['String'];
   water: Scalars['Float'];
 };
 
@@ -1095,7 +1109,7 @@ export enum TableEnum {
   Chemical = 'chemical',
   DownstreamPipelines = 'downstreamPipelines',
   Facility = 'facility',
-  Geotechnicals = 'geotechnicals',
+  GeotechnicalParameters = 'geotechnicalParameters',
   LicenseChanges = 'licenseChanges',
   PigRuns = 'pigRuns',
   Pipeline = 'pipeline',
@@ -1198,6 +1212,7 @@ export type Well = {
   authorized: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   createdBy: User;
+  createdById: Scalars['String'];
   fdcRecId?: Maybe<Scalars['String']>;
   firstInjection?: Maybe<Scalars['DateTime']>;
   firstProduction?: Maybe<Scalars['DateTime']>;
@@ -1212,6 +1227,7 @@ export type Well = {
   totalFluids: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
+  updatedById: Scalars['String'];
   water: Scalars['Float'];
   wellBatches?: Maybe<Array<Maybe<WellBatch>>>;
 };

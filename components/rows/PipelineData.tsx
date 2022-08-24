@@ -36,7 +36,7 @@ export type IValidatorsLicenseChanges = PickNullable<NonNullable<IValidators>, '
 export type IValidatorsGeotechnicals = PickNullable<NonNullable<IValidators>, 'geotechnicalFacingEnum'>;
 export type IValidatorsConnectedSources = PickNullable<NonNullable<IValidators>, 'flowCalculationDirectionEnum'>;
 export type IValidatorsPressureTests = PickNullable<NonNullable<IValidators>, 'limitingSpecEnum'>;
-export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'riskEnvironmentEnum' | 'geotechnicalFacingEnum' | 'pipelineTypeEnum' | 'pipelineMaterialEnum'>;
+export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'riskEnvironmentEnum' | 'pipelineTypeEnum' | 'pipelineMaterialEnum'>;
 export type IValidatorsPigRuns = PickNullable<NonNullable<IValidators>, 'pigTypeEnum' | 'pigInspectionEnum' | 'operatorEnum'>;
 export type IValidatorsPipelineBatches = PickNullable<NonNullable<IValidators>, 'solubilityEnum' | 'batchProductEnum'>;
 export type IValidatorsChemical = PickNullable<NonNullable<IValidators>, 'chemicalSupplierEnum'>;
@@ -86,7 +86,6 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
 
   const validatorsRisk: IValidatorsRisk = validators && {
     riskEnvironmentEnum: validators.riskEnvironmentEnum,
-    geotechnicalFacingEnum: validators.geotechnicalFacingEnum,
     pipelineTypeEnum: validators.pipelineTypeEnum,
     pipelineMaterialEnum: validators.pipelineMaterialEnum,
   };
