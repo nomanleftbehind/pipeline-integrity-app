@@ -44,8 +44,9 @@ export function ModalFieldError({ fieldError: { field, message }, hideFieldError
       <div className='modal'>
         <div className='modal-box'>
           <div>
-            {`Field: ${field}`}<br />
-            {`Message: ${message}`}
+            {/* {`Field: ${field}`}<br />
+            {`Message: ${message}`} */}
+            {message}
           </div>
           {executeFunction && <button onClick={executeFunction}>OK</button>}
           <button onClick={hideFieldError}>{executeFunction ? 'Cancel' : 'OK'}</button>

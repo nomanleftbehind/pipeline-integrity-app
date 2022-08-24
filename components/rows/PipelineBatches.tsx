@@ -171,7 +171,8 @@ export default function PipelineBatches({ pipelineId, validators }: IPipelineBat
               <div className={`pipeline-batch-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   className='button-container'
-                  aria-label='delete row' size='small' onClick={() => {
+                  aria-label='delete row' size='small' title='Delete pipeline batch'
+                  onClick={() => {
                     setToDeletePipelineBatch({ id, friendlyName: date.split('T')[0] });
                     setConfirmDeletePipelineBatchModal(true);
                   }}>
