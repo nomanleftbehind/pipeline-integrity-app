@@ -13,6 +13,10 @@ ALTER TABLE ppl_db."PressureTest"
 ALTER TABLE ppl_db."PipelineBatch"
 	DROP CONSTRAINT "PipelineBatch_pipelineId_fkey",
 	ADD CONSTRAINT "PipelineBatch_pipelineId_fkey" FOREIGN KEY ("pipelineId") REFERENCES ppl_db."Pipeline"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE ppl_db."Geotechnical"
+	DROP CONSTRAINT "Geotechnical_pipelineId_fkey",
+	ADD CONSTRAINT "Geotechnical_pipelineId_fkey" FOREIGN KEY ("pipelineId") REFERENCES ppl_db."Pipeline"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 	
 ALTER TABLE ppl_db."Risk"
 	DROP CONSTRAINT "Risk_id_fkey",
