@@ -231,7 +231,7 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
 
 
   return (
-    <div style={{ gridColumn: '1 / 13', gridRow: gridRow + 1, backgroundColor: rowIsEven ? '#abeaff' : undefined }}>
+    <div style={{ gridColumn: '1 / 13', gridRow: gridRow + 1, backgroundColor: rowIsEven ? '#d2eef8' : '#fcf9e6' }}>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <div className='pipeline-data'>
           <div className='tabs'>

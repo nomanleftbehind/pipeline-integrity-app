@@ -8,9 +8,11 @@ import { ITableConstructObject } from './SearchNavigation';
 
 
 
-
+export const licenseMatchPattern = "^(AB|SK|BC)(\\d{5}|\\d{6})$";
+export const segmentMatchPattern = "^((UL)(\\d{1,2})|(\\d{1,3}))$";
 export const fromToMatchPattern = "^((\\d{2}-\\d{2}-\\d{3}-\\d{2}W\\d{1})|([A-Z]{1}-\\d{3}-[A-Z]{1} \\d{3}-[A-Z]{1}-\\d{2}))$";
 export const wallThicknessMatchPattern = "^(\\d|1\\d|2[0-5])(\\.\\d{1,2})?$";
+export const outsideDiameterMatchPattern = "^4[3-9]$|^4[2-9]\\.[2-9]\\d?$|^([5-9]\\d)(\\.\\d\\d?)?$|^([1-2]\\d{2})(\\.\\d\\d?)?$|^(3[0-2][0-3])(\\.[0-8]\\d?)?$"; // number between 42.2 and 323.89
 
 interface IValidateRegex {
   field: string;
@@ -25,7 +27,7 @@ export const validateRegex = ({ field, matchPattern, prettyMatchPattern }: IVali
     return {
       error: {
         field: 'Field',
-        message: `Format needs to match ${prettyMatchPattern}`,
+        message: `Format needs to match ${prettyMatchPattern}.`,
       }
     }
   }
@@ -882,77 +884,15 @@ export const PipelineMutation = extendType({
           const authorized = resolvePipelineAuthorized(user);
           if (authorized) {
             if (args.license) {
-              const currentPipeline = await ctx.prisma.pipeline.findUnique({
-                where: { id: args.id },
-                select: {
-                  segment: true,
-                }
-              });
-              if (currentPipeline) {
-                const { segment } = currentPipeline;
-                const pipelineWithSameSegment = await ctx.prisma.pipeline.findUnique({
-                  where: { license_segment: { license: args.license, segment } },
-                  select: {
-                    id: true,
-                    satellite: {
-                      select: {
-                        name: true,
-                        facility: {
-                          select: {
-                            name: true,
-                          }
-                        }
-                      }
-                    }
-                  }
-                });
-                if (pipelineWithSameSegment && pipelineWithSameSegment.id !== args.id) {
-                  const facility = pipelineWithSameSegment.satellite?.facility?.name;
-                  const satellite = pipelineWithSameSegment.satellite?.name;
-                  return {
-                    error: {
-                      field: 'license',
-                      message: `Pipeline ${args.license}-${segment} already exists at facility ${facility}, satellite ${satellite}.`,
-                    }
-                  }
-                }
+              const error = validateRegex({ field: String(args.license), matchPattern: licenseMatchPattern, prettyMatchPattern: 'AB/SK/BC followed by 5 or 6 digits' });
+              if (error) {
+                return error;
               }
             }
             if (args.segment) {
-              const currentPipeline = await ctx.prisma.pipeline.findUnique({
-                where: { id: args.id },
-                select: {
-                  license: true,
-                }
-              });
-              if (currentPipeline) {
-                const { license } = currentPipeline;
-                const pipelineWithSameLicense = await ctx.prisma.pipeline.findUnique({
-                  where: { license_segment: { license, segment: args.segment } },
-                  select: {
-                    id: true,
-                    satellite: {
-                      select: {
-                        name: true,
-                        facility: {
-                          select: {
-                            name: true,
-                          }
-                        }
-                      }
-                    }
-                  }
-                });
-                if (pipelineWithSameLicense && pipelineWithSameLicense.id !== args.id) {
-                  const facility = pipelineWithSameLicense.satellite?.facility?.name;
-                  const satellite = pipelineWithSameLicense.satellite?.name;
-                  return {
-                    error: {
-                      field: 'segment',
-                      message: `Pipeline ${license}-${args.segment} already exists at facility ${facility}, satellite ${satellite}.`,
-                    }
-                  }
-                }
+              const error = validateRegex({ field: String(args.segment), matchPattern: segmentMatchPattern, prettyMatchPattern: '1-3 digits or UL followed by 1-2 digits' });
+              if (error) {
+                return error;
               }
             }
             if (args.from || args.to) {
@@ -962,37 +902,57 @@ export const PipelineMutation = extendType({
               }
             }
             if (args.wallThickness) {
-              const error = validateRegex({ field: String(args.wallThickness), matchPattern: wallThicknessMatchPattern, prettyMatchPattern: 'number between 0 and 25.99' });
+              const error = validateRegex({ field: String(args.wallThickness), matchPattern: wallThicknessMatchPattern, prettyMatchPattern: 'number between 0 and 25.99 up to two decimal places' });
               if (error) {
                 return error;
               }
             }
-            const pipeline = await ctx.prisma.pipeline.update({
-              where: { id: args.id },
-              data: {
-                satelliteId: args.satelliteId,
-                license: args.license || undefined,
-                segment: args.segment || undefined,
-                flowCalculationDirection: args.flowCalculationDirection || undefined,
-                from: args.from || undefined,
-                fromFeatureId: args.fromFeatureId,
-                to: args.to || undefined,
-                toFeatureId: args.toFeatureId,
-                length: args.length || undefined,
-                pipelineTypeId: args.pipelineTypeId,
-                pipelineGradeId: args.pipelineGradeId,
-                yieldStrength: args.yieldStrength,
-                outsideDiameter: args.outsideDiameter,
-                wallThickness: args.wallThickness,
-                pipelineMaterialId: args.pipelineMaterialId,
-                mop: args.mop,
-                pipelineInternalProtectionId: args.pipelineInternalProtectionId,
-                piggable: args.piggable,
-                piggingFrequency: args.piggingFrequency,
-                updatedById: userId,
-              },
-            });
-            return { pipeline }
+            if (args.outsideDiameter) {
+              const error = validateRegex({ field: String(args.outsideDiameter), matchPattern: outsideDiameterMatchPattern, prettyMatchPattern: 'number between 42.2 and 323.89 up to two decimal places' });
+              if (error) {
+                return error;
+              }
+            }
+            try {
+              const pipeline = await ctx.prisma.pipeline.update({
+                where: { id: args.id },
+                data: {
+                  satelliteId: args.satelliteId,
+                  license: args.license || undefined,
+                  segment: args.segment || undefined,
+                  flowCalculationDirection: args.flowCalculationDirection || undefined,
+                  from: args.from || undefined,
+                  fromFeatureId: args.fromFeatureId,
+                  to: args.to || undefined,
+                  toFeatureId: args.toFeatureId,
+                  length: args.length || undefined,
+                  pipelineTypeId: args.pipelineTypeId,
+                  pipelineGradeId: args.pipelineGradeId,
+                  yieldStrength: args.yieldStrength,
+                  outsideDiameter: args.outsideDiameter,
+                  wallThickness: args.wallThickness,
+                  pipelineMaterialId: args.pipelineMaterialId,
+                  mop: args.mop,
+                  pipelineInternalProtectionId: args.pipelineInternalProtectionId,
+                  piggable: args.piggable,
+                  piggingFrequency: args.piggingFrequency,
+                  updatedById: userId,
+                },
+              });
+              return { pipeline }
+            } catch (e) {
+              if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2002') {
+                  return {
+                    error: {
+                      field: 'Pipeline',
+                      message: 'Pipeline with same license and segment already exists.',
+                    }
+                  }
+                }
+              }
+              throw e;
+            }
           }
           return {
             error: {

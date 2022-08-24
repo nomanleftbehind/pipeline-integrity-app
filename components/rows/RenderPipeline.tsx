@@ -123,7 +123,7 @@ export default function RenderPipeline({ gridRow, rowIsEven, pipeline, validator
     { columnName: 'currentSubstance', columnType: 'string', nullable: false, record: currentSubstance, },
   ];
 
-  const backgroundColor = rowIsEven ? '#abeaff' : undefined;
+  const backgroundColor = rowIsEven ? '#abeaff' : '#fff7c9';
 
   return (
     <>
