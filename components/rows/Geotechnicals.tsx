@@ -26,6 +26,9 @@ export default function Geotechnicals({ pipelineId, validators }: IGeotechnicalP
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
+  const [confirmDeleteGeotechnicalModal, setConfirmDeleteGeotechnicalModal] = useState(false);
+  const [toDeleteGeotechnical, setToDeleteGeotechnical] = useState({ id: '', friendlyName: '' });
+
 
   const { data, loading, error } = useGeotechnicalsByPipelineIdQuery({ variables: { pipelineId } });
   const [editGeotechnical] = useEditGeotechnicalMutation({
@@ -91,8 +94,9 @@ export default function Geotechnicals({ pipelineId, validators }: IGeotechnicalP
     addGeotechnical();
   }
 
-  const deleteRecord = (id: string) => {
-    deleteGeotechnical({ variables: { id } });
+  const deleteRecord = () => {
+    setConfirmDeleteGeotechnicalModal(false);
+    deleteGeotechnical({ variables: { id: toDeleteGeotechnical.id } });
   }
 
   const hideFieldErrorModal = () => {
@@ -126,6 +130,11 @@ export default function Geotechnicals({ pipelineId, validators }: IGeotechnicalP
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>
+      {confirmDeleteGeotechnicalModal && <ModalFieldError
+        fieldError={{ field: 'Geotechnical Parameter', message: `Are you sure you want to delete geotechnical parameter${toDeleteGeotechnical.friendlyName ? ` from ${toDeleteGeotechnical.friendlyName}` : ''}?` }}
+        hideFieldError={() => setConfirmDeleteGeotechnicalModal(false)}
+        executeFunction={deleteRecord}
+      />}
       {isModalOpen && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
@@ -161,7 +170,11 @@ export default function Geotechnicals({ pipelineId, validators }: IGeotechnicalP
               <div className={`geotechnical-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   className='button-container'
-                  aria-label='delete row' size='small' title='Delete geotechnical entry' disabled={!authorized} onClick={() => deleteRecord(id)}>
+                  aria-label='delete row' size='small' title='Delete geotechnical entry' disabled={!authorized}
+                  onClick={() => {
+                    setToDeleteGeotechnical({ id, friendlyName: dateSlopeChecked?.split('T')[0] || '' });
+                    setConfirmDeleteGeotechnicalModal(true);
+                  }}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </div>

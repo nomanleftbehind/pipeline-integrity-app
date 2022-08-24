@@ -56,6 +56,9 @@ export default function PressureTests({ pipelineId, validators }: IPressureTests
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
+  const [confirmDeletePressureTestModal, setConfirmDeletePressureTestModal] = useState(false);
+  const [toDeletePressureTest, setToDeletePressureTest] = useState({ id: '', friendlyName: '' });
+
 
   const { limitingSpecEnum } = validators || {};
 
@@ -91,8 +94,9 @@ export default function PressureTests({ pipelineId, validators }: IPressureTests
     addPressureTest();
   }
 
-  const deleteRecord = (id: string) => {
-    deletePressureTest({ variables: { id } });
+  const deleteRecord = () => {
+    setConfirmDeletePressureTestModal(false);
+    deletePressureTest({ variables: { id: toDeletePressureTest.id } });
   }
 
   const hideFieldErrorModal = () => {
@@ -132,6 +136,11 @@ export default function PressureTests({ pipelineId, validators }: IPressureTests
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>
+      {confirmDeletePressureTestModal && <ModalFieldError
+        fieldError={{ field: 'Pressure Test', message: `Are you sure you want to delete pressure test from ${toDeletePressureTest.friendlyName}?` }}
+        hideFieldError={() => setConfirmDeletePressureTestModal(false)}
+        executeFunction={deleteRecord}
+      />}
       {isModalOpen && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
@@ -176,7 +185,11 @@ export default function PressureTests({ pipelineId, validators }: IPressureTests
               <div className={`pressure-test-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   className='button-container'
-                  aria-label='delete row' size='small' disabled={!authorized} onClick={() => deleteRecord(id)}>
+                  aria-label='delete row' size='small' disabled={!authorized}
+                  onClick={() => {
+                    setToDeletePressureTest({ id, friendlyName: pressureTestDate.split('T')[0] });
+                    setConfirmDeletePressureTestModal(true);
+                  }}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </div>

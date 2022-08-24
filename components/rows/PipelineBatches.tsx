@@ -26,6 +26,9 @@ export default function PipelineBatches({ pipelineId, validators }: IPipelineBat
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
+  const [confirmDeletePipelineBatchModal, setConfirmDeletePipelineBatchModal] = useState(false);
+  const [toDeletePipelineBatch, setToDeletePipelineBatch] = useState({ id: '', friendlyName: '' });
+
 
   const { data, loading, error } = usePipelineBatchesByPipelineIdQuery({ variables: { pipelineId } });
 
@@ -94,8 +97,9 @@ export default function PipelineBatches({ pipelineId, validators }: IPipelineBat
     addPipelineBatch();
   }
 
-  const deleteRecord = (id: string) => {
-    deletePipelineBatch({ variables: { id } });
+  const deleteRecord = () => {
+    setConfirmDeletePipelineBatchModal(false);
+    deletePipelineBatch({ variables: { id: toDeletePipelineBatch.id } });
   }
 
   const hideFieldErrorModal = () => {
@@ -128,6 +132,11 @@ export default function PipelineBatches({ pipelineId, validators }: IPipelineBat
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>
+      {confirmDeletePipelineBatchModal && <ModalFieldError
+        fieldError={{ field: 'Pipeline Batch', message: `Are you sure you want to delete pipeline batch from ${toDeletePipelineBatch.friendlyName}?` }}
+        hideFieldError={() => setConfirmDeletePipelineBatchModal(false)}
+        executeFunction={deleteRecord}
+      />}
       {isModalOpen && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
@@ -162,7 +171,10 @@ export default function PipelineBatches({ pipelineId, validators }: IPipelineBat
               <div className={`pipeline-batch-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   className='button-container'
-                  aria-label='delete row' size='small' onClick={() => deleteRecord(id)}>
+                  aria-label='delete row' size='small' onClick={() => {
+                    setToDeletePipelineBatch({ id, friendlyName: date.split('T')[0] });
+                    setConfirmDeletePipelineBatchModal(true);
+                  }}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </div>

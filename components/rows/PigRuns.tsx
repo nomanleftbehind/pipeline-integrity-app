@@ -56,6 +56,9 @@ export default function PigRuns({ pipelineId, validators }: IPigRunsProps) {
 
   const initialFieldError = { field: '', message: '' };
   const [fieldError, setFieldError] = useState(initialFieldError);
+  const [confirmDeletePigRunModal, setConfirmDeletePigRunModal] = useState(false);
+  const [toDeletePigRun, setToDeletePigRun] = useState({ id: '', friendlyName: '' });
+
 
   const { pigTypeEnum, pigInspectionEnum, operatorEnum } = validators || {};
 
@@ -91,8 +94,9 @@ export default function PigRuns({ pipelineId, validators }: IPigRunsProps) {
     addPigRun();
   }
 
-  const deleteRecord = (id: string) => {
-    deletePigRun({ variables: { id } });
+  const deleteRecord = () => {
+    setConfirmDeletePigRunModal(false);
+    deletePigRun({ variables: { id: toDeletePigRun.id } });
   }
 
   const hideFieldErrorModal = () => {
@@ -125,6 +129,11 @@ export default function PigRuns({ pipelineId, validators }: IPigRunsProps) {
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>
+      {confirmDeletePigRunModal && <ModalFieldError
+        fieldError={{ field: 'Pig Run', message: `Are you sure you want to delete pig run from ${toDeletePigRun.friendlyName}?` }}
+        hideFieldError={() => setConfirmDeletePigRunModal(false)}
+        executeFunction={deleteRecord}
+      />}
       {isModalOpen && <ModalFieldError
         fieldError={fieldError}
         hideFieldError={hideFieldErrorModal}
@@ -159,7 +168,10 @@ export default function PigRuns({ pipelineId, validators }: IPigRunsProps) {
               <div className={`pig-run-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   className='button-container'
-                  aria-label='delete row' size='small' disabled={!authorized} onClick={() => deleteRecord(id)}>
+                  aria-label='delete row' size='small' title='Delete pig run' disabled={!authorized} onClick={() => {
+                    setToDeletePigRun({ id, friendlyName: dateIn.split('T')[0] });
+                    setConfirmDeletePigRunModal(true);
+                  }}>
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </div>
