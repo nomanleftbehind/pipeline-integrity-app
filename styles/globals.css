@@ -25,7 +25,7 @@ a {
 
 
 .app {
-  padding-top: 55px;
+  padding-top: 50px;
 }
 
 #modal-root {
@@ -316,7 +316,7 @@ nav ul li div {
   left: 0px;
   width: 300px;
   /* max-height: 100vh; */
-  max-height: calc(100vh - 55px);
+  max-height: calc(100vh - 50px); /* this keeps sidebar 50px shorter than screen height, because horizontal navigation bar at the top of the page takes 50px of the screen vertical */
   overflow-y: auto;
 }
 

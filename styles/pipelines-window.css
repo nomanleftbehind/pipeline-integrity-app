@@ -1,6 +1,6 @@
 .pipelines-window {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 30px)) 130px 100px 180px 230px 180px 230px repeat(2, 140px) calc(100vw - 1785px);
+  grid-template-columns: repeat(3, minmax(0, 30px)) 130px 100px 180px 230px 180px 230px repeat(2, 140px) calc(100vw - 1741px);
 
   /* row-gap: 2px; */
   /* column-gap: 4px; */
@@ -8,7 +8,7 @@
   grid-auto-rows: min-content;
   border: #00b9f7 2px solid;
   border-radius: 6px;
-  height: calc(100vh - 88px); /* This thing keep pagination control at the bottom of the page */
+  height: calc(100vh - 83px); /* This thing keep pagination control at the bottom of the page */
   overflow: auto;
 }
 

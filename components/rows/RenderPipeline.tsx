@@ -128,7 +128,7 @@ export default function RenderPipeline({ gridRow, rowIsEven, pipeline, validator
   return (
     <>
       {confirmDeletePipelineModal && <ModalFieldError
-        fieldError={{ field: 'Pipeline', message: `Are you sure you want to delete pipeline ${license}-${segment}?` }}
+        fieldError={{ field: 'Pipeline', message: `Are you sure you want to delete "${license}-${segment}" pipeline? This will delete all License Changes, Pig Runs, Pressure Tests, Pipeline Batches, Geotechnical Parameters, Risk and Chemical section associated with the pipeline!` }}
         hideFieldError={() => setConfirmDeletePipelineModal(false)}
         executeFunction={deleteRecord}
       />}

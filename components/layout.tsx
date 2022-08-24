@@ -15,7 +15,7 @@ export default function Layout({ children, title }: LayoutProps) {
         <title>{title}</title>
       </Head>
       <MenuBar />
-      <div className="app" style={{ paddingTop: '55px' }} >
+      <div className="app">
         <main className={styles.main}>{children}</main>
       </div>
     </>

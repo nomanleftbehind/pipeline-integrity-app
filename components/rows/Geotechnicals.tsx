@@ -126,7 +126,7 @@ export default function Geotechnicals({ pipelineId, validators }: IGeotechnicalP
       <div className='pipeline-data-view-header sticky top left' style={{ gridColumn: 1 }}>
         <IconButton
           className='button-container'
-          aria-label='add row' size='small' title='Add geotechnical entry' onClick={addRecord}>
+          aria-label='add row' size='small' title='Add geotechnical parameter' onClick={addRecord}>
           <AddCircleOutlineOutlinedIcon />
         </IconButton>
       </div>
@@ -170,7 +170,7 @@ export default function Geotechnicals({ pipelineId, validators }: IGeotechnicalP
               <div className={`geotechnical-row sticky left${isLastRow ? ' last' : ''}`} style={{ gridColumn: 1, gridRow }}>
                 <IconButton
                   className='button-container'
-                  aria-label='delete row' size='small' title='Delete geotechnical entry' disabled={!authorized}
+                  aria-label='delete row' size='small' title='Delete geotechnical parameter' disabled={!authorized}
                   onClick={() => {
                     setToDeleteGeotechnical({ id, friendlyName: dateSlopeChecked?.split('T')[0] || '' });
                     setConfirmDeleteGeotechnicalModal(true);
