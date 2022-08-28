@@ -553,6 +553,11 @@ type Risk {
   updatedById: String!
 }
 
+type RiskAllocationProgressObject {
+  numberOfItems: Int!
+  progress: Int!
+}
+
 type RiskPayload {
   error: FieldError
   risk: Risk
@@ -671,6 +676,11 @@ type SourceOptions {
   id: String!
   satellite: String
   source: String!
+}
+
+type Subscription {
+  licenseChangeUpdate: LicenseChange
+  riskAllocationProgress: RiskAllocationProgressObject!
 }
 
 enum TableEnum {

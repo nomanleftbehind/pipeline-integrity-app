@@ -1,4 +1,4 @@
-import { QueryLazyOptions } from '@apollo/client';
+import { LazyQueryHookOptions, QueryResult } from '@apollo/client';
 
 import {
   createContext,
@@ -22,7 +22,7 @@ interface IContextProps {
   setUser: Dispatch<SetStateAction<IUser>>;
   authLoading: boolean;
   authError: string;
-  loadUser: (options?: QueryLazyOptions<Exact<{ [key: string]: never; }>> | undefined) => void;
+  loadUser: (options?: Partial<LazyQueryHookOptions<MeQuery, Exact<{ [key: string]: never; }>>>) => Promise<QueryResult<MeQuery, Exact<{ [key: string]: never; }>>>;
 }
 
 const AuthContext = createContext<IContextProps | null>(null);
@@ -34,7 +34,7 @@ interface IAuthProviderProps {
 export default function AuthProvider({ children }: IAuthProviderProps) {
   const [user, setUser] = useState<IUser>(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [authError, setAuthError] = useState<string>('');
+  const [authError, setAuthError] = useState('');
 
   const [loadUser, { data, loading }] = useMeLazyQuery({
     onCompleted: (data) => {
@@ -46,7 +46,12 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
     },
   });
 
-  useEffect(() => loadUser(), []);
+  useEffect(() => {
+    const loadUserAwait = async () => {
+      await loadUser();
+    }
+    loadUserAwait();
+  }, []);
 
   return (
     <AuthContext.Provider

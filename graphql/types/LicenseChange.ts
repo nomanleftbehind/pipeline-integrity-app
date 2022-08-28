@@ -1,9 +1,7 @@
-import { objectType, stringArg, extendType, nonNull, arg } from 'nexus';
-import { Context } from '../context';
+import { objectType, stringArg, extendType, nonNull, arg, subscriptionType } from 'nexus';
+import { Context, ContextSubscription } from '../context';
 import { User as IUser, LicenseChange as ILicenseChange } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
-
-
 
 
 export const LicenseChangeObjectFields: ITableConstructObject[] = [
@@ -183,6 +181,7 @@ export const LicenseChangeMutation = extendType({
                 updatedById: userId,
               },
             });
+            ctx.pubsub.publish('licenseChangeUpdate', licenseChange);
             return { licenseChange }
           }
           return {
@@ -310,6 +309,23 @@ export const LicenseChangeMutation = extendType({
           }
         }
       }
+    })
+  }
+});
+
+
+export const LicenseChangeSubscription = extendType({
+  type: 'Subscription',
+  definition: t => {
+    t.field('licenseChangeUpdate', {
+      type: 'LicenseChange',
+      subscribe: (_root, _args, ctx: ContextSubscription) => {
+        return ctx.pubsub.asyncIterator('licenseChangeUpdate');
+      },
+      resolve: (root: ILicenseChange, args, ctx: ContextSubscription) => {
+        console.log('subscribe ctx:', root);
+        return root
+      },
     })
   }
 });

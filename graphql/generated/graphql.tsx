@@ -12,7 +12,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: string;
 };
 
@@ -985,6 +984,11 @@ export type Risk = {
   updatedById: Scalars['String'];
 };
 
+export type RiskAllocationProgressObject = {
+  numberOfItems: Scalars['Int'];
+  progress: Scalars['Int'];
+};
+
 export type RiskPayload = {
   error?: Maybe<FieldError>;
   risk?: Maybe<Risk>;
@@ -1103,6 +1107,11 @@ export type SourceOptions = {
   id: Scalars['String'];
   satellite?: Maybe<Scalars['String']>;
   source: Scalars['String'];
+};
+
+export type Subscription = {
+  licenseChangeUpdate?: Maybe<LicenseChange>;
+  riskAllocationProgress: RiskAllocationProgressObject;
 };
 
 export enum TableEnum {
@@ -1779,6 +1788,16 @@ export type SideBarQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SideBarQuery = { sideBar?: Array<{ id: string, name: string, satellites: Array<{ id: string, name: string }> } | null | undefined> | null | undefined };
+
+export type LicenseChangeUpdateSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LicenseChangeUpdateSubscription = { licenseChangeUpdate?: { id: string, statusId: string, substanceId: string, date: string, comment?: string | null | undefined, linkToDocumentation?: string | null | undefined, createdById: string, createdAt: string, updatedById: string, updatedAt: string } | null | undefined };
+
+export type RiskAllocationProgressSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RiskAllocationProgressSubscription = { riskAllocationProgress: { progress: number, numberOfItems: number } };
 
 
 export const LoginDocument = gql`
@@ -4785,3 +4804,71 @@ export function useSideBarLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Si
 export type SideBarQueryHookResult = ReturnType<typeof useSideBarQuery>;
 export type SideBarLazyQueryHookResult = ReturnType<typeof useSideBarLazyQuery>;
 export type SideBarQueryResult = Apollo.QueryResult<SideBarQuery, SideBarQueryVariables>;
+export const LicenseChangeUpdateDocument = gql`
+    subscription LicenseChangeUpdate {
+  licenseChangeUpdate {
+    id
+    statusId
+    substanceId
+    date
+    comment
+    linkToDocumentation
+    createdById
+    createdAt
+    updatedById
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useLicenseChangeUpdateSubscription__
+ *
+ * To run a query within a React component, call `useLicenseChangeUpdateSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useLicenseChangeUpdateSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLicenseChangeUpdateSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLicenseChangeUpdateSubscription(baseOptions?: Apollo.SubscriptionHookOptions<LicenseChangeUpdateSubscription, LicenseChangeUpdateSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<LicenseChangeUpdateSubscription, LicenseChangeUpdateSubscriptionVariables>(LicenseChangeUpdateDocument, options);
+      }
+export type LicenseChangeUpdateSubscriptionHookResult = ReturnType<typeof useLicenseChangeUpdateSubscription>;
+export type LicenseChangeUpdateSubscriptionResult = Apollo.SubscriptionResult<LicenseChangeUpdateSubscription>;
+export const RiskAllocationProgressDocument = gql`
+    subscription RiskAllocationProgress {
+  riskAllocationProgress {
+    progress
+    numberOfItems
+  }
+}
+    `;
+
+/**
+ * __useRiskAllocationProgressSubscription__
+ *
+ * To run a query within a React component, call `useRiskAllocationProgressSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useRiskAllocationProgressSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRiskAllocationProgressSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useRiskAllocationProgressSubscription(baseOptions?: Apollo.SubscriptionHookOptions<RiskAllocationProgressSubscription, RiskAllocationProgressSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<RiskAllocationProgressSubscription, RiskAllocationProgressSubscriptionVariables>(RiskAllocationProgressDocument, options);
+      }
+export type RiskAllocationProgressSubscriptionHookResult = ReturnType<typeof useRiskAllocationProgressSubscription>;
+export type RiskAllocationProgressSubscriptionResult = Apollo.SubscriptionResult<RiskAllocationProgressSubscription>;

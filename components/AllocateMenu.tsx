@@ -4,7 +4,10 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { openModal } from '../components/rows/RenderPipeline';
 import { ModalFieldError as ModalFieldPayload } from './Modal';
-import { useAllocateRiskMutation } from '../graphql/generated/graphql';
+import {
+  useAllocateRiskMutation,
+  useRiskAllocationProgressSubscription,
+} from '../graphql/generated/graphql';
 
 
 export default function AllocateMenu() {
@@ -17,14 +20,28 @@ export default function AllocateMenu() {
     setAnchorEl(null);
   };
 
+  const { } = useRiskAllocationProgressSubscription({
+    onSubscriptionData: ({ subscriptionData: { data } }) => {
+      if (data) {
+        const { riskAllocationProgress: { progress, numberOfItems } } = data;
+        console.log(`Allocated ${progress} of ${numberOfItems}`);
+        
+        setFieldPayload({
+          field: 'Risk Allocation',
+          message: `Allocated ${progress} of ${numberOfItems}`
+        });
+      }
+    },
+  });
+
   const [allocateRisk] = useAllocateRiskMutation({
     onCompleted: ({ allocateRisk }) => {
       const { error, success } = allocateRisk || {};
       if (error) {
-        setFieldEPayload(error);
+        setFieldPayload(error);
       }
       if (success) {
-        setFieldEPayload(success);
+        setFieldPayload(success);
       }
     }
   });
@@ -36,10 +53,10 @@ export default function AllocateMenu() {
   }
 
   const initialFieldPayload = { field: '', message: '' };
-  const [fieldPayload, setFieldEPayload] = useState(initialFieldPayload);
+  const [fieldPayload, setFieldPayload] = useState(initialFieldPayload);
 
   const hideFieldPayloadModal = () => {
-    setFieldEPayload(initialFieldPayload);
+    setFieldPayload(initialFieldPayload);
   }
 
   const isModalOpen = openModal(fieldPayload);

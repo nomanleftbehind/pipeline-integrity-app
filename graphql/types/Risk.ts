@@ -1,6 +1,7 @@
-import { enumType, objectType, stringArg, extendType, nonNull, inputObjectType, arg } from 'nexus';
-import { Context } from '../context';
+import { objectType, stringArg, extendType, nonNull, inputObjectType, arg } from 'nexus';
+import { Context, ContextSubscription } from '../context';
 import { User as IUser } from '@prisma/client';
+import { NexusGenFieldTypes } from 'nexus-typegen';
 import { allocateRisk } from './RiskCalcs';
 import { ITableConstructObject } from './SearchNavigation';
 
@@ -277,9 +278,13 @@ export const RiskMutation = extendType({
                 id: true,
               }
             });
+            const numberOfItems = allRisks.length;
+            let progress = 0;
             for (const { id } of allRisks) {
-              console.log(id);
               await allocateRisk({ id, ctx });
+              progress += 1;
+              ctx.pubsub.publish('riskAllocationProgress', { progress, numberOfItems });
+              if (progress > 100) break
             }
             return {
               success: {
@@ -312,4 +317,28 @@ export const AllocationPayload = objectType({
     t.field('success', { type: 'FieldError' })
     t.field('error', { type: 'FieldError' })
   },
+});
+
+
+export const RiskAllocationProgressObject = objectType({
+  name: 'RiskAllocationProgressObject',
+  definition: t => {
+    t.nonNull.int('progress')
+    t.nonNull.int('numberOfItems')
+  },
+});
+
+export const RiskAllocationProgressSubscription = extendType({
+  type: 'Subscription',
+  definition: t => {
+    t.nonNull.field('riskAllocationProgress', {
+      type: 'RiskAllocationProgressObject',
+      subscribe: (_root, _args, ctx: ContextSubscription) => {
+        return ctx.pubsub.asyncIterator('riskAllocationProgress');
+      },
+      resolve: (root: NexusGenFieldTypes['Subscription']['riskAllocationProgress'], args, ctx: ContextSubscription) => {
+        return root
+      },
+    })
+  }
 });

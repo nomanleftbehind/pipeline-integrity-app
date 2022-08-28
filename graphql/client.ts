@@ -1,7 +1,10 @@
 import { useMemo } from 'react';
-import { ApolloClient, InMemoryCache, NormalizedCacheObject, } from '@apollo/client';
+import { ApolloClient, InMemoryCache, NormalizedCacheObject, split } from '@apollo/client';
 import merge from 'deepmerge';
 import { HttpLink } from '@apollo/client/link/http';
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import { createClient } from "graphql-ws";
+import { getMainDefinition } from '@apollo/client/utilities';
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
@@ -20,9 +23,33 @@ function createIsomorphLink() {
 }
 
 function createApolloClient() {
+
+  const httpLink = new HttpLink({
+    uri: 'http://localhost:3000/api',
+    credentials: 'same-origin',
+  });
+
+  const wsLink = typeof window !== 'undefined' ? new GraphQLWsLink(createClient({
+    url: 'ws://localhost:3000/api',
+
+  })) : null;
+
+  const splitLink = typeof window !== 'undefined' ? split(
+    ({ query }) => {
+      const definition = getMainDefinition(query);
+      return (
+        definition.kind === 'OperationDefinition' &&
+        definition.operation === 'subscription'
+      );
+    },
+    wsLink!,
+    httpLink,
+  ) : httpLink;
+
+
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
-    link: createIsomorphLink(),
+    link: splitLink,//createIsomorphLink(),
     cache: new InMemoryCache({
       addTypename: false,
       // default behavior of completely replacing the existing data with the incoming data,

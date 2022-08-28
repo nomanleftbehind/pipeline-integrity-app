@@ -827,7 +827,7 @@ export function serverEnumToDatabaseEnum<T>(object: T, key: keyof T) {
   return object[key] as unknown as keyof T;
 }
 
-export function databaseEnumToServerEnum<T>(object: T, value: T[keyof T] | null | undefined) {
+export function databaseEnumToServerEnum<T extends {}>(object: T, value: T[keyof T] | null | undefined) {
   // This step is necessary because otherwise, function would return undefined if null was passed for value.
   // In GraphQL and context of this function, undefined means `do nothing`, null means set field to null.
   if (value === null) {

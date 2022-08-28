@@ -7,6 +7,7 @@ import {
   LicenseChangesByPipelineIdDocument,
   PipelinesByIdDocument,
   RiskByIdDocument,
+  useLicenseChangeUpdateSubscription
 } from '../../graphql/generated/graphql';
 
 import RecordEntry, { IEditRecord, IRecordEntryProps } from '../fields/RecordEntry';
@@ -31,9 +32,19 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
   const [confirmDeleteLicenseChangeModal, setConfirmDeleteLicenseChangeModal] = useState(false);
   const [toDeleteLicenseChange, setToDeleteLicenseChange] = useState({ id: '', friendlyName: '' });
 
-  const { data, loading, error } = useLicenseChangesByPipelineIdQuery({ variables: { pipelineId } });
+  const { data: dataLicneseUpdatedSubscription, loading: loadingLicneseUpdatedSubscription } = useLicenseChangeUpdateSubscription({
+    onSubscriptionComplete: () => {
+      console.log('subscription complete');
+    },
+    onSubscriptionData: ({ client, subscriptionData }) => {
+      console.log('client:', client);
+      console.log('subscriptionData:', subscriptionData);
+    },
+  });
+
+  const { data, loading, error, subscribeToMore } = useLicenseChangesByPipelineIdQuery({ variables: { pipelineId } });
   const [editLicenseChange] = useEditLicenseChangeMutation({
-    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdDocument, 'pipelinesById', RiskByIdDocument, 'RiskById'],
+    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdDocument, 'PipelinesById'/*, RiskByIdDocument, 'RiskById'*/],
     onCompleted: ({ editLicenseChange }) => {
       const { error } = editLicenseChange || {};
       if (error) {
@@ -43,7 +54,7 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
   });
   const [addLicenseChange] = useAddLicenseChangeMutation({
     variables: { pipelineId },
-    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdDocument, 'pipelinesById', RiskByIdDocument, 'RiskById'],
+    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdDocument, 'PipelinesById'/*, RiskByIdDocument, 'RiskById'*/],
     onCompleted: ({ addLicenseChange }) => {
       const { error } = addLicenseChange || {};
       if (error) {
@@ -52,7 +63,7 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
     }
   });
   const [deleteLicenseChange] = useDeleteLicenseChangeMutation({
-    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdDocument, 'pipelinesById', RiskByIdDocument, 'RiskById'],
+    refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdDocument, 'PipelinesById'/*, RiskByIdDocument, 'RiskById'*/],
     onCompleted: ({ deleteLicenseChange }) => {
       const { error } = deleteLicenseChange || {};
       if (error) {
@@ -141,6 +152,7 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
         gridColumn += 2;
         return <div key={gridColumn} className='pipeline-data-view-header sticky top' style={{ gridColumn }}>{label}</div>
       })}
+      {dataLicneseUpdatedSubscription?.licenseChangeUpdate && <div>{dataLicneseUpdatedSubscription.licenseChangeUpdate.comment}</div>}
       {loading && <div style={{ padding: '4px', gridColumn: 2, gridRow: 2 }}>Loading...</div>}
       {error && <div style={{ padding: '4px', gridColumn: 2, gridRow: 2 }}>{error.message}</div>}
       {data?.licenseChangesByPipelineId?.map((licenseChange, gridRow) => {

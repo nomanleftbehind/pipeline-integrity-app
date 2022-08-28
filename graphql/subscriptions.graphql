@@ -1,0 +1,21 @@
+subscription LicenseChangeUpdate {
+  licenseChangeUpdate {
+    id
+    statusId
+    substanceId
+    date
+    comment
+    linkToDocumentation
+    createdById
+    createdAt
+    updatedById
+    updatedAt
+  }
+}
+
+subscription RiskAllocationProgress {
+  riskAllocationProgress {
+    progress
+    numberOfItems
+  }
+}
