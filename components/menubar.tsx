@@ -32,7 +32,7 @@ export default function ManuBar() {
         )}
         {(user && ['ADMIN', 'ENGINEER'].includes(user.role)) && (
           <li>
-            <AllocateMenu />
+            <AllocateMenu userId={user.id} />
           </li>
         )}
         {(!user || user.role === 'ADMIN') && (

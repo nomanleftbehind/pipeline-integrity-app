@@ -1,9 +1,10 @@
 import { objectType, stringArg, extendType, nonNull, inputObjectType, arg } from 'nexus';
 import { Context, ContextSubscription } from '../context';
 import { User as IUser } from '@prisma/client';
-import { NexusGenFieldTypes } from 'nexus-typegen';
+import { NexusGenFieldTypes, NexusGenArgTypes } from 'nexus-typegen';
 import { allocateRisk } from './RiskCalcs';
 import { ITableConstructObject } from './SearchNavigation';
+import { withFilter } from 'graphql-subscriptions';
 
 
 
@@ -270,7 +271,7 @@ export const RiskMutation = extendType({
       resolve: async (_, _args, ctx) => {
         const user = ctx.user;
         if (user) {
-          const { firstName } = user;
+          const { firstName, id: userId } = user;
           const authorized = resolveRiskAuthorized(user);
           if (authorized) {
             const allRisks = await ctx.prisma.risk.findMany({
@@ -283,7 +284,7 @@ export const RiskMutation = extendType({
             for (const { id } of allRisks) {
               await allocateRisk({ id, ctx });
               progress += 1;
-              ctx.pubsub.publish('riskAllocationProgress', { progress, numberOfItems });
+              ctx.pubsub.publish('riskAllocationProgress', { userId, progress, numberOfItems });
               if (progress > 100) break
             }
             return {
@@ -323,8 +324,16 @@ export const AllocationPayload = objectType({
 export const RiskAllocationProgressObject = objectType({
   name: 'RiskAllocationProgressObject',
   definition: t => {
+    t.nonNull.string('userId')
     t.nonNull.int('progress')
     t.nonNull.int('numberOfItems')
+  },
+});
+
+export const RiskAllocationInput = inputObjectType({
+  name: 'RiskAllocationInput',
+  definition(t) {
+    t.nonNull.string('userId')
   },
 });
 
@@ -333,10 +342,17 @@ export const RiskAllocationProgressSubscription = extendType({
   definition: t => {
     t.nonNull.field('riskAllocationProgress', {
       type: 'RiskAllocationProgressObject',
-      subscribe: (_root, _args, ctx: ContextSubscription) => {
-        return ctx.pubsub.asyncIterator('riskAllocationProgress');
-      },
-      resolve: (root: NexusGenFieldTypes['Subscription']['riskAllocationProgress'], args, ctx: ContextSubscription) => {
+      args: { data: nonNull(arg({ type: 'RiskAllocationInput' })) },
+      subscribe: withFilter(
+        (_root/* This is still undefined at this point */, _args: NexusGenArgTypes['Subscription']['riskAllocationProgress'], ctx: ContextSubscription) => {
+          return ctx.pubsub.asyncIterator('riskAllocationProgress')
+        },
+        (root: NexusGenFieldTypes['Subscription']['riskAllocationProgress'], args: NexusGenArgTypes['Subscription']['riskAllocationProgress'], _ctx: ContextSubscription) => {
+          // Only push an update for user who pressed the allocate button
+          return (root.userId === args.data.userId);
+        },
+      ),
+      resolve: (root: NexusGenFieldTypes['Subscription']['riskAllocationProgress'], _args, _ctx: ContextSubscription) => {
         return root
       },
     })

@@ -13,8 +13,8 @@ subscription LicenseChangeUpdate {
   }
 }
 
-subscription RiskAllocationProgress {
-  riskAllocationProgress {
+subscription RiskAllocationProgress($data: RiskAllocationInput!) {
+  riskAllocationProgress(data: $data) {
     progress
     numberOfItems
   }

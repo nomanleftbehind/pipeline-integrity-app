@@ -31,7 +31,6 @@ function createApolloClient() {
 
   const wsLink = typeof window !== 'undefined' ? new GraphQLWsLink(createClient({
     url: 'ws://localhost:3000/api',
-
   })) : null;
 
   const splitLink = typeof window !== 'undefined' ? split(

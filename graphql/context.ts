@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../lib/prisma';
-import { getUser } from "../lib/user";
+import { getUser } from '../lib/user';
 import { User as IUser } from '@prisma/client';
 import { PubSub } from 'graphql-subscriptions';
 

@@ -984,9 +984,14 @@ export type Risk = {
   updatedById: Scalars['String'];
 };
 
+export type RiskAllocationInput = {
+  userId: Scalars['String'];
+};
+
 export type RiskAllocationProgressObject = {
   numberOfItems: Scalars['Int'];
   progress: Scalars['Int'];
+  userId: Scalars['String'];
 };
 
 export type RiskPayload = {
@@ -1112,6 +1117,11 @@ export type SourceOptions = {
 export type Subscription = {
   licenseChangeUpdate?: Maybe<LicenseChange>;
   riskAllocationProgress: RiskAllocationProgressObject;
+};
+
+
+export type SubscriptionRiskAllocationProgressArgs = {
+  data: RiskAllocationInput;
 };
 
 export enum TableEnum {
@@ -1794,7 +1804,9 @@ export type LicenseChangeUpdateSubscriptionVariables = Exact<{ [key: string]: ne
 
 export type LicenseChangeUpdateSubscription = { licenseChangeUpdate?: { id: string, statusId: string, substanceId: string, date: string, comment?: string | null | undefined, linkToDocumentation?: string | null | undefined, createdById: string, createdAt: string, updatedById: string, updatedAt: string } | null | undefined };
 
-export type RiskAllocationProgressSubscriptionVariables = Exact<{ [key: string]: never; }>;
+export type RiskAllocationProgressSubscriptionVariables = Exact<{
+  data: RiskAllocationInput;
+}>;
 
 
 export type RiskAllocationProgressSubscription = { riskAllocationProgress: { progress: number, numberOfItems: number } };
@@ -4843,8 +4855,8 @@ export function useLicenseChangeUpdateSubscription(baseOptions?: Apollo.Subscrip
 export type LicenseChangeUpdateSubscriptionHookResult = ReturnType<typeof useLicenseChangeUpdateSubscription>;
 export type LicenseChangeUpdateSubscriptionResult = Apollo.SubscriptionResult<LicenseChangeUpdateSubscription>;
 export const RiskAllocationProgressDocument = gql`
-    subscription RiskAllocationProgress {
-  riskAllocationProgress {
+    subscription RiskAllocationProgress($data: RiskAllocationInput!) {
+  riskAllocationProgress(data: $data) {
     progress
     numberOfItems
   }
@@ -4863,10 +4875,11 @@ export const RiskAllocationProgressDocument = gql`
  * @example
  * const { data, loading, error } = useRiskAllocationProgressSubscription({
  *   variables: {
+ *      data: // value for 'data'
  *   },
  * });
  */
-export function useRiskAllocationProgressSubscription(baseOptions?: Apollo.SubscriptionHookOptions<RiskAllocationProgressSubscription, RiskAllocationProgressSubscriptionVariables>) {
+export function useRiskAllocationProgressSubscription(baseOptions: Apollo.SubscriptionHookOptions<RiskAllocationProgressSubscription, RiskAllocationProgressSubscriptionVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useSubscription<RiskAllocationProgressSubscription, RiskAllocationProgressSubscriptionVariables>(RiskAllocationProgressDocument, options);
       }

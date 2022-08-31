@@ -553,9 +553,14 @@ type Risk {
   updatedById: String!
 }
 
+input RiskAllocationInput {
+  userId: String!
+}
+
 type RiskAllocationProgressObject {
   numberOfItems: Int!
   progress: Int!
+  userId: String!
 }
 
 type RiskPayload {
@@ -680,7 +685,7 @@ type SourceOptions {
 
 type Subscription {
   licenseChangeUpdate: LicenseChange
-  riskAllocationProgress: RiskAllocationProgressObject!
+  riskAllocationProgress(data: RiskAllocationInput!): RiskAllocationProgressObject!
 }
 
 enum TableEnum {

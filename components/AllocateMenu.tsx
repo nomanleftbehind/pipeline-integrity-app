@@ -10,7 +10,11 @@ import {
 } from '../graphql/generated/graphql';
 
 
-export default function AllocateMenu() {
+interface IAllocateMenuProps {
+  userId: string;
+}
+
+export default function AllocateMenu({ userId }: IAllocateMenuProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -21,11 +25,12 @@ export default function AllocateMenu() {
   };
 
   const { } = useRiskAllocationProgressSubscription({
+    variables: { data: { userId } },
     onSubscriptionData: ({ subscriptionData: { data } }) => {
       if (data) {
         const { riskAllocationProgress: { progress, numberOfItems } } = data;
         console.log(`Allocated ${progress} of ${numberOfItems}`);
-        
+
         setFieldPayload({
           field: 'Risk Allocation',
           message: `Allocated ${progress} of ${numberOfItems}`

@@ -50,8 +50,8 @@ export default cors(async function (req, res: any) {
     res.socket.server.subtransport = useServer(
       {
         schema,
-        onConnect: ({ subscriptions }) => {
-          console.log('Connected!');
+        onConnect: ({ subscriptions, connectionParams }) => {
+          console.log('connectionParams', connectionParams);
         },
         onError: (ctx, msg, errors) => {
           console.log(errors);
@@ -59,10 +59,10 @@ export default cors(async function (req, res: any) {
         onDisconnect: () => {
           console.log('Disconnected');
         },
-        context: (ctx, msg, args) => {
+        context: async (ctx, msg, args) => {
           return {
             pubsub,
-            prisma
+            prisma,
           }
         }
       },
