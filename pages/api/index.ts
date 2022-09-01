@@ -14,7 +14,7 @@ const cors = Cors({ allowCredentials: true, origin: 'https://studio.apollographq
 
 const path = '/api';
 const apollo = new ApolloServer({
-  schema: schema,
+  schema,
   csrfPrevention: true,
   introspection: true,
   // Default cache in Apollo Server 3 is unbounded, meaning an attacker can exhaust the memory and crash the server.
@@ -70,7 +70,8 @@ export default cors(async function (req, res: any) {
     );
   }
 
-  return res.socket.server.apollo(req, res);
+  // Possibly use return instead of await here
+  await res.socket.server.apollo(req, res);
 });
 
 export const config = {
