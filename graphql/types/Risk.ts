@@ -1,6 +1,6 @@
 import { objectType, stringArg, extendType, nonNull, inputObjectType, arg } from 'nexus';
 import { Context, ContextSubscription } from '../context';
-import { User as IUser } from '@prisma/client';
+import { Prisma, User as IUser } from '@prisma/client';
 import { NexusGenFieldTypes, NexusGenArgTypes } from 'nexus-typegen';
 import { allocateRisk } from './RiskCalcs';
 import { ITableConstructObject } from './SearchNavigation';
@@ -281,12 +281,30 @@ export const RiskMutation = extendType({
             });
             const numberOfItems = allRisks.length;
             let progress = 0;
-            for (const { id } of allRisks) {
-              await allocateRisk({ id, ctx });
-              progress += 1;
-              ctx.pubsub.publish('riskAllocationProgress', { userId, progress, numberOfItems });
-              if (progress > 100) break
+            try {
+              for (const { id } of allRisks) {
+                progress += 1;
+                await allocateRisk({ id, ctx });
+                ctx.pubsub.publish('riskAllocationProgress', { userId, progress, numberOfItems });
+                if (progress > 100) break
+              }
+            } catch (e) {
+              // If allocation fails, publish initial progress to close the progress modal
+              ctx.pubsub.publish('riskAllocationProgress', { userId, progress: 0, numberOfItems: 0 });
+              if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2010') {
+                  return {
+                    error: {
+                      field: 'User',
+                      message: `Hi ${firstName}, pipeline flow calculation function does not exit on a database.`,
+                    }
+                  }
+                }
+              }
+              throw e;
             }
+            // If allocation succeeds, publish initial progress after the loop to close the progress modal
+            ctx.pubsub.publish('riskAllocationProgress', { userId, progress: 0, numberOfItems: 0 });
             return {
               success: {
                 field: 'Risk',

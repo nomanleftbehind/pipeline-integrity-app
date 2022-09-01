@@ -2,8 +2,8 @@ import { useState } from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { openModal } from '../components/rows/RenderPipeline';
-import { ModalFieldError as ModalFieldPayload } from './Modal';
+import { ModalAllocationProgress, ModalFieldError, openAllocationProgressModal } from './Modal';
+import { openModal } from './rows/RenderPipeline';
 import {
   useAllocateRiskMutation,
   useRiskAllocationProgressSubscription,
@@ -29,11 +29,9 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
     onSubscriptionData: ({ subscriptionData: { data } }) => {
       if (data) {
         const { riskAllocationProgress: { progress, numberOfItems } } = data;
-        console.log(`Allocated ${progress} of ${numberOfItems}`);
-
-        setFieldPayload({
-          field: 'Risk Allocation',
-          message: `Allocated ${progress} of ${numberOfItems}`
+        setAllocationProgressBar({
+          progress,
+          numberOfItems,
         });
       }
     },
@@ -43,34 +41,37 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
     onCompleted: ({ allocateRisk }) => {
       const { error, success } = allocateRisk || {};
       if (error) {
-        setFieldPayload(error);
+        setFieldStatus(error);
       }
       if (success) {
-        setFieldPayload(success);
+        setFieldStatus(success);
       }
     }
   });
 
   const handleAllocate = () => {
-    allocateRisk({
-      notifyOnNetworkStatusChange: true,
-    });
+    allocateRisk();
   }
 
-  const initialFieldPayload = { field: '', message: '' };
-  const [fieldPayload, setFieldPayload] = useState(initialFieldPayload);
+  const [allocationProgressBar, setAllocationProgressBar] = useState({ progress: 0, numberOfItems: 0 });
+  const initialFieldStatus = { field: '', message: '' };
+  const [fieldStatus, setFieldStatus] = useState(initialFieldStatus);
 
-  const hideFieldPayloadModal = () => {
-    setFieldPayload(initialFieldPayload);
+  const isProgressModalOpen = openAllocationProgressModal(allocationProgressBar);
+  const isStatusModalOpen = openModal(fieldStatus);
+
+  const hideFieldStatusModal = () => {
+    setFieldStatus(initialFieldStatus);
   }
-
-  const isModalOpen = openModal(fieldPayload);
 
   return (
     <div>
-      {isModalOpen && <ModalFieldPayload
-        fieldError={fieldPayload}
-        hideFieldError={hideFieldPayloadModal}
+      {isProgressModalOpen && <ModalAllocationProgress
+        progress={allocationProgressBar}
+      />}
+      {isStatusModalOpen && <ModalFieldError
+        fieldError={fieldStatus}
+        hideFieldError={hideFieldStatusModal}
       />}
       <Button
         id="basic-button"

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, ReactNode } from 'react';
 import ReactDOM from 'react-dom';
-import { FieldError } from '../graphql/generated/graphql';
+import { FieldError, RiskAllocationProgressSubscription } from '../graphql/generated/graphql';
 
 
 interface IModalProps {
@@ -54,4 +54,29 @@ export function ModalFieldError({ fieldError: { field, message }, hideFieldError
       </div>
     </Modal>
   );
+}
+
+interface IModalAllocationProgressProps {
+  progress: RiskAllocationProgressSubscription['riskAllocationProgress'];
+}
+
+export function ModalAllocationProgress({ progress: { progress, numberOfItems } }: IModalAllocationProgressProps) {
+  return (
+    <Modal>
+      <div className='modal'>
+        <div className='modal-box'>
+          <div>
+            {`Allocated ${progress} out of ${numberOfItems}`}
+          </div>
+          <div style={{ width: '100%', border: '1px solid black', padding: '1px' }}>
+            <div style={{ width: `${(progress / numberOfItems) * 100}%`, backgroundColor: 'blue', height: '20px' }}></div>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+export const openAllocationProgressModal = ({ progress, numberOfItems }: RiskAllocationProgressSubscription['riskAllocationProgress']) => {
+  return progress !== 0 && numberOfItems !== 0;
 }
