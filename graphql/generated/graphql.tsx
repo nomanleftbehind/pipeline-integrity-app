@@ -1115,7 +1115,6 @@ export type SourceOptions = {
 };
 
 export type Subscription = {
-  licenseChangeUpdate?: Maybe<LicenseChange>;
   riskAllocationProgress: RiskAllocationProgressObject;
 };
 
@@ -1798,11 +1797,6 @@ export type SideBarQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SideBarQuery = { sideBar?: Array<{ id: string, name: string, satellites: Array<{ id: string, name: string }> } | null | undefined> | null | undefined };
-
-export type LicenseChangeUpdateSubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type LicenseChangeUpdateSubscription = { licenseChangeUpdate?: { id: string, statusId: string, substanceId: string, date: string, comment?: string | null | undefined, linkToDocumentation?: string | null | undefined, createdById: string, createdAt: string, updatedById: string, updatedAt: string } | null | undefined };
 
 export type RiskAllocationProgressSubscriptionVariables = Exact<{
   data: RiskAllocationInput;
@@ -4816,44 +4810,6 @@ export function useSideBarLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Si
 export type SideBarQueryHookResult = ReturnType<typeof useSideBarQuery>;
 export type SideBarLazyQueryHookResult = ReturnType<typeof useSideBarLazyQuery>;
 export type SideBarQueryResult = Apollo.QueryResult<SideBarQuery, SideBarQueryVariables>;
-export const LicenseChangeUpdateDocument = gql`
-    subscription LicenseChangeUpdate {
-  licenseChangeUpdate {
-    id
-    statusId
-    substanceId
-    date
-    comment
-    linkToDocumentation
-    createdById
-    createdAt
-    updatedById
-    updatedAt
-  }
-}
-    `;
-
-/**
- * __useLicenseChangeUpdateSubscription__
- *
- * To run a query within a React component, call `useLicenseChangeUpdateSubscription` and pass it any options that fit your needs.
- * When your component renders, `useLicenseChangeUpdateSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useLicenseChangeUpdateSubscription({
- *   variables: {
- *   },
- * });
- */
-export function useLicenseChangeUpdateSubscription(baseOptions?: Apollo.SubscriptionHookOptions<LicenseChangeUpdateSubscription, LicenseChangeUpdateSubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<LicenseChangeUpdateSubscription, LicenseChangeUpdateSubscriptionVariables>(LicenseChangeUpdateDocument, options);
-      }
-export type LicenseChangeUpdateSubscriptionHookResult = ReturnType<typeof useLicenseChangeUpdateSubscription>;
-export type LicenseChangeUpdateSubscriptionResult = Apollo.SubscriptionResult<LicenseChangeUpdateSubscription>;
 export const RiskAllocationProgressDocument = gql`
     subscription RiskAllocationProgress($data: RiskAllocationInput!) {
   riskAllocationProgress(data: $data) {

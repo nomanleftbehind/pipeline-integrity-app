@@ -9824,18 +9824,6 @@
         "description": null,
         "fields": [
           {
-            "name": "licenseChangeUpdate",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "LicenseChange",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "riskAllocationProgress",
             "description": null,
             "args": [

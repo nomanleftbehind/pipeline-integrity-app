@@ -283,10 +283,9 @@ export const RiskMutation = extendType({
             let progress = 0;
             try {
               for (const { id } of allRisks) {
-                progress += 1;
                 await allocateRisk({ id, ctx });
+                progress += 1;
                 ctx.pubsub.publish('riskAllocationProgress', { userId, progress, numberOfItems });
-                if (progress > 100) break
               }
             } catch (e) {
               // If allocation fails, publish initial progress to close the progress modal
@@ -295,8 +294,8 @@ export const RiskMutation = extendType({
                 if (e.code === 'P2010') {
                   return {
                     error: {
-                      field: 'User',
-                      message: `Hi ${firstName}, pipeline flow calculation function does not exit on a database.`,
+                      field: 'Risk',
+                      message: `Pipeline flow calculation function does not exit on a database.`,
                     }
                   }
                 }

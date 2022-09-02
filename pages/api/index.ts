@@ -1,15 +1,14 @@
 import { ApolloServer } from 'apollo-server-micro';
-import { useServer } from 'graphql-ws/lib/use/ws';
-import { WebSocketServer } from 'ws';
+import { RequestHandler } from 'micro';
 import Cors from 'micro-cors';
+import { WebSocketServer } from 'ws';
+import { NextApiHandler } from 'next';
+import { useServer } from 'graphql-ws/lib/use/ws';
 
 import { schema } from '../../graphql/schema';
 import { createContext } from '../../graphql/context';
 import { prisma } from '../../lib/prisma';
 import { pubsub } from '../../graphql/context';
-
-
-const cors = Cors({ allowCredentials: true, origin: 'https://studio.apollographql.com' });
 
 
 const path = '/api';
@@ -29,7 +28,8 @@ const apollo = new ApolloServer({
 // otherwise apollo server will be initialized on every request
 const startServer = apollo.start();
 
-export default cors(async function (req, res: any) {
+const handler: NextApiHandler = async (req, res: any) => {
+
   if (req.method === 'OPTIONS') {
     res.end();
     return false;
@@ -50,11 +50,11 @@ export default cors(async function (req, res: any) {
     res.socket.server.subtransport = useServer(
       {
         schema,
-        onConnect: ({ subscriptions, connectionParams }) => {
-          console.log('connectionParams', connectionParams);
+        onConnect: ({ subscriptions }) => {
+          console.log('subscriptions', subscriptions);
         },
         onError: (ctx, msg, errors) => {
-          console.log(errors);
+          console.log('errors:', errors);
         },
         onDisconnect: () => {
           console.log('Disconnected');
@@ -72,7 +72,9 @@ export default cors(async function (req, res: any) {
 
   // Possibly use return instead of await here
   await res.socket.server.apollo(req, res);
-});
+};
+
+export default Cors()(handler as RequestHandler);
 
 export const config = {
   api: {

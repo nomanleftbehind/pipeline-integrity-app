@@ -1,18 +1,3 @@
-subscription LicenseChangeUpdate {
-  licenseChangeUpdate {
-    id
-    statusId
-    substanceId
-    date
-    comment
-    linkToDocumentation
-    createdById
-    createdAt
-    updatedById
-    updatedAt
-  }
-}
-
 subscription RiskAllocationProgress($data: RiskAllocationInput!) {
   riskAllocationProgress(data: $data) {
     progress

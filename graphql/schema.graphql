@@ -684,7 +684,6 @@ type SourceOptions {
 }
 
 type Subscription {
-  licenseChangeUpdate: LicenseChange
   riskAllocationProgress(data: RiskAllocationInput!): RiskAllocationProgressObject!
 }
 
