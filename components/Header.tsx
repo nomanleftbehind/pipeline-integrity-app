@@ -34,7 +34,7 @@ export const prettifyColumnName = (columnName: string) => {
   if (columnName === 'pipelineTypeId') {
     return 'Type'
   }
-  if (columnName === 'pipelineGradeId') {
+  if (columnName === 'gradeId') {
     return 'Grade'
   }
   if (columnName === 'fromFeatureId') {
@@ -43,10 +43,10 @@ export const prettifyColumnName = (columnName: string) => {
   if (columnName === 'toFeatureId') {
     return 'To Feature'
   }
-  if (columnName === 'pipelineMaterialId') {
+  if (columnName === 'materialId') {
     return 'Material'
   }
-  if (columnName === 'pipelineInternalProtectionId') {
+  if (columnName === 'internalProtectionId') {
     return 'Internal Protection'
   }
   if (columnName === 'statusId') {

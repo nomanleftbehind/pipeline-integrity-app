@@ -15,13 +15,13 @@ import {
   loadBatchProductEnumObjectArray,
   loadChemicalSupplierEnumObjectArray,
   loadPipelineTypeEnumObjectArray,
-  loadPipelineGradeEnumObjectArray,
-  loadPipelineFromToFeatureEnumObjectArray,
+  loadGradeEnumObjectArray,
+  loadFromToFeatureEnumObjectArray,
   loadPigTypeEnumObjectArray,
-  loadPipelineMaterialEnumObjectArray,
-  loadPipelineInternalProtectionEnumObjectArray,
-  loadLicenseChangeStatusEnumObjectArray,
-  loadLicenseChangeSubstanceEnumObjectArray,
+  loadMaterialEnumObjectArray,
+  loadInternalProtectionEnumObjectArray,
+  loadStatusEnumObjectArray,
+  loadSubstanceEnumObjectArray,
   loadRiskEnvironmentEnumObjectArray,
 } from './Validator';
 import type { GetGen } from 'nexus/dist/typegenTypeHelpers';
@@ -130,13 +130,13 @@ export const SearchNavigationQuery = extendType({
       resolve: async (_, _args, ctx: Context) => {
         const userIdEnumObjectArray = await loadUserEnumObjectArray({ ctx });
         const environmentIdEnumObjectArray = await loadRiskEnvironmentEnumObjectArray({ ctx });
-        const statusIdEnumObjectArray = await loadLicenseChangeStatusEnumObjectArray({ ctx });
-        const substanceIdEnumObjectArray = await loadLicenseChangeSubstanceEnumObjectArray({ ctx });
+        const statusIdEnumObjectArray = await loadStatusEnumObjectArray({ ctx });
+        const substanceIdEnumObjectArray = await loadSubstanceEnumObjectArray({ ctx });
         const pipelineTypeIdEnumObjectArray = await loadPipelineTypeEnumObjectArray({ ctx });
-        const pipelineGradeIdEnumObjectArray = await loadPipelineGradeEnumObjectArray({ ctx });
-        const pipelineFromToFeatureIdEnumObjectArray = await loadPipelineFromToFeatureEnumObjectArray({ ctx });
-        const pipelineMaterialIdEnumObjectArray = await loadPipelineMaterialEnumObjectArray({ ctx });
-        const pipelineInternalProtectionIdEnumObjectArray = await loadPipelineInternalProtectionEnumObjectArray({ ctx });
+        const gradeIdEnumObjectArray = await loadGradeEnumObjectArray({ ctx });
+        const fromToFeatureIdEnumObjectArray = await loadFromToFeatureEnumObjectArray({ ctx });
+        const materialIdEnumObjectArray = await loadMaterialEnumObjectArray({ ctx });
+        const internalProtectionIdEnumObjectArray = await loadInternalProtectionEnumObjectArray({ ctx });
         const operatorIdEnumObjectArray = await loadOperatorEnumObjectArray({ ctx });
         const pigTypeIdEnumObjectArray = await loadPigTypeEnumObjectArray({ ctx });
         const productIdEnumObjectArray = await loadBatchProductEnumObjectArray({ ctx });
@@ -148,13 +148,8 @@ export const SearchNavigationQuery = extendType({
             .map(({ field, nullable, type, enumObjectArray }) => {
               const newObj: ITableObjectExtend = {
                 table, field, nullable, type,
-                enumObjectArray: field === 'pipelineTypeId' ? pipelineTypeIdEnumObjectArray :
-                  field === 'pipelineGradeId' ? pipelineGradeIdEnumObjectArray :
-                    ['fromFeatureId', 'toFeatureId'].includes(field) ? pipelineFromToFeatureIdEnumObjectArray :
-                      field === 'pipelineMaterialId' ? pipelineMaterialIdEnumObjectArray :
-                        field === 'pipelineInternalProtectionId' ? pipelineInternalProtectionIdEnumObjectArray :
-                          ['createdById', 'updatedById'].includes(field) ? userIdEnumObjectArray :
-                            enumObjectArray
+                enumObjectArray: ['createdById', 'updatedById'].includes(field) ? userIdEnumObjectArray :
+                  enumObjectArray
               };
               return newObj;
             });
@@ -192,8 +187,13 @@ export const SearchNavigationQuery = extendType({
               table: 'licenseChanges', field, nullable, type,
               enumObjectArray: field === 'statusId' ? statusIdEnumObjectArray :
                 field === 'substanceId' ? substanceIdEnumObjectArray :
-                  ['createdById', 'updatedById'].includes(field) ? userIdEnumObjectArray :
-                    enumObjectArray
+                  field === 'pipelineTypeId' ? pipelineTypeIdEnumObjectArray :
+                    field === 'gradeId' ? gradeIdEnumObjectArray :
+                      ['fromFeatureId', 'toFeatureId'].includes(field) ? fromToFeatureIdEnumObjectArray :
+                        field === 'materialId' ? materialIdEnumObjectArray :
+                          field === 'internalProtectionId' ? internalProtectionIdEnumObjectArray :
+                            ['createdById', 'updatedById'].includes(field) ? userIdEnumObjectArray :
+                              enumObjectArray
             };
             return newObj;
           });

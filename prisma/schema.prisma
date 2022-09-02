@@ -8,63 +8,63 @@ datasource db {
 }
 
 model User {
-  id                                  String                       @id @default(uuid())
-  email                               String                       @unique
-  password                            String
-  firstName                           String
-  lastName                            String
-  role                                UserRoleEnum                 @default(OPERATOR)
-  facilityCreatedBy                   Facility[]                   @relation("facilityCreatedBy")
-  facilityUpdatedBy                   Facility[]                   @relation("facilityUpdatedBy")
-  satelliteCreatedBy                  Satellite[]                  @relation("satelliteCreatedBy")
-  satelliteUpdatedBy                  Satellite[]                  @relation("satelliteUpdatedBy")
-  pipelineCreatedBy                   Pipeline[]                   @relation("pipelineCreatedBy")
-  pipelineUpdatedBy                   Pipeline[]                   @relation("pipelineUpdatedBy")
-  pipelineTypeCreatedBy               PipelineType[]               @relation("pipelineTypeCreatedBy")
-  pipelineTypeUpdatedBy               PipelineType[]               @relation("pipelineTypeUpdatedBy")
-  pipelineGradeCreatedBy              PipelineGrade[]              @relation("pipelineGradeCreatedBy")
-  pipelineGradeUpdatedBy              PipelineGrade[]              @relation("pipelineGradeUpdatedBy")
-  pipelineFromToFeatureCreatedBy      PipelineFromToFeature[]      @relation("pipelineFromToFeatureCreatedBy")
-  pipelineFromToFeatureUpdatedBy      PipelineFromToFeature[]      @relation("pipelineFromToFeatureUpdatedBy")
-  pipelineMaterialCreatedBy           PipelineMaterial[]           @relation("pipelineMaterialCreatedBy")
-  pipelineMaterialUpdatedBy           PipelineMaterial[]           @relation("pipelineMaterialUpdatedBy")
-  pipelineInternalProtectionCreatedBy PipelineInternalProtection[] @relation("pipelineInternalProtectionCreatedBy")
-  pipelineInternalProtectionUpdatedBy PipelineInternalProtection[] @relation("pipelineInternalProtectionUpdatedBy")
-  pipelinesOnPipelinesCreatedBy       PipelinesOnPipelines[]       @relation("pipelinesOnPipelinesCreatedBy")
-  pipelinesOnPipelinesUpdatedBy       PipelinesOnPipelines[]       @relation("pipelinesOnPipelinesUpdatedBy")
-  licenseChangeCreatedBy              LicenseChange[]              @relation("licenseChangeCreatedBy")
-  licenseChangeUpdatedBy              LicenseChange[]              @relation("licenseChangeUpdatedBy")
-  licenseChangeStatusCreatedBy        LicenseChangeStatus[]        @relation("licenseChangeStatusCreatedBy")
-  licenseChangeStatusUpdatedBy        LicenseChangeStatus[]        @relation("licenseChangeStatusUpdatedBy")
-  licenseChangeSubstanceCreatedBy     LicenseChangeSubstance[]     @relation("licenseChangeSubstanceCreatedBy")
-  licenseChangeSubstanceUpdatedBy     LicenseChangeSubstance[]     @relation("licenseChangeSubstanceUpdatedBy")
-  wellCreatedBy                       Well[]                       @relation("wellCreatedBy")
-  wellUpdatedBy                       Well[]                       @relation("wellUpdatedBy")
-  salesPointsCreatedBy                SalesPoint[]                 @relation("salesPointCreatedBy")
-  salesPointsUpdatedBy                SalesPoint[]                 @relation("salesPointUpdatedBy")
-  pigRunOperator                      PigRun[]                     @relation("pigRunOperator")
-  pigRunCreatedBy                     PigRun[]                     @relation("pigRunCreatedBy")
-  pigRunUpdatedBy                     PigRun[]                     @relation("pigRunUpdatedBy")
-  pressureTestCreatedBy               PressureTest[]               @relation("pressureTestCreatedBy")
-  pressureTestUpdatedBy               PressureTest[]               @relation("pressureTestUpdatedBy")
-  pipelineBatcheCreatedBy             PipelineBatch[]              @relation("pipelineBatchCreatedBy")
-  pipelineBatcheUpdatedBy             PipelineBatch[]              @relation("pipelineBatchUpdatedBy")
-  wellBatchCreatedBy                  WellBatch[]                  @relation("wellBatchCreatedBy")
-  wellBatchUpdatedBy                  WellBatch[]                  @relation("wellBatchUpdatedBy")
-  batchProductCreatedBy               BatchProduct[]               @relation("batchProductCreatedBy")
-  batchProductUpdatedBy               BatchProduct[]               @relation("batchProductUpdatedBy")
-  pigTypeCreatedBy                    PigType[]                    @relation("pigTypeCreatedBy")
-  pigTypeUpdatedBy                    PigType[]                    @relation("pigTypeUpdatedBy")
-  riskCreatedBy                       Risk[]                       @relation("riskCreatedBy")
-  riskUpdatedBy                       Risk[]                       @relation("riskUpdatedBy")
-  geotechnicalCreatedBy               Geotechnical[]               @relation("geotechnicalCreatedBy")
-  geotechnicalUpdatedBy               Geotechnical[]               @relation("geotechnicalUpdatedBy")
-  riskEnvironmentCreatedBy            RiskEnvironment[]            @relation("riskEnvironmentCreatedBy")
-  riskEnvironmentUpdatedBy            RiskEnvironment[]            @relation("riskEnvironmentUpdatedBy")
-  chemicalCreatedBy                   Chemical[]                   @relation("chemicalCreatedBy")
-  chemicalUpdatedBy                   Chemical[]                   @relation("chemicalUpdatedBy")
-  chemicalSupplierCreatedBy           ChemicalSupplier[]           @relation("chemicalSupplierCreatedBy")
-  chemicalSupplierUpdatedBy           ChemicalSupplier[]           @relation("chemicalSupplierUpdatedBy")
+  id                            String                 @id @default(uuid())
+  email                         String                 @unique
+  password                      String
+  firstName                     String
+  lastName                      String
+  role                          UserRoleEnum           @default(OPERATOR)
+  facilityCreatedBy             Facility[]             @relation("facilityCreatedBy")
+  facilityUpdatedBy             Facility[]             @relation("facilityUpdatedBy")
+  satelliteCreatedBy            Satellite[]            @relation("satelliteCreatedBy")
+  satelliteUpdatedBy            Satellite[]            @relation("satelliteUpdatedBy")
+  pipelineCreatedBy             Pipeline[]             @relation("pipelineCreatedBy")
+  pipelineUpdatedBy             Pipeline[]             @relation("pipelineUpdatedBy")
+  pipelineTypeCreatedBy         PipelineType[]         @relation("pipelineTypeCreatedBy")
+  pipelineTypeUpdatedBy         PipelineType[]         @relation("pipelineTypeUpdatedBy")
+  gradeCreatedBy                Grade[]                @relation("gradeCreatedBy")
+  gradeUpdatedBy                Grade[]                @relation("gradeUpdatedBy")
+  fromToFeatureCreatedBy        FromToFeature[]        @relation("fromToFeatureCreatedBy")
+  fromToFeatureUpdatedBy        FromToFeature[]        @relation("fromToFeatureUpdatedBy")
+  materialCreatedBy             Material[]             @relation("materialCreatedBy")
+  materialUpdatedBy             Material[]             @relation("materialUpdatedBy")
+  internalProtectionCreatedBy   InternalProtection[]   @relation("internalProtectionCreatedBy")
+  internalProtectionUpdatedBy   InternalProtection[]   @relation("internalProtectionUpdatedBy")
+  pipelinesOnPipelinesCreatedBy PipelinesOnPipelines[] @relation("pipelinesOnPipelinesCreatedBy")
+  pipelinesOnPipelinesUpdatedBy PipelinesOnPipelines[] @relation("pipelinesOnPipelinesUpdatedBy")
+  licenseChangeCreatedBy        LicenseChange[]        @relation("licenseChangeCreatedBy")
+  licenseChangeUpdatedBy        LicenseChange[]        @relation("licenseChangeUpdatedBy")
+  statusCreatedBy               Status[]               @relation("statusCreatedBy")
+  statusUpdatedBy               Status[]               @relation("statusUpdatedBy")
+  substanceCreatedBy            Substance[]            @relation("substanceCreatedBy")
+  substanceUpdatedBy            Substance[]            @relation("substanceUpdatedBy")
+  wellCreatedBy                 Well[]                 @relation("wellCreatedBy")
+  wellUpdatedBy                 Well[]                 @relation("wellUpdatedBy")
+  salesPointsCreatedBy          SalesPoint[]           @relation("salesPointCreatedBy")
+  salesPointsUpdatedBy          SalesPoint[]           @relation("salesPointUpdatedBy")
+  pigRunOperator                PigRun[]               @relation("pigRunOperator")
+  pigRunCreatedBy               PigRun[]               @relation("pigRunCreatedBy")
+  pigRunUpdatedBy               PigRun[]               @relation("pigRunUpdatedBy")
+  pressureTestCreatedBy         PressureTest[]         @relation("pressureTestCreatedBy")
+  pressureTestUpdatedBy         PressureTest[]         @relation("pressureTestUpdatedBy")
+  pipelineBatcheCreatedBy       PipelineBatch[]        @relation("pipelineBatchCreatedBy")
+  pipelineBatcheUpdatedBy       PipelineBatch[]        @relation("pipelineBatchUpdatedBy")
+  wellBatchCreatedBy            WellBatch[]            @relation("wellBatchCreatedBy")
+  wellBatchUpdatedBy            WellBatch[]            @relation("wellBatchUpdatedBy")
+  batchProductCreatedBy         BatchProduct[]         @relation("batchProductCreatedBy")
+  batchProductUpdatedBy         BatchProduct[]         @relation("batchProductUpdatedBy")
+  pigTypeCreatedBy              PigType[]              @relation("pigTypeCreatedBy")
+  pigTypeUpdatedBy              PigType[]              @relation("pigTypeUpdatedBy")
+  riskCreatedBy                 Risk[]                 @relation("riskCreatedBy")
+  riskUpdatedBy                 Risk[]                 @relation("riskUpdatedBy")
+  geotechnicalCreatedBy         Geotechnical[]         @relation("geotechnicalCreatedBy")
+  geotechnicalUpdatedBy         Geotechnical[]         @relation("geotechnicalUpdatedBy")
+  riskEnvironmentCreatedBy      RiskEnvironment[]      @relation("riskEnvironmentCreatedBy")
+  riskEnvironmentUpdatedBy      RiskEnvironment[]      @relation("riskEnvironmentUpdatedBy")
+  chemicalCreatedBy             Chemical[]             @relation("chemicalCreatedBy")
+  chemicalUpdatedBy             Chemical[]             @relation("chemicalUpdatedBy")
+  chemicalSupplierCreatedBy     ChemicalSupplier[]     @relation("chemicalSupplierCreatedBy")
+  chemicalSupplierUpdatedBy     ChemicalSupplier[]     @relation("chemicalSupplierUpdatedBy")
 }
 
 enum UserRoleEnum {
@@ -115,119 +115,100 @@ model Satellite {
 }
 
 model Pipeline {
-  id                           String                       @id @default(uuid())
-  satellite                    Satellite?                   @relation(fields: [satelliteId], references: [id])
-  satelliteId                  String?
-  wells                        Well[]
-  salesPoints                  SalesPoint[]
-  pigRuns                      PigRun[]
-  risk                         Risk?
-  geotechnicals                Geotechnical[]
-  chemical                     Chemical?
-  license                      String
-  segment                      String
-  from                         String
-  fromFeature                  PipelineFromToFeature?       @relation("fromFeature", fields: [fromFeatureId], references: [id])
-  fromFeatureId                String?
-  to                           String
-  toFeature                    PipelineFromToFeature?       @relation("toFeature", fields: [toFeatureId], references: [id])
-  toFeatureId                  String?
-  licenseChanges               LicenseChange[]
-  length                       Float
-  pipelineType                 PipelineType?                @relation(fields: [pipelineTypeId], references: [id])
-  pipelineTypeId               String?
-  pipelineGrade                PipelineGrade?               @relation(fields: [pipelineGradeId], references: [id])
-  pipelineGradeId              String?
-  yieldStrength                Int?
-  outsideDiameter              Float?
-  wallThickness                Float?
-  pipelineMaterial             PipelineMaterial?            @relation(fields: [pipelineMaterialId], references: [id])
-  pipelineMaterialId           String?
-  mop                          Int?
-  pipelineInternalProtection   PipelineInternalProtection?  @relation(fields: [pipelineInternalProtectionId], references: [id])
-  pipelineInternalProtectionId String?
-  piggable                     Boolean?
-  piggingFrequency             Int?
-  flowCalculationDirection     FlowCalculationDirectionEnum
-  upstream                     PipelinesOnPipelines[]       @relation("upstream")
-  downstream                   PipelinesOnPipelines[]       @relation("downstream")
-  pressureTests                PressureTest[]
-  pipelineBatches              PipelineBatch[]
-  comment                      String?
-  createdBy                    User                         @relation("pipelineCreatedBy", fields: [createdById], references: [id])
-  createdById                  String
-  createdAt                    DateTime                     @default(now())
-  updatedBy                    User                         @relation("pipelineUpdatedBy", fields: [updatedById], references: [id])
-  updatedById                  String
-  updatedAt                    DateTime                     @updatedAt
+  id                       String                       @id @default(uuid())
+  satellite                Satellite?                   @relation(fields: [satelliteId], references: [id])
+  satelliteId              String?
+  license                  String
+  segment                  String
+  flowCalculationDirection FlowCalculationDirectionEnum
+  piggable                 Boolean?
+  piggingFrequency         Int?
+  comment                  String?
+  risk                     Risk?
+  chemical                 Chemical?
+  licenseChanges           LicenseChange[]
+  pigRuns                  PigRun[]
+  pressureTests            PressureTest[]
+  pipelineBatches          PipelineBatch[]
+  geotechnicals            Geotechnical[]
+  wells                    Well[]
+  salesPoints              SalesPoint[]
+  upstream                 PipelinesOnPipelines[]       @relation("upstream")
+  downstream               PipelinesOnPipelines[]       @relation("downstream")
+  createdBy                User                         @relation("pipelineCreatedBy", fields: [createdById], references: [id])
+  createdById              String
+  createdAt                DateTime                     @default(now())
+  updatedBy                User                         @relation("pipelineUpdatedBy", fields: [updatedById], references: [id])
+  updatedById              String
+  updatedAt                DateTime                     @updatedAt
 
   @@unique([license, segment])
 }
 
 model PipelineType {
-  id          String     @id @default(uuid())
-  pipelines   Pipeline[]
-  type        String     @unique
+  id          String          @id @default(uuid())
+  pipelines   LicenseChange[]
+  type        String          @unique
   description String?
-  createdBy   User       @relation("pipelineTypeCreatedBy", fields: [createdById], references: [id])
+  createdBy   User            @relation("pipelineTypeCreatedBy", fields: [createdById], references: [id])
   createdById String
-  createdAt   DateTime   @default(now())
-  updatedBy   User       @relation("pipelineTypeUpdatedBy", fields: [updatedById], references: [id])
+  createdAt   DateTime        @default(now())
+  updatedBy   User            @relation("pipelineTypeUpdatedBy", fields: [updatedById], references: [id])
   updatedById String
-  updatedAt   DateTime   @updatedAt
+  updatedAt   DateTime        @updatedAt
 }
 
-model PipelineGrade {
-  id          String     @id @default(uuid())
-  pipelines   Pipeline[]
-  grade       String     @unique
+model Grade {
+  id          String          @id @default(uuid())
+  pipelines   LicenseChange[]
+  grade       String          @unique
   description String?
-  createdBy   User       @relation("pipelineGradeCreatedBy", fields: [createdById], references: [id])
+  createdBy   User            @relation("gradeCreatedBy", fields: [createdById], references: [id])
   createdById String
-  createdAt   DateTime   @default(now())
-  updatedBy   User       @relation("pipelineGradeUpdatedBy", fields: [updatedById], references: [id])
+  createdAt   DateTime        @default(now())
+  updatedBy   User            @relation("gradeUpdatedBy", fields: [updatedById], references: [id])
   updatedById String
-  updatedAt   DateTime   @updatedAt
+  updatedAt   DateTime        @updatedAt
 }
 
-model PipelineFromToFeature {
-  id                   String     @id @default(uuid())
-  pipelinesFromFeature Pipeline[] @relation("fromFeature")
-  pipelinesToFeature   Pipeline[] @relation("toFeature")
-  feature              String     @unique
+model FromToFeature {
+  id                   String          @id @default(uuid())
+  pipelinesFromFeature LicenseChange[] @relation("fromFeature")
+  pipelinesToFeature   LicenseChange[] @relation("toFeature")
+  feature              String          @unique
   description          String?
-  createdBy            User       @relation("pipelineFromToFeatureCreatedBy", fields: [createdById], references: [id])
+  createdBy            User            @relation("fromToFeatureCreatedBy", fields: [createdById], references: [id])
   createdById          String
-  createdAt            DateTime   @default(now())
-  updatedBy            User       @relation("pipelineFromToFeatureUpdatedBy", fields: [updatedById], references: [id])
+  createdAt            DateTime        @default(now())
+  updatedBy            User            @relation("fromToFeatureUpdatedBy", fields: [updatedById], references: [id])
   updatedById          String
-  updatedAt            DateTime   @updatedAt
+  updatedAt            DateTime        @updatedAt
 }
 
-model PipelineMaterial {
-  id          String     @id @default(uuid())
-  pipelines   Pipeline[]
-  material    String     @unique
+model Material {
+  id          String          @id @default(uuid())
+  pipelines   LicenseChange[]
+  material    String          @unique
   description String?
-  createdBy   User       @relation("pipelineMaterialCreatedBy", fields: [createdById], references: [id])
+  createdBy   User            @relation("materialCreatedBy", fields: [createdById], references: [id])
   createdById String
-  createdAt   DateTime   @default(now())
-  updatedBy   User       @relation("pipelineMaterialUpdatedBy", fields: [updatedById], references: [id])
+  createdAt   DateTime        @default(now())
+  updatedBy   User            @relation("materialUpdatedBy", fields: [updatedById], references: [id])
   updatedById String
-  updatedAt   DateTime   @updatedAt
+  updatedAt   DateTime        @updatedAt
 }
 
-model PipelineInternalProtection {
-  id                 String     @id @default(uuid())
-  pipelines          Pipeline[]
-  internalProtection String     @unique
+model InternalProtection {
+  id                 String          @id @default(uuid())
+  pipelines          LicenseChange[]
+  internalProtection String          @unique
   description        String?
-  createdBy          User       @relation("pipelineInternalProtectionCreatedBy", fields: [createdById], references: [id])
+  createdBy          User            @relation("internalProtectionCreatedBy", fields: [createdById], references: [id])
   createdById        String
-  createdAt          DateTime   @default(now())
-  updatedBy          User       @relation("pipelineInternalProtectionUpdatedBy", fields: [updatedById], references: [id])
+  createdAt          DateTime        @default(now())
+  updatedBy          User            @relation("internalProtectionUpdatedBy", fields: [updatedById], references: [id])
   updatedById        String
-  updatedAt          DateTime   @updatedAt
+  updatedAt          DateTime        @updatedAt
 }
 
 model PipelinesOnPipelines {
@@ -246,48 +227,67 @@ model PipelinesOnPipelines {
 }
 
 model LicenseChange {
-  id                  String                 @id @default(uuid())
-  pipeline            Pipeline               @relation(fields: [pipelineId], references: [id])
-  pipelineId          String
-  status              LicenseChangeStatus    @relation(fields: [statusId], references: [id])
-  statusId            String
-  substance           LicenseChangeSubstance @relation(fields: [substanceId], references: [id])
-  substanceId         String
-  date                DateTime
-  comment             String?
-  linkToDocumentation String?
-  createdBy           User                   @relation("licenseChangeCreatedBy", fields: [createdById], references: [id])
-  createdById         String
-  createdAt           DateTime               @default(now())
-  updatedBy           User                   @relation("licenseChangeUpdatedBy", fields: [updatedById], references: [id])
-  updatedById         String
-  updatedAt           DateTime               @updatedAt
+  id                   String              @id @default(uuid())
+  pipeline             Pipeline            @relation(fields: [pipelineId], references: [id])
+  pipelineId           String
+  date                 DateTime
+  status               Status              @relation(fields: [statusId], references: [id])
+  statusId             String
+  substance            Substance           @relation(fields: [substanceId], references: [id])
+  substanceId          String
+  from                 String
+  fromFeature          FromToFeature?      @relation("fromFeature", fields: [fromFeatureId], references: [id])
+  fromFeatureId        String?
+  to                   String
+  toFeature            FromToFeature?      @relation("toFeature", fields: [toFeatureId], references: [id])
+  toFeatureId          String?
+  length               Float
+  pipelineType         PipelineType?       @relation(fields: [pipelineTypeId], references: [id])
+  pipelineTypeId       String?
+  grade                Grade?              @relation(fields: [gradeId], references: [id])
+  gradeId              String?
+  yieldStrength        Int?
+  outsideDiameter      Float?
+  wallThickness        Float?
+  material             Material?           @relation(fields: [materialId], references: [id])
+  materialId           String?
+  mop                  Int?
+  internalProtection   InternalProtection? @relation(fields: [internalProtectionId], references: [id])
+  internalProtectionId String?
+  comment              String?
+  linkToDocumentation  String?
+  createdBy            User                @relation("licenseChangeCreatedBy", fields: [createdById], references: [id])
+  createdById          String
+  createdAt            DateTime            @default(now())
+  updatedBy            User                @relation("licenseChangeUpdatedBy", fields: [updatedById], references: [id])
+  updatedById          String
+  updatedAt            DateTime            @updatedAt
 
   @@unique([pipelineId, date])
 }
 
-model LicenseChangeStatus {
+model Status {
   id             String          @id @default(uuid())
   licenseChanges LicenseChange[]
   status         String          @unique
   description    String?
-  createdBy      User            @relation("licenseChangeStatusCreatedBy", fields: [createdById], references: [id])
+  createdBy      User            @relation("statusCreatedBy", fields: [createdById], references: [id])
   createdById    String
   createdAt      DateTime        @default(now())
-  updatedBy      User            @relation("licenseChangeStatusUpdatedBy", fields: [updatedById], references: [id])
+  updatedBy      User            @relation("statusUpdatedBy", fields: [updatedById], references: [id])
   updatedById    String
   updatedAt      DateTime        @updatedAt
 }
 
-model LicenseChangeSubstance {
+model Substance {
   id             String          @id @default(uuid())
   licenseChanges LicenseChange[]
   substance      String          @unique
   description    String?
-  createdBy      User            @relation("licenseChangeSubstanceCreatedBy", fields: [createdById], references: [id])
+  createdBy      User            @relation("substanceCreatedBy", fields: [createdById], references: [id])
   createdById    String
   createdAt      DateTime        @default(now())
-  updatedBy      User            @relation("licenseChangeSubstanceUpdatedBy", fields: [updatedById], references: [id])
+  updatedBy      User            @relation("substanceUpdatedBy", fields: [updatedById], references: [id])
   updatedById    String
   updatedAt      DateTime        @updatedAt
 }
@@ -330,7 +330,7 @@ model PressureTest {
   id                       String            @id @default(uuid())
   pipeline                 Pipeline          @relation(fields: [pipelineId], references: [id])
   pipelineId               String
-  pressureTestDate         DateTime
+  date                     DateTime
   limitingSpec             LimitingSpecEnum?
   infoSentOutDate          DateTime?
   ddsDate                  DateTime?

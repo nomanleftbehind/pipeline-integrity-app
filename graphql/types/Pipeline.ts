@@ -10,9 +10,6 @@ import { ITableConstructObject } from './SearchNavigation';
 
 export const licenseMatchPattern = "^(AB|SK|BC)(\\d{5}|\\d{6})$";
 export const segmentMatchPattern = "^((UL)(\\d{1,2})|(\\d{1,3}))$";
-export const fromToMatchPattern = "^((\\d{2}-\\d{2}-\\d{3}-\\d{2}W\\d{1})|([A-Z]{1}-\\d{3}-[A-Z]{1} \\d{3}-[A-Z]{1}-\\d{2}))$";
-export const wallThicknessMatchPattern = "^(\\d|1\\d|2[0-5])(\\.\\d{1,2})?$";
-export const outsideDiameterMatchPattern = "^4[3-9]$|^4[2-9]\\.[2-9]\\d?$|^([5-9]\\d)(\\.\\d\\d?)?$|^([1-2]\\d{2})(\\.\\d\\d?)?$|^(3[0-2][0-3])(\\.[0-8]\\d?)?$"; // number between 42.2 and 323.89
 
 interface IValidateRegex {
   field: string;
@@ -57,19 +54,6 @@ export const PipelineObjectFields: ITableConstructObject[] = [
   { field: 'license', nullable: false, type: 'String' },
   { field: 'segment', nullable: false, type: 'String' },
   { field: 'flowCalculationDirection', nullable: false, type: 'FlowCalculationDirectionEnum', enumObjectArray: FlowCalculationDirectionEnumArray },
-  { field: 'from', nullable: false, type: 'String' },
-  { field: 'fromFeatureId', nullable: true, type: 'String' },
-  { field: 'to', nullable: false, type: 'String' },
-  { field: 'toFeatureId', nullable: true, type: 'String' },
-  { field: 'pipelineTypeId', nullable: true, type: 'String' },
-  { field: 'pipelineGradeId', nullable: true, type: 'String' },
-  { field: 'pipelineMaterialId', nullable: true, type: 'String' },
-  { field: 'pipelineInternalProtectionId', nullable: true, type: 'String' },
-  { field: 'length', nullable: false, type: 'Float' },
-  { field: 'yieldStrength', nullable: true, type: 'Int' },
-  { field: 'outsideDiameter', nullable: true, type: 'Float' },
-  { field: 'wallThickness', nullable: true, type: 'Float' },
-  { field: 'mop', nullable: true, type: 'Int' },
   { field: 'piggable', nullable: true, type: 'Boolean' },
   { field: 'piggingFrequency', nullable: true, type: 'Int' },
   { field: 'createdAt', nullable: false, type: 'DateTime' },
@@ -107,8 +91,7 @@ export const PipelineExtendObject = extendType({
           orderBy: { date: 'desc' },
           select: { status: { select: { status: true } } },
         }) || {};
-        const result = status?.status || null;
-        return result;
+        return status?.status || null;
       },
     })
     t.field('currentSubstance', {
@@ -119,8 +102,51 @@ export const PipelineExtendObject = extendType({
           orderBy: { date: 'desc' },
           select: { substance: { select: { substance: true } } },
         }) || {};
-        const result = substance?.substance || null;
-        return result;
+        return substance?.substance || null;
+      },
+    })
+    t.field('currentFrom', {
+      type: 'String',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const { from } = await ctx.prisma.licenseChange.findFirst({
+          where: { pipelineId: id },
+          orderBy: { date: 'desc' },
+          select: { from: true },
+        }) || {};
+        return from || null;
+      },
+    })
+    t.field('currentFromFeature', {
+      type: 'String',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const { fromFeature } = await ctx.prisma.licenseChange.findFirst({
+          where: { pipelineId: id },
+          orderBy: { date: 'desc' },
+          select: { fromFeature: { select: { feature: true } } },
+        }) || {};
+        return fromFeature?.feature || null;
+      },
+    })
+    t.field('currentTo', {
+      type: 'String',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const { to } = await ctx.prisma.licenseChange.findFirst({
+          where: { pipelineId: id },
+          orderBy: { date: 'desc' },
+          select: { to: true },
+        }) || {};
+        return to || null;
+      },
+    })
+    t.field('currentToFeature', {
+      type: 'String',
+      resolve: async ({ id }, _args, ctx: Context) => {
+        const { toFeature } = await ctx.prisma.licenseChange.findFirst({
+          where: { pipelineId: id },
+          orderBy: { date: 'desc' },
+          select: { toFeature: { select: { feature: true } } },
+        }) || {};
+        return toFeature?.feature || null;
       },
     })
     t.field('firstLicenseDate', {
@@ -861,19 +887,6 @@ export const PipelineMutation = extendType({
         license: stringArg(),
         segment: stringArg(),
         flowCalculationDirection: arg({ type: 'FlowCalculationDirectionEnum' }),
-        from: stringArg(),
-        fromFeatureId: stringArg(),
-        to: stringArg(),
-        toFeatureId: stringArg(),
-        length: floatArg(),
-        pipelineTypeId: stringArg(),
-        pipelineGradeId: stringArg(),
-        yieldStrength: intArg(),
-        outsideDiameter: floatArg(),
-        wallThickness: floatArg(),
-        pipelineMaterialId: stringArg(),
-        mop: intArg(),
-        pipelineInternalProtectionId: stringArg(),
         piggable: booleanArg(),
         piggingFrequency: intArg(),
       },
@@ -895,24 +908,6 @@ export const PipelineMutation = extendType({
                 return error;
               }
             }
-            if (args.from || args.to) {
-              const error = validateRegex({ field: (args.from || args.to)!, matchPattern: fromToMatchPattern, prettyMatchPattern: '##-##-###-##W# or X-###-X ###-X-##' });
-              if (error) {
-                return error;
-              }
-            }
-            if (args.wallThickness) {
-              const error = validateRegex({ field: String(args.wallThickness), matchPattern: wallThicknessMatchPattern, prettyMatchPattern: 'number between 0 and 25.99 up to two decimal places' });
-              if (error) {
-                return error;
-              }
-            }
-            if (args.outsideDiameter) {
-              const error = validateRegex({ field: String(args.outsideDiameter), matchPattern: outsideDiameterMatchPattern, prettyMatchPattern: 'number between 42.2 and 323.89 up to two decimal places' });
-              if (error) {
-                return error;
-              }
-            }
             try {
               const pipeline = await ctx.prisma.pipeline.update({
                 where: { id: args.id },
@@ -921,19 +916,6 @@ export const PipelineMutation = extendType({
                   license: args.license || undefined,
                   segment: args.segment || undefined,
                   flowCalculationDirection: args.flowCalculationDirection || undefined,
-                  from: args.from || undefined,
-                  fromFeatureId: args.fromFeatureId,
-                  to: args.to || undefined,
-                  toFeatureId: args.toFeatureId,
-                  length: args.length || undefined,
-                  pipelineTypeId: args.pipelineTypeId,
-                  pipelineGradeId: args.pipelineGradeId,
-                  yieldStrength: args.yieldStrength,
-                  outsideDiameter: args.outsideDiameter,
-                  wallThickness: args.wallThickness,
-                  pipelineMaterialId: args.pipelineMaterialId,
-                  mop: args.mop,
-                  pipelineInternalProtectionId: args.pipelineInternalProtectionId,
                   piggable: args.piggable,
                   piggingFrequency: args.piggingFrequency,
                   updatedById: userId,

@@ -199,14 +199,27 @@ type LicenseChange {
   createdBy: User!
   createdById: String!
   date: DateTime!
+  from: String!
+  fromFeatureId: String
+  gradeId: String
   id: String!
+  internalProtectionId: String
+  length: Float!
   linkToDocumentation: String
+  materialId: String
+  mop: Int
+  outsideDiameter: Float
   pipeline: Pipeline!
+  pipelineTypeId: String
   statusId: String!
   substanceId: String!
+  to: String!
+  toFeatureId: String
   updatedAt: DateTime!
   updatedBy: User!
   updatedById: String!
+  wallThickness: Float
+  yieldStrength: Int
 }
 
 type LicenseChangePayload {
@@ -252,11 +265,11 @@ type Mutation {
   editChemical(bacteria: Boolean, bacteriaTreatment: Boolean, baselineFluidAnalysisDate: DateTime, batchFrequency: Int, chemicalSupplierId: String, co2: Boolean, comment: String, continuousInjection: Boolean, downholeBatch: Boolean, h2s: Boolean, id: String!, inhibitorPipelineBatch: Boolean, injectionRate: Float, o2: Boolean, scaleTreatment: Boolean, scaling: Boolean): ChemicalPayload
   editFacility(id: String!, name: String): Facility
   editGeotechnical(data: EditGeotechnicalInput!): GeotechnicalPayload
-  editLicenseChange(comment: String, date: DateTime, id: String!, linkToDocumentation: String, statusId: String, substanceId: String): LicenseChangePayload
+  editLicenseChange(comment: String, date: DateTime, from: String, fromFeatureId: String, gradeId: String, id: String!, internalProtectionId: String, length: Float, linkToDocumentation: String, materialId: String, mop: Int, outsideDiameter: Float, pipelineTypeId: String, statusId: String, substanceId: String, to: String, toFeatureId: String, wallThickness: Float, yieldStrength: Int): LicenseChangePayload
   editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigTypeId: String): PigRunPayload
-  editPipeline(flowCalculationDirection: FlowCalculationDirectionEnum, from: String, fromFeatureId: String, id: String!, length: Float, license: String, mop: Int, outsideDiameter: Float, piggable: Boolean, piggingFrequency: Int, pipelineGradeId: String, pipelineInternalProtectionId: String, pipelineMaterialId: String, pipelineTypeId: String, satelliteId: String, segment: String, to: String, toFeatureId: String, wallThickness: Float, yieldStrength: Int): PipelinePayload
+  editPipeline(flowCalculationDirection: FlowCalculationDirectionEnum, id: String!, license: String, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String): PipelinePayload
   editPipelineBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, productId: String): PipelineBatchPayload
-  editPressureTest(comment: String, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pressureTestDate: DateTime, pressureTestReceivedDate: DateTime): PressureTestPayload
+  editPressureTest(comment: String, date: DateTime, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pressureTestReceivedDate: DateTime): PressureTestPayload
   editRisk(data: EditRiskInput!): RiskPayload
   editSalesPoint(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, name: String, oil: Float, pipelineId: String, water: Float): SalesPointPayload
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
@@ -320,40 +333,31 @@ type Pipeline {
   createdAt: DateTime!
   createdBy: User!
   createdById: String!
+  currentFrom: String
+  currentFromFeature: String
   currentStatus: String
   currentSubstance: String
+  currentTo: String
+  currentToFeature: String
   downstream: [Pipeline]
   firstLicenseDate: DateTime
   flowCalculationDirection: FlowCalculationDirectionEnum!
-  from: String!
-  fromFeatureId: String
   id: String!
-  length: Float!
   license: String!
   licenseChanges: [LicenseChange]
-  mop: Int
-  outsideDiameter: Float
   pigRuns: [PigRun]
   piggable: Boolean
   piggingFrequency: Int
-  pipelineGradeId: String
-  pipelineInternalProtectionId: String
-  pipelineMaterialId: String
-  pipelineTypeId: String
   pressureTests: [PressureTest]
   risk: Risk
   salesPoints: [SalesPoint]
   satellite: Satellite
   segment: String!
-  to: String!
-  toFeatureId: String
   updatedAt: DateTime!
   updatedBy: User!
   updatedById: String!
   upstream: [Pipeline]
-  wallThickness: Float
   wells: [Well]
-  yieldStrength: Int
 }
 
 type PipelineBatch {
@@ -455,6 +459,7 @@ type PressureTest {
   createdAt: DateTime!
   createdBy: User!
   createdById: String!
+  date: DateTime!
   ddsDate: DateTime
   id: String!
   infoSentOutDate: DateTime
@@ -464,7 +469,6 @@ type PressureTest {
   mopTestPressure: Float
   pipeline: Pipeline!
   pressureTestCorrosionAllowance: Float
-  pressureTestDate: DateTime!
   pressureTestPressure: Float
   pressureTestReceivedDate: DateTime
   requiredWTForMop: Float
@@ -763,19 +767,19 @@ type ValidatorsPipeline {
   fromToFeatureEnum: [EnumObject!]!
   fromToMatchPattern: String!
   geotechnicalFacingEnum: [EnumObject!]!
+  gradeEnum: [EnumObject!]!
   havingEnum: [EnumObject!]!
+  internalProtectionEnum: [EnumObject!]!
   lengthMatchPattern: String!
   licenseMatchPattern: String!
   limitingSpecEnum: [EnumObject!]!
+  materialEnum: [EnumObject!]!
   mopMatchPattern: String!
   operationEnum: [EnumObject!]!
   operatorEnum: [EnumObject!]!
   outsideDiameterMatchPattern: String!
   pigInspectionEnum: [EnumObject!]!
   pigTypeEnum: [EnumObject!]!
-  pipelineGradeEnum: [EnumObject!]!
-  pipelineInternalProtectionEnum: [EnumObject!]!
-  pipelineMaterialEnum: [EnumObject!]!
   pipelineTypeEnum: [EnumObject!]!
   riskEnvironmentEnum: [EnumObject!]!
   segmentMatchPattern: String!

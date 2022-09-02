@@ -1,13 +1,13 @@
 import { PrismaClient } from '@prisma/client';
 
 import { pipelineTypeData } from './SeedPipelineTypeData';
-import { pipelineGradeData } from './SeedPipelineGradeData';
-import { pipelineFromToFeatureData1 } from './SeedPipelineFromToFeatureData';
+import { gradeData } from './SeedGradeData';
+import { fromToFeatureData1 } from './SeedFromToFeatureData';
 import { pigTypeData } from './SeedPigTypeData';
-import { pipelineMaterialData } from './SeedPipelineMaterialData';
-import { pipelineInternalProtectionData } from './SeedPipelineInternalProtectionData';
-import { licenseChangeStatusData } from './SeedLicenseChangeStatusData';
-import { licenseChangeSubstanceData } from './SeedLicenseChangeSubstanceData';
+import { materialData } from './SeedMaterialData';
+import { internalProtectionData } from './SeedInternalProtectionData';
+import { statusData } from './SeedStatusData';
+import { substanceData } from './SeedSubstanceData';
 import { riskEnvironmentData } from './SeedRiskEnvironmentData';
 
 import {
@@ -109,56 +109,56 @@ async function main() {
     const user = await prisma.user.create({
       data: u,
     })
-    console.log(`Created user with id: ${user.id}`)
+    console.log(`Created user ${user.email}`)
   }
 
   for (const u of pipelineTypeData) {
     const pipelineType = await prisma.pipelineType.create({
       data: u,
     })
-    console.log(`Created pipeline type with id: ${pipelineType.id}`)
+    console.log(`Created pipeline type ${pipelineType.type}`)
   }
 
-  for (const u of pipelineGradeData) {
-    const pipelineGrade = await prisma.pipelineGrade.create({
+  for (const u of gradeData) {
+    const grade = await prisma.grade.create({
       data: u,
     })
-    console.log(`Created pipeline grade with id: ${pipelineGrade.grade}`)
+    console.log(`Created pipeline grade ${grade.grade}`)
   }
 
-  for (const u of pipelineFromToFeatureData1) {
-    const pipelineFromToFeature = await prisma.pipelineFromToFeature.create({
+  for (const u of fromToFeatureData1) {
+    const fromToFeature = await prisma.fromToFeature.create({
       data: u,
     })
-    console.log(`Created pipeline from-to feature with id: ${pipelineFromToFeature.id}`)
+    console.log(`Created pipeline from-to feature ${fromToFeature.feature}`)
   }
 
-  for (const u of pipelineMaterialData) {
-    const pipelineMaterial = await prisma.pipelineMaterial.create({
+  for (const u of materialData) {
+    const material = await prisma.material.create({
       data: u,
     })
-    console.log(`Created pipeline material with id: ${pipelineMaterial.id}`)
+    console.log(`Created pipeline material ${material.material}`)
   }
 
-  for (const u of pipelineInternalProtectionData) {
-    const pipelineInternalProtection = await prisma.pipelineInternalProtection.create({
+  for (const u of internalProtectionData) {
+    const internalProtection = await prisma.internalProtection.create({
       data: u,
     })
-    console.log(`Created pipeline internal protection with id: ${pipelineInternalProtection.id}`)
+    console.log(`Created pipeline internal protection ${internalProtection.internalProtection}`)
   }
 
-  for (const u of licenseChangeStatusData) {
-    const licenseChangeStatus = await prisma.licenseChangeStatus.create({
+  for (const u of statusData) {
+    const status = await prisma.status.create({
       data: u,
     })
-    console.log(`Created license change status with id: ${licenseChangeStatus.id}`)
+    console.log(`Created status ${status.status}`)
   }
 
-  for (const u of licenseChangeSubstanceData) {
-    const licenseChangeSubstance = await prisma.licenseChangeSubstance.create({
+  for (const u of substanceData) {
+    const substance = await prisma.substance.create({
       data: u,
     })
-    console.log(`Created license change substance with id: ${licenseChangeSubstance.id}`)
+    console.log(`Created substance ${substance.substance}`)
   }
 
   for (const u of riskEnvironmentData) {

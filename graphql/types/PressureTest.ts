@@ -37,10 +37,10 @@ export const LimitingSpecEnumArray: NexusGenObjects['EnumObject'][] = Object.ent
 
 export const PressureTestObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
+  { field: 'date', nullable: false, type: 'DateTime' },
   { field: 'limitingSpec', nullable: true, type: 'LimitingSpecEnum', enumObjectArray: LimitingSpecEnumArray },
   { field: 'infoSentOutDate', nullable: true, type: 'DateTime' },
   { field: 'ddsDate', nullable: true, type: 'DateTime' },
-  { field: 'pressureTestDate', nullable: false, type: 'DateTime' },
   { field: 'pressureTestReceivedDate', nullable: true, type: 'DateTime' },
   { field: 'integritySheetUpdated', nullable: true, type: 'DateTime' },
   { field: 'comment', nullable: true, type: 'String' },
@@ -186,7 +186,7 @@ export const PressureTestQuery = extendType({
         }
         const result = await ctx.prisma.pressureTest.findMany({
           where: { pipelineId },
-          orderBy: { pressureTestDate: 'desc' },
+          orderBy: { date: 'desc' },
         });
         return result;
       }
@@ -214,7 +214,7 @@ export const PressureTestMutation = extendType({
         limitingSpec: arg({ type: 'LimitingSpecEnum' }),
         infoSentOutDate: arg({ type: 'DateTime' }),
         ddsDate: arg({ type: 'DateTime' }),
-        pressureTestDate: arg({ type: 'DateTime' }),
+        date: arg({ type: 'DateTime' }),
         pressureTestReceivedDate: arg({ type: 'DateTime' }),
         integritySheetUpdated: arg({ type: 'DateTime' }),
         comment: stringArg(),
@@ -247,7 +247,7 @@ export const PressureTestMutation = extendType({
                 limitingSpec: databaseEnumToServerEnum(LimitingSpecEnumMembers, args.limitingSpec),
                 infoSentOutDate: args.infoSentOutDate,
                 ddsDate: args.ddsDate,
-                pressureTestDate: args.pressureTestDate || undefined,
+                date: args.date || undefined,
                 pressureTestReceivedDate: args.pressureTestReceivedDate,
                 integritySheetUpdated: args.integritySheetUpdated,
                 comment: args.comment,
@@ -287,7 +287,7 @@ export const PressureTestMutation = extendType({
             const pressureTest = await ctx.prisma.pressureTest.create({
               data: {
                 pipelineId,
-                pressureTestDate: today,
+                date: today,
                 createdById: userId,
                 updatedById: userId,
               }

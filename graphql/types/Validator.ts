@@ -5,7 +5,8 @@ import {
 } from './Pipeline';
 import { Context } from '../context';
 
-import { fromToMatchPattern, wallThicknessMatchPattern, outsideDiameterMatchPattern, licenseMatchPattern, segmentMatchPattern } from './Pipeline';
+import { licenseMatchPattern, segmentMatchPattern, } from './Pipeline';
+import { fromToMatchPattern, wallThicknessMatchPattern, outsideDiameterMatchPattern, } from './LicenseChange';
 import { PigInspectionEnumArray } from './PigRun';
 import { LimitingSpecEnumArray } from './PressureTest';
 import { GeotechnicalFacingEnumArray } from './Geotechnical';
@@ -32,8 +33,8 @@ export const loadPipelineTypeEnumObjectArray = async ({ ctx }: ILoadEnumObjectAr
 	});
 }
 
-export const loadPipelineGradeEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
-	return (await ctx.prisma.pipelineGrade.findMany({
+export const loadGradeEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.grade.findMany({
 		select: { id: true, grade: true },
 		orderBy: { grade: 'asc' },
 	})).map(({ id, grade }) => {
@@ -41,8 +42,8 @@ export const loadPipelineGradeEnumObjectArray = async ({ ctx }: ILoadEnumObjectA
 	});
 }
 
-export const loadPipelineFromToFeatureEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
-	return (await ctx.prisma.pipelineFromToFeature.findMany({
+export const loadFromToFeatureEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.fromToFeature.findMany({
 		select: { id: true, feature: true },
 		orderBy: { feature: 'asc' },
 	})).map(({ id, feature }) => {
@@ -50,8 +51,8 @@ export const loadPipelineFromToFeatureEnumObjectArray = async ({ ctx }: ILoadEnu
 	});
 }
 
-export const loadPipelineMaterialEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
-	return (await ctx.prisma.pipelineMaterial.findMany({
+export const loadMaterialEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.material.findMany({
 		select: { id: true, material: true },
 		orderBy: { material: 'asc' },
 	})).map(({ id, material }) => {
@@ -59,8 +60,8 @@ export const loadPipelineMaterialEnumObjectArray = async ({ ctx }: ILoadEnumObje
 	});
 }
 
-export const loadPipelineInternalProtectionEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
-	return (await ctx.prisma.pipelineInternalProtection.findMany({
+export const loadInternalProtectionEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.internalProtection.findMany({
 		select: { id: true, internalProtection: true },
 		orderBy: { internalProtection: 'asc' },
 	})).map(({ id, internalProtection }) => {
@@ -68,8 +69,8 @@ export const loadPipelineInternalProtectionEnumObjectArray = async ({ ctx }: ILo
 	});
 }
 
-export const loadLicenseChangeStatusEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
-	return (await ctx.prisma.licenseChangeStatus.findMany({
+export const loadStatusEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.status.findMany({
 		select: { id: true, status: true },
 		orderBy: { status: 'asc' },
 	})).map(({ id, status }) => {
@@ -77,8 +78,8 @@ export const loadLicenseChangeStatusEnumObjectArray = async ({ ctx }: ILoadEnumO
 	});
 }
 
-export const loadLicenseChangeSubstanceEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
-	return (await ctx.prisma.licenseChangeSubstance.findMany({
+export const loadSubstanceEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.substance.findMany({
 		select: { id: true, substance: true },
 		orderBy: { substance: 'asc' },
 	})).map(({ id, substance }) => {
@@ -149,18 +150,18 @@ export const ValidatorsPipeline = objectType({
 		t.nonNull.string('licenseMatchPattern')
 		t.nonNull.string('segmentMatchPattern')
 		t.nonNull.string('fromToMatchPattern')
-		t.nonNull.list.nonNull.field('fromToFeatureEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadPipelineFromToFeatureEnumObjectArray({ ctx }) })
-		t.nonNull.list.nonNull.field('statusEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadLicenseChangeStatusEnumObjectArray({ ctx }) })
-		t.nonNull.list.nonNull.field('substanceEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadLicenseChangeSubstanceEnumObjectArray({ ctx }) })
+		t.nonNull.list.nonNull.field('fromToFeatureEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadFromToFeatureEnumObjectArray({ ctx }) })
+		t.nonNull.list.nonNull.field('statusEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadStatusEnumObjectArray({ ctx }) })
+		t.nonNull.list.nonNull.field('substanceEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadSubstanceEnumObjectArray({ ctx }) })
 		t.nonNull.string('lengthMatchPattern')
 		t.nonNull.list.nonNull.field('pipelineTypeEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadPipelineTypeEnumObjectArray({ ctx }) })
-		t.nonNull.list.nonNull.field('pipelineGradeEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadPipelineGradeEnumObjectArray({ ctx }) })
+		t.nonNull.list.nonNull.field('gradeEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadGradeEnumObjectArray({ ctx }) })
 		t.nonNull.string('yieldStrengthMatchPattern')
 		t.nonNull.string('outsideDiameterMatchPattern')
 		t.nonNull.string('wallThicknessMatchPattern')
-		t.nonNull.list.nonNull.field('pipelineMaterialEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadPipelineMaterialEnumObjectArray({ ctx }) })
+		t.nonNull.list.nonNull.field('materialEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadMaterialEnumObjectArray({ ctx }) })
 		t.nonNull.string('mopMatchPattern')
-		t.nonNull.list.nonNull.field('pipelineInternalProtectionEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadPipelineInternalProtectionEnumObjectArray({ ctx }) })
+		t.nonNull.list.nonNull.field('internalProtectionEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadInternalProtectionEnumObjectArray({ ctx }) })
 		t.nonNull.list.nonNull.field('flowCalculationDirectionEnum', { type: 'EnumObject' })
 		t.nonNull.list.nonNull.field('limitingSpecEnum', { type: 'EnumObject' })
 		t.nonNull.list.nonNull.field('riskEnvironmentEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadRiskEnvironmentEnumObjectArray({ ctx }) })

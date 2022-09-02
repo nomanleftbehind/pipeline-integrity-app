@@ -19,24 +19,15 @@ query PipelinesById($navigationInput: NavigationInput!, $skip: Int!, $take: Int!
       license
       segment
       flowCalculationDirection
-      from
-      fromFeatureId
-      to
-      toFeatureId
+      piggable
+      piggingFrequency
+      currentFrom
+      currentFromFeature
+      currentTo
+      currentToFeature
       currentStatus
       currentSubstance
       firstLicenseDate
-      length
-      pipelineTypeId
-      pipelineGradeId
-      yieldStrength
-      outsideDiameter
-      wallThickness
-      pipelineMaterialId
-      mop
-      pipelineInternalProtectionId
-      piggable
-      piggingFrequency
       createdBy {
         id
         email
@@ -168,19 +159,19 @@ query ValidatorsPipeline {
       serverEnum
       databaseEnum
     }
-    pipelineGradeEnum {
+    gradeEnum {
       serverEnum
       databaseEnum
     }
     yieldStrengthMatchPattern
     outsideDiameterMatchPattern
     wallThicknessMatchPattern
-    pipelineMaterialEnum {
+    materialEnum {
       serverEnum
       databaseEnum
     }
     mopMatchPattern
-    pipelineInternalProtectionEnum {
+    internalProtectionEnum {
       serverEnum
       databaseEnum
     }
@@ -247,9 +238,22 @@ query ValidatorsUserRole {
 query LicenseChangesByPipelineId($pipelineId: String!) {
   licenseChangesByPipelineId(pipelineId: $pipelineId) {
     id
+    date
     statusId
     substanceId
-    date
+    from
+    fromFeatureId
+    to
+    toFeatureId
+    length
+    pipelineTypeId
+    gradeId
+    yieldStrength
+    outsideDiameter
+    wallThickness
+    materialId
+    mop
+    internalProtectionId
     comment
     linkToDocumentation
     createdBy {
@@ -279,7 +283,7 @@ query PressureTestsByPipelineId($pipelineId: String!) {
     waterForPigging
     infoSentOutDate
     ddsDate
-    pressureTestDate
+    date
     pressureTestReceivedDate
     integritySheetUpdated
     comment

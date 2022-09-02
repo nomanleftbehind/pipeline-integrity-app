@@ -152,8 +152,8 @@ mutation DisconnectSalesPoint($id: String!) {
   }
 }
 
-mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $from: String, $fromFeatureId: String, $to: String, $toFeatureId: String, $length: Float, $pipelineTypeId: String, $pipelineGradeId: String, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $pipelineMaterialId: String, $mop: Int, $pipelineInternalProtectionId: String, $piggable: Boolean, $piggingFrequency: Int) {
-  editPipeline(id: $id, satelliteId: $satelliteId, license: $license, segment: $segment, flowCalculationDirection: $flowCalculationDirection, from: $from, fromFeatureId: $fromFeatureId, to: $to, toFeatureId: $toFeatureId, length: $length, pipelineTypeId: $pipelineTypeId, pipelineGradeId: $pipelineGradeId, yieldStrength: $yieldStrength, outsideDiameter: $outsideDiameter, wallThickness: $wallThickness, pipelineMaterialId: $pipelineMaterialId, mop: $mop, pipelineInternalProtectionId: $pipelineInternalProtectionId, piggable: $piggable, piggingFrequency: $piggingFrequency) {
+mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
+  editPipeline(id: $id, satelliteId: $satelliteId, license: $license, segment: $segment, flowCalculationDirection: $flowCalculationDirection, piggable: $piggable, piggingFrequency: $piggingFrequency) {
     pipeline {
       id
     }
@@ -200,8 +200,8 @@ mutation DeleteLicenseChange($id: String!) {
   }
 }
 
-mutation EditPressureTest($id: String!, $limitingSpec: LimitingSpecEnum, $infoSentOutDate: DateTime, $ddsDate: DateTime, $pressureTestDate: DateTime, $pressureTestReceivedDate: DateTime, $integritySheetUpdated: DateTime, $comment: String) {
-  editPressureTest(id: $id, limitingSpec: $limitingSpec, infoSentOutDate: $infoSentOutDate, ddsDate: $ddsDate, pressureTestDate: $pressureTestDate, pressureTestReceivedDate: $pressureTestReceivedDate, integritySheetUpdated: $integritySheetUpdated, comment: $comment) {
+mutation EditPressureTest($id: String!, $limitingSpec: LimitingSpecEnum, $infoSentOutDate: DateTime, $ddsDate: DateTime, $date: DateTime, $pressureTestReceivedDate: DateTime, $integritySheetUpdated: DateTime, $comment: String) {
+  editPressureTest(id: $id, limitingSpec: $limitingSpec, infoSentOutDate: $infoSentOutDate, ddsDate: $ddsDate, date: $date, pressureTestReceivedDate: $pressureTestReceivedDate, integritySheetUpdated: $integritySheetUpdated, comment: $comment) {
     pressureTest {
       id
     }

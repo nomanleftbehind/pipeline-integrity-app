@@ -1,14 +1,33 @@
-import { objectType, stringArg, extendType, nonNull, arg } from 'nexus';
+import { objectType, stringArg, extendType, nonNull, arg, floatArg, intArg } from 'nexus';
 import { Context } from '../context';
 import { User as IUser, LicenseChange as ILicenseChange } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
+import { validateRegex } from './Pipeline';
+
+
+export const fromToMatchPattern = "^((\\d{2}-\\d{2}-\\d{3}-\\d{2}W\\d{1})|([A-Z]{1}-\\d{3}-[A-Z]{1} \\d{3}-[A-Z]{1}-\\d{2}))$";
+export const wallThicknessMatchPattern = "^(\\d|1\\d|2[0-5])(\\.\\d{1,2})?$";
+export const outsideDiameterMatchPattern = "^4[3-9]$|^4[2-9]\\.[2-9]\\d?$|^([5-9]\\d)(\\.\\d\\d?)?$|^([1-2]\\d{2})(\\.\\d\\d?)?$|^(3[0-2][0-3])(\\.[0-8]\\d?)?$"; // number between 42.2 and 323.89
 
 
 export const LicenseChangeObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
+  { field: 'date', nullable: false, type: 'DateTime', },
   { field: 'statusId', nullable: false, type: 'String' },
   { field: 'substanceId', nullable: false, type: 'String' },
-  { field: 'date', nullable: false, type: 'DateTime', },
+  { field: 'from', nullable: false, type: 'String' },
+  { field: 'fromFeatureId', nullable: true, type: 'String' },
+  { field: 'to', nullable: false, type: 'String' },
+  { field: 'toFeatureId', nullable: true, type: 'String' },
+  { field: 'pipelineTypeId', nullable: true, type: 'String' },
+  { field: 'gradeId', nullable: true, type: 'String' },
+  { field: 'materialId', nullable: true, type: 'String' },
+  { field: 'internalProtectionId', nullable: true, type: 'String' },
+  { field: 'length', nullable: false, type: 'Float' },
+  { field: 'yieldStrength', nullable: true, type: 'Int' },
+  { field: 'outsideDiameter', nullable: true, type: 'Float' },
+  { field: 'wallThickness', nullable: true, type: 'Float' },
+  { field: 'mop', nullable: true, type: 'Int' },
   { field: 'comment', nullable: true, type: 'String' },
   { field: 'linkToDocumentation', nullable: true, type: 'String', },
   { field: 'createdById', nullable: false, type: 'String' },
@@ -120,9 +139,22 @@ export const LicenseChangeMutation = extendType({
       type: 'LicenseChangePayload',
       args: {
         id: nonNull(stringArg()),
+        date: arg({ type: 'DateTime' }),
         statusId: stringArg(),
         substanceId: stringArg(),
-        date: arg({ type: 'DateTime' }),
+        from: stringArg(),
+        fromFeatureId: stringArg(),
+        to: stringArg(),
+        toFeatureId: stringArg(),
+        length: floatArg(),
+        pipelineTypeId: stringArg(),
+        gradeId: stringArg(),
+        yieldStrength: intArg(),
+        outsideDiameter: floatArg(),
+        wallThickness: floatArg(),
+        materialId: stringArg(),
+        mop: intArg(),
+        internalProtectionId: stringArg(),
         comment: stringArg(),
         linkToDocumentation: stringArg(),
       },
@@ -170,12 +202,44 @@ export const LicenseChangeMutation = extendType({
               }
             }
 
+            if (args.from || args.to) {
+              const error = validateRegex({ field: (args.from || args.to)!, matchPattern: fromToMatchPattern, prettyMatchPattern: '##-##-###-##W# or X-###-X ###-X-##' });
+              if (error) {
+                return error;
+              }
+            }
+            if (args.wallThickness) {
+              const error = validateRegex({ field: String(args.wallThickness), matchPattern: wallThicknessMatchPattern, prettyMatchPattern: 'number between 0 and 25.99 up to two decimal places' });
+              if (error) {
+                return error;
+              }
+            }
+            if (args.outsideDiameter) {
+              const error = validateRegex({ field: String(args.outsideDiameter), matchPattern: outsideDiameterMatchPattern, prettyMatchPattern: 'number between 42.2 and 323.89 up to two decimal places' });
+              if (error) {
+                return error;
+              }
+            }
+
             const licenseChange = await ctx.prisma.licenseChange.update({
               where: { id: args.id },
               data: {
                 statusId: args.statusId || undefined,
                 substanceId: args.substanceId || undefined,
                 date: args.date || undefined,
+                from: args.from || undefined,
+                fromFeatureId: args.fromFeatureId,
+                to: args.to || undefined,
+                toFeatureId: args.toFeatureId,
+                length: args.length || undefined,
+                pipelineTypeId: args.pipelineTypeId,
+                gradeId: args.gradeId,
+                yieldStrength: args.yieldStrength,
+                outsideDiameter: args.outsideDiameter,
+                wallThickness: args.wallThickness,
+                materialId: args.materialId,
+                mop: args.mop,
+                internalProtectionId: args.internalProtectionId,
                 linkToDocumentation: args.linkToDocumentation,
                 comment: args.comment,
                 updatedById: userId,
@@ -235,6 +299,9 @@ export const LicenseChangeMutation = extendType({
               data: {
                 pipeline: { connect: { id: pipelineId } },
                 date: today,
+                from: '',
+                to: '',
+                length: 0,
                 status: { connect: { status: 'Operating' } },
                 substance: { connect: { substance: 'Oil Well Effluent' } },
                 createdBy: { connect: { id: userId } },

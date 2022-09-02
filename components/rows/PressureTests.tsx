@@ -155,12 +155,12 @@ export default function PressureTests({ pipelineId, validators }: IPressureTests
         const isLastRow = data.pressureTestsByPipelineId?.length === gridRow + 1;
         gridRow += 2;
         if (pressureTest) {
-          const { comment, ddsDate, pressureTestDate, infoSentOutDate, integritySheetUpdated, limitingSpec, pressureTestReceivedDate, requiredWTForMop, mopTestPressure,
+          const { comment, ddsDate, date, infoSentOutDate, integritySheetUpdated, limitingSpec, pressureTestReceivedDate, requiredWTForMop, mopTestPressure,
             maxPressureOfLimitingSpec, pressureTestPressure, requiredWTForTestPressure, pressureTestCorrosionAllowance, waterForPigging, createdBy, createdAt, updatedBy, updatedAt, id, authorized
           } = pressureTest;
 
           const pressureTestColumns: IRecordEntryMap[] = [
-            { columnName: 'pressureTestDate', columnType: 'date', nullable: false, record: pressureTestDate, editRecord },
+            { columnName: 'date', columnType: 'date', nullable: false, record: date, editRecord },
             { columnName: 'pressureTestReceivedDate', columnType: 'date', nullable: true, record: pressureTestReceivedDate, editRecord },
             { columnName: 'infoSentOutDate', columnType: 'date', nullable: true, record: infoSentOutDate, editRecord },
             { columnName: 'ddsDate', columnType: 'date', nullable: true, record: ddsDate, editRecord },
@@ -187,7 +187,7 @@ export default function PressureTests({ pipelineId, validators }: IPressureTests
                   className='button-container'
                   aria-label='delete row' size='small' disabled={!authorized}
                   onClick={() => {
-                    setToDeletePressureTest({ id, friendlyName: pressureTestDate.split('T')[0] });
+                    setToDeletePressureTest({ id, friendlyName: date.split('T')[0] });
                     setConfirmDeletePressureTestModal(true);
                   }}>
                   <DeleteOutlineOutlinedIcon />

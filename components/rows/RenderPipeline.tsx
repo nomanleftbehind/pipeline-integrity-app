@@ -109,18 +109,18 @@ export default function RenderPipeline({ gridRow, rowIsEven, pipeline, validator
 
   const isModalOpen = openModal(fieldError);
 
-  const { id, license, segment, from, fromFeatureId, to, toFeatureId, currentStatus, currentSubstance, authorized } = pipeline;
-  const { licenseMatchPattern, segmentMatchPattern, fromToMatchPattern, fromToFeatureEnum } = validators || {};
+  const { id, license, segment, currentFrom, currentFromFeature, currentTo, currentToFeature, currentStatus, currentSubstance, authorized, } = pipeline;
+  const { licenseMatchPattern, segmentMatchPattern } = validators || {};
 
   const pipelineColumns: IRecordEntryMap[] = [
     { columnName: 'license', columnType: 'string', nullable: false, record: license, validator: licenseMatchPattern, editRecord },
     { columnName: 'segment', columnType: 'string', nullable: false, record: segment, validator: segmentMatchPattern, editRecord },
-    { columnName: 'from', columnType: 'string', nullable: false, record: from, validator: fromToMatchPattern, editRecord },
-    { columnName: 'fromFeatureId', columnType: 'string', nullable: true, record: fromFeatureId, validator: fromToFeatureEnum, editRecord },
-    { columnName: 'to', columnType: 'string', nullable: false, record: to, validator: fromToMatchPattern, editRecord },
-    { columnName: 'toFeatureId', columnType: 'string', nullable: true, record: toFeatureId, validator: fromToFeatureEnum, editRecord },
-    { columnName: 'currentStatus', columnType: 'string', nullable: false, record: currentStatus, },
-    { columnName: 'currentSubstance', columnType: 'string', nullable: false, record: currentSubstance, },
+    { columnName: 'currentFrom', columnType: 'string', nullable: true, record: currentFrom },
+    { columnName: 'currentFromFeature', columnType: 'string', nullable: true, record: currentFromFeature },
+    { columnName: 'currentTo', columnType: 'string', nullable: true, record: currentTo },
+    { columnName: 'currentToFeature', columnType: 'string', nullable: true, record: currentToFeature },
+    { columnName: 'currentStatus', columnType: 'string', nullable: true, record: currentStatus, },
+    { columnName: 'currentSubstance', columnType: 'string', nullable: true, record: currentSubstance, },
   ];
 
   const backgroundColor = rowIsEven ? '#abeaff' : '#fff7c9';

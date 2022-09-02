@@ -31,12 +31,12 @@ type PickNullable<T, K extends keyof T> = {
 } | null | undefined;
 
 
-export type IValidatorsMechanicalProperties = PickNullable<NonNullable<IValidators>, 'lengthMatchPattern' | 'pipelineTypeEnum' | 'pipelineGradeEnum' | 'yieldStrengthMatchPattern' | 'outsideDiameterMatchPattern' | 'wallThicknessMatchPattern' | 'pipelineMaterialEnum' | 'mopMatchPattern' | 'pipelineInternalProtectionEnum'>;
-export type IValidatorsLicenseChanges = PickNullable<NonNullable<IValidators>, 'statusEnum' | 'substanceEnum'>;
+export type IValidatorsMechanicalProperties = PickNullable<NonNullable<IValidators>, 'lengthMatchPattern' | 'pipelineTypeEnum' | 'gradeEnum' | 'yieldStrengthMatchPattern' | 'outsideDiameterMatchPattern' | 'wallThicknessMatchPattern' | 'materialEnum' | 'mopMatchPattern' | 'internalProtectionEnum'>;
+export type IValidatorsLicenseChanges = PickNullable<NonNullable<IValidators>, 'statusEnum' | 'substanceEnum' | 'fromToMatchPattern' | 'fromToFeatureEnum' | 'lengthMatchPattern' | 'pipelineTypeEnum' | 'gradeEnum' | 'yieldStrengthMatchPattern' | 'outsideDiameterMatchPattern' | 'wallThicknessMatchPattern' | 'materialEnum' | 'mopMatchPattern' | 'internalProtectionEnum'>;
 export type IValidatorsGeotechnicals = PickNullable<NonNullable<IValidators>, 'geotechnicalFacingEnum'>;
 export type IValidatorsConnectedSources = PickNullable<NonNullable<IValidators>, 'flowCalculationDirectionEnum'>;
 export type IValidatorsPressureTests = PickNullable<NonNullable<IValidators>, 'limitingSpecEnum'>;
-export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'riskEnvironmentEnum' | 'pipelineTypeEnum' | 'pipelineMaterialEnum'>;
+export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'riskEnvironmentEnum' | 'pipelineTypeEnum' | 'materialEnum'>;
 export type IValidatorsPigRuns = PickNullable<NonNullable<IValidators>, 'pigTypeEnum' | 'pigInspectionEnum' | 'operatorEnum'>;
 export type IValidatorsPipelineBatches = PickNullable<NonNullable<IValidators>, 'solubilityEnum' | 'batchProductEnum'>;
 export type IValidatorsChemical = PickNullable<NonNullable<IValidators>, 'chemicalSupplierEnum'>;
@@ -74,6 +74,17 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
   const validatorsLicenseChanges: IValidatorsLicenseChanges = validators && {
     statusEnum: validators.statusEnum,
     substanceEnum: validators.substanceEnum,
+    lengthMatchPattern: validators.lengthMatchPattern,
+    pipelineTypeEnum: validators.pipelineTypeEnum,
+    gradeEnum: validators.gradeEnum,
+    yieldStrengthMatchPattern: validators.yieldStrengthMatchPattern,
+    outsideDiameterMatchPattern: validators.outsideDiameterMatchPattern,
+    wallThicknessMatchPattern: validators.wallThicknessMatchPattern,
+    materialEnum: validators.materialEnum,
+    mopMatchPattern: validators.mopMatchPattern,
+    internalProtectionEnum: validators.internalProtectionEnum,
+    fromToMatchPattern: validators.fromToMatchPattern,
+    fromToFeatureEnum: validators.fromToFeatureEnum,
   };
 
   const validatorsConnectedSources: IValidatorsConnectedSources = validators && {

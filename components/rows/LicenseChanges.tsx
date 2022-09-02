@@ -30,7 +30,7 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
   const [confirmDeleteLicenseChangeModal, setConfirmDeleteLicenseChangeModal] = useState(false);
   const [toDeleteLicenseChange, setToDeleteLicenseChange] = useState({ id: '', friendlyName: '' });
 
-  const { data, loading, error, subscribeToMore } = useLicenseChangesByPipelineIdQuery({ variables: { pipelineId } });
+  const { data, loading, error } = useLicenseChangesByPipelineIdQuery({ variables: { pipelineId } });
   const [editLicenseChange] = useEditLicenseChangeMutation({
     refetchQueries: [LicenseChangesByPipelineIdDocument, 'LicenseChangesByPipelineId', PipelinesByIdDocument, 'PipelinesById'/*, RiskByIdDocument, 'RiskById'*/],
     onCompleted: ({ editLicenseChange }) => {
@@ -60,7 +60,7 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
     }
   });
 
-  const { statusEnum, substanceEnum } = validators || {};
+  const { statusEnum, substanceEnum, fromToMatchPattern, fromToFeatureEnum, lengthMatchPattern, pipelineTypeEnum, gradeEnum, yieldStrengthMatchPattern, outsideDiameterMatchPattern, wallThicknessMatchPattern, materialEnum, mopMatchPattern, internalProtectionEnum, } = validators || {};
 
   const editRecord = ({ id, columnName, columnType, newRecord }: IEditRecord) => {
     const switchNewRecord = () => {
@@ -108,8 +108,13 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
   const licenseChangeHeader = [
     { label: 'Date' },
     { label: 'Status' },
-    { label: 'Substance' },
     { label: 'Link To Documentation' },
+    { label: 'From' },
+    { label: 'From Feature' },
+    { label: 'To' },
+    { label: 'To Feature' },
+    { label: 'Length (km)' },
+    { label: 'Type' },
     { label: 'Comment' },
     { label: 'Created By' },
     { label: 'Created At' },
@@ -146,11 +151,19 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
         const isLastRow = data.licenseChangesByPipelineId?.length === gridRow + 1;
         gridRow += 2;
         if (licenseChange) {
-          const { id, date, statusId, substanceId, linkToDocumentation, comment, createdBy, createdAt, updatedBy, updatedAt, authorized } = licenseChange;
+          const { id, date, statusId, substanceId, from, fromFeatureId, to, toFeatureId, length, pipelineTypeId, gradeId, yieldStrength, outsideDiameter,
+            wallThickness, materialId, mop, internalProtectionId, linkToDocumentation, comment, createdBy, createdAt, updatedBy, updatedAt, authorized, } = licenseChange;
           const licenseChangeColumns: IRecordEntryMap[] = [
             { columnName: 'date', columnType: 'date', nullable: false, record: date, editRecord },
             { columnName: 'statusId', columnType: 'string', nullable: false, record: statusId, validator: statusEnum, editRecord },
             { columnName: 'substanceId', columnType: 'string', nullable: false, record: substanceId, validator: substanceEnum, editRecord },
+            { columnName: 'from', columnType: 'string', nullable: false, record: from, validator: fromToMatchPattern, editRecord },
+            { columnName: 'fromFeatureId', columnType: 'string', nullable: true, record: fromFeatureId, validator: fromToFeatureEnum, editRecord },
+            { columnName: 'to', columnType: 'string', nullable: false, record: to, validator: fromToMatchPattern, editRecord },
+            { columnName: 'toFeatureId', columnType: 'string', nullable: true, record: toFeatureId, validator: fromToFeatureEnum, editRecord },
+            { columnName: 'length', columnType: 'number', nullable: false, record: length, validator: lengthMatchPattern, editRecord },
+
+            { columnName: 'pipelineTypeId', columnType: 'string', nullable: true, record: pipelineTypeId, validator: fromToFeatureEnum, editRecord },
             { columnName: 'linkToDocumentation', columnType: 'link', nullable: true, record: linkToDocumentation, editRecord },
             { columnName: 'comment', columnType: 'string', nullable: true, record: comment, editRecord },
             { columnName: 'createdBy', columnType: 'string', nullable: false, record: createdBy.email },
