@@ -1,4 +1,4 @@
-import { PressureTest as IPressureTest, Pipeline as IPipeline } from '@prisma/client';
+import { PressureTest as IPressureTest, LicenseChange as ILicenseChange } from '@prisma/client';
 
 type IMaxPressureOfLimitingSpecArgs = Pick<IPressureTest, 'limitingSpec'>;
 
@@ -11,7 +11,7 @@ const corrosionAllowance = 0.5;
 
 
 
-type IRequiredWTForMopCalcArgs = Pick<IPipeline, 'mop' | 'outsideDiameter' | 'yieldStrength'>;
+type IRequiredWTForMopCalcArgs = Pick<ILicenseChange, 'mop' | 'outsideDiameter' | 'yieldStrength'>;
 
 export const requiredWTForMopCalc = async ({ mop, outsideDiameter, yieldStrength }: IRequiredWTForMopCalcArgs) => {
   if (mop !== null && outsideDiameter !== null && yieldStrength !== null) {
@@ -22,8 +22,8 @@ export const requiredWTForMopCalc = async ({ mop, outsideDiameter, yieldStrength
 }
 
 interface IMopTestPressureCalcArgs {
-  outsideDiameter: IPipeline['outsideDiameter'];
-  yieldStrength: IPipeline['yieldStrength'];
+  outsideDiameter: ILicenseChange['outsideDiameter'];
+  yieldStrength: ILicenseChange['yieldStrength'];
   requiredWTForMop: IPressureTest['requiredWTForMop'];
 }
 
@@ -68,8 +68,8 @@ export const pressureTestPressureCalc = async ({ maxPressureOfLimitingSpec, mopT
 
 interface IRequiredWTForTestPressureCalcArgs {
   pressureTestPressure: IPressureTest['pressureTestPressure'];
-  outsideDiameter: IPipeline['outsideDiameter'];
-  yieldStrength: IPipeline['yieldStrength'];
+  outsideDiameter: ILicenseChange['outsideDiameter'];
+  yieldStrength: ILicenseChange['yieldStrength'];
 }
 
 export const requiredWTForTestPressureCalc = async ({ pressureTestPressure, outsideDiameter, yieldStrength }: IRequiredWTForTestPressureCalcArgs) => {
@@ -92,7 +92,7 @@ export const pressureTestCorrosionAllowanceCalc = async ({ requiredWTForMop, req
 }
 
 
-type IWaterForPiggingCalcArgs = Pick<IPipeline, 'length' | 'outsideDiameter' | 'wallThickness'>;
+type IWaterForPiggingCalcArgs = Pick<ILicenseChange, 'length' | 'outsideDiameter' | 'wallThickness'>;
 
 export const waterForPiggingCalc = async ({ length, outsideDiameter, wallThickness }: IWaterForPiggingCalcArgs) => {
   if (outsideDiameter !== null && wallThickness !== null) {

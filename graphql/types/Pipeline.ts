@@ -56,6 +56,7 @@ export const PipelineObjectFields: ITableConstructObject[] = [
   { field: 'flowCalculationDirection', nullable: false, type: 'FlowCalculationDirectionEnum', enumObjectArray: FlowCalculationDirectionEnumArray },
   { field: 'piggable', nullable: true, type: 'Boolean' },
   { field: 'piggingFrequency', nullable: true, type: 'Int' },
+  { field: 'comment', nullable: true, type: 'String' },
   { field: 'createdAt', nullable: false, type: 'DateTime' },
   { field: 'createdById', nullable: false, type: 'String' },
   { field: 'updatedAt', nullable: false, type: 'DateTime' },
@@ -531,9 +532,10 @@ export const PipelineQuery = extendType({
                   }
                 }
               } else {
-                console.log('HI');
-
                 // TODO implement search navigation for _min and _max 'Having' for numeric and date fields of upstream and downstream pipelines
+                return {
+                  id: ''
+                }
               }
             } else if (table !== 'facility' && table !== 'satellite') {
               // one-to-many relations
@@ -781,6 +783,11 @@ export const PipelineQuery = extendType({
                 }
               }
             }
+            // This flow branch will never be returned because search navigation by facility or satellite is not a possibility on frontend.
+            // Typescript is not aware of this so return is defined to satisfy compiler.
+            return {
+              id: ''
+            }
           }
           ));
 
@@ -889,6 +896,7 @@ export const PipelineMutation = extendType({
         flowCalculationDirection: arg({ type: 'FlowCalculationDirectionEnum' }),
         piggable: booleanArg(),
         piggingFrequency: intArg(),
+        comment: stringArg(),
       },
       resolve: async (_, args, ctx: Context) => {
         const user = ctx.user;
@@ -918,6 +926,7 @@ export const PipelineMutation = extendType({
                   flowCalculationDirection: args.flowCalculationDirection || undefined,
                   piggable: args.piggable,
                   piggingFrequency: args.piggingFrequency,
+                  comment: args.comment,
                   updatedById: userId,
                 },
               });

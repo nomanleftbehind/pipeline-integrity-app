@@ -1,8 +1,8 @@
 import {
   Risk as IRisk,
   LicenseChange as ILicenseChange,
-  LicenseChangeStatus as ILicenseChangeStatus,
-  LicenseChangeSubstance as ILicenseChangeSubstance,
+  Status as IStatus,
+  Substance as ISubstance,
   Pipeline as IPipeline,
   Chemical as IChemical,
 } from '@prisma/client';
@@ -83,10 +83,10 @@ export const consequenceAssetCalc = async ({ repairTimeDays, oilReleaseCost, gas
 }
 
 interface IProbabilityInteriorCalcArgs {
-  type: IPipeline['pipelineTypeId'];
-  material: IPipeline['pipelineMaterialId'];
-  currentSubstance: ILicenseChangeSubstance['substance'];
-  currentStatus: ILicenseChangeStatus['status'];
+  type: ILicenseChange['pipelineTypeId'];
+  material: ILicenseChange['materialId'];
+  currentSubstance: ISubstance['substance'];
+  currentStatus: IStatus['status'];
 }
 
 export const probabilityInteriorCalc = async ({ type, material, currentSubstance, currentStatus }: IProbabilityInteriorCalcArgs) => {
@@ -127,7 +127,7 @@ export const probabilityInteriorCalc = async ({ type, material, currentSubstance
 interface IProbabilityExteriorCalcArgs {
   firstLicenseDate: ILicenseChange['date'];
   currentStatus: ILicenseChange['statusId'];
-  material: IPipeline['pipelineMaterialId'];
+  material: ILicenseChange['materialId'];
 }
 
 export const probabilityExteriorCalc = async ({ firstLicenseDate, currentStatus, material }: IProbabilityExteriorCalcArgs) => {
@@ -323,6 +323,8 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
     select: {
       substance: { select: { substance: true } },
       status: { select: { status: true } },
+      pipelineType: { select: { type: true } },
+      material: { select: { material: true } },
     },
   });
 
@@ -336,8 +338,6 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
     where: { id },
     select: {
       flowCalculationDirection: true,
-      pipelineType: { select: { type: true } },
-      pipelineMaterial: { select: { material: true } },
       piggable: true,
     }
   });
@@ -355,11 +355,11 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
   if (risk && lastLicenseChange && firstLicenseChange && pipeline && chemical) {
 
     const { environment: environmentObject, oilReleaseCost, gasReleaseCost, repairTimeDays, consequencePeople, probabilityGeo, safeguardInternalProtection, safeguardExternalCoating } = risk;
-    const { substance: { substance: currentSubstance }, status: { status: currentStatus } } = lastLicenseChange;
+    const { substance: { substance: currentSubstance }, status: { status: currentStatus }, pipelineType: currentType, material: currentMaterial } = lastLicenseChange;
     const { date: firstLicenseDate } = firstLicenseChange;
-    const { flowCalculationDirection, pipelineType, pipelineMaterial, piggable } = pipeline;
-    const type = pipelineType?.type || null;
-    const material = pipelineMaterial?.material || null;
+    const { flowCalculationDirection, piggable } = pipeline;
+    const type = currentType?.type || null;
+    const material = currentMaterial?.material || null;
     const environment = environmentObject?.environment || null;
     const { downholeBatch, inhibitorPipelineBatch, bacteriaTreatment, scaleTreatment } = chemical;
 

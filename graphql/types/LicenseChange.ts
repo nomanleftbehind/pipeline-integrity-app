@@ -159,6 +159,8 @@ export const LicenseChangeMutation = extendType({
         linkToDocumentation: stringArg(),
       },
       resolve: async (_parent, args, ctx: Context) => {
+        console.log('args:', args);
+        
         const user = ctx.user;
         if (user) {
           const { id: userId, role, firstName } = user;

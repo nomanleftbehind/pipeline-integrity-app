@@ -499,6 +499,7 @@ export type MutationEditPigRunArgs = {
 
 
 export type MutationEditPipelineArgs = {
+  comment?: Maybe<Scalars['String']>;
   flowCalculationDirection?: Maybe<FlowCalculationDirectionEnum>;
   id: Scalars['String'];
   license?: Maybe<Scalars['String']>;
@@ -649,6 +650,7 @@ export type PigRunPayload = {
 
 export type Pipeline = {
   authorized: Scalars['Boolean'];
+  comment?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   createdBy: User;
   createdById: Scalars['String'];
@@ -1397,6 +1399,7 @@ export type EditPipelineMutationVariables = Exact<{
   flowCalculationDirection?: Maybe<FlowCalculationDirectionEnum>;
   piggable?: Maybe<Scalars['Boolean']>;
   piggingFrequency?: Maybe<Scalars['Int']>;
+  comment?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -1404,9 +1407,22 @@ export type EditPipelineMutation = { editPipeline?: { pipeline?: { id: string } 
 
 export type EditLicenseChangeMutationVariables = Exact<{
   id: Scalars['String'];
+  date?: Maybe<Scalars['DateTime']>;
   statusId?: Maybe<Scalars['String']>;
   substanceId?: Maybe<Scalars['String']>;
-  date?: Maybe<Scalars['DateTime']>;
+  from?: Maybe<Scalars['String']>;
+  fromFeatureId?: Maybe<Scalars['String']>;
+  to?: Maybe<Scalars['String']>;
+  toFeatureId?: Maybe<Scalars['String']>;
+  length?: Maybe<Scalars['Float']>;
+  pipelineTypeId?: Maybe<Scalars['String']>;
+  gradeId?: Maybe<Scalars['String']>;
+  yieldStrength?: Maybe<Scalars['Int']>;
+  outsideDiameter?: Maybe<Scalars['Float']>;
+  wallThickness?: Maybe<Scalars['Float']>;
+  materialId?: Maybe<Scalars['String']>;
+  mop?: Maybe<Scalars['Int']>;
+  internalProtectionId?: Maybe<Scalars['String']>;
   comment?: Maybe<Scalars['String']>;
   linkToDocumentation?: Maybe<Scalars['String']>;
 }>;
@@ -1638,7 +1654,7 @@ export type PipelinesByIdQueryVariables = Exact<{
 }>;
 
 
-export type PipelinesByIdQuery = { pipelinesById: { count: number, pipelines?: Array<{ id: string, license: string, segment: string, flowCalculationDirection: FlowCalculationDirectionEnum, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, currentFrom?: string | null | undefined, currentFromFeature?: string | null | undefined, currentTo?: string | null | undefined, currentToFeature?: string | null | undefined, currentStatus?: string | null | undefined, currentSubstance?: string | null | undefined, firstLicenseDate?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined } };
+export type PipelinesByIdQuery = { pipelinesById: { count: number, pipelines?: Array<{ id: string, license: string, segment: string, flowCalculationDirection: FlowCalculationDirectionEnum, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, comment?: string | null | undefined, currentFrom?: string | null | undefined, currentFromFeature?: string | null | undefined, currentTo?: string | null | undefined, currentToFeature?: string | null | undefined, currentStatus?: string | null | undefined, currentSubstance?: string | null | undefined, firstLicenseDate?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined } };
 
 export type PigRunsByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -2319,7 +2335,7 @@ export type DisconnectSalesPointMutationHookResult = ReturnType<typeof useDiscon
 export type DisconnectSalesPointMutationResult = Apollo.MutationResult<DisconnectSalesPointMutation>;
 export type DisconnectSalesPointMutationOptions = Apollo.BaseMutationOptions<DisconnectSalesPointMutation, DisconnectSalesPointMutationVariables>;
 export const EditPipelineDocument = gql`
-    mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $piggable: Boolean, $piggingFrequency: Int) {
+    mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $piggable: Boolean, $piggingFrequency: Int, $comment: String) {
   editPipeline(
     id: $id
     satelliteId: $satelliteId
@@ -2328,6 +2344,7 @@ export const EditPipelineDocument = gql`
     flowCalculationDirection: $flowCalculationDirection
     piggable: $piggable
     piggingFrequency: $piggingFrequency
+    comment: $comment
   ) {
     pipeline {
       id
@@ -2361,6 +2378,7 @@ export type EditPipelineMutationFn = Apollo.MutationFunction<EditPipelineMutatio
  *      flowCalculationDirection: // value for 'flowCalculationDirection'
  *      piggable: // value for 'piggable'
  *      piggingFrequency: // value for 'piggingFrequency'
+ *      comment: // value for 'comment'
  *   },
  * });
  */
@@ -2372,12 +2390,25 @@ export type EditPipelineMutationHookResult = ReturnType<typeof useEditPipelineMu
 export type EditPipelineMutationResult = Apollo.MutationResult<EditPipelineMutation>;
 export type EditPipelineMutationOptions = Apollo.BaseMutationOptions<EditPipelineMutation, EditPipelineMutationVariables>;
 export const EditLicenseChangeDocument = gql`
-    mutation EditLicenseChange($id: String!, $statusId: String, $substanceId: String, $date: DateTime, $comment: String, $linkToDocumentation: String) {
+    mutation EditLicenseChange($id: String!, $date: DateTime, $statusId: String, $substanceId: String, $from: String, $fromFeatureId: String, $to: String, $toFeatureId: String, $length: Float, $pipelineTypeId: String, $gradeId: String, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $materialId: String, $mop: Int, $internalProtectionId: String, $comment: String, $linkToDocumentation: String) {
   editLicenseChange(
     id: $id
+    date: $date
     statusId: $statusId
     substanceId: $substanceId
-    date: $date
+    from: $from
+    fromFeatureId: $fromFeatureId
+    to: $to
+    toFeatureId: $toFeatureId
+    length: $length
+    pipelineTypeId: $pipelineTypeId
+    gradeId: $gradeId
+    yieldStrength: $yieldStrength
+    outsideDiameter: $outsideDiameter
+    wallThickness: $wallThickness
+    materialId: $materialId
+    mop: $mop
+    internalProtectionId: $internalProtectionId
     comment: $comment
     linkToDocumentation: $linkToDocumentation
   ) {
@@ -2407,9 +2438,22 @@ export type EditLicenseChangeMutationFn = Apollo.MutationFunction<EditLicenseCha
  * const [editLicenseChangeMutation, { data, loading, error }] = useEditLicenseChangeMutation({
  *   variables: {
  *      id: // value for 'id'
+ *      date: // value for 'date'
  *      statusId: // value for 'statusId'
  *      substanceId: // value for 'substanceId'
- *      date: // value for 'date'
+ *      from: // value for 'from'
+ *      fromFeatureId: // value for 'fromFeatureId'
+ *      to: // value for 'to'
+ *      toFeatureId: // value for 'toFeatureId'
+ *      length: // value for 'length'
+ *      pipelineTypeId: // value for 'pipelineTypeId'
+ *      gradeId: // value for 'gradeId'
+ *      yieldStrength: // value for 'yieldStrength'
+ *      outsideDiameter: // value for 'outsideDiameter'
+ *      wallThickness: // value for 'wallThickness'
+ *      materialId: // value for 'materialId'
+ *      mop: // value for 'mop'
+ *      internalProtectionId: // value for 'internalProtectionId'
  *      comment: // value for 'comment'
  *      linkToDocumentation: // value for 'linkToDocumentation'
  *   },
@@ -3530,6 +3574,7 @@ export const PipelinesByIdDocument = gql`
       flowCalculationDirection
       piggable
       piggingFrequency
+      comment
       currentFrom
       currentFromFeature
       currentTo

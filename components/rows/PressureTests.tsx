@@ -106,7 +106,7 @@ export default function PressureTests({ pipelineId, validators }: IPressureTests
   const isModalOpen = openModal(fieldError);
 
   const pressureTestHeader = [
-    { label: 'Pressure Test Date' },
+    { label: 'Date' },
     { label: 'Pressure Test Received Date' },
     { label: 'Info Sent Out Date' },
     { label: 'DDS Date' },

@@ -21,6 +21,7 @@ query PipelinesById($navigationInput: NavigationInput!, $skip: Int!, $take: Int!
       flowCalculationDirection
       piggable
       piggingFrequency
+      comment
       currentFrom
       currentFromFeature
       currentTo

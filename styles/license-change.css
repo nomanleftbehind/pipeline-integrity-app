@@ -5,7 +5,29 @@
 
 .license-change {
   display: grid;
-  grid-template-columns: 30px var(--date-width) 135px 130px 240px 220px auto;
+  grid-template-columns: 30px var(--date-width) 135px 140px 160px 180px 160px 180px 110px
+    /*Type*/
+    120px
+    /*Grade*/
+    120px
+    /*Yield Str.*/
+    110px
+    /*Out. Diam.*/
+    100px
+    /*Wall Thick.*/
+    100px
+    /*Material*/
+    120px
+    /*MOP*/
+    100px
+    /*Int. Prot.*/
+    160px
+    /*Link to Doc.*/
+    240px
+    /*Comment*/
+    240px
+    /*rest*/
+    auto;
   row-gap: 2px;
   column-gap: 4px;
   grid-auto-rows: minmax(20px, auto);

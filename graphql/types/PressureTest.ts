@@ -144,8 +144,9 @@ export const PressureTestQuery = extendType({
       resolve: async (_, { pipelineId }, ctx: Context) => {
 
 
-        const pipeline = await ctx.prisma.pipeline.findUnique({
-          where: { id: pipelineId },
+        const latestLicenseChange = await ctx.prisma.licenseChange.findFirst({
+          where: { pipelineId },
+          orderBy: { date: 'desc' },
           select: { mop: true, outsideDiameter: true, yieldStrength: true, wallThickness: true, length: true }
         });
 
@@ -154,8 +155,8 @@ export const PressureTestQuery = extendType({
           select: { id: true, limitingSpec: true }
         });
 
-        if (pipeline && pipelinePressureTests.length > 0) {
-          const { mop, outsideDiameter, yieldStrength, wallThickness, length } = pipeline;
+        if (latestLicenseChange && pipelinePressureTests.length > 0) {
+          const { mop, outsideDiameter, yieldStrength, wallThickness, length } = latestLicenseChange;
           const requiredWTForMop = await requiredWTForMopCalc({ mop, outsideDiameter, yieldStrength });
           const mopTestPressure = await mopTestPressureCalc({ outsideDiameter, requiredWTForMop, yieldStrength });
           const waterForPigging = await waterForPiggingCalc({ length, outsideDiameter, wallThickness });

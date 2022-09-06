@@ -267,7 +267,7 @@ type Mutation {
   editGeotechnical(data: EditGeotechnicalInput!): GeotechnicalPayload
   editLicenseChange(comment: String, date: DateTime, from: String, fromFeatureId: String, gradeId: String, id: String!, internalProtectionId: String, length: Float, linkToDocumentation: String, materialId: String, mop: Int, outsideDiameter: Float, pipelineTypeId: String, statusId: String, substanceId: String, to: String, toFeatureId: String, wallThickness: Float, yieldStrength: Int): LicenseChangePayload
   editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigTypeId: String): PigRunPayload
-  editPipeline(flowCalculationDirection: FlowCalculationDirectionEnum, id: String!, license: String, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String): PipelinePayload
+  editPipeline(comment: String, flowCalculationDirection: FlowCalculationDirectionEnum, id: String!, license: String, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String): PipelinePayload
   editPipelineBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, productId: String): PipelineBatchPayload
   editPressureTest(comment: String, date: DateTime, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pressureTestReceivedDate: DateTime): PressureTestPayload
   editRisk(data: EditRiskInput!): RiskPayload
@@ -330,6 +330,7 @@ type PigRunPayload {
 
 type Pipeline {
   authorized: Boolean!
+  comment: String
   createdAt: DateTime!
   createdBy: User!
   createdById: String!
