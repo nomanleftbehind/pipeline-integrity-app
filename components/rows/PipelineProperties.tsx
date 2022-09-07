@@ -4,28 +4,35 @@ import { IRecordEntryMap } from './LicenseChanges';
 import { IPipeline } from './RenderPipeline';
 import { IValidatorsPipelineProperties } from './PipelineData';
 
-export type IMechanicalPropertyRecordEntryMap = IRecordEntryMap & { label: string };
+export type IPipelinePropertyRecordEntryMap = IRecordEntryMap & { label: string };
 
-type IMechanicalPropertiesProps = Pick<IPipeline, 'id' | 'flowCalculationDirection' | 'piggable' | 'piggingFrequency' | 'authorized'> & {
+interface IMechanicalPropertiesProps {
+  fields: Pick<IPipeline, 'id' | 'flowCalculationDirection' | 'piggable' | 'piggingFrequency' | 'comment' | 'authorized' | 'createdBy' | 'createdAt' | 'updatedBy' | 'updatedAt'>;
   editPipeline: IEditRecordFunction;
   validators?: IValidatorsPipelineProperties;
 };
 
-export default function MechanicalProperties({ id, flowCalculationDirection, piggable, piggingFrequency, authorized, editPipeline: editRecord, validators }: IMechanicalPropertiesProps) {
+export default function PipelineProperties({ fields: { id, flowCalculationDirection, piggable, piggingFrequency, comment, authorized, createdBy, createdAt, updatedBy, updatedAt }, editPipeline: editRecord, validators }: IMechanicalPropertiesProps) {
 
   const { flowCalculationDirectionEnum } = validators || {};
 
-  const mechanicalProperties: IMechanicalPropertyRecordEntryMap[] = [
+  const pipelineProperties: IPipelinePropertyRecordEntryMap[] = [
     { columnName: 'flowCalculationDirection', record: flowCalculationDirection, label: 'Flow Calculation Direction', columnType: 'string', nullable: false, validator: flowCalculationDirectionEnum, editRecord },
     { columnName: 'piggable', record: piggable, label: 'Piggable', columnType: 'boolean', nullable: true, editRecord },
     { columnName: 'piggingFrequency', record: piggingFrequency, label: 'Pigging Frequency (#/year)', columnType: 'number', nullable: true, editRecord },
+    { columnName: 'comment', record: comment, label: 'Comment', columnType: 'string', nullable: true, editRecord },
+    { columnName: 'createdBy', record: createdBy.email, columnType: 'string', label: 'Created By', nullable: false },
+    { columnName: 'createdAt', record: createdAt, columnType: 'date', label: 'Created At', nullable: false },
+    { columnName: 'updatedBy', record: updatedBy.email, columnType: 'string', label: 'Updated By', nullable: false },
+    { columnName: 'updatedAt', record: updatedAt, columnType: 'date', label: 'Updated At', nullable: false },
+    { columnName: 'id', record: id, columnType: 'string', label: 'ID', nullable: false },
   ];
 
   let gridRow = 0;
 
   return (
     <div className='mechanical-properties'>
-      {mechanicalProperties.map(({ columnName, label, record, validator, columnType, nullable, editRecord }, i) => {
+      {pipelineProperties.map(({ columnName, label, record, validator, columnType, nullable, editRecord }, i) => {
         let gridColumn = i;
         gridColumn = gridColumn % 3 + 1;
         if (gridColumn === 1) {

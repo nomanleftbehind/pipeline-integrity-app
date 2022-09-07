@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { IPipeline } from './RenderPipeline';
 import RecordEntry, { IEditRecord, IEditRecordFunction } from '../fields/RecordEntry';
 import { ModalFieldError } from '../Modal';
-import { IMechanicalPropertyRecordEntryMap as IRiskPropertyRecordEntryMap } from './MechanicalProperties';
+import { IPipelinePropertyRecordEntryMap as IRiskPropertyRecordEntryMap } from './PipelineProperties';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -123,7 +123,7 @@ export default function Risk({ id, license, segment, flowCalculationDirection, c
         oilReleaseCost, gasReleaseCost, repairTimeDays, releaseTimeDays, costPerM3Released,
         safeguardExternalCoating, safeguardCathodic, probabilityExteriorWithSafeguards, riskPotentialExternalWithSafeguards,
         createdBy, createdAt, updatedBy, updatedAt, comment, authorized } = data.riskById;
-      const { riskEnvironmentEnum, pipelineTypeEnum, materialEnum } = validators || {};
+      const { riskEnvironmentEnum } = validators || {};
 
       const riskProperties: IRiskPropertyRecordEntryMap[] = [
         { columnName: 'aerialReview', record: aerialReview, columnType: 'boolean', label: 'Aerial Review', nullable: true, editRecord },

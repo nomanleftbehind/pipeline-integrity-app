@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ConnectedSources from './ConnectedSources/ConnectedSources';
 import LicenseChanges from './LicenseChanges';
-import MechanicalProperties from './MechanicalProperties';
+import PipelineProperties from './PipelineProperties';
 import PressureTests from './PressureTests';
 import PigRuns from './PigRuns';
 import PipelineBatches from './PipelineBatches';
@@ -21,7 +21,6 @@ export interface IPipelineDataProps {
   open: boolean;
   pipeline: IPipeline;
   validators: IValidators;
-  authorized: boolean;
   editPipeline: IEditRecordFunction;
 }
 
@@ -36,13 +35,13 @@ export type IValidatorsLicenseChanges = PickNullable<NonNullable<IValidators>, '
 export type IValidatorsGeotechnicals = PickNullable<NonNullable<IValidators>, 'geotechnicalFacingEnum'>;
 export type IValidatorsConnectedSources = PickNullable<NonNullable<IValidators>, 'flowCalculationDirectionEnum'>;
 export type IValidatorsPressureTests = PickNullable<NonNullable<IValidators>, 'limitingSpecEnum'>;
-export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'riskEnvironmentEnum' | 'pipelineTypeEnum' | 'materialEnum'>;
+export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'riskEnvironmentEnum'>;
 export type IValidatorsPigRuns = PickNullable<NonNullable<IValidators>, 'pigTypeEnum' | 'pigInspectionEnum' | 'operatorEnum'>;
 export type IValidatorsPipelineBatches = PickNullable<NonNullable<IValidators>, 'solubilityEnum' | 'batchProductEnum'>;
 export type IValidatorsChemical = PickNullable<NonNullable<IValidators>, 'chemicalSupplierEnum'>;
 export type IValidatorsNavigation = PickNullable<NonNullable<IValidators>, 'operationEnum' | 'havingEnum'>;
 
-type IView = 'license change' | 'connected source' | 'mechanical properties' | 'pressure test' | 'pig run' | 'pipeline batch' | 'risk' | 'geotechnical' | 'chemical' | 'system fields';
+type IView = 'license change' | 'connected source' | 'pipeline properties' | 'pressure test' | 'pig run' | 'pipeline batch' | 'risk' | 'geotechnical' | 'chemical';
 
 interface ITabPanelMap {
   title: string;
@@ -54,10 +53,10 @@ interface ITabPanelProps extends ITabPanelMap {
   handleViewClick: (view: IView) => void;
 }
 
-export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editPipeline, authorized, validators }: IPipelineDataProps) {
+export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editPipeline, validators }: IPipelineDataProps) {
   const [view, setView] = useState<IView>('license change');
 
-  const { id, license, segment, currentSubstance, flowCalculationDirection, currentStatus, firstLicenseDate, piggable, piggingFrequency, comment } = pipeline;
+  const { id, license, segment, currentSubstance, flowCalculationDirection, currentStatus, firstLicenseDate, piggable, piggingFrequency, comment, createdBy, createdAt, updatedBy, updatedAt, authorized } = pipeline;
 
   const validatorsLicenseChanges: IValidatorsLicenseChanges = validators && {
     statusEnum: validators.statusEnum,
@@ -89,8 +88,6 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
 
   const validatorsRisk: IValidatorsRisk = validators && {
     riskEnvironmentEnum: validators.riskEnvironmentEnum,
-    pipelineTypeEnum: validators.pipelineTypeEnum,
-    materialEnum: validators.materialEnum,
   };
 
   const validatorsGeotechnicals: IValidatorsGeotechnicals = validators && {
@@ -113,15 +110,6 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
     chemicalSupplierEnum: validators.chemicalSupplierEnum,
   };
 
-
-  // const systemFields: IPipelineProperty[] = [
-  //   { columnName: 'createdBy', record: createdBy.email, columnType: 'string' },
-  //   { columnName: 'createdAt', record: createdAt, columnType: 'date' },
-  //   { columnName: 'updatedBy', record: updatedBy.email, columnType: 'string' },
-  //   { columnName: 'updatedAt', record: updatedAt, columnType: 'date' },
-  //   { columnName: 'id', record: id, columnType: 'string' },
-  // ];
-
   const handleViewClick = (view: IView) => {
     setView(view);
   }
@@ -142,13 +130,9 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
         authorized={authorized}
       />
     }
-    if (view === 'mechanical properties') {
-      return <MechanicalProperties
-        id={id}
-        flowCalculationDirection={flowCalculationDirection}
-        piggable={piggable}
-        piggingFrequency={piggingFrequency}
-        authorized={authorized}
+    if (view === 'pipeline properties') {
+      return <PipelineProperties
+        fields={{ id, flowCalculationDirection, piggable, piggingFrequency, comment, authorized, createdBy, createdAt, updatedBy, updatedAt }}
         editPipeline={editPipeline}
         validators={validatorsPipelineProperties}
       />
@@ -198,28 +182,18 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
         validators={validatorsChemical}
       />
     }
-    // if (view === 'system fields') {
-    //   return <PipelineProperties
-    //     open={open}
-    //     id={id}
-    //     createdById={createdBy.id}
-    //     propertiesName="System Fields"
-    //     pipelineProperties={systemFields}
-    //   />
-    // }
   }
 
   const tabs: ITabPanelMap[] = [
     { title: 'License Changes', view: 'license change' },
     { title: 'Connected Sources', view: 'connected source' },
-    { title: 'Mechanical Properties', view: 'mechanical properties' },
+    { title: 'Pipeline Properties', view: 'pipeline properties' },
     { title: 'Pressure Tests', view: 'pressure test' },
     { title: 'Pig Runs', view: 'pig run' },
     { title: 'Pipeline Batches', view: 'pipeline batch' },
     { title: 'Chemical', view: 'chemical' },
     { title: 'Risk', view: 'risk' },
     { title: 'Geotechnical', view: 'geotechnical' },
-    { title: 'System Fields', view: 'system fields' },
   ];
 
 

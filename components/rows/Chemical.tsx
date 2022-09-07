@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { IPipeline } from './RenderPipeline';
 import RecordEntry, { IEditRecord } from '../fields/RecordEntry';
 import { ModalFieldError } from '../Modal';
-import { IMechanicalPropertyRecordEntryMap as IChemicalPropertyRecordEntryMap } from './MechanicalProperties';
+import { IPipelinePropertyRecordEntryMap as IChemicalPropertyRecordEntryMap } from './PipelineProperties';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';

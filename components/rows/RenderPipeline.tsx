@@ -167,7 +167,6 @@ export default function RenderPipeline({ gridRow, rowIsEven, pipeline, validator
         open={open}
         pipeline={pipeline}
         validators={validators}
-        authorized={authorized}
         editPipeline={editRecord}
       />
     </>
