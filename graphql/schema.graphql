@@ -353,6 +353,7 @@ type Pipeline {
   risk: Risk
   salesPoints: [SalesPoint]
   satellite: Satellite
+  satelliteId: String
   segment: String!
   updatedAt: DateTime!
   updatedBy: User!
@@ -783,6 +784,7 @@ type ValidatorsPipeline {
   pigTypeEnum: [EnumObject!]!
   pipelineTypeEnum: [EnumObject!]!
   riskEnvironmentEnum: [EnumObject!]!
+  satelliteEnum: [EnumObject!]!
   segmentMatchPattern: String!
   solubilityEnum: [EnumObject!]!
   statusEnum: [EnumObject!]!

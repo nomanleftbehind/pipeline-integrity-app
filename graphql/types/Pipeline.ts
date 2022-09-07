@@ -57,6 +57,7 @@ export const PipelineObjectFields: ITableConstructObject[] = [
   { field: 'piggable', nullable: true, type: 'Boolean' },
   { field: 'piggingFrequency', nullable: true, type: 'Int' },
   { field: 'comment', nullable: true, type: 'String' },
+  { field: 'satelliteId', nullable: true, type: 'String' },
   { field: 'createdAt', nullable: false, type: 'DateTime' },
   { field: 'createdById', nullable: false, type: 'String' },
   { field: 'updatedAt', nullable: false, type: 'DateTime' },

@@ -673,6 +673,7 @@ export type Pipeline = {
   risk?: Maybe<Risk>;
   salesPoints?: Maybe<Array<Maybe<SalesPoint>>>;
   satellite?: Maybe<Satellite>;
+  satelliteId?: Maybe<Scalars['String']>;
   segment: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
@@ -1220,6 +1221,7 @@ export type ValidatorsPipeline = {
   pigTypeEnum: Array<EnumObject>;
   pipelineTypeEnum: Array<EnumObject>;
   riskEnvironmentEnum: Array<EnumObject>;
+  satelliteEnum: Array<EnumObject>;
   segmentMatchPattern: Scalars['String'];
   solubilityEnum: Array<EnumObject>;
   statusEnum: Array<EnumObject>;
@@ -1654,7 +1656,7 @@ export type PipelinesByIdQueryVariables = Exact<{
 }>;
 
 
-export type PipelinesByIdQuery = { pipelinesById: { count: number, pipelines?: Array<{ id: string, license: string, segment: string, flowCalculationDirection: FlowCalculationDirectionEnum, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, comment?: string | null | undefined, currentFrom?: string | null | undefined, currentFromFeature?: string | null | undefined, currentTo?: string | null | undefined, currentToFeature?: string | null | undefined, currentStatus?: string | null | undefined, currentSubstance?: string | null | undefined, firstLicenseDate?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined } };
+export type PipelinesByIdQuery = { pipelinesById: { count: number, pipelines?: Array<{ id: string, license: string, segment: string, flowCalculationDirection: FlowCalculationDirectionEnum, piggable?: boolean | null | undefined, piggingFrequency?: number | null | undefined, comment?: string | null | undefined, satelliteId?: string | null | undefined, currentFrom?: string | null | undefined, currentFromFeature?: string | null | undefined, currentTo?: string | null | undefined, currentToFeature?: string | null | undefined, currentStatus?: string | null | undefined, currentSubstance?: string | null | undefined, firstLicenseDate?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined } };
 
 export type PigRunsByPipelineIdQueryVariables = Exact<{
   pipelineId: Scalars['String'];
@@ -1685,7 +1687,7 @@ export type WellBatchesByWellIdQuery = { wellBatchesByWellId?: Array<{ id: strin
 export type ValidatorsPipelineQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, gradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, materialEnum: Array<{ serverEnum: string, databaseEnum: string }>, internalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, riskEnvironmentEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }>, chemicalSupplierEnum: Array<{ serverEnum: string, databaseEnum: string }>, operationEnum: Array<{ serverEnum: string, databaseEnum: string }>, havingEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
+export type ValidatorsPipelineQuery = { validatorsPipeline?: { licenseMatchPattern: string, segmentMatchPattern: string, fromToMatchPattern: string, lengthMatchPattern: string, yieldStrengthMatchPattern: string, outsideDiameterMatchPattern: string, wallThicknessMatchPattern: string, mopMatchPattern: string, flowCalculationDirectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, satelliteEnum: Array<{ serverEnum: string, databaseEnum: string }>, fromToFeatureEnum: Array<{ serverEnum: string, databaseEnum: string }>, statusEnum: Array<{ serverEnum: string, databaseEnum: string }>, substanceEnum: Array<{ serverEnum: string, databaseEnum: string }>, pipelineTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, gradeEnum: Array<{ serverEnum: string, databaseEnum: string }>, materialEnum: Array<{ serverEnum: string, databaseEnum: string }>, internalProtectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, limitingSpecEnum: Array<{ serverEnum: string, databaseEnum: string }>, riskEnvironmentEnum: Array<{ serverEnum: string, databaseEnum: string }>, geotechnicalFacingEnum: Array<{ serverEnum: string, databaseEnum: string }>, solubilityEnum: Array<{ serverEnum: string, databaseEnum: string }>, batchProductEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigTypeEnum: Array<{ serverEnum: string, databaseEnum: string }>, pigInspectionEnum: Array<{ serverEnum: string, databaseEnum: string }>, operatorEnum: Array<{ serverEnum: string, databaseEnum: string }>, chemicalSupplierEnum: Array<{ serverEnum: string, databaseEnum: string }>, operationEnum: Array<{ serverEnum: string, databaseEnum: string }>, havingEnum: Array<{ serverEnum: string, databaseEnum: string }> } | null | undefined };
 
 export type ValidatorsUserRoleQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3575,6 +3577,7 @@ export const PipelinesByIdDocument = gql`
       piggable
       piggingFrequency
       comment
+      satelliteId
       currentFrom
       currentFromFeature
       currentTo
@@ -3841,6 +3844,14 @@ export const ValidatorsPipelineDocument = gql`
   validatorsPipeline {
     licenseMatchPattern
     segmentMatchPattern
+    flowCalculationDirectionEnum {
+      serverEnum
+      databaseEnum
+    }
+    satelliteEnum {
+      serverEnum
+      databaseEnum
+    }
     fromToMatchPattern
     fromToFeatureEnum {
       serverEnum
@@ -3872,10 +3883,6 @@ export const ValidatorsPipelineDocument = gql`
     }
     mopMatchPattern
     internalProtectionEnum {
-      serverEnum
-      databaseEnum
-    }
-    flowCalculationDirectionEnum {
       serverEnum
       databaseEnum
     }

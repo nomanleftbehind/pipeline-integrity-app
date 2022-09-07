@@ -23,6 +23,7 @@ import {
   loadStatusEnumObjectArray,
   loadSubstanceEnumObjectArray,
   loadRiskEnvironmentEnumObjectArray,
+  loadSatelliteEnumObjectArray,
 } from './Validator';
 import type { GetGen } from 'nexus/dist/typegenTypeHelpers';
 import type { AllNexusOutputTypeDefs } from 'nexus/dist/definitions/wrapping';
@@ -141,15 +142,16 @@ export const SearchNavigationQuery = extendType({
         const pigTypeIdEnumObjectArray = await loadPigTypeEnumObjectArray({ ctx });
         const productIdEnumObjectArray = await loadBatchProductEnumObjectArray({ ctx });
         const chemicalSupplierIdEnumObjectArray = await loadChemicalSupplierEnumObjectArray({ ctx });
+        const satelliteIdEnumObjectArray = await loadSatelliteEnumObjectArray({ ctx });
 
         const generatePipelineSearchNavigationObject = async (table: Extract<NexusGenEnums['TableEnum'], 'pipeline' | 'upstream' | 'downstream'>) => {
-
           return PipelineObjectFields
             .map(({ field, nullable, type, enumObjectArray }) => {
               const newObj: ITableObjectExtend = {
                 table, field, nullable, type,
-                enumObjectArray: ['createdById', 'updatedById'].includes(field) ? userIdEnumObjectArray :
-                  enumObjectArray
+                enumObjectArray: field === 'satelliteId' ? satelliteIdEnumObjectArray :
+                  ['createdById', 'updatedById'].includes(field) ? userIdEnumObjectArray :
+                    enumObjectArray
               };
               return newObj;
             });

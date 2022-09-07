@@ -91,7 +91,7 @@ interface IProbabilityInteriorCalcArgs {
 
 export const probabilityInteriorCalc = async ({ type, material, currentSubstance, currentStatus }: IProbabilityInteriorCalcArgs) => {
 
-  const isTypeZ245 = type && ['TypeZ2451', 'TypeZ2453'].includes(type);
+  const isTypeZ245 = type && ['Z245.1', 'Z245.3'].includes(type);
 
   if ((currentStatus && ['Discontinued', 'Abandoned'].includes(currentStatus)) || (material && ['Fiberglass', 'Composite', 'Polyethylene', 'Asbestos Cement', 'Polyvinyl Chloride', 'Aluminum'].includes(material))) {
     return 1;
@@ -102,7 +102,7 @@ export const probabilityInteriorCalc = async ({ type, material, currentSubstance
       } else {
         return 4;
       }
-    } else if (currentSubstance === 'Crude Oil'/* || currentSubstance === 'Sour Crude'*/) {
+    } else if (currentSubstance === 'Crude Oil' || currentSubstance === 'Sour Crude') {
       if (isTypeZ245) {
         return 2;
       } else {

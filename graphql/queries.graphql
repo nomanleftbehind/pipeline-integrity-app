@@ -22,6 +22,7 @@ query PipelinesById($navigationInput: NavigationInput!, $skip: Int!, $take: Int!
       piggable
       piggingFrequency
       comment
+      satelliteId
       currentFrom
       currentFromFeature
       currentTo
@@ -142,6 +143,14 @@ query ValidatorsPipeline {
   validatorsPipeline {
     licenseMatchPattern
     segmentMatchPattern
+    flowCalculationDirectionEnum {
+      serverEnum
+      databaseEnum
+    }
+    satelliteEnum {
+      serverEnum
+      databaseEnum
+    }
     fromToMatchPattern
     fromToFeatureEnum {
       serverEnum
@@ -173,10 +182,6 @@ query ValidatorsPipeline {
     }
     mopMatchPattern
     internalProtectionEnum {
-      serverEnum
-      databaseEnum
-    }
-    flowCalculationDirectionEnum {
       serverEnum
       databaseEnum
     }

@@ -30,7 +30,7 @@ type PickNullable<T, K extends keyof T> = {
 } | null | undefined;
 
 
-export type IValidatorsPipelineProperties = PickNullable<NonNullable<IValidators>, 'flowCalculationDirectionEnum'>;
+export type IValidatorsPipelineProperties = PickNullable<NonNullable<IValidators>, 'flowCalculationDirectionEnum' | 'satelliteEnum'>;
 export type IValidatorsLicenseChanges = PickNullable<NonNullable<IValidators>, 'statusEnum' | 'substanceEnum' | 'fromToMatchPattern' | 'fromToFeatureEnum' | 'lengthMatchPattern' | 'pipelineTypeEnum' | 'gradeEnum' | 'yieldStrengthMatchPattern' | 'outsideDiameterMatchPattern' | 'wallThicknessMatchPattern' | 'materialEnum' | 'mopMatchPattern' | 'internalProtectionEnum'>;
 export type IValidatorsGeotechnicals = PickNullable<NonNullable<IValidators>, 'geotechnicalFacingEnum'>;
 export type IValidatorsConnectedSources = PickNullable<NonNullable<IValidators>, 'flowCalculationDirectionEnum'>;
@@ -56,7 +56,7 @@ interface ITabPanelProps extends ITabPanelMap {
 export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editPipeline, validators }: IPipelineDataProps) {
   const [view, setView] = useState<IView>('license change');
 
-  const { id, license, segment, currentSubstance, flowCalculationDirection, currentStatus, firstLicenseDate, piggable, piggingFrequency, comment, createdBy, createdAt, updatedBy, updatedAt, authorized } = pipeline;
+  const { id, license, segment, currentSubstance, flowCalculationDirection, currentStatus, firstLicenseDate, piggable, piggingFrequency, comment, createdBy, createdAt, updatedBy, updatedAt, authorized, satelliteId } = pipeline;
 
   const validatorsLicenseChanges: IValidatorsLicenseChanges = validators && {
     statusEnum: validators.statusEnum,
@@ -80,6 +80,7 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
 
   const validatorsPipelineProperties: IValidatorsPipelineProperties = validators && {
     flowCalculationDirectionEnum: validators.flowCalculationDirectionEnum,
+    satelliteEnum: validators.satelliteEnum,
   };
 
   const validatorsPressureTests: IValidatorsPressureTests = validators && {
@@ -132,7 +133,7 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
     }
     if (view === 'pipeline properties') {
       return <PipelineProperties
-        fields={{ id, flowCalculationDirection, piggable, piggingFrequency, comment, authorized, createdBy, createdAt, updatedBy, updatedAt }}
+        fields={{ id, flowCalculationDirection, piggable, piggingFrequency, comment, authorized, createdBy, createdAt, updatedBy, updatedAt, satelliteId }}
         editPipeline={editPipeline}
         validators={validatorsPipelineProperties}
       />

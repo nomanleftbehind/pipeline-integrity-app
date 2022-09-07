@@ -87,6 +87,15 @@ export const loadSubstanceEnumObjectArray = async ({ ctx }: ILoadEnumObjectArray
 	});
 }
 
+export const loadSatelliteEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
+	return (await ctx.prisma.satellite.findMany({
+		select: { id: true, name: true },
+		orderBy: { name: 'asc' },
+	})).map(({ id, name }) => {
+		return { databaseEnum: name, serverEnum: id };
+	});
+}
+
 export const loadPigTypeEnumObjectArray = async ({ ctx }: ILoadEnumObjectArrayArgs) => {
 	return (await ctx.prisma.pigType.findMany({
 		select: { id: true, type: true },
@@ -149,6 +158,8 @@ export const ValidatorsPipeline = objectType({
 	definition: t => {
 		t.nonNull.string('licenseMatchPattern')
 		t.nonNull.string('segmentMatchPattern')
+		t.nonNull.list.nonNull.field('flowCalculationDirectionEnum', { type: 'EnumObject' })
+		t.nonNull.list.nonNull.field('satelliteEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadSatelliteEnumObjectArray({ ctx }) })
 		t.nonNull.string('fromToMatchPattern')
 		t.nonNull.list.nonNull.field('fromToFeatureEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadFromToFeatureEnumObjectArray({ ctx }) })
 		t.nonNull.list.nonNull.field('statusEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadStatusEnumObjectArray({ ctx }) })
@@ -162,7 +173,6 @@ export const ValidatorsPipeline = objectType({
 		t.nonNull.list.nonNull.field('materialEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadMaterialEnumObjectArray({ ctx }) })
 		t.nonNull.string('mopMatchPattern')
 		t.nonNull.list.nonNull.field('internalProtectionEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadInternalProtectionEnumObjectArray({ ctx }) })
-		t.nonNull.list.nonNull.field('flowCalculationDirectionEnum', { type: 'EnumObject' })
 		t.nonNull.list.nonNull.field('limitingSpecEnum', { type: 'EnumObject' })
 		t.nonNull.list.nonNull.field('riskEnvironmentEnum', { type: 'EnumObject', resolve: async (_, _args, ctx: Context) => await loadRiskEnvironmentEnumObjectArray({ ctx }) })
 		t.nonNull.list.nonNull.field('geotechnicalFacingEnum', { type: 'EnumObject' })

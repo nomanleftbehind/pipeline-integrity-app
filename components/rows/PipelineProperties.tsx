@@ -7,20 +7,21 @@ import { IValidatorsPipelineProperties } from './PipelineData';
 export type IPipelinePropertyRecordEntryMap = IRecordEntryMap & { label: string };
 
 interface IMechanicalPropertiesProps {
-  fields: Pick<IPipeline, 'id' | 'flowCalculationDirection' | 'piggable' | 'piggingFrequency' | 'comment' | 'authorized' | 'createdBy' | 'createdAt' | 'updatedBy' | 'updatedAt'>;
+  fields: Pick<IPipeline, 'id' | 'flowCalculationDirection' | 'piggable' | 'piggingFrequency' | 'comment' | 'satelliteId' | 'authorized' | 'createdBy' | 'createdAt' | 'updatedBy' | 'updatedAt'>;
   editPipeline: IEditRecordFunction;
   validators?: IValidatorsPipelineProperties;
 };
 
-export default function PipelineProperties({ fields: { id, flowCalculationDirection, piggable, piggingFrequency, comment, authorized, createdBy, createdAt, updatedBy, updatedAt }, editPipeline: editRecord, validators }: IMechanicalPropertiesProps) {
+export default function PipelineProperties({ fields: { id, flowCalculationDirection, piggable, piggingFrequency, comment, satelliteId, authorized, createdBy, createdAt, updatedBy, updatedAt }, editPipeline: editRecord, validators }: IMechanicalPropertiesProps) {
 
-  const { flowCalculationDirectionEnum } = validators || {};
+  const { flowCalculationDirectionEnum, satelliteEnum } = validators || {};
 
   const pipelineProperties: IPipelinePropertyRecordEntryMap[] = [
     { columnName: 'flowCalculationDirection', record: flowCalculationDirection, label: 'Flow Calculation Direction', columnType: 'string', nullable: false, validator: flowCalculationDirectionEnum, editRecord },
     { columnName: 'piggable', record: piggable, label: 'Piggable', columnType: 'boolean', nullable: true, editRecord },
     { columnName: 'piggingFrequency', record: piggingFrequency, label: 'Pigging Frequency (#/year)', columnType: 'number', nullable: true, editRecord },
     { columnName: 'comment', record: comment, label: 'Comment', columnType: 'string', nullable: true, editRecord },
+    { columnName: 'satelliteId', record: satelliteId, label: 'Satellite', columnType: 'string', nullable: true, validator: satelliteEnum, editRecord },
     { columnName: 'createdBy', record: createdBy.email, columnType: 'string', label: 'Created By', nullable: false },
     { columnName: 'createdAt', record: createdAt, columnType: 'date', label: 'Created At', nullable: false },
     { columnName: 'updatedBy', record: updatedBy.email, columnType: 'string', label: 'Updated By', nullable: false },

@@ -58,6 +58,9 @@ export const prettifyColumnName = (columnName: string) => {
   if (columnName === 'pigTypeId') {
     return 'Pig Type'
   }
+  if (columnName === 'satelliteId') {
+    return 'Satellite'
+  }
   if (columnName === 'createdById') {
     return 'Created By'
   }
