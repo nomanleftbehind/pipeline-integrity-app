@@ -12,6 +12,8 @@ export * from './WellBatch';
 export * from './PressureTest';
 export * from './Risk';
 export * from './Geotechnical';
+export * from './CathodicSurvey';
+export * from './Company';
 export * from './Chemical';
 export * from './ChemicalSupplier';
 export * from './Well';

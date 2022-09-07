@@ -576,6 +576,28 @@ query ChemicalById($id: String!) {
   }
 }
 
+query CathodicSurveysByPipelineId($pipelineId: String!) {
+  cathodicSurveysByPipelineId(pipelineId: $pipelineId) {
+    id
+    date
+    companyId
+    deficiencies
+    correctionDate
+    comment
+    createdBy {
+      id
+      email
+    }
+    createdAt
+    updatedBy {
+      id
+      email
+    }
+    updatedAt
+    authorized
+  }
+}
+
 query PipelinesFlow($idList: [String]!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
   pipelinesFlow(idList: $idList, flowCalculationDirection: $flowCalculationDirection) {
     id

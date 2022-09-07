@@ -26,6 +26,29 @@ type BatchProduct {
   wellBatches: [WellBatch]
 }
 
+type CathodicSurvey {
+  authorized: Boolean!
+  comment: String
+  company: Company
+  companyId: String
+  correctionDate: DateTime
+  createdAt: DateTime!
+  createdBy: User!
+  createdById: String!
+  date: DateTime!
+  deficiencies: Boolean
+  id: String!
+  pipeline: Pipeline!
+  updatedAt: DateTime!
+  updatedBy: User!
+  updatedById: String!
+}
+
+type CathodicSurveyPayload {
+  cathodicSurvey: CathodicSurvey
+  error: FieldError
+}
+
 input ChangePasswordInput {
   confirmPassword: String!
   password: String!
@@ -77,10 +100,31 @@ type ChemicalSupplier {
   updatedBy: User!
 }
 
+type Company {
+  authorized: Boolean!
+  cathodicSurveys: [CathodicSurvey]
+  createdAt: DateTime!
+  createdBy: User!
+  description: String
+  id: String!
+  name: String!
+  updatedAt: DateTime!
+  updatedBy: User!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
+
+input EditCathodicSurveyInput {
+  comment: String
+  companyId: String
+  correctionDate: DateTime
+  date: DateTime
+  deficiencies: Boolean
+  id: String!
+}
 
 input EditGeotechnicalInput {
   comment: String
@@ -234,6 +278,7 @@ enum LimitingSpecEnum {
 }
 
 type Mutation {
+  addCathodicSurvey(pipelineId: String!): CathodicSurveyPayload
   addChemical(id: String!): ChemicalPayload
   addGeotechnical(pipelineId: String!): GeotechnicalPayload
   addLicenseChange(pipelineId: String!): LicenseChangePayload
@@ -248,6 +293,7 @@ type Mutation {
   connectSalesPoint(id: String!, pipelineId: String!): SalesPointPayload
   connectWell(id: String!, pipelineId: String!): WellPayload
   createFacility(data: FacilityCreateInput!): Facility
+  deleteCathodicSurvey(id: String!): CathodicSurveyPayload
   deleteChemical(id: String!): ChemicalPayload
   deleteGeotechnical(id: String!): GeotechnicalPayload
   deleteLicenseChange(id: String!): LicenseChangePayload
@@ -262,6 +308,7 @@ type Mutation {
   disconnectSalesPoint(id: String!): SalesPointPayload
   disconnectWell(id: String!): WellPayload
   duplicatePipeline(id: String!): PipelinePayload
+  editCathodicSurvey(data: EditCathodicSurveyInput!): CathodicSurveyPayload
   editChemical(bacteria: Boolean, bacteriaTreatment: Boolean, baselineFluidAnalysisDate: DateTime, batchFrequency: Int, chemicalSupplierId: String, co2: Boolean, comment: String, continuousInjection: Boolean, downholeBatch: Boolean, h2s: Boolean, id: String!, inhibitorPipelineBatch: Boolean, injectionRate: Float, o2: Boolean, scaleTreatment: Boolean, scaling: Boolean): ChemicalPayload
   editFacility(id: String!, name: String): Facility
   editGeotechnical(data: EditGeotechnicalInput!): GeotechnicalPayload
@@ -490,6 +537,7 @@ type Query {
   allFacilities: [Facility]
   allSatellites: [Satellite]
   allUsers: [User]
+  cathodicSurveysByPipelineId(pipelineId: String!): [CathodicSurvey]
   chemicalById(id: String!): Chemical
   connectedPipelinesByPipelineId(flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): PipelinesFlowAndSourceGroupBy
   geotechnicalsByPipelineId(pipelineId: String!): [Geotechnical]
@@ -694,6 +742,7 @@ type Subscription {
 }
 
 enum TableEnum {
+  cathodicSurveys
   chemical
   downstreamPipelines
   facility
@@ -765,6 +814,7 @@ input UserUniqueInput {
 type ValidatorsPipeline {
   batchProductEnum: [EnumObject!]!
   chemicalSupplierEnum: [EnumObject!]!
+  companyEnum: [EnumObject!]!
   flowCalculationDirectionEnum: [EnumObject!]!
   fromToFeatureEnum: [EnumObject!]!
   fromToMatchPattern: String!

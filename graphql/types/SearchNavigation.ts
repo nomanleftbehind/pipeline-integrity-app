@@ -2,6 +2,7 @@ import { enumType, objectType, extendType } from 'nexus';
 import { PipelineObjectFields } from './Pipeline';
 import { RiskObjectFields } from './Risk';
 import { GeotechnicalObjectFields } from './Geotechnical';
+import { CathodicSurveyObjectFields } from './CathodicSurvey';
 import { ChemicalObjectFields } from './Chemical';
 import { WellObjectFields } from './Well';
 import { SalesPointObjectFields } from './SalesPoint';
@@ -24,6 +25,7 @@ import {
   loadSubstanceEnumObjectArray,
   loadRiskEnvironmentEnumObjectArray,
   loadSatelliteEnumObjectArray,
+  loadCompanyEnumObjectArray,
 } from './Validator';
 import type { GetGen } from 'nexus/dist/typegenTypeHelpers';
 import type { AllNexusOutputTypeDefs } from 'nexus/dist/definitions/wrapping';
@@ -53,6 +55,7 @@ export const TableEnumMembers = {
   salesPoints: 'salesPoints',
   licenseChanges: 'licenseChanges',
   geotechnicalParameters: 'geotechnicals',
+  cathodicSurveys: 'cathodicSurveys',
   pressureTests: 'pressureTests',
   pigRuns: 'pigRuns',
   pipelineBatches: 'pipelineBatches',
@@ -143,6 +146,7 @@ export const SearchNavigationQuery = extendType({
         const productIdEnumObjectArray = await loadBatchProductEnumObjectArray({ ctx });
         const chemicalSupplierIdEnumObjectArray = await loadChemicalSupplierEnumObjectArray({ ctx });
         const satelliteIdEnumObjectArray = await loadSatelliteEnumObjectArray({ ctx });
+        const companyIdEnumObjectArray = await loadCompanyEnumObjectArray({ ctx });
 
         const generatePipelineSearchNavigationObject = async (table: Extract<NexusGenEnums['TableEnum'], 'pipeline' | 'upstream' | 'downstream'>) => {
           return PipelineObjectFields
@@ -179,6 +183,17 @@ export const SearchNavigationQuery = extendType({
               table: 'geotechnicals', field, nullable, type,
               enumObjectArray: ['createdById', 'updatedById'].includes(field) ? userIdEnumObjectArray :
                 enumObjectArray
+            };
+            return newObj;
+          });
+
+        const searchNavigationObjectCathodicSurvey = CathodicSurveyObjectFields
+          .map(({ field, nullable, type, enumObjectArray }) => {
+            const newObj: ITableObjectExtend = {
+              table: 'cathodicSurveys', field, nullable, type,
+              enumObjectArray: field === 'companyId' ? companyIdEnumObjectArray :
+                ['createdById', 'updatedById'].includes(field) ? userIdEnumObjectArray :
+                  enumObjectArray
             };
             return newObj;
           });
@@ -269,12 +284,13 @@ export const SearchNavigationQuery = extendType({
           .concat(
             searchNavigationObjectUpstreamPipeline,
             searchNavigationObjectDownstreamPipeline,
+            searchNavigationObjectLicenseChange,
             searchNavigationObjectRisk,
             searchNavigationObjectChemical,
             searchNavigationObjectWell,
             searchNavigationObjectSalesPoint,
-            searchNavigationObjectLicenseChange,
             searchNavigationObjectGeotechnical,
+            searchNavigationObjectCathodicSurvey,
             searchNavigationObjectPressureTest,
             searchNavigationObjectPigRun,
             searchNavigationObjectPipelineBatch,

@@ -164,11 +164,11 @@ export const PressureTestQuery = extendType({
           for (const { id, limitingSpec } of pipelinePressureTests) {
             const maxPressureOfLimitingSpec = await maxPressureOfLimitingSpecCalc({ limitingSpec });
 
-            const pressureTestPressure = await pressureTestPressureCalc({ mopTestPressure, maxPressureOfLimitingSpec });
+            const testPressure = await pressureTestPressureCalc({ mopTestPressure, maxPressureOfLimitingSpec });
 
-            const requiredWTForTestPressure = await requiredWTForTestPressureCalc({ pressureTestPressure, outsideDiameter, yieldStrength });
+            const requiredWTForTestPressure = await requiredWTForTestPressureCalc({ testPressure, outsideDiameter, yieldStrength });
 
-            const pressureTestCorrosionAllowance = await pressureTestCorrosionAllowanceCalc({ requiredWTForMop, requiredWTForTestPressure });
+            const corrosionAllowance = await pressureTestCorrosionAllowanceCalc({ requiredWTForMop, requiredWTForTestPressure });
 
             await ctx.prisma.pressureTest.update({
               where: { id },
@@ -176,9 +176,9 @@ export const PressureTestQuery = extendType({
                 requiredWTForMop,
                 mopTestPressure,
                 maxPressureOfLimitingSpec,
-                pressureTestPressure,
+                testPressure,
                 requiredWTForTestPressure,
-                pressureTestCorrosionAllowance,
+                corrosionAllowance,
                 waterForPigging,
               }
             });

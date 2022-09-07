@@ -67,14 +67,14 @@ export const pressureTestPressureCalc = async ({ maxPressureOfLimitingSpec, mopT
 
 
 interface IRequiredWTForTestPressureCalcArgs {
-  pressureTestPressure: IPressureTest['pressureTestPressure'];
+  testPressure: IPressureTest['testPressure'];
   outsideDiameter: ILicenseChange['outsideDiameter'];
   yieldStrength: ILicenseChange['yieldStrength'];
 }
 
-export const requiredWTForTestPressureCalc = async ({ pressureTestPressure, outsideDiameter, yieldStrength }: IRequiredWTForTestPressureCalcArgs) => {
-  if (yieldStrength !== null && outsideDiameter !== null && pressureTestPressure !== null) {
-    const result = ((pressureTestPressure / 1.25) * outsideDiameter) / (2 * yieldStrength * 1000 * designFactor * locationFactor * jointFactor * tempDeratingFactor);
+export const requiredWTForTestPressureCalc = async ({ testPressure, outsideDiameter, yieldStrength }: IRequiredWTForTestPressureCalcArgs) => {
+  if (yieldStrength !== null && outsideDiameter !== null && testPressure !== null) {
+    const result = ((testPressure / 1.25) * outsideDiameter) / (2 * yieldStrength * 1000 * designFactor * locationFactor * jointFactor * tempDeratingFactor);
     return result;
   }
   return null;

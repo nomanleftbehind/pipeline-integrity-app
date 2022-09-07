@@ -416,6 +416,42 @@ mutation DeleteGeotechnical($id: String!) {
   }
 }
 
+mutation EditCathodicSurvey($data: EditCathodicSurveyInput!) {
+  editCathodicSurvey(data: $data) {
+    cathodicSurvey {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
+mutation AddCathodicSurvey($pipelineId: String!) {
+  addCathodicSurvey(pipelineId: $pipelineId) {
+    cathodicSurvey {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
+mutation DeleteCathodicSurvey($id: String!) {
+  deleteCathodicSurvey(id: $id) {
+    cathodicSurvey {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
 mutation AllocateRisk {
   allocateRisk {
     success {

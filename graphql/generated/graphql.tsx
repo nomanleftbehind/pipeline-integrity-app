@@ -39,6 +39,29 @@ export type BatchProduct = {
   wellBatches?: Maybe<Array<Maybe<WellBatch>>>;
 };
 
+export type CathodicSurvey = {
+  authorized: Scalars['Boolean'];
+  comment?: Maybe<Scalars['String']>;
+  company?: Maybe<Company>;
+  companyId?: Maybe<Scalars['String']>;
+  correctionDate?: Maybe<Scalars['DateTime']>;
+  createdAt: Scalars['DateTime'];
+  createdBy: User;
+  createdById: Scalars['String'];
+  date: Scalars['DateTime'];
+  deficiencies?: Maybe<Scalars['Boolean']>;
+  id: Scalars['String'];
+  pipeline: Pipeline;
+  updatedAt: Scalars['DateTime'];
+  updatedBy: User;
+  updatedById: Scalars['String'];
+};
+
+export type CathodicSurveyPayload = {
+  cathodicSurvey?: Maybe<CathodicSurvey>;
+  error?: Maybe<FieldError>;
+};
+
 export type ChangePasswordInput = {
   confirmPassword: Scalars['String'];
   password: Scalars['String'];
@@ -88,6 +111,27 @@ export type ChemicalSupplier = {
   name: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
+};
+
+export type Company = {
+  authorized: Scalars['Boolean'];
+  cathodicSurveys?: Maybe<Array<Maybe<CathodicSurvey>>>;
+  createdAt: Scalars['DateTime'];
+  createdBy: User;
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  updatedBy: User;
+};
+
+export type EditCathodicSurveyInput = {
+  comment?: Maybe<Scalars['String']>;
+  companyId?: Maybe<Scalars['String']>;
+  correctionDate?: Maybe<Scalars['DateTime']>;
+  date?: Maybe<Scalars['DateTime']>;
+  deficiencies?: Maybe<Scalars['Boolean']>;
+  id: Scalars['String'];
 };
 
 export type EditGeotechnicalInput = {
@@ -242,6 +286,7 @@ export enum LimitingSpecEnum {
 }
 
 export type Mutation = {
+  addCathodicSurvey?: Maybe<CathodicSurveyPayload>;
   addChemical?: Maybe<ChemicalPayload>;
   addGeotechnical?: Maybe<GeotechnicalPayload>;
   addLicenseChange?: Maybe<LicenseChangePayload>;
@@ -256,6 +301,7 @@ export type Mutation = {
   connectSalesPoint?: Maybe<SalesPointPayload>;
   connectWell?: Maybe<WellPayload>;
   createFacility?: Maybe<Facility>;
+  deleteCathodicSurvey?: Maybe<CathodicSurveyPayload>;
   deleteChemical?: Maybe<ChemicalPayload>;
   deleteGeotechnical?: Maybe<GeotechnicalPayload>;
   deleteLicenseChange?: Maybe<LicenseChangePayload>;
@@ -270,6 +316,7 @@ export type Mutation = {
   disconnectSalesPoint?: Maybe<SalesPointPayload>;
   disconnectWell?: Maybe<WellPayload>;
   duplicatePipeline?: Maybe<PipelinePayload>;
+  editCathodicSurvey?: Maybe<CathodicSurveyPayload>;
   editChemical?: Maybe<ChemicalPayload>;
   editFacility?: Maybe<Facility>;
   editGeotechnical?: Maybe<GeotechnicalPayload>;
@@ -287,6 +334,11 @@ export type Mutation = {
   login: AuthPayload;
   logout: Scalars['Boolean'];
   signup: AuthPayload;
+};
+
+
+export type MutationAddCathodicSurveyArgs = {
+  pipelineId: Scalars['String'];
 };
 
 
@@ -360,6 +412,11 @@ export type MutationCreateFacilityArgs = {
 };
 
 
+export type MutationDeleteCathodicSurveyArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationDeleteChemicalArgs = {
   id: Scalars['String'];
 };
@@ -429,6 +486,11 @@ export type MutationDisconnectWellArgs = {
 
 export type MutationDuplicatePipelineArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationEditCathodicSurveyArgs = {
+  data: EditCathodicSurveyInput;
 };
 
 
@@ -807,6 +869,7 @@ export type Query = {
   allFacilities?: Maybe<Array<Maybe<Facility>>>;
   allSatellites?: Maybe<Array<Maybe<Satellite>>>;
   allUsers?: Maybe<Array<Maybe<User>>>;
+  cathodicSurveysByPipelineId?: Maybe<Array<Maybe<CathodicSurvey>>>;
   chemicalById?: Maybe<Chemical>;
   connectedPipelinesByPipelineId?: Maybe<PipelinesFlowAndSourceGroupBy>;
   geotechnicalsByPipelineId?: Maybe<Array<Maybe<Geotechnical>>>;
@@ -835,6 +898,11 @@ export type Query = {
   wellOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   wellsByPipelineId?: Maybe<Array<Maybe<Well>>>;
   wellsGroupByPipelineId?: Maybe<SourceGroupBy>;
+};
+
+
+export type QueryCathodicSurveysByPipelineIdArgs = {
+  pipelineId: Scalars['String'];
 };
 
 
@@ -1598,6 +1666,27 @@ export type DeleteGeotechnicalMutationVariables = Exact<{
 
 export type DeleteGeotechnicalMutation = { deleteGeotechnical?: { geotechnical?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
+export type EditCathodicSurveyMutationVariables = Exact<{
+  data: EditCathodicSurveyInput;
+}>;
+
+
+export type EditCathodicSurveyMutation = { editCathodicSurvey?: { cathodicSurvey?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type AddCathodicSurveyMutationVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type AddCathodicSurveyMutation = { addCathodicSurvey?: { cathodicSurvey?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type DeleteCathodicSurveyMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteCathodicSurveyMutation = { deleteCathodicSurvey?: { cathodicSurvey?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
 export type AllocateRiskMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1793,6 +1882,13 @@ export type ChemicalByIdQueryVariables = Exact<{
 
 
 export type ChemicalByIdQuery = { chemicalById?: { id: string, chemicalSupplierId?: string | null | undefined, baselineFluidAnalysisDate?: string | null | undefined, scaling?: boolean | null | undefined, bacteria?: boolean | null | undefined, co2?: boolean | null | undefined, o2?: boolean | null | undefined, h2s?: boolean | null | undefined, continuousInjection?: boolean | null | undefined, injectionRate?: number | null | undefined, downholeBatch?: boolean | null | undefined, inhibitorPipelineBatch?: boolean | null | undefined, bacteriaTreatment?: boolean | null | undefined, scaleTreatment?: boolean | null | undefined, batchFrequency?: number | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined };
+
+export type CathodicSurveysByPipelineIdQueryVariables = Exact<{
+  pipelineId: Scalars['String'];
+}>;
+
+
+export type CathodicSurveysByPipelineIdQuery = { cathodicSurveysByPipelineId?: Array<{ id: string, date: string, companyId?: string | null | undefined, deficiencies?: boolean | null | undefined, correctionDate?: string | null | undefined, comment?: string | null | undefined, createdAt: string, updatedAt: string, authorized: boolean, createdBy: { id: string, email: string }, updatedBy: { id: string, email: string } } | null | undefined> | null | undefined };
 
 export type PipelinesFlowQueryVariables = Exact<{
   idList: Array<Maybe<Scalars['String']>> | Maybe<Scalars['String']>;
@@ -3308,6 +3404,123 @@ export function useDeleteGeotechnicalMutation(baseOptions?: Apollo.MutationHookO
 export type DeleteGeotechnicalMutationHookResult = ReturnType<typeof useDeleteGeotechnicalMutation>;
 export type DeleteGeotechnicalMutationResult = Apollo.MutationResult<DeleteGeotechnicalMutation>;
 export type DeleteGeotechnicalMutationOptions = Apollo.BaseMutationOptions<DeleteGeotechnicalMutation, DeleteGeotechnicalMutationVariables>;
+export const EditCathodicSurveyDocument = gql`
+    mutation EditCathodicSurvey($data: EditCathodicSurveyInput!) {
+  editCathodicSurvey(data: $data) {
+    cathodicSurvey {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type EditCathodicSurveyMutationFn = Apollo.MutationFunction<EditCathodicSurveyMutation, EditCathodicSurveyMutationVariables>;
+
+/**
+ * __useEditCathodicSurveyMutation__
+ *
+ * To run a mutation, you first call `useEditCathodicSurveyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditCathodicSurveyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editCathodicSurveyMutation, { data, loading, error }] = useEditCathodicSurveyMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useEditCathodicSurveyMutation(baseOptions?: Apollo.MutationHookOptions<EditCathodicSurveyMutation, EditCathodicSurveyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditCathodicSurveyMutation, EditCathodicSurveyMutationVariables>(EditCathodicSurveyDocument, options);
+      }
+export type EditCathodicSurveyMutationHookResult = ReturnType<typeof useEditCathodicSurveyMutation>;
+export type EditCathodicSurveyMutationResult = Apollo.MutationResult<EditCathodicSurveyMutation>;
+export type EditCathodicSurveyMutationOptions = Apollo.BaseMutationOptions<EditCathodicSurveyMutation, EditCathodicSurveyMutationVariables>;
+export const AddCathodicSurveyDocument = gql`
+    mutation AddCathodicSurvey($pipelineId: String!) {
+  addCathodicSurvey(pipelineId: $pipelineId) {
+    cathodicSurvey {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type AddCathodicSurveyMutationFn = Apollo.MutationFunction<AddCathodicSurveyMutation, AddCathodicSurveyMutationVariables>;
+
+/**
+ * __useAddCathodicSurveyMutation__
+ *
+ * To run a mutation, you first call `useAddCathodicSurveyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddCathodicSurveyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addCathodicSurveyMutation, { data, loading, error }] = useAddCathodicSurveyMutation({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useAddCathodicSurveyMutation(baseOptions?: Apollo.MutationHookOptions<AddCathodicSurveyMutation, AddCathodicSurveyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddCathodicSurveyMutation, AddCathodicSurveyMutationVariables>(AddCathodicSurveyDocument, options);
+      }
+export type AddCathodicSurveyMutationHookResult = ReturnType<typeof useAddCathodicSurveyMutation>;
+export type AddCathodicSurveyMutationResult = Apollo.MutationResult<AddCathodicSurveyMutation>;
+export type AddCathodicSurveyMutationOptions = Apollo.BaseMutationOptions<AddCathodicSurveyMutation, AddCathodicSurveyMutationVariables>;
+export const DeleteCathodicSurveyDocument = gql`
+    mutation DeleteCathodicSurvey($id: String!) {
+  deleteCathodicSurvey(id: $id) {
+    cathodicSurvey {
+      id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type DeleteCathodicSurveyMutationFn = Apollo.MutationFunction<DeleteCathodicSurveyMutation, DeleteCathodicSurveyMutationVariables>;
+
+/**
+ * __useDeleteCathodicSurveyMutation__
+ *
+ * To run a mutation, you first call `useDeleteCathodicSurveyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCathodicSurveyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCathodicSurveyMutation, { data, loading, error }] = useDeleteCathodicSurveyMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteCathodicSurveyMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCathodicSurveyMutation, DeleteCathodicSurveyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCathodicSurveyMutation, DeleteCathodicSurveyMutationVariables>(DeleteCathodicSurveyDocument, options);
+      }
+export type DeleteCathodicSurveyMutationHookResult = ReturnType<typeof useDeleteCathodicSurveyMutation>;
+export type DeleteCathodicSurveyMutationResult = Apollo.MutationResult<DeleteCathodicSurveyMutation>;
+export type DeleteCathodicSurveyMutationOptions = Apollo.BaseMutationOptions<DeleteCathodicSurveyMutation, DeleteCathodicSurveyMutationVariables>;
 export const AllocateRiskDocument = gql`
     mutation AllocateRisk {
   allocateRisk {
@@ -4743,6 +4956,57 @@ export function useChemicalByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type ChemicalByIdQueryHookResult = ReturnType<typeof useChemicalByIdQuery>;
 export type ChemicalByIdLazyQueryHookResult = ReturnType<typeof useChemicalByIdLazyQuery>;
 export type ChemicalByIdQueryResult = Apollo.QueryResult<ChemicalByIdQuery, ChemicalByIdQueryVariables>;
+export const CathodicSurveysByPipelineIdDocument = gql`
+    query CathodicSurveysByPipelineId($pipelineId: String!) {
+  cathodicSurveysByPipelineId(pipelineId: $pipelineId) {
+    id
+    date
+    companyId
+    deficiencies
+    correctionDate
+    comment
+    createdBy {
+      id
+      email
+    }
+    createdAt
+    updatedBy {
+      id
+      email
+    }
+    updatedAt
+    authorized
+  }
+}
+    `;
+
+/**
+ * __useCathodicSurveysByPipelineIdQuery__
+ *
+ * To run a query within a React component, call `useCathodicSurveysByPipelineIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCathodicSurveysByPipelineIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCathodicSurveysByPipelineIdQuery({
+ *   variables: {
+ *      pipelineId: // value for 'pipelineId'
+ *   },
+ * });
+ */
+export function useCathodicSurveysByPipelineIdQuery(baseOptions: Apollo.QueryHookOptions<CathodicSurveysByPipelineIdQuery, CathodicSurveysByPipelineIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CathodicSurveysByPipelineIdQuery, CathodicSurveysByPipelineIdQueryVariables>(CathodicSurveysByPipelineIdDocument, options);
+      }
+export function useCathodicSurveysByPipelineIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CathodicSurveysByPipelineIdQuery, CathodicSurveysByPipelineIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CathodicSurveysByPipelineIdQuery, CathodicSurveysByPipelineIdQueryVariables>(CathodicSurveysByPipelineIdDocument, options);
+        }
+export type CathodicSurveysByPipelineIdQueryHookResult = ReturnType<typeof useCathodicSurveysByPipelineIdQuery>;
+export type CathodicSurveysByPipelineIdLazyQueryHookResult = ReturnType<typeof useCathodicSurveysByPipelineIdLazyQuery>;
+export type CathodicSurveysByPipelineIdQueryResult = Apollo.QueryResult<CathodicSurveysByPipelineIdQuery, CathodicSurveysByPipelineIdQueryVariables>;
 export const PipelinesFlowDocument = gql`
     query PipelinesFlow($idList: [String]!, $flowCalculationDirection: FlowCalculationDirectionEnum!) {
   pipelinesFlow(
