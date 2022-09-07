@@ -68,6 +68,12 @@ import {
   licenseChangeData3,
 } from './SeedLicenseChangeData';
 
+import { companytData } from './SeedCompanyData';
+import {
+  cathodicSurveyData1,
+  cathodicSurveyData2,
+} from './SeedCathodicSurveyData';
+
 import { chemicalSupplierData } from './SeedChemicalSupplierData';
 import {
   chemicalData1,
@@ -165,49 +171,49 @@ async function main() {
     const riskEnvironment = await prisma.riskEnvironment.create({
       data: u,
     })
-    console.log(`Created risk environment with id: ${riskEnvironment.id}`)
+    console.log(`Created risk environment ${riskEnvironment.environment}`)
   }
 
   for (const u of pigTypeData) {
     const pigType = await prisma.pigType.create({
       data: u,
     })
-    console.log(`Created pig type with id: ${pigType.id}`)
+    console.log(`Created pig type ${pigType.type}`)
   }
 
   for (const u of batchProductData) {
     const batchProduct = await prisma.batchProduct.create({
       data: u,
     })
-    console.log(`Created batchProduct with id: ${batchProduct.id}`)
+    console.log(`Created batchProduct ${batchProduct.product}`)
   }
 
   for (const u of facilityData) {
     const facility = await prisma.facility.create({
       data: u,
     })
-    console.log(`Created facility with id: ${facility.id}`)
+    console.log(`Created facility ${facility.name}`)
   }
 
   for (const u of satelliteData) {
     const satellite = await prisma.satellite.create({
       data: u,
     })
-    console.log(`Created satellite with id: ${satellite.id}`)
+    console.log(`Created satellite ${satellite.name}`)
   }
 
   for (const u of pipelineData1) {
     const pipeline = await prisma.pipeline.create({
       data: u,
     })
-    console.log(`Created pipeline with id: ${pipeline.id}`)
+    console.log(`Created pipeline ${pipeline.license}-${pipeline.segment}`)
   }
 
   for (const u of pipelineData2) {
     const pipeline = await prisma.pipeline.create({
       data: u,
     })
-    console.log(`Created pipeline in batch 2 with id: ${pipeline.id}`)
+    console.log(`Created pipeline ${pipeline.license}-${pipeline.segment}`)
   }
 
   for (const u of pipelinesOnPipelinesData1) {
@@ -221,7 +227,7 @@ async function main() {
     const licenseChange = await prisma.licenseChange.create({
       data: u,
     })
-    console.log(`Created license change with id: ${licenseChange.id}`)
+    console.log(`Created license change dated ${licenseChange.date}`)
 
   }
 
@@ -229,189 +235,189 @@ async function main() {
     const licenseChange = await prisma.licenseChange.create({
       data: u,
     })
-    console.log(`Created license change with id: ${licenseChange.id}`)
+    console.log(`Created license change dated ${licenseChange.date}`)
   }
 
   for (const u of licenseChangeData3) {
     const licenseChange = await prisma.licenseChange.create({
       data: u,
     })
-    console.log(`Created license change with id: ${licenseChange.id}`)
+    console.log(`Created license change dated ${licenseChange.date}`)
   }
 
   for (const u of wellData1) {
     const well = await prisma.well.create({
       data: u,
     })
-    console.log(`Created well with id: ${well.id}`)
+    console.log(`Created well ${well.name}`)
   }
 
   for (const u of wellData2) {
     const well = await prisma.well.create({
       data: u,
     })
-    console.log(`Created well with id: ${well.id}`)
+    console.log(`Created well ${well.name}`)
   }
 
   for (const u of salesPointData1) {
     const salesPoint = await prisma.salesPoint.create({
       data: u,
     })
-    console.log(`Created sales point with id: ${salesPoint.id}`)
+    console.log(`Created sales point ${salesPoint.name}`)
   }
 
   for (const u of pigRunData1) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
-    console.log(`Created pig run with id: ${pigRun.id}`)
+    console.log(`Created pig run on pipeline ${pigRun.pipelineId} dated ${pigRun.dateIn}`)
   }
 
   for (const u of pigRunData2) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
-    console.log(`Created pig run with id: ${pigRun.id}`)
+    console.log(`Created pig run on pipeline ${pigRun.pipelineId} dated ${pigRun.dateIn}`)
   }
 
   for (const u of pigRunData3) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
-    console.log(`Created pig run with id: ${pigRun.id}`)
+    console.log(`Created pig run on pipeline ${pigRun.pipelineId} dated ${pigRun.dateIn}`)
   }
 
   for (const u of pigRunData4) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
-    console.log(`Created pig run with id: ${pigRun.id}`)
+    console.log(`Created pig run on pipeline ${pigRun.pipelineId} dated ${pigRun.dateIn}`)
   }
 
   for (const u of pigRunData5) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
-    console.log(`Created pig run with id: ${pigRun.id}`)
+    console.log(`Created pig run on pipeline ${pigRun.pipelineId} dated ${pigRun.dateIn}`)
   }
 
   for (const u of pigRunData6) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
-    console.log(`Created pig run with id: ${pigRun.id}`)
+    console.log(`Created pig run on pipeline ${pigRun.pipelineId} dated ${pigRun.dateIn}`)
   }
 
   for (const u of pigRunData7) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
-    console.log(`Created pig run with id: ${pigRun.id}`)
+    console.log(`Created pig run on pipeline ${pigRun.pipelineId} dated ${pigRun.dateIn}`)
   }
 
   for (const u of pigRunData8) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
-    console.log(`Created pig run with id: ${pigRun.id}`)
+    console.log(`Created pig run on pipeline ${pigRun.pipelineId} dated ${pigRun.dateIn}`)
   }
 
   for (const u of pigRunData9) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
-    console.log(`Created pig run with id: ${pigRun.id}`)
+    console.log(`Created pig run on pipeline ${pigRun.pipelineId} dated ${pigRun.dateIn}`)
   }
 
   for (const u of pigRunData10) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
-    console.log(`Created pig run with id: ${pigRun.id}`)
+    console.log(`Created pig run on pipeline ${pigRun.pipelineId} dated ${pigRun.dateIn}`)
   }
 
   for (const u of pigRunData11) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
-    console.log(`Created pig run with id: ${pigRun.id}`)
+    console.log(`Created pig run on pipeline ${pigRun.pipelineId} dated ${pigRun.dateIn}`)
   }
 
   for (const u of pigRunData12) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
-    console.log(`Created pig run with id: ${pigRun.id}`)
+    console.log(`Created pig run on pipeline ${pigRun.pipelineId} dated ${pigRun.dateIn}`)
   }
 
   for (const u of pigRunData13) {
     const pigRun = await prisma.pigRun.create({
       data: u,
     })
-    console.log(`Created pig run with id: ${pigRun.id}`)
+    console.log(`Created pig run on pipeline ${pigRun.pipelineId} dated ${pigRun.dateIn}`)
   }
 
   for (const u of pipelineBatchData1) {
     const pipelineBatch = await prisma.pipelineBatch.create({
       data: u,
     })
-    console.log(`Created pipeline batch with id: ${pipelineBatch.id}`)
+    console.log(`Created pipeline batch on pipeline ${pipelineBatch.pipelineId} dated ${pipelineBatch.date}`)
   }
 
   for (const u of pipelineBatchData2) {
     const pipelineBatch = await prisma.pipelineBatch.create({
       data: u,
     })
-    console.log(`Created pipeline batch with id: ${pipelineBatch.id}`)
+    console.log(`Created pipeline batch on pipeline ${pipelineBatch.pipelineId} dated ${pipelineBatch.date}`)
   }
 
   for (const u of wellBatchData1) {
     const wellBatch = await prisma.wellBatch.create({
       data: u,
     })
-    console.log(`Created pipeline batch with id: ${wellBatch.id}`)
+    console.log(`Created well batch on well ${wellBatch.wellId} dated ${wellBatch.date}`)
   }
 
   for (const u of wellBatchData2) {
     const wellBatch = await prisma.wellBatch.create({
       data: u,
     })
-    console.log(`Created pipeline batch with id: ${wellBatch.id}`)
+    console.log(`Created well batch on well ${wellBatch.wellId} dated ${wellBatch.date}`)
   }
 
   for (const u of wellBatchData3) {
     const wellBatch = await prisma.wellBatch.create({
       data: u,
     })
-    console.log(`Created pipeline batch with id: ${wellBatch.id}`)
+    console.log(`Created well batch on well ${wellBatch.wellId} dated ${wellBatch.date}`)
   }
 
   for (const u of wellBatchData4) {
     const wellBatch = await prisma.wellBatch.create({
       data: u,
     })
-    console.log(`Created pipeline batch with id: ${wellBatch.id}`)
+    console.log(`Created well batch on well ${wellBatch.wellId} dated ${wellBatch.date}`)
   }
 
   for (const u of wellBatchData5) {
     const wellBatch = await prisma.wellBatch.create({
       data: u,
     })
-    console.log(`Created pipeline batch with id: ${wellBatch.id}`)
+    console.log(`Created well batch on well ${wellBatch.wellId} dated ${wellBatch.date}`)
   }
 
   for (const u of wellBatchData6) {
     const wellBatch = await prisma.wellBatch.create({
       data: u,
     })
-    console.log(`Created pipeline batch with id: ${wellBatch.id}`)
+    console.log(`Created well batch on well ${wellBatch.wellId} dated ${wellBatch.date}`)
   }
 
   for (const u of pressureTestData) {
     const pressureTest = await prisma.pressureTest.create({
       data: u,
     })
-    console.log(`Created pressure test run with id: ${pressureTest.id}`)
+    console.log(`Created pressure test on pipeline ${pressureTest.pipelineId} dated ${pressureTest.date}`)
   }
 
   for (const u of riskData1) {
@@ -434,11 +440,32 @@ async function main() {
     console.log(`Created geotechnical with id: ${geotechnical.id}`)
   }
 
+  for (const u of companytData) {
+    const company = await prisma.company.create({
+      data: u,
+    })
+    console.log(`Created company ${company.name}`)
+  }
+
+  for (const u of cathodicSurveyData1) {
+    const cathodicSurvey = await prisma.cathodicSurvey.create({
+      data: u,
+    })
+    console.log(`Created cathodic survey on pipeline ${cathodicSurvey.pipelineId} dated ${cathodicSurvey.date}`)
+  }
+
+  for (const u of cathodicSurveyData2) {
+    const cathodicSurvey = await prisma.cathodicSurvey.create({
+      data: u,
+    })
+    console.log(`Created cathodic survey on pipeline ${cathodicSurvey.pipelineId} dated ${cathodicSurvey.date}`)
+  }
+
   for (const u of chemicalSupplierData) {
     const chemicalSupplier = await prisma.chemicalSupplier.create({
       data: u,
     })
-    console.log(`Created chemical supplier with id: ${chemicalSupplier.id}`)
+    console.log(`Created chemical supplier ${chemicalSupplier.name}`)
   }
 
   for (const u of chemicalData1) {

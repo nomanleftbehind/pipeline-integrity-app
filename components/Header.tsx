@@ -22,54 +22,38 @@ export const prettifyColumnName = (columnName: string) => {
   if (columnName === 'h2s') {
     return 'H₂S'
   }
-  if (columnName === 'chemicalSupplierId') {
-    return 'Chemical Supplier'
-  }
-  if (columnName === 'productId') {
-    return 'Product'
-  }
-  if (columnName === 'operatorId') {
-    return 'Operator'
-  }
   if (columnName === 'pipelineTypeId') {
     return 'Type'
   }
-  if (columnName === 'gradeId') {
-    return 'Grade'
+  if (columnName === 'length') {
+    return 'Length (km)'
   }
-  if (columnName === 'fromFeatureId') {
-    return 'From Feature'
+  if (columnName === 'mop') {
+    return 'MOP (kPa)'
   }
-  if (columnName === 'toFeatureId') {
-    return 'To Feature'
+  if (columnName === 'requiredWTForMop') {
+    return 'Required W.T. for MOP (mm)'
   }
-  if (columnName === 'materialId') {
-    return 'Material'
+  if (columnName === 'requiredWTForTestPressure') {
+    return 'Required W.T. for Test Pressure (mm)'
   }
-  if (columnName === 'internalProtectionId') {
-    return 'Internal Protection'
+  if (columnName === 'mopTestPressure') {
+    return 'MOP Test Pressure (kPa)'
   }
-  if (columnName === 'statusId') {
-    return 'Status'
+  if (columnName === 'pressureTestCorrosionAllowance') {
+    return 'Pressure Test Corrosion Allowance (mm)'
   }
-  if (columnName === 'substanceId') {
-    return 'Substance'
+  if (columnName === 'costPerM3Released') {
+    return 'Cost Per m³ Released'
   }
-  if (columnName === 'pigTypeId') {
-    return 'Pig Type'
+  if (columnName === 'yieldStrength') {
+    return 'Yield Strength (Mpa)'
   }
-  if (columnName === 'satelliteId') {
-    return 'Satellite'
-  }
-  if (columnName === 'createdById') {
-    return 'Created By'
-  }
-  if (columnName === 'updatedById') {
-    return 'Updated By'
-  }
+
   return columnName
     .split(/(?=[A-Z])/)
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .filter(word => word !== 'Id')
     .join(' ');
 }
 

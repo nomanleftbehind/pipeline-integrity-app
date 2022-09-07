@@ -47,14 +47,18 @@ model User {
   pigRunUpdatedBy               PigRun[]               @relation("pigRunUpdatedBy")
   pressureTestCreatedBy         PressureTest[]         @relation("pressureTestCreatedBy")
   pressureTestUpdatedBy         PressureTest[]         @relation("pressureTestUpdatedBy")
-  pipelineBatcheCreatedBy       PipelineBatch[]        @relation("pipelineBatchCreatedBy")
-  pipelineBatcheUpdatedBy       PipelineBatch[]        @relation("pipelineBatchUpdatedBy")
+  pipelineBatchCreatedBy        PipelineBatch[]        @relation("pipelineBatchCreatedBy")
+  pipelineBatchUpdatedBy        PipelineBatch[]        @relation("pipelineBatchUpdatedBy")
   wellBatchCreatedBy            WellBatch[]            @relation("wellBatchCreatedBy")
   wellBatchUpdatedBy            WellBatch[]            @relation("wellBatchUpdatedBy")
   batchProductCreatedBy         BatchProduct[]         @relation("batchProductCreatedBy")
   batchProductUpdatedBy         BatchProduct[]         @relation("batchProductUpdatedBy")
   pigTypeCreatedBy              PigType[]              @relation("pigTypeCreatedBy")
   pigTypeUpdatedBy              PigType[]              @relation("pigTypeUpdatedBy")
+  cathodicSurveyCreatedBy       CathodicSurvey[]       @relation("cathodicSurveyCreatedBy")
+  cathodicSurveyUpdatedBy       CathodicSurvey[]       @relation("cathodicSurveyUpdatedBy")
+  companyCreatedBy              Company[]              @relation("companyCreatedBy")
+  companyUpdatedBy              Company[]              @relation("companyUpdatedBy")
   riskCreatedBy                 Risk[]                 @relation("riskCreatedBy")
   riskUpdatedBy                 Risk[]                 @relation("riskUpdatedBy")
   geotechnicalCreatedBy         Geotechnical[]         @relation("geotechnicalCreatedBy")
@@ -131,6 +135,7 @@ model Pipeline {
   pressureTests            PressureTest[]
   pipelineBatches          PipelineBatch[]
   geotechnicals            Geotechnical[]
+  cathodicSurveys          CathodicSurvey[]
   wells                    Well[]
   salesPoints              SalesPoint[]
   upstream                 PipelinesOnPipelines[]       @relation("upstream")
@@ -292,6 +297,39 @@ model Substance {
   updatedAt      DateTime        @updatedAt
 }
 
+model CathodicSurvey {
+  id             String    @id @default(uuid())
+  pipeline       Pipeline  @relation(fields: [pipelineId], references: [id])
+  pipelineId     String
+  date           DateTime
+  company        Company?  @relation(fields: [companyId], references: [id])
+  companyId      String?
+  deficiencies   Boolean?
+  correctionDate DateTime?
+  comment        String?
+  createdBy      User      @relation("cathodicSurveyCreatedBy", fields: [createdById], references: [id])
+  createdById    String
+  createdAt      DateTime  @default(now())
+  updatedBy      User      @relation("cathodicSurveyUpdatedBy", fields: [updatedById], references: [id])
+  updatedById    String
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([pipelineId, date])
+}
+
+model Company {
+  id              String           @id @default(uuid())
+  cathodicSurveys CathodicSurvey[]
+  name            String           @unique
+  description     String?
+  createdBy       User             @relation("companyCreatedBy", fields: [createdById], references: [id])
+  createdById     String
+  createdAt       DateTime         @default(now())
+  updatedBy       User             @relation("companyUpdatedBy", fields: [updatedById], references: [id])
+  updatedById     String
+  updatedAt       DateTime         @updatedAt
+}
+
 model PigRun {
   id                          String             @id @default(uuid())
   pipeline                    Pipeline           @relation(fields: [pipelineId], references: [id])
@@ -345,13 +383,13 @@ model PressureTest {
   updatedAt                DateTime          @updatedAt
 
   // calculated fields
-  requiredWTForMop               Float?
-  mopTestPressure                Float?
-  maxPressureOfLimitingSpec      Float?
-  pressureTestPressure           Float?
-  requiredWTForTestPressure      Float?
-  pressureTestCorrosionAllowance Float?
-  waterForPigging                Float?
+  requiredWTForMop          Float?
+  mopTestPressure           Float?
+  maxPressureOfLimitingSpec Float?
+  testPressure              Float?
+  requiredWTForTestPressure Float?
+  corrosionAllowance        Float?
+  waterForPigging           Float?
 }
 
 model Risk {
