@@ -6,6 +6,7 @@ import PressureTests from './PressureTests';
 import PigRuns from './PigRuns';
 import PipelineBatches from './PipelineBatches';
 import Risk from './Risk';
+import CathodicSurveys from './CathodicSurveys';
 import Geotechnicals from './Geotechnicals';
 import Chemical from './Chemical';
 import { IEditRecordFunction } from '../fields/RecordEntry';
@@ -33,6 +34,7 @@ type PickNullable<T, K extends keyof T> = {
 export type IValidatorsPipelineProperties = PickNullable<NonNullable<IValidators>, 'flowCalculationDirectionEnum' | 'satelliteEnum'>;
 export type IValidatorsLicenseChanges = PickNullable<NonNullable<IValidators>, 'statusEnum' | 'substanceEnum' | 'fromToMatchPattern' | 'fromToFeatureEnum' | 'lengthMatchPattern' | 'pipelineTypeEnum' | 'gradeEnum' | 'yieldStrengthMatchPattern' | 'outsideDiameterMatchPattern' | 'wallThicknessMatchPattern' | 'materialEnum' | 'mopMatchPattern' | 'internalProtectionEnum'>;
 export type IValidatorsGeotechnicals = PickNullable<NonNullable<IValidators>, 'geotechnicalFacingEnum'>;
+export type IValidatorsCathodicSurveys = PickNullable<NonNullable<IValidators>, 'companyEnum'>;
 export type IValidatorsConnectedSources = PickNullable<NonNullable<IValidators>, 'flowCalculationDirectionEnum'>;
 export type IValidatorsPressureTests = PickNullable<NonNullable<IValidators>, 'limitingSpecEnum'>;
 export type IValidatorsRisk = PickNullable<NonNullable<IValidators>, 'riskEnvironmentEnum'>;
@@ -41,7 +43,7 @@ export type IValidatorsPipelineBatches = PickNullable<NonNullable<IValidators>, 
 export type IValidatorsChemical = PickNullable<NonNullable<IValidators>, 'chemicalSupplierEnum'>;
 export type IValidatorsNavigation = PickNullable<NonNullable<IValidators>, 'operationEnum' | 'havingEnum'>;
 
-type IView = 'license change' | 'connected source' | 'pipeline properties' | 'pressure test' | 'pig run' | 'pipeline batch' | 'risk' | 'geotechnical' | 'chemical';
+type IView = 'license change' | 'connected source' | 'pipeline properties' | 'pressure test' | 'pig run' | 'pipeline batch' | 'risk' | 'geotechnical' | 'cathodic surveys' | 'chemical';
 
 interface ITabPanelMap {
   title: string;
@@ -91,9 +93,12 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
     riskEnvironmentEnum: validators.riskEnvironmentEnum,
   };
 
+  const validatorsCathodicSurveys: IValidatorsCathodicSurveys = validators && {
+    companyEnum: validators.companyEnum,
+  };
+
   const validatorsGeotechnicals: IValidatorsGeotechnicals = validators && {
     geotechnicalFacingEnum: validators.geotechnicalFacingEnum,
-
   };
 
   const validatorsPigRuns: IValidatorsPigRuns = validators && {
@@ -156,6 +161,12 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
         validators={validatorsPipelineBatches}
       />
     }
+    if (view === 'cathodic surveys') {
+      return <CathodicSurveys
+        pipelineId={id}
+        validators={validatorsCathodicSurveys}
+      />
+    }
     if (view === 'risk') {
       return <Risk
         id={id}
@@ -192,9 +203,10 @@ export default function PipelineData({ gridRow, rowIsEven, open, pipeline, editP
     { title: 'Pressure Tests', view: 'pressure test' },
     { title: 'Pig Runs', view: 'pig run' },
     { title: 'Pipeline Batches', view: 'pipeline batch' },
+    { title: 'Cathodic Surveys', view: 'cathodic surveys' },
+    { title: 'Geotechnical', view: 'geotechnical' },
     { title: 'Chemical', view: 'chemical' },
     { title: 'Risk', view: 'risk' },
-    { title: 'Geotechnical', view: 'geotechnical' },
   ];
 
 

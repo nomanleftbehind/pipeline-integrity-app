@@ -1,0 +1,11 @@
+.cathodic-survey {
+  display: grid;
+  grid-template-columns: 30px var(--date-width) 180px 80px var(--date-width) 240px auto;
+  row-gap: 2px;
+  column-gap: 4px;
+  grid-auto-rows: minmax(20px, auto);
+}
+
+.cathodic-survey-row {
+  padding: 2px;
+}

@@ -18,6 +18,7 @@ import '../styles/injection-point.css';
 import '../styles/chemical.css';
 import '../styles/risk.css';
 import '../styles/geotechnical.css';
+import '../styles/cathodic-survey.css';
 import '../styles/search-navigation.css';
 import '../styles/button-container.css';
 import Layout from '../components/layout';

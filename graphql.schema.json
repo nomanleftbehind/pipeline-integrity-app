@@ -10579,6 +10579,12 @@
         "interfaces": null,
         "enumValues": [
           {
+            "name": "cathodicSurveys",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "chemical",
             "description": null,
             "isDeprecated": false,
@@ -11255,6 +11261,30 @@
           },
           {
             "name": "chemicalSupplierEnum",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "EnumObject",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "companyEnum",
             "description": null,
             "args": [],
             "type": {

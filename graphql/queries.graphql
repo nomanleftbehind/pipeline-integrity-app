@@ -221,6 +221,10 @@ query ValidatorsPipeline {
       serverEnum
       databaseEnum
     }
+    companyEnum {
+      serverEnum
+      databaseEnum
+    }
     operationEnum {
       serverEnum
       databaseEnum
