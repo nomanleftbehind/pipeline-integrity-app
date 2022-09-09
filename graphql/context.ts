@@ -3,11 +3,11 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../lib/prisma';
 import { getUser } from '../lib/user';
 import { User as IUser } from '@prisma/client';
-import { PubSub } from 'graphql-subscriptions';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 export interface Context {
   prisma: PrismaClient;
-  pubsub: PubSub;
+  pubsub: RedisPubSub;
   req: NextApiRequest; // HTTP request carrying the `Authorization` header
   res: NextApiResponse;
   user: IUser | null;
@@ -23,7 +23,7 @@ interface ICreateContextProps {
   res: NextApiResponse;
 }
 
-export const pubsub = new PubSub();
+export const pubsub = new RedisPubSub();
 
 export async function createContext({ req, res }: ICreateContextProps): Promise<Context> {
 
