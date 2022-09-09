@@ -3,6 +3,7 @@ import { Context } from '../context';
 import { User as IUser, LicenseChange as ILicenseChange } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
 import { validateRegex } from './Pipeline';
+import { PartialBy } from './Pipeline';
 
 
 export const fromToMatchPattern = "^((\\d{2}-\\d{2}-\\d{3}-\\d{2}W\\d{1})|([A-Z]{1}-\\d{3}-[A-Z]{1} \\d{3}-[A-Z]{1}-\\d{2}))$";
@@ -132,6 +133,8 @@ export const LicenseChangePayload = objectType({
 });
 
 
+type ILicenseChangePartialBy = PartialBy<ILicenseChange, 'id' | 'createdAt' | 'updatedAt'>
+
 export const LicenseChangeMutation = extendType({
   type: 'Mutation',
   definition(t) {
@@ -160,7 +163,7 @@ export const LicenseChangeMutation = extendType({
       },
       resolve: async (_parent, args, ctx: Context) => {
         console.log('args:', args);
-        
+
         const user = ctx.user;
         if (user) {
           const { id: userId, role, firstName } = user;
@@ -276,26 +279,46 @@ export const LicenseChangeMutation = extendType({
         if (user) {
           const { id: userId, role, firstName } = user;
           if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') {
-            const pipelineLicenseChanges = await ctx.prisma.licenseChange.findMany({
-              where: {
-                pipelineId,
-              },
-              select: {
-                date: true,
-              },
-              orderBy: {
-                date: 'asc'
-              }
-            });
+            // Find the latest license change and if it exists create new license change as a copy of it
+            const latestLicenseChange = await ctx.prisma.licenseChange.findFirst({
+              where: { pipelineId },
+              orderBy: { date: 'desc' }
+            }) as ILicenseChangePartialBy | null;;
+
+            if (latestLicenseChange) {
+              latestLicenseChange.date.setDate(latestLicenseChange.date.getDate() + 1);
+              delete latestLicenseChange.id;
+              delete latestLicenseChange.createdAt;
+              delete latestLicenseChange.updatedAt;
+              latestLicenseChange.createdById = userId;
+              latestLicenseChange.updatedById = userId;
+
+              const licenseChange = await ctx.prisma.licenseChange.create({
+                data: latestLicenseChange
+              })
+              return { licenseChange };
+            }
+            // If pipeline has no license changes, continue with the following execution
+            // const pipelineLicenseChanges = await ctx.prisma.licenseChange.findMany({
+            //   where: {
+            //     pipelineId,
+            //   },
+            //   select: {
+            //     date: true,
+            //   },
+            //   orderBy: {
+            //     date: 'asc'
+            //   }
+            // });
             // When adding new license change entry, date when license was changed is mandatory and has to be unique,
             // so we set it to today and check if it already exists in which case we will keep increasing it by 1 until it's unique.
             const today = new Date();
             today.setUTCHours(0, 0, 0, 0);
-            for (const i of pipelineLicenseChanges) {
-              if (i.date.getTime() === today.getTime()) {
-                today.setDate(today.getDate() + 1);
-              }
-            }
+            // for (const i of pipelineLicenseChanges) {
+            //   if (i.date.getTime() === today.getTime()) {
+            //     today.setDate(today.getDate() + 1);
+            //   }
+            // }
 
             const licenseChange = await ctx.prisma.licenseChange.create({
               data: {
