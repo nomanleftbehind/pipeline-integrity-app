@@ -6,7 +6,14 @@ import {
 import { Context } from '../context';
 
 import { licenseMatchPattern, segmentMatchPattern, } from './Pipeline';
-import { fromToMatchPattern, wallThicknessMatchPattern, outsideDiameterMatchPattern, } from './LicenseChange';
+import {
+  fromToMatchPattern,
+  wallThicknessMatchPattern,
+  outsideDiameterMatchPattern,
+  lengthMatchPattern,
+  mopMatchPattern,
+  yieldStrengthMatchPattern
+} from './LicenseChange';
 import { PigInspectionEnumArray } from './PigRun';
 import { LimitingSpecEnumArray } from './PressureTest';
 import { GeotechnicalFacingEnumArray } from './Geotechnical';
@@ -14,9 +21,7 @@ import { SolubilityEnumArray } from './BatchProduct';
 import { OperationEnumArray, HavingEnumArray } from './SearchNavigation';
 
 
-export const lengthMatchPattern = "^\\d*\\.?\\d*$";
-export const yieldStrengthMatchPattern = "^(240|206|359|290|0|289|57|24|200|205|380|2875|241|358|360)$";
-export const mopMatchPattern = "^\\d{1,5}$"; // number between 0 and 99999
+
 
 
 

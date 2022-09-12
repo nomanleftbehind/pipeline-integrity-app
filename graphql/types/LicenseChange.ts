@@ -8,6 +8,9 @@ import { validateRegex } from './Pipeline';
 export const fromToMatchPattern = "^((\\d{2}-\\d{2}-\\d{3}-\\d{2}W\\d{1})|([A-Z]{1}-\\d{3}-[A-Z]{1} \\d{3}-[A-Z]{1}-\\d{2}))$";
 export const wallThicknessMatchPattern = "^(\\d|1\\d|2[0-5])(\\.\\d{1,2})?$";
 export const outsideDiameterMatchPattern = "^4[3-9]$|^4[2-9]\\.[2-9]\\d?$|^([5-9]\\d)(\\.\\d\\d?)?$|^([1-2]\\d{2})(\\.\\d\\d?)?$|^(3[0-2][0-3])(\\.[0-8]\\d?)?$"; // number between 42.2 and 323.89
+export const lengthMatchPattern = "^\\d*\\.?\\d*$";
+export const yieldStrengthMatchPattern = "^(240|206|359|290|0|289|57|24|200|205|380|2875|241|358|360)$";
+export const mopMatchPattern = "^\\d{1,5}$"; // number between 0 and 99999
 
 
 export const LicenseChangeObjectFields: ITableConstructObject[] = [
@@ -162,10 +165,6 @@ export const LicenseChangeMutation = extendType({
       args: { data: nonNull(arg({ type: 'EditLicenseChangeInput' })) },
       resolve: async (_parent, { data: { id, date, from, fromFeatureId, to, toFeatureId, statusId, substanceId, length, pipelineTypeId, gradeId, yieldStrength, outsideDiameter, wallThickness, materialId, mop, internalProtectionId, linkToDocumentation, comment } }, ctx: Context) => {
 
-        if (date instanceof String) {
-          console.log('Date date', date);
-
-        }
         const user = ctx.user;
         if (user) {
           const { id: userId, firstName } = user;
@@ -185,6 +184,24 @@ export const LicenseChangeMutation = extendType({
             }
             if (outsideDiameter) {
               const error = validateRegex({ field: String(outsideDiameter), matchPattern: outsideDiameterMatchPattern, prettyMatchPattern: 'number between 42.2 and 323.89 up to two decimal places' });
+              if (error) {
+                return error;
+              }
+            }
+            if (length) {
+              const error = validateRegex({ field: String(length), matchPattern: lengthMatchPattern, prettyMatchPattern: 'any number' });
+              if (error) {
+                return error;
+              }
+            }
+            if (yieldStrength) {
+              const error = validateRegex({ field: String(yieldStrength), matchPattern: yieldStrengthMatchPattern, prettyMatchPattern: 'valid yield strength' });
+              if (error) {
+                return error;
+              }
+            }
+            if (mop) {
+              const error = validateRegex({ field: String(mop), matchPattern: mopMatchPattern, prettyMatchPattern: 'whole number between 0 and 99999' });
               if (error) {
                 return error;
               }

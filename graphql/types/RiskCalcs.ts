@@ -5,6 +5,7 @@ import {
   Substance as ISubstance,
   Pipeline as IPipeline,
   Chemical as IChemical,
+  CathodicSurvey as ICathodicSurvey,
 } from '@prisma/client';
 import { Context } from '../context';
 import { totalFluidsCalc } from './Well';
@@ -14,8 +15,8 @@ import { pipelineFlow } from './PipelineFlow';
 
 interface IConsequenceEnviroCalcArgs {
   environment: IRisk['environmentId'];
-  currentSubstance: ILicenseChange['substanceId'];
-  currentStatus: ILicenseChange['statusId'];
+  currentSubstance?: ILicenseChange['substanceId'];
+  currentStatus?: ILicenseChange['statusId'];
   totalFluids: number;
 }
 
@@ -83,19 +84,19 @@ export const consequenceAssetCalc = async ({ repairTimeDays, oilReleaseCost, gas
 }
 
 interface IProbabilityInteriorCalcArgs {
-  type: ILicenseChange['pipelineTypeId'];
-  material: ILicenseChange['materialId'];
-  currentSubstance: ISubstance['substance'];
-  currentStatus: IStatus['status'];
+  currentType?: ILicenseChange['pipelineTypeId'];
+  currentMaterial?: ILicenseChange['materialId'];
+  currentSubstance?: ISubstance['substance'];
+  currentStatus?: IStatus['status'];
 }
 
-export const probabilityInteriorCalc = async ({ type, material, currentSubstance, currentStatus }: IProbabilityInteriorCalcArgs) => {
+export const probabilityInteriorCalc = async ({ currentType, currentMaterial, currentSubstance, currentStatus }: IProbabilityInteriorCalcArgs) => {
 
-  const isTypeZ245 = type && ['Z245.1', 'Z245.3'].includes(type);
+  const isTypeZ245 = currentType && ['Z245.1', 'Z245.3'].includes(currentType);
 
-  if ((currentStatus && ['Discontinued', 'Abandoned'].includes(currentStatus)) || (material && ['Fiberglass', 'Composite', 'Polyethylene', 'Asbestos Cement', 'Polyvinyl Chloride', 'Aluminum'].includes(material))) {
+  if ((currentStatus && ['Discontinued', 'Abandoned'].includes(currentStatus)) || (currentMaterial && ['Fiberglass', 'Composite', 'Polyethylene', 'Asbestos Cement', 'Polyvinyl Chloride', 'Aluminum'].includes(currentMaterial))) {
     return 1;
-  } else if (material === 'Steel') {
+  } else if (currentMaterial === 'Steel') {
     if (currentSubstance && ['Oil Well Effluent', 'Salt Water', 'Fresh Water'].includes(currentSubstance)) {
       if (isTypeZ245) {
         return 3;
@@ -125,24 +126,26 @@ export const probabilityInteriorCalc = async ({ type, material, currentSubstance
 }
 
 interface IProbabilityExteriorCalcArgs {
-  firstLicenseDate: ILicenseChange['date'];
-  currentStatus: ILicenseChange['statusId'];
-  material: ILicenseChange['materialId'];
+  firstLicenseDate?: ILicenseChange['date'];
+  currentStatus?: ILicenseChange['statusId'];
+  currentMaterial?: ILicenseChange['materialId'];
 }
 
-export const probabilityExteriorCalc = async ({ firstLicenseDate, currentStatus, material }: IProbabilityExteriorCalcArgs) => {
+export const probabilityExteriorCalc = async ({ firstLicenseDate, currentStatus, currentMaterial }: IProbabilityExteriorCalcArgs) => {
 
   if (currentStatus === 'Discontinued' || currentStatus === 'Abandoned') {
     return 1;
   }
-  if (material === 'Steel') {
-    const vintage = firstLicenseDate.getFullYear();
-    if (vintage > 2000) {
-      return 3;
+  if (currentMaterial === 'Steel') {
+    if (firstLicenseDate) {
+      const vintage = firstLicenseDate.getUTCFullYear();
+      if (vintage > 2000) {
+        return 3;
+      }
     }
     return 4;
   }
-  if (material === 'Fiberglass' || material === 'Composite' || material === 'Polyethylene' || material === 'Asbestos Cement' || material === 'Polyvinyl Chloride' || material === 'Aluminum') {
+  if (currentMaterial === 'Fiberglass' || currentMaterial === 'Composite' || currentMaterial === 'Polyethylene' || currentMaterial === 'Asbestos Cement' || currentMaterial === 'Polyvinyl Chloride' || currentMaterial === 'Aluminum') {
     return 1;
   }
   return null;
@@ -206,11 +209,11 @@ export const riskPotentialExternalCalc = async ({ consequenceMax, probabilityExt
 }
 
 interface ISafeguardPiggingCalcArgs {
-  piggable: IPipeline['piggable'];
+  piggable?: IPipeline['piggable'];
 }
 
 export const safeguardPiggingCalc = async ({ piggable }: ISafeguardPiggingCalcArgs) => {
-  if (piggable !== null) {
+  if (piggable != null) {
     if (piggable) {
       return 1;
     }
@@ -220,10 +223,10 @@ export const safeguardPiggingCalc = async ({ piggable }: ISafeguardPiggingCalcAr
 }
 
 interface ISafeguardChemicalInhibitionCalcArgs {
-  downholeBatch: IChemical['downholeBatch'];
-  inhibitorPipelineBatch: IChemical['inhibitorPipelineBatch'];
-  bacteriaTreatment: IChemical['bacteriaTreatment'];
-  scaleTreatment: IChemical['scaleTreatment'];
+  downholeBatch?: IChemical['downholeBatch'];
+  inhibitorPipelineBatch?: IChemical['inhibitorPipelineBatch'];
+  bacteriaTreatment?: IChemical['bacteriaTreatment'];
+  scaleTreatment?: IChemical['scaleTreatment'];
 }
 
 export const safeguardChemicalInhibitionCalc = async ({ downholeBatch, inhibitorPipelineBatch, bacteriaTreatment, scaleTreatment }: ISafeguardChemicalInhibitionCalcArgs) => {
@@ -264,8 +267,18 @@ export const riskPotentialInternalWithSafeguardsCalc = async ({ consequenceMax, 
   return null;
 }
 
+interface ISafeguardCathodicCalc {
+  lastCathodicSurveyDate?: ICathodicSurvey['date'];
+}
 
-export const safeguardCathodicCalc = async () => {
+export const safeguardCathodicCalc = async ({ lastCathodicSurveyDate }: ISafeguardCathodicCalc) => {
+  if (lastCathodicSurveyDate) {
+    const yearAgo = new Date(new Date(new Date().setUTCFullYear(new Date().getUTCFullYear() - 1)).setUTCHours(0, 0, 0, 0));
+    if (lastCathodicSurveyDate > yearAgo) {
+      return 1;
+    }
+    return 0;
+  }
   return null;
 }
 
@@ -317,53 +330,54 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
     }
   });
 
-  const lastLicenseChange = await ctx.prisma.licenseChange.findFirst({
-    where: { pipelineId: id },
-    orderBy: { date: 'desc' },
-    select: {
-      substance: { select: { substance: true } },
-      status: { select: { status: true } },
-      pipelineType: { select: { type: true } },
-      material: { select: { material: true } },
-    },
-  });
+  if (risk) {
 
-  const firstLicenseChange = await ctx.prisma.licenseChange.findFirst({
-    where: { pipelineId: id },
-    orderBy: { date: 'asc' },
-    select: { date: true },
-  });
+    const pipeline = await ctx.prisma.pipeline.findUnique({
+      where: { id },
+      select: {
+        flowCalculationDirection: true,
+        piggable: true,
+      }
+    });
 
-  const pipeline = await ctx.prisma.pipeline.findUnique({
-    where: { id },
-    select: {
-      flowCalculationDirection: true,
-      piggable: true,
-    }
-  });
+    const firstLicenseChange = await ctx.prisma.licenseChange.findFirst({ where: { pipelineId: id }, orderBy: { date: 'asc' }, select: { date: true }, });
 
-  const chemical = await ctx.prisma.chemical.findUnique({
-    where: { id },
-    select: {
-      downholeBatch: true,
-      inhibitorPipelineBatch: true,
-      bacteriaTreatment: true,
-      scaleTreatment: true,
-    }
-  });
+    const lastLicenseChange = await ctx.prisma.licenseChange.findFirst({
+      where: { pipelineId: id },
+      orderBy: { date: 'desc' },
+      select: {
+        substance: { select: { substance: true } },
+        status: { select: { status: true } },
+        pipelineType: { select: { type: true } },
+        material: { select: { material: true } },
+      },
+    });
 
-  if (risk && lastLicenseChange && firstLicenseChange && pipeline && chemical) {
+    const chemical = await ctx.prisma.chemical.findUnique({
+      where: { id },
+      select: {
+        downholeBatch: true,
+        inhibitorPipelineBatch: true,
+        bacteriaTreatment: true,
+        scaleTreatment: true,
+      }
+    });
 
     const { environment: environmentObject, oilReleaseCost, gasReleaseCost, repairTimeDays, consequencePeople, probabilityGeo, safeguardInternalProtection, safeguardExternalCoating } = risk;
-    const { substance: { substance: currentSubstance }, status: { status: currentStatus }, pipelineType: currentType, material: currentMaterial } = lastLicenseChange;
-    const { date: firstLicenseDate } = firstLicenseChange;
-    const { flowCalculationDirection, piggable } = pipeline;
-    const type = currentType?.type || null;
-    const material = currentMaterial?.material || null;
-    const environment = environmentObject?.environment || null;
-    const { downholeBatch, inhibitorPipelineBatch, bacteriaTreatment, scaleTreatment } = chemical;
+    const { substance, status, pipelineType, material } = lastLicenseChange || {};
+    const { date: firstLicenseDate } = firstLicenseChange || {};
+    const { flowCalculationDirection, piggable } = pipeline || {};
 
-    const { oil, water, gas } = (await pipelineFlow({ id, flowCalculationDirection, ctx })) || { oil: 0, water: 0, gas: 0 };
+    const currentSubstance = substance?.substance;
+    const currentStatus = status?.status;
+    const currentType = pipelineType?.type;
+    const currentMaterial = material?.material;
+    const environment = environmentObject?.environment || null;
+    const { downholeBatch, inhibitorPipelineBatch, bacteriaTreatment, scaleTreatment } = chemical || {};
+
+    const { oil, water, gas } = flowCalculationDirection && (await pipelineFlow({ id, flowCalculationDirection, ctx })) || { oil: 0, water: 0, gas: 0 };
+
+    console.log(oil, water, gas);
 
     const totalFluids = await totalFluidsCalc({ oil, water, gas });
 
@@ -375,9 +389,9 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
 
     const consequenceMax = await conequenceMaxCalc({ consequencePeople, consequenceEnviro, consequenceAsset });
 
-    const probabilityInterior = await probabilityInteriorCalc({ type, material, currentStatus, currentSubstance });
+    const probabilityInterior = await probabilityInteriorCalc({ currentType, currentMaterial, currentStatus, currentSubstance });
 
-    const probabilityExterior = await probabilityExteriorCalc({ firstLicenseDate, currentStatus, material });
+    const probabilityExterior = await probabilityExteriorCalc({ firstLicenseDate, currentStatus, currentMaterial });
 
     const riskPotentialGeo = await riskPotentialGeoCalc({ consequenceMax, probabilityGeo });
 
@@ -393,7 +407,8 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
 
     const riskPotentialInternalWithSafeguards = await riskPotentialInternalWithSafeguardsCalc({ consequenceMax, probabilityInteriorWithSafeguards });
 
-    const safeguardCathodic = await safeguardCathodicCalc();
+    const lastCathodicSurvey = await ctx.prisma.cathodicSurvey.findFirst({ where: { pipelineId: id }, orderBy: { date: 'desc' }, select: { date: true }, });
+    const safeguardCathodic = await safeguardCathodicCalc({ lastCathodicSurveyDate: lastCathodicSurvey?.date });
 
     const probabilityExteriorWithSafeguards = await probabilityExteriorWithSafeguardsCalc({ probabilityExterior, safeguardCathodic, safeguardExternalCoating });
 
