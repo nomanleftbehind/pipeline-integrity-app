@@ -87,7 +87,7 @@ export default function LicenseChanges({ pipelineId, validators }: ILicenseChang
       }
     }
     newRecord = switchNewRecord();
-    editLicenseChange({ variables: { id, [columnName]: newRecord } });
+    editLicenseChange({ variables: { data: { id, [columnName]: newRecord } } });
   }
 
   const addRecord = () => {

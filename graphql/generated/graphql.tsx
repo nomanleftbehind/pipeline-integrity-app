@@ -146,6 +146,28 @@ export type EditGeotechnicalInput = {
   slopeAngleS2?: Maybe<Scalars['Int']>;
 };
 
+export type EditLicenseChangeInput = {
+  comment?: Maybe<Scalars['String']>;
+  date?: Maybe<Scalars['DateTime']>;
+  from?: Maybe<Scalars['String']>;
+  fromFeatureId?: Maybe<Scalars['String']>;
+  gradeId?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  internalProtectionId?: Maybe<Scalars['String']>;
+  length?: Maybe<Scalars['Float']>;
+  linkToDocumentation?: Maybe<Scalars['String']>;
+  materialId?: Maybe<Scalars['String']>;
+  mop?: Maybe<Scalars['Int']>;
+  outsideDiameter?: Maybe<Scalars['Float']>;
+  pipelineTypeId?: Maybe<Scalars['String']>;
+  statusId?: Maybe<Scalars['String']>;
+  substanceId?: Maybe<Scalars['String']>;
+  to?: Maybe<Scalars['String']>;
+  toFeatureId?: Maybe<Scalars['String']>;
+  wallThickness?: Maybe<Scalars['Float']>;
+  yieldStrength?: Maybe<Scalars['Int']>;
+};
+
 export type EditRiskInput = {
   aerialReview?: Maybe<Scalars['Boolean']>;
   comment?: Maybe<Scalars['String']>;
@@ -526,25 +548,7 @@ export type MutationEditGeotechnicalArgs = {
 
 
 export type MutationEditLicenseChangeArgs = {
-  comment?: Maybe<Scalars['String']>;
-  date?: Maybe<Scalars['DateTime']>;
-  from?: Maybe<Scalars['String']>;
-  fromFeatureId?: Maybe<Scalars['String']>;
-  gradeId?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
-  internalProtectionId?: Maybe<Scalars['String']>;
-  length?: Maybe<Scalars['Float']>;
-  linkToDocumentation?: Maybe<Scalars['String']>;
-  materialId?: Maybe<Scalars['String']>;
-  mop?: Maybe<Scalars['Int']>;
-  outsideDiameter?: Maybe<Scalars['Float']>;
-  pipelineTypeId?: Maybe<Scalars['String']>;
-  statusId?: Maybe<Scalars['String']>;
-  substanceId?: Maybe<Scalars['String']>;
-  to?: Maybe<Scalars['String']>;
-  toFeatureId?: Maybe<Scalars['String']>;
-  wallThickness?: Maybe<Scalars['Float']>;
-  yieldStrength?: Maybe<Scalars['Int']>;
+  data: EditLicenseChangeInput;
 };
 
 
@@ -1478,25 +1482,7 @@ export type EditPipelineMutationVariables = Exact<{
 export type EditPipelineMutation = { editPipeline?: { pipeline?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type EditLicenseChangeMutationVariables = Exact<{
-  id: Scalars['String'];
-  date?: Maybe<Scalars['DateTime']>;
-  statusId?: Maybe<Scalars['String']>;
-  substanceId?: Maybe<Scalars['String']>;
-  from?: Maybe<Scalars['String']>;
-  fromFeatureId?: Maybe<Scalars['String']>;
-  to?: Maybe<Scalars['String']>;
-  toFeatureId?: Maybe<Scalars['String']>;
-  length?: Maybe<Scalars['Float']>;
-  pipelineTypeId?: Maybe<Scalars['String']>;
-  gradeId?: Maybe<Scalars['String']>;
-  yieldStrength?: Maybe<Scalars['Int']>;
-  outsideDiameter?: Maybe<Scalars['Float']>;
-  wallThickness?: Maybe<Scalars['Float']>;
-  materialId?: Maybe<Scalars['String']>;
-  mop?: Maybe<Scalars['Int']>;
-  internalProtectionId?: Maybe<Scalars['String']>;
-  comment?: Maybe<Scalars['String']>;
-  linkToDocumentation?: Maybe<Scalars['String']>;
+  data: EditLicenseChangeInput;
 }>;
 
 
@@ -2490,28 +2476,8 @@ export type EditPipelineMutationHookResult = ReturnType<typeof useEditPipelineMu
 export type EditPipelineMutationResult = Apollo.MutationResult<EditPipelineMutation>;
 export type EditPipelineMutationOptions = Apollo.BaseMutationOptions<EditPipelineMutation, EditPipelineMutationVariables>;
 export const EditLicenseChangeDocument = gql`
-    mutation EditLicenseChange($id: String!, $date: DateTime, $statusId: String, $substanceId: String, $from: String, $fromFeatureId: String, $to: String, $toFeatureId: String, $length: Float, $pipelineTypeId: String, $gradeId: String, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $materialId: String, $mop: Int, $internalProtectionId: String, $comment: String, $linkToDocumentation: String) {
-  editLicenseChange(
-    id: $id
-    date: $date
-    statusId: $statusId
-    substanceId: $substanceId
-    from: $from
-    fromFeatureId: $fromFeatureId
-    to: $to
-    toFeatureId: $toFeatureId
-    length: $length
-    pipelineTypeId: $pipelineTypeId
-    gradeId: $gradeId
-    yieldStrength: $yieldStrength
-    outsideDiameter: $outsideDiameter
-    wallThickness: $wallThickness
-    materialId: $materialId
-    mop: $mop
-    internalProtectionId: $internalProtectionId
-    comment: $comment
-    linkToDocumentation: $linkToDocumentation
-  ) {
+    mutation EditLicenseChange($data: EditLicenseChangeInput!) {
+  editLicenseChange(data: $data) {
     licenseChange {
       id
     }
@@ -2537,25 +2503,7 @@ export type EditLicenseChangeMutationFn = Apollo.MutationFunction<EditLicenseCha
  * @example
  * const [editLicenseChangeMutation, { data, loading, error }] = useEditLicenseChangeMutation({
  *   variables: {
- *      id: // value for 'id'
- *      date: // value for 'date'
- *      statusId: // value for 'statusId'
- *      substanceId: // value for 'substanceId'
- *      from: // value for 'from'
- *      fromFeatureId: // value for 'fromFeatureId'
- *      to: // value for 'to'
- *      toFeatureId: // value for 'toFeatureId'
- *      length: // value for 'length'
- *      pipelineTypeId: // value for 'pipelineTypeId'
- *      gradeId: // value for 'gradeId'
- *      yieldStrength: // value for 'yieldStrength'
- *      outsideDiameter: // value for 'outsideDiameter'
- *      wallThickness: // value for 'wallThickness'
- *      materialId: // value for 'materialId'
- *      mop: // value for 'mop'
- *      internalProtectionId: // value for 'internalProtectionId'
- *      comment: // value for 'comment'
- *      linkToDocumentation: // value for 'linkToDocumentation'
+ *      data: // value for 'data'
  *   },
  * });
  */

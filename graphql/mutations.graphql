@@ -164,8 +164,8 @@ mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $seg
   }
 }
 
-mutation EditLicenseChange($id: String!, $date: DateTime, $statusId: String, $substanceId: String, $from: String, $fromFeatureId: String, $to: String, $toFeatureId: String, $length: Float, $pipelineTypeId: String, $gradeId: String, $yieldStrength: Int, $outsideDiameter: Float, $wallThickness: Float, $materialId: String, $mop: Int, $internalProtectionId: String, $comment: String, $linkToDocumentation: String) {
-  editLicenseChange(id: $id, date: $date, statusId: $statusId, substanceId: $substanceId, from: $from, fromFeatureId: $fromFeatureId, to: $to, toFeatureId: $toFeatureId, length: $length, pipelineTypeId: $pipelineTypeId, gradeId: $gradeId, yieldStrength: $yieldStrength, outsideDiameter: $outsideDiameter, wallThickness: $wallThickness, materialId: $materialId, mop: $mop, internalProtectionId: $internalProtectionId, comment: $comment, linkToDocumentation: $linkToDocumentation) {
+mutation EditLicenseChange($data: EditLicenseChangeInput!) {
+  editLicenseChange(data: $data) {
     licenseChange {
       id
     }

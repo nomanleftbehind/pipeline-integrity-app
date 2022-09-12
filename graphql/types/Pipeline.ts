@@ -1,7 +1,6 @@
-import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, floatArg, booleanArg } from 'nexus';
+import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, booleanArg } from 'nexus';
 import { NexusGenObjects } from 'nexus-typegen';
 import { Context } from '../context';
-import { Pipeline as IPipeline } from '@prisma/client';
 import { totalPipelineFlowRawQuery } from './PipelineFlow';
 import { Prisma, User as IUser } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
@@ -881,8 +880,6 @@ export const PipelinePayload = objectType({
   },
 });
 
-export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
-type IPipelinePartialBy = PartialBy<IPipeline, 'id' | 'createdAt' | 'updatedAt'>
 
 export const PipelineMutation = extendType({
   type: 'Mutation',
@@ -1019,15 +1016,23 @@ export const PipelineMutation = extendType({
           const { id: userId, firstName } = user;
           if (authorized) {
             const newPipeline = await ctx.prisma.pipeline.findUnique({
-              where: { id }
-            }) as IPipelinePartialBy | null;
+              where: { id },
+              select: {
+                license: true,
+                segment: true,
+                flowCalculationDirection: true,
+                piggable: true,
+                piggingFrequency: true,
+                comment: true,
+                satelliteId: true,
+                createdById: true,
+                updatedById: true,
+              }
+            });
 
             if (newPipeline) {
               newPipeline.license += '_copy';
               newPipeline.segment += '_copy';
-              delete newPipeline.id;
-              delete newPipeline.createdAt;
-              delete newPipeline.updatedAt;
               newPipeline.createdById = userId;
               newPipeline.updatedById = userId;
 

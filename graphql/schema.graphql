@@ -138,6 +138,28 @@ input EditGeotechnicalInput {
   slopeAngleS2: Int
 }
 
+input EditLicenseChangeInput {
+  comment: String
+  date: DateTime
+  from: String
+  fromFeatureId: String
+  gradeId: String
+  id: String!
+  internalProtectionId: String
+  length: Float
+  linkToDocumentation: String
+  materialId: String
+  mop: Int
+  outsideDiameter: Float
+  pipelineTypeId: String
+  statusId: String
+  substanceId: String
+  to: String
+  toFeatureId: String
+  wallThickness: Float
+  yieldStrength: Int
+}
+
 input EditRiskInput {
   aerialReview: Boolean
   comment: String
@@ -312,7 +334,7 @@ type Mutation {
   editChemical(bacteria: Boolean, bacteriaTreatment: Boolean, baselineFluidAnalysisDate: DateTime, batchFrequency: Int, chemicalSupplierId: String, co2: Boolean, comment: String, continuousInjection: Boolean, downholeBatch: Boolean, h2s: Boolean, id: String!, inhibitorPipelineBatch: Boolean, injectionRate: Float, o2: Boolean, scaleTreatment: Boolean, scaling: Boolean): ChemicalPayload
   editFacility(id: String!, name: String): Facility
   editGeotechnical(data: EditGeotechnicalInput!): GeotechnicalPayload
-  editLicenseChange(comment: String, date: DateTime, from: String, fromFeatureId: String, gradeId: String, id: String!, internalProtectionId: String, length: Float, linkToDocumentation: String, materialId: String, mop: Int, outsideDiameter: Float, pipelineTypeId: String, statusId: String, substanceId: String, to: String, toFeatureId: String, wallThickness: Float, yieldStrength: Int): LicenseChangePayload
+  editLicenseChange(data: EditLicenseChangeInput!): LicenseChangePayload
   editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigTypeId: String): PigRunPayload
   editPipeline(comment: String, flowCalculationDirection: FlowCalculationDirectionEnum, id: String!, license: String, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String): PipelinePayload
   editPipelineBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, productId: String): PipelineBatchPayload

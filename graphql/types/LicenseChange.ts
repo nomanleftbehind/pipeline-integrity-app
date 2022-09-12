@@ -1,9 +1,8 @@
-import { objectType, stringArg, extendType, nonNull, arg, floatArg, intArg } from 'nexus';
+import { objectType, stringArg, extendType, nonNull, arg, inputObjectType } from 'nexus';
 import { Context } from '../context';
-import { User as IUser, LicenseChange as ILicenseChange } from '@prisma/client';
+import { User as IUser, Prisma } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
 import { validateRegex } from './Pipeline';
-import { PartialBy } from './Pipeline';
 
 
 export const fromToMatchPattern = "^((\\d{2}-\\d{2}-\\d{3}-\\d{2}W\\d{1})|([A-Z]{1}-\\d{3}-[A-Z]{1} \\d{3}-[A-Z]{1}-\\d{2}))$";
@@ -83,22 +82,18 @@ export const LicenseChangeExtendObject = extendType({
       },
     })
     t.nonNull.boolean('authorized', {
-      resolve: async ({ createdById }, _args, ctx: Context) => {
+      resolve: async (_, _args, ctx: Context) => {
         const user = ctx.user;
-        return !!user && resolveLicenseChangeAuthorized({ user, createdById });
+        return !!user && resolveLicenseChangeAuthorized(user);
       }
     })
   },
 });
 
-interface IresolveLicenseChangeAuthorizedArgs {
-  user: IUser;
-  createdById: ILicenseChange['createdById'];
-}
 
-const resolveLicenseChangeAuthorized = ({ user, createdById }: IresolveLicenseChangeAuthorizedArgs) => {
-  const { role, id } = user;
-  return role === 'ADMIN' || role === 'ENGINEER' || (role === 'OFFICE' && createdById === id);
+const resolveLicenseChangeAuthorized = (user: IUser) => {
+  const { role } = user;
+  return role === 'ADMIN' || role === 'ENGINEER' || role === 'REGULATORY';
 }
 
 
@@ -133,129 +128,111 @@ export const LicenseChangePayload = objectType({
 });
 
 
-type ILicenseChangePartialBy = PartialBy<ILicenseChange, 'id' | 'createdAt' | 'updatedAt'>
+export const EditLicenseChangeInput = inputObjectType({
+  name: 'EditLicenseChangeInput',
+  definition(t) {
+    t.nonNull.string('id')
+    t.field('date', { type: 'DateTime' })
+    t.string('statusId')
+    t.string('substanceId')
+    t.string('from')
+    t.string('fromFeatureId')
+    t.string('to')
+    t.string('toFeatureId')
+    t.float('length')
+    t.string('pipelineTypeId')
+    t.string('gradeId')
+    t.int('yieldStrength')
+    t.float('outsideDiameter')
+    t.float('wallThickness')
+    t.string('materialId')
+    t.int('mop')
+    t.string('internalProtectionId')
+    t.string('comment')
+    t.string('linkToDocumentation')
+  },
+});
+
 
 export const LicenseChangeMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editLicenseChange', {
       type: 'LicenseChangePayload',
-      args: {
-        id: nonNull(stringArg()),
-        date: arg({ type: 'DateTime' }),
-        statusId: stringArg(),
-        substanceId: stringArg(),
-        from: stringArg(),
-        fromFeatureId: stringArg(),
-        to: stringArg(),
-        toFeatureId: stringArg(),
-        length: floatArg(),
-        pipelineTypeId: stringArg(),
-        gradeId: stringArg(),
-        yieldStrength: intArg(),
-        outsideDiameter: floatArg(),
-        wallThickness: floatArg(),
-        materialId: stringArg(),
-        mop: intArg(),
-        internalProtectionId: stringArg(),
-        comment: stringArg(),
-        linkToDocumentation: stringArg(),
-      },
-      resolve: async (_parent, args, ctx: Context) => {
-        console.log('args:', args);
+      args: { data: nonNull(arg({ type: 'EditLicenseChangeInput' })) },
+      resolve: async (_parent, { data: { id, date, from, fromFeatureId, to, toFeatureId, statusId, substanceId, length, pipelineTypeId, gradeId, yieldStrength, outsideDiameter, wallThickness, materialId, mop, internalProtectionId, linkToDocumentation, comment } }, ctx: Context) => {
 
+        if (date instanceof String) {
+          console.log('Date date', date);
+
+        }
         const user = ctx.user;
         if (user) {
-          const { id: userId, role, firstName } = user;
-          if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') {
-            const currentLicenseChange = await ctx.prisma.licenseChange.findUnique({
-              where: { id: args.id },
-              select: {
-                pipelineId: true,
-                createdById: true,
-                date: true,
+          const { id: userId, firstName } = user;
+          const authorized = resolveLicenseChangeAuthorized(user);
+          if (authorized) {
+            if (from || to) {
+              const error = validateRegex({ field: (from || to)!, matchPattern: fromToMatchPattern, prettyMatchPattern: '##-##-###-##W# or X-###-X ###-X-##' });
+              if (error) {
+                return error;
               }
-            });
-
-            if (currentLicenseChange) {
-
-              const { pipelineId, createdById, date } = currentLicenseChange;
-
-              const pipelineLicenseChanges = await ctx.prisma.licenseChange.findMany({
-                where: { pipelineId },
-                select: { date: true, }
+            }
+            if (wallThickness) {
+              const error = validateRegex({ field: String(wallThickness), matchPattern: wallThicknessMatchPattern, prettyMatchPattern: 'number between 0 and 25.99 up to two decimal places' });
+              if (error) {
+                return error;
+              }
+            }
+            if (outsideDiameter) {
+              const error = validateRegex({ field: String(outsideDiameter), matchPattern: outsideDiameterMatchPattern, prettyMatchPattern: 'number between 42.2 and 323.89 up to two decimal places' });
+              if (error) {
+                return error;
+              }
+            }
+            try {
+              const licenseChange = await ctx.prisma.licenseChange.update({
+                where: { id },
+                data: {
+                  statusId: statusId || undefined,
+                  substanceId: substanceId || undefined,
+                  date: date || undefined,
+                  from: from || undefined,
+                  fromFeatureId,
+                  to: to || undefined,
+                  toFeatureId,
+                  length: length || undefined,
+                  pipelineTypeId,
+                  gradeId,
+                  yieldStrength,
+                  outsideDiameter,
+                  wallThickness,
+                  materialId,
+                  mop,
+                  internalProtectionId,
+                  linkToDocumentation,
+                  comment,
+                  updatedById: userId,
+                },
               });
-
-              const licenseChangeDates = pipelineLicenseChanges.map(licenseChange => licenseChange.date.getTime());
-
-              if (args.date && licenseChangeDates.includes(args.date.getTime()) && args.date.getTime() !== date.getTime()) {
-                return {
-                  error: {
-                    field: 'License change date',
-                    message: `License change date ${args.date.toISOString().split('T')[0]} is already entered for this pipeline. One pipeline cannot have multiple license changes on the same date.`,
+              return { licenseChange }
+            } catch (e) {
+              if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2002') {
+                  return {
+                    error: {
+                      field: 'date',
+                      message: `License change dated ${date?.toISOString().split('T')[0]} already exists for this pipeline. One pipeline cannot have multiple license changes on the same date.`,
+                    }
                   }
                 }
               }
-
-              if (role === 'OFFICE' && createdById !== userId) {
-                return {
-                  error: {
-                    field: 'License change',
-                    message: `Hi ${firstName}. Your user privilages do not allow you to edit license change entries not authored by you.`,
-                  }
-                }
-              }
+              throw e;
             }
-
-            if (args.from || args.to) {
-              const error = validateRegex({ field: (args.from || args.to)!, matchPattern: fromToMatchPattern, prettyMatchPattern: '##-##-###-##W# or X-###-X ###-X-##' });
-              if (error) {
-                return error;
-              }
-            }
-            if (args.wallThickness) {
-              const error = validateRegex({ field: String(args.wallThickness), matchPattern: wallThicknessMatchPattern, prettyMatchPattern: 'number between 0 and 25.99 up to two decimal places' });
-              if (error) {
-                return error;
-              }
-            }
-            if (args.outsideDiameter) {
-              const error = validateRegex({ field: String(args.outsideDiameter), matchPattern: outsideDiameterMatchPattern, prettyMatchPattern: 'number between 42.2 and 323.89 up to two decimal places' });
-              if (error) {
-                return error;
-              }
-            }
-
-            const licenseChange = await ctx.prisma.licenseChange.update({
-              where: { id: args.id },
-              data: {
-                statusId: args.statusId || undefined,
-                substanceId: args.substanceId || undefined,
-                date: args.date || undefined,
-                from: args.from || undefined,
-                fromFeatureId: args.fromFeatureId,
-                to: args.to || undefined,
-                toFeatureId: args.toFeatureId,
-                length: args.length || undefined,
-                pipelineTypeId: args.pipelineTypeId,
-                gradeId: args.gradeId,
-                yieldStrength: args.yieldStrength,
-                outsideDiameter: args.outsideDiameter,
-                wallThickness: args.wallThickness,
-                materialId: args.materialId,
-                mop: args.mop,
-                internalProtectionId: args.internalProtectionId,
-                linkToDocumentation: args.linkToDocumentation,
-                comment: args.comment,
-                updatedById: userId,
-              },
-            });
-            return { licenseChange }
           }
           return {
             error: {
               field: 'User',
-              message: `Hi ${firstName}, you are not authorized to make changes to license changes.`,
+              message: `Hi ${firstName}, you are not authorized to modify license changes.`,
             }
           }
         }
@@ -282,14 +259,43 @@ export const LicenseChangeMutation = extendType({
             // Find the latest license change and if it exists create new license change as a copy of it
             const latestLicenseChange = await ctx.prisma.licenseChange.findFirst({
               where: { pipelineId },
-              orderBy: { date: 'desc' }
-            }) as ILicenseChangePartialBy | null;;
+              orderBy: { date: 'desc' },
+              select: {
+                pipelineId: true,
+                date: true,
+                from: true,
+                fromFeatureId: true,
+                to: true,
+                toFeatureId: true,
+                pipelineTypeId: true,
+                gradeId: true,
+                internalProtectionId: true,
+                length: true,
+                materialId: true,
+                mop: true,
+                outsideDiameter: true,
+                statusId: true,
+                substanceId: true,
+                wallThickness: true,
+                yieldStrength: true,
+                comment: true,
+                linkToDocumentation: true,
+                createdById: true,
+                updatedById: true,
+              }
+            });
+
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
 
             if (latestLicenseChange) {
-              latestLicenseChange.date.setDate(latestLicenseChange.date.getDate() + 1);
-              delete latestLicenseChange.id;
-              delete latestLicenseChange.createdAt;
-              delete latestLicenseChange.updatedAt;
+              // License change date is mandatory and has to be unique. The following procedure makes sure it is.
+              const yesterday = new Date(today)
+              yesterday.setDate(yesterday.getDate() - 1)
+              const newDate = new Date(Math.max(yesterday.getTime(), latestLicenseChange.date.getTime()));
+              newDate.setDate(newDate.getDate() + 1);
+
+              latestLicenseChange.date = newDate;
               latestLicenseChange.createdById = userId;
               latestLicenseChange.updatedById = userId;
 
@@ -298,28 +304,8 @@ export const LicenseChangeMutation = extendType({
               })
               return { licenseChange };
             }
-            // If pipeline has no license changes, continue with the following execution
-            // const pipelineLicenseChanges = await ctx.prisma.licenseChange.findMany({
-            //   where: {
-            //     pipelineId,
-            //   },
-            //   select: {
-            //     date: true,
-            //   },
-            //   orderBy: {
-            //     date: 'asc'
-            //   }
-            // });
-            // When adding new license change entry, date when license was changed is mandatory and has to be unique,
-            // so we set it to today and check if it already exists in which case we will keep increasing it by 1 until it's unique.
-            const today = new Date();
-            today.setUTCHours(0, 0, 0, 0);
-            // for (const i of pipelineLicenseChanges) {
-            //   if (i.date.getTime() === today.getTime()) {
-            //     today.setDate(today.getDate() + 1);
-            //   }
-            // }
 
+            // If pipeline has no license changes, continue with the following execution
             const licenseChange = await ctx.prisma.licenseChange.create({
               data: {
                 pipeline: { connect: { id: pipelineId } },
