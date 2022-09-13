@@ -249,6 +249,8 @@ type GeotechnicalPayload {
 enum HavingEnum {
   any
   count
+  first
+  last
   maximum
   minimum
 }

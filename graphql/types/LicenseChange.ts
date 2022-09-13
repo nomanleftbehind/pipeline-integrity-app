@@ -1,6 +1,6 @@
 import { objectType, stringArg, extendType, nonNull, arg, inputObjectType } from 'nexus';
 import { Context } from '../context';
-import { User as IUser, Prisma } from '@prisma/client';
+import { User as IUser, Prisma, LicenseChange as ILicenseChange } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
 import { validateRegex } from './Pipeline';
 
@@ -231,6 +231,7 @@ export const LicenseChangeMutation = extendType({
                   updatedById: userId,
                 },
               });
+              await allocateLicenseChange({ pipelineId: licenseChange.pipelineId, ctx });
               return { licenseChange }
             } catch (e) {
               if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -271,8 +272,9 @@ export const LicenseChangeMutation = extendType({
         const user = ctx.user;
 
         if (user) {
-          const { id: userId, role, firstName } = user;
-          if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') {
+          const { id: userId, firstName } = user;
+          const authorized = resolveLicenseChangeAuthorized(user);
+          if (authorized) {
             // Find the latest license change and if it exists create new license change as a copy of it
             const latestLicenseChange = await ctx.prisma.licenseChange.findFirst({
               where: { pipelineId },
@@ -319,6 +321,7 @@ export const LicenseChangeMutation = extendType({
               const licenseChange = await ctx.prisma.licenseChange.create({
                 data: latestLicenseChange
               })
+              await allocateLicenseChange({ pipelineId, ctx });
               return { licenseChange };
             }
 
@@ -336,6 +339,7 @@ export const LicenseChangeMutation = extendType({
                 updatedBy: { connect: { id: userId } },
               }
             });
+            await allocateLicenseChange({ pipelineId, ctx });
             return { licenseChange };
           }
           return {
@@ -360,33 +364,15 @@ export const LicenseChangeMutation = extendType({
         id: nonNull(stringArg()),
       },
       resolve: async (_parent, { id }, ctx: Context) => {
-
         const user = ctx.user;
-
         if (user) {
-          const { id: userId, role, firstName } = user;
-          if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OFFICE') {
-
-            if (role === 'OFFICE') {
-              const currentLicenseChange = await ctx.prisma.licenseChange.findUnique({
-                where: { id },
-                select: {
-                  createdById: true,
-                }
-              });
-
-              if (currentLicenseChange && currentLicenseChange.createdById !== userId) {
-                return {
-                  error: {
-                    field: 'License change created by',
-                    message: `Hi ${firstName}. Your user privilages do not allow you to delete license changes not authored by you.`,
-                  }
-                }
-              }
-            }
+          const { firstName } = user;
+          const authorized = resolveLicenseChangeAuthorized(user);
+          if (authorized) {
             const licenseChange = await ctx.prisma.licenseChange.delete({
               where: { id }
             });
+            await allocateLicenseChange({ pipelineId: licenseChange.pipelineId, ctx });
             return { licenseChange }
           }
           return {
@@ -406,3 +392,36 @@ export const LicenseChangeMutation = extendType({
     })
   }
 });
+
+
+interface IAllocateLicenseChange {
+  pipelineId: ILicenseChange['pipelineId'];
+  ctx: Context;
+}
+
+export const allocateLicenseChange = async ({ pipelineId, ctx }: IAllocateLicenseChange) => {
+
+  const { _min, _max } = await ctx.prisma.licenseChange.aggregate({
+    where: { pipelineId },
+    _max: { date: true },
+    _min: { date: true },
+  });
+
+  const pipelineLicenseChanges = await ctx.prisma.licenseChange.findMany({
+    where: { pipelineId },
+    select: { id: true, date: true }
+  });
+
+  for (const { id, date } of pipelineLicenseChanges) {
+    const first = date.getTime() === _min.date?.getTime() ? true : null;
+    const last = date.getTime() === _max.date?.getTime() ? true : null;
+    await ctx.prisma.licenseChange.update({
+      where: { id },
+      data: {
+        first,
+        last,
+      }
+    });
+    console.log(`License change date ${date.toISOString().split('T')[0]} is first: ${first}, last: ${last}.`);
+  }
+}

@@ -547,6 +547,15 @@ export const PipelineQuery = extendType({
                     }
                   }
                 };
+              } else if (having === 'first' || having === 'last') {
+                return {
+                  [table]: {
+                    some: {
+                      [field]: { [operation]: castValue },
+                      [having]: true,
+                    }
+                  }
+                };
               } else if (having === '_count' && (operation === 'equals' || operation === 'lte') && castValue === 0) {
                 // This filter returns pipelines that have zero related records of specified table
                 return {
@@ -763,6 +772,34 @@ export const PipelineQuery = extendType({
                     }
                   } else {
                     for (const { pipelineId } of await ctx.prisma.geotechnical.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        [field]: {
+                          [having]: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(pipelineId);
+                    }
+                  }
+                } else if (table === 'cathodicSurveys') {
+                  if (having === '_count') {
+                    for (const { pipelineId } of await ctx.prisma.cathodicSurvey.groupBy({
+                      by: ['pipelineId'],
+                      having: {
+                        id: {
+                          _count: {
+                            [operation]: castValue
+                          }
+                        }
+                      }
+                    })) {
+                      pipelineIds.push(pipelineId);
+                    }
+                  } else {
+                    for (const { pipelineId } of await ctx.prisma.cathodicSurvey.groupBy({
                       by: ['pipelineId'],
                       having: {
                         [field]: {

@@ -261,6 +261,10 @@ model LicenseChange {
   updatedById          String
   updatedAt            DateTime            @updatedAt
 
+  // calculated fields
+  first Boolean?
+  last  Boolean?
+
   @@unique([pipelineId, date])
 }
 
@@ -307,6 +311,10 @@ model CathodicSurvey {
   updatedById    String
   updatedAt      DateTime  @updatedAt
 
+  // calculated fields
+  first Boolean?
+  last  Boolean?
+
   @@unique([pipelineId, date])
 }
 
@@ -342,6 +350,10 @@ model PigRun {
   updatedBy                   User               @relation("pigRunUpdatedBy", fields: [updatedById], references: [id])
   updatedById                 String
   updatedAt                   DateTime           @updatedAt
+
+  // calculated fields
+  first Boolean?
+  last  Boolean?
 }
 
 model PigType {
@@ -383,6 +395,10 @@ model PressureTest {
   requiredWTForTestPressure Float?
   corrosionAllowance        Float?
   waterForPigging           Float?
+
+  // calculated fields
+  first Boolean?
+  last  Boolean?
 }
 
 model Risk {
@@ -445,6 +461,10 @@ model Geotechnical {
   updatedBy        User                    @relation("geotechnicalUpdatedBy", fields: [updatedById], references: [id])
   updatedById      String
   updatedAt        DateTime                @updatedAt
+
+  // calculated fields
+  first Boolean?
+  last  Boolean?
 }
 
 model RiskEnvironment {
@@ -560,6 +580,10 @@ model PipelineBatch {
   updatedBy      User         @relation("pipelineBatchUpdatedBy", fields: [updatedById], references: [id])
   updatedById    String
   updatedAt      DateTime     @updatedAt
+
+  // calculated fields
+  first Boolean?
+  last  Boolean?
 }
 
 model WellBatch {
@@ -579,6 +603,10 @@ model WellBatch {
   updatedBy      User         @relation("wellBatchUpdatedBy", fields: [updatedById], references: [id])
   updatedById    String
   updatedAt      DateTime     @updatedAt
+
+  // calculated fields
+  first Boolean?
+  last  Boolean?
 }
 
 model BatchProduct {

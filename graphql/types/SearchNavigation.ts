@@ -91,6 +91,8 @@ export const OperationEnumArray: NexusGenObjects['EnumObject'][] = Object.entrie
 
 export const HavingEnumMembers: { [x: string]: NexusGenEnums['HavingEnum'] } = {
   any: '_any',
+  first: 'first',
+  last: 'last',
   minimum: '_min',
   maximum: '_max',
   count: '_count',
