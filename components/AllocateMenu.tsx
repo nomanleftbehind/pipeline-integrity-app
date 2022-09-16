@@ -7,6 +7,8 @@ import { openModal } from './rows/RenderPipeline';
 import {
   useAllocateRiskMutation,
   useRiskAllocationProgressSubscription,
+  useAllocateChronologicalEdgeMutation,
+  useChronologicalEdgeAllocationProgressSubscription,
 } from '../graphql/generated/graphql';
 
 
@@ -37,6 +39,19 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
     },
   });
 
+  const { } = useChronologicalEdgeAllocationProgressSubscription({
+    variables: { data: { userId } },
+    onSubscriptionData: ({ subscriptionData: { data } }) => {
+      if (data) {
+        const { chronologicalEdgeAllocationProgress: { progress, numberOfItems } } = data;
+        setAllocationProgressBar({
+          progress,
+          numberOfItems,
+        });
+      }
+    },
+  });
+
   const [allocateRisk] = useAllocateRiskMutation({
     onCompleted: ({ allocateRisk }) => {
       const { error, success } = allocateRisk || {};
@@ -49,8 +64,24 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
     }
   });
 
-  const handleAllocate = () => {
+  const [allocateChronologicalEdge] = useAllocateChronologicalEdgeMutation({
+    onCompleted: ({ allocateChronologicalEdge }) => {
+      const { error, success } = allocateChronologicalEdge || {};
+      if (error) {
+        setFieldStatus(error);
+      }
+      if (success) {
+        setFieldStatus(success);
+      }
+    }
+  });
+
+  const handleAllocateRisk = () => {
     allocateRisk();
+  }
+
+  const handleAllocateChronologicalEdge = () => {
+    allocateChronologicalEdge();
   }
 
   const [allocationProgressBar, setAllocationProgressBar] = useState({ progress: 0, numberOfItems: 0 });
@@ -92,7 +123,8 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleAllocate}>Risk</MenuItem>
+        <MenuItem onClick={handleAllocateRisk}>Risk</MenuItem>
+        <MenuItem onClick={handleAllocateChronologicalEdge}>Chronological Edge</MenuItem>
       </Menu>
     </div>
   );

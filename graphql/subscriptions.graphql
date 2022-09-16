@@ -1,5 +1,12 @@
-subscription RiskAllocationProgress($data: RiskAllocationInput!) {
+subscription RiskAllocationProgress($data: AllocationInput!) {
   riskAllocationProgress(data: $data) {
+    progress
+    numberOfItems
+  }
+}
+
+subscription ChronologicalEdgeAllocationProgress($data: AllocationInput!) {
+  chronologicalEdgeAllocationProgress(data: $data) {
     progress
     numberOfItems
   }

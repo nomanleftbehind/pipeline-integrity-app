@@ -63,14 +63,12 @@ interface IModalAllocationProgressProps {
 export function ModalAllocationProgress({ progress: { progress, numberOfItems } }: IModalAllocationProgressProps) {
   return (
     <Modal>
-      <div className='modal'>
-        <div className='modal-box'>
-          <div>
-            {`Allocated ${progress} out of ${numberOfItems}`}
-          </div>
-          <div style={{ width: '100%', border: '1px solid black', padding: '1px' }}>
-            <div style={{ width: `${(progress / numberOfItems) * 100}%`, backgroundColor: 'blue', height: '20px' }}></div>
-          </div>
+      <div className='modal-progress'>
+        {/* <div>
+          {`Allocated ${progress} out of ${numberOfItems}`}
+        </div> */}
+        <div style={{ width: '100%', border: '1px solid black', padding: '1px' }}>
+          <div style={{ width: `${(progress / numberOfItems) * 100}%`, backgroundColor: 'red', height: '10px' }}></div>
         </div>
       </div>
     </Modal>

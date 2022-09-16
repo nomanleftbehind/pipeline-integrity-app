@@ -2,9 +2,19 @@
 ### Do not make changes to this file directly
 
 
+input AllocationInput {
+  userId: String!
+}
+
 type AllocationPayload {
   error: FieldError
   success: FieldError
+}
+
+type AllocationProgressObject {
+  numberOfItems: Int!
+  progress: Int!
+  userId: String!
 }
 
 type AuthPayload {
@@ -311,6 +321,7 @@ type Mutation {
   addPressureTest(pipelineId: String!): PressureTestPayload
   addRisk(id: String!): RiskPayload
   addWellBatch(wellId: String!): WellBatchPayload
+  allocateChronologicalEdge: AllocationPayload
   allocateRisk: AllocationPayload
   changePassword(changePasswordInput: ChangePasswordInput!): AuthPayload!
   connectPipeline(connectNewPipelineId: String!, connectedPipelineId: String, flowCalculationDirection: FlowCalculationDirectionEnum!, pipelineId: String!): PipelinesOnPipelinesPayload
@@ -631,16 +642,6 @@ type Risk {
   updatedById: String!
 }
 
-input RiskAllocationInput {
-  userId: String!
-}
-
-type RiskAllocationProgressObject {
-  numberOfItems: Int!
-  progress: Int!
-  userId: String!
-}
-
 type RiskPayload {
   error: FieldError
   risk: Risk
@@ -762,7 +763,8 @@ type SourceOptions {
 }
 
 type Subscription {
-  riskAllocationProgress(data: RiskAllocationInput!): RiskAllocationProgressObject!
+  chronologicalEdgeAllocationProgress(data: AllocationInput!): AllocationProgressObject!
+  riskAllocationProgress(data: AllocationInput!): AllocationProgressObject!
 }
 
 enum TableEnum {

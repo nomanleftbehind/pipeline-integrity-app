@@ -338,8 +338,8 @@ export const AllocationPayload = objectType({
 });
 
 
-export const RiskAllocationProgressObject = objectType({
-  name: 'RiskAllocationProgressObject',
+export const AllocationProgressObject = objectType({
+  name: 'AllocationProgressObject',
   definition: t => {
     t.nonNull.string('userId')
     t.nonNull.int('progress')
@@ -347,8 +347,8 @@ export const RiskAllocationProgressObject = objectType({
   },
 });
 
-export const RiskAllocationInput = inputObjectType({
-  name: 'RiskAllocationInput',
+export const AllocationInput = inputObjectType({
+  name: 'AllocationInput',
   definition(t) {
     t.nonNull.string('userId')
   },
@@ -358,8 +358,8 @@ export const RiskAllocationProgressSubscription = extendType({
   type: 'Subscription',
   definition: t => {
     t.nonNull.field('riskAllocationProgress', {
-      type: 'RiskAllocationProgressObject',
-      args: { data: nonNull(arg({ type: 'RiskAllocationInput' })) },
+      type: 'AllocationProgressObject',
+      args: { data: nonNull(arg({ type: 'AllocationInput' })) },
       subscribe: withFilter(
         (_root/* This is still undefined at this point */, _args: NexusGenArgTypes['Subscription']['riskAllocationProgress'], ctx: ContextSubscription) => {
           return ctx.pubsub.asyncIterator('riskAllocationProgress')

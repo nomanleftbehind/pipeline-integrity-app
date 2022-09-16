@@ -1,9 +1,11 @@
 import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, booleanArg } from 'nexus';
-import { NexusGenObjects } from 'nexus-typegen';
-import { Context } from '../context';
+import { NexusGenObjects, NexusGenFieldTypes, NexusGenArgTypes } from 'nexus-typegen';
+import { Context, ContextSubscription } from '../context';
 import { totalPipelineFlowRawQuery } from './PipelineFlow';
 import { Prisma, User as IUser } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
+import { allocateLicenseChange } from './LicenseChange';
+import { withFilter } from 'graphql-subscriptions';
 
 
 
@@ -1113,6 +1115,88 @@ export const PipelineMutation = extendType({
           }
         }
       }
+    })
+    t.field('allocateChronologicalEdge', {
+      type: 'AllocationPayload',
+      resolve: async (_, _args, ctx) => {
+        const user = ctx.user;
+        if (user) {
+          const { firstName, id: userId } = user;
+          const authorized = resolvePipelineAuthorized(user);
+          if (authorized) {
+            const allPipelines = await ctx.prisma.pipeline.findMany({
+              select: {
+                id: true,
+              }
+            });
+            const numberOfItems = allPipelines.length;
+            let progress = 0;
+            try {
+              for (const { id: pipelineId } of allPipelines) {
+                await allocateLicenseChange({ pipelineId, ctx });
+                progress += 1;
+                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
+              }
+            } catch (e) {
+              // If allocation fails, publish initial progress to close the progress modal
+              ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress: 0, numberOfItems: 0 });
+              if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2010') {
+                  return {
+                    error: {
+                      field: 'Pipeline',
+                      message: `Pipeline flow calculation function does not exit on a database.`,
+                    }
+                  }
+                }
+              }
+              throw e;
+            }
+            // If allocation succeeds, publish initial progress after the loop to close the progress modal
+            ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress: 0, numberOfItems: 0 });
+            return {
+              success: {
+                field: 'Chronological edge',
+                message: `Allocated ${allPipelines.length} chronological edges`,
+              }
+            }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to allocate chronological edges.`,
+            }
+          }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
+      }
+    })
+  }
+});
+
+export const PipelineAllocationProgressSubscription = extendType({
+  type: 'Subscription',
+  definition: t => {
+    t.nonNull.field('chronologicalEdgeAllocationProgress', {
+      type: 'AllocationProgressObject',
+      args: { data: nonNull(arg({ type: 'AllocationInput' })) },
+      subscribe: withFilter(
+        (_root/* This is still undefined at this point */, _args: NexusGenArgTypes['Subscription']['chronologicalEdgeAllocationProgress'], ctx: ContextSubscription) => {
+          return ctx.pubsub.asyncIterator('chronologicalEdgeAllocationProgress')
+        },
+        (root: NexusGenFieldTypes['Subscription']['chronologicalEdgeAllocationProgress'], args: NexusGenArgTypes['Subscription']['chronologicalEdgeAllocationProgress'], _ctx: ContextSubscription) => {
+          // Only push an update for user who pressed the allocate button
+          return (root.userId === args.data.userId);
+        },
+      ),
+      resolve: (root: NexusGenFieldTypes['Subscription']['chronologicalEdgeAllocationProgress'], _args, _ctx: ContextSubscription) => {
+        return root
+      },
     })
   }
 });

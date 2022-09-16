@@ -15,9 +15,19 @@ export type Scalars = {
   DateTime: string;
 };
 
+export type AllocationInput = {
+  userId: Scalars['String'];
+};
+
 export type AllocationPayload = {
   error?: Maybe<FieldError>;
   success?: Maybe<FieldError>;
+};
+
+export type AllocationProgressObject = {
+  numberOfItems: Scalars['Int'];
+  progress: Scalars['Int'];
+  userId: Scalars['String'];
 };
 
 export type AuthPayload = {
@@ -257,6 +267,8 @@ export type GeotechnicalPayload = {
 export enum HavingEnum {
   Any = 'any',
   Count = 'count',
+  First = 'first',
+  Last = 'last',
   Maximum = 'maximum',
   Minimum = 'minimum'
 }
@@ -317,6 +329,7 @@ export type Mutation = {
   addPressureTest?: Maybe<PressureTestPayload>;
   addRisk?: Maybe<RiskPayload>;
   addWellBatch?: Maybe<WellBatchPayload>;
+  allocateChronologicalEdge?: Maybe<AllocationPayload>;
   allocateRisk?: Maybe<AllocationPayload>;
   changePassword: AuthPayload;
   connectPipeline?: Maybe<PipelinesOnPipelinesPayload>;
@@ -1063,16 +1076,6 @@ export type Risk = {
   updatedById: Scalars['String'];
 };
 
-export type RiskAllocationInput = {
-  userId: Scalars['String'];
-};
-
-export type RiskAllocationProgressObject = {
-  numberOfItems: Scalars['Int'];
-  progress: Scalars['Int'];
-  userId: Scalars['String'];
-};
-
 export type RiskPayload = {
   error?: Maybe<FieldError>;
   risk?: Maybe<Risk>;
@@ -1194,12 +1197,18 @@ export type SourceOptions = {
 };
 
 export type Subscription = {
-  riskAllocationProgress: RiskAllocationProgressObject;
+  chronologicalEdgeAllocationProgress: AllocationProgressObject;
+  riskAllocationProgress: AllocationProgressObject;
+};
+
+
+export type SubscriptionChronologicalEdgeAllocationProgressArgs = {
+  data: AllocationInput;
 };
 
 
 export type SubscriptionRiskAllocationProgressArgs = {
-  data: RiskAllocationInput;
+  data: AllocationInput;
 };
 
 export enum TableEnum {
@@ -1680,6 +1689,11 @@ export type AllocateRiskMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type AllocateRiskMutation = { allocateRisk?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
+export type AllocateChronologicalEdgeMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllocateChronologicalEdgeMutation = { allocateChronologicalEdge?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
 export type EditChemicalMutationVariables = Exact<{
   id: Scalars['String'];
   chemicalSupplierId?: Maybe<Scalars['String']>;
@@ -1892,11 +1906,18 @@ export type SideBarQueryVariables = Exact<{ [key: string]: never; }>;
 export type SideBarQuery = { sideBar?: Array<{ id: string, name: string, satellites: Array<{ id: string, name: string }> } | null | undefined> | null | undefined };
 
 export type RiskAllocationProgressSubscriptionVariables = Exact<{
-  data: RiskAllocationInput;
+  data: AllocationInput;
 }>;
 
 
 export type RiskAllocationProgressSubscription = { riskAllocationProgress: { progress: number, numberOfItems: number } };
+
+export type ChronologicalEdgeAllocationProgressSubscriptionVariables = Exact<{
+  data: AllocationInput;
+}>;
+
+
+export type ChronologicalEdgeAllocationProgressSubscription = { chronologicalEdgeAllocationProgress: { progress: number, numberOfItems: number } };
 
 
 export const LoginDocument = gql`
@@ -3510,6 +3531,45 @@ export function useAllocateRiskMutation(baseOptions?: Apollo.MutationHookOptions
 export type AllocateRiskMutationHookResult = ReturnType<typeof useAllocateRiskMutation>;
 export type AllocateRiskMutationResult = Apollo.MutationResult<AllocateRiskMutation>;
 export type AllocateRiskMutationOptions = Apollo.BaseMutationOptions<AllocateRiskMutation, AllocateRiskMutationVariables>;
+export const AllocateChronologicalEdgeDocument = gql`
+    mutation AllocateChronologicalEdge {
+  allocateChronologicalEdge {
+    success {
+      field
+      message
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type AllocateChronologicalEdgeMutationFn = Apollo.MutationFunction<AllocateChronologicalEdgeMutation, AllocateChronologicalEdgeMutationVariables>;
+
+/**
+ * __useAllocateChronologicalEdgeMutation__
+ *
+ * To run a mutation, you first call `useAllocateChronologicalEdgeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAllocateChronologicalEdgeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [allocateChronologicalEdgeMutation, { data, loading, error }] = useAllocateChronologicalEdgeMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllocateChronologicalEdgeMutation(baseOptions?: Apollo.MutationHookOptions<AllocateChronologicalEdgeMutation, AllocateChronologicalEdgeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AllocateChronologicalEdgeMutation, AllocateChronologicalEdgeMutationVariables>(AllocateChronologicalEdgeDocument, options);
+      }
+export type AllocateChronologicalEdgeMutationHookResult = ReturnType<typeof useAllocateChronologicalEdgeMutation>;
+export type AllocateChronologicalEdgeMutationResult = Apollo.MutationResult<AllocateChronologicalEdgeMutation>;
+export type AllocateChronologicalEdgeMutationOptions = Apollo.BaseMutationOptions<AllocateChronologicalEdgeMutation, AllocateChronologicalEdgeMutationVariables>;
 export const EditChemicalDocument = gql`
     mutation EditChemical($id: String!, $chemicalSupplierId: String, $baselineFluidAnalysisDate: DateTime, $scaling: Boolean, $bacteria: Boolean, $co2: Boolean, $o2: Boolean, $h2s: Boolean, $continuousInjection: Boolean, $injectionRate: Float, $downholeBatch: Boolean, $inhibitorPipelineBatch: Boolean, $bacteriaTreatment: Boolean, $scaleTreatment: Boolean, $batchFrequency: Int, $comment: String) {
   editChemical(
@@ -5050,7 +5110,7 @@ export type SideBarQueryHookResult = ReturnType<typeof useSideBarQuery>;
 export type SideBarLazyQueryHookResult = ReturnType<typeof useSideBarLazyQuery>;
 export type SideBarQueryResult = Apollo.QueryResult<SideBarQuery, SideBarQueryVariables>;
 export const RiskAllocationProgressDocument = gql`
-    subscription RiskAllocationProgress($data: RiskAllocationInput!) {
+    subscription RiskAllocationProgress($data: AllocationInput!) {
   riskAllocationProgress(data: $data) {
     progress
     numberOfItems
@@ -5080,3 +5140,34 @@ export function useRiskAllocationProgressSubscription(baseOptions: Apollo.Subscr
       }
 export type RiskAllocationProgressSubscriptionHookResult = ReturnType<typeof useRiskAllocationProgressSubscription>;
 export type RiskAllocationProgressSubscriptionResult = Apollo.SubscriptionResult<RiskAllocationProgressSubscription>;
+export const ChronologicalEdgeAllocationProgressDocument = gql`
+    subscription ChronologicalEdgeAllocationProgress($data: AllocationInput!) {
+  chronologicalEdgeAllocationProgress(data: $data) {
+    progress
+    numberOfItems
+  }
+}
+    `;
+
+/**
+ * __useChronologicalEdgeAllocationProgressSubscription__
+ *
+ * To run a query within a React component, call `useChronologicalEdgeAllocationProgressSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useChronologicalEdgeAllocationProgressSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChronologicalEdgeAllocationProgressSubscription({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useChronologicalEdgeAllocationProgressSubscription(baseOptions: Apollo.SubscriptionHookOptions<ChronologicalEdgeAllocationProgressSubscription, ChronologicalEdgeAllocationProgressSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<ChronologicalEdgeAllocationProgressSubscription, ChronologicalEdgeAllocationProgressSubscriptionVariables>(ChronologicalEdgeAllocationProgressDocument, options);
+      }
+export type ChronologicalEdgeAllocationProgressSubscriptionHookResult = ReturnType<typeof useChronologicalEdgeAllocationProgressSubscription>;
+export type ChronologicalEdgeAllocationProgressSubscriptionResult = Apollo.SubscriptionResult<ChronologicalEdgeAllocationProgressSubscription>;

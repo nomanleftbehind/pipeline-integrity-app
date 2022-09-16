@@ -422,6 +422,5 @@ export const allocateLicenseChange = async ({ pipelineId, ctx }: IAllocateLicens
         last,
       }
     });
-    console.log(`License change date ${date.toISOString().split('T')[0]} is first: ${first}, last: ${last}.`);
   }
 }

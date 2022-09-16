@@ -21,6 +21,7 @@ import '../styles/geotechnical.css';
 import '../styles/cathodic-survey.css';
 import '../styles/search-navigation.css';
 import '../styles/button-container.css';
+import '../styles/modal.css';
 import Layout from '../components/layout';
 // import '../styles/styles-formik.css';
 // import '../styles/styles-custom-formik.css';
