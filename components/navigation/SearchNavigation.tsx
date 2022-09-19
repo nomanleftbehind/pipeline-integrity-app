@@ -58,8 +58,8 @@ export default function SearchNavigation({ searchNavigationInputArray, searchEnu
           </select>
 
           {having !== HavingEnum.Count && <>
-            <div style={{ gridRow: 2, gridColumn: 2 }}>Field:</div>
-            <select style={{ gridRow: 2, gridColumn: 3 }} value={field} onChange={(e) => handleChange({ e, index, key: 'field' })}>
+            <div style={{ gridRow: 3, gridColumn: 2 }}>Field:</div>
+            <select style={{ gridRow: 3, gridColumn: 3 }} value={field} onChange={(e) => handleChange({ e, index, key: 'field' })}>
               {options?.filter(({ table: tableName }) => tableName === table).map(({ field: fieldName }) => {
                 const prettyField = prettifyColumnName(fieldName);
                 return (
@@ -69,9 +69,9 @@ export default function SearchNavigation({ searchNavigationInputArray, searchEnu
             </select>
           </>}
 
-          {[TableEnum.LicenseChanges, TableEnum.GeotechnicalParameters, TableEnum.Wells, TableEnum.SalesPoints, TableEnum.PigRuns, TableEnum.PressureTests, TableEnum.PipelineBatches, TableEnum.UpstreamPipelines, TableEnum.DownstreamPipelines].includes(table) && <>
-            <div style={{ gridRow: 3, gridColumn: 2 }}>Having:</div>
-            <select style={{ gridRow: 3, gridColumn: 3 }} value={having} onChange={(e) => handleChange({ e, index, key: 'having' })}>
+          {[TableEnum.LicenseChanges, TableEnum.GeotechnicalParameters, TableEnum.Wells, TableEnum.SalesPoints, TableEnum.PigRuns, TableEnum.PressureTests, TableEnum.PipelineBatches, TableEnum.UpstreamPipelines, TableEnum.DownstreamPipelines, TableEnum.CathodicSurveys].includes(table) && <>
+            <div style={{ gridRow: 2, gridColumn: 2 }}>Where:</div>
+            <select style={{ gridRow: 2, gridColumn: 3 }} value={having} onChange={(e) => handleChange({ e, index, key: 'having' })}>
               {validators && validators.havingEnum.filter(({ serverEnum }) => {
 
                 // Special case when searching for Count of related fields, field is set to `id` and type is set to `Int` even though `id` is of type `String`
@@ -79,15 +79,15 @@ export default function SearchNavigation({ searchNavigationInputArray, searchEnu
                 if (['Int', 'Float', 'DateTime'].includes(type) && having !== HavingEnum.Count && ![TableEnum.DownstreamPipelines, TableEnum.UpstreamPipelines].includes(table)) {
                   return true;
                 }
-                return serverEnum === HavingEnum.Any || serverEnum === HavingEnum.Count;
+                return serverEnum === HavingEnum.Any || serverEnum === HavingEnum.Count || serverEnum == HavingEnum.First || serverEnum == HavingEnum.Last;
 
               }).map(({ serverEnum }) => {
 
                 const prettyHaving = prettifyColumnName(serverEnum);
-                const customHaving = type === 'DateTime' ? serverEnum === HavingEnum.Minimum ? 'First' : serverEnum === HavingEnum.Maximum ? 'Last' : prettyHaving : prettyHaving;
+                // const customHaving = type === 'DateTime' ? serverEnum === HavingEnum.Minimum ? 'First' : serverEnum === HavingEnum.Maximum ? 'Last' : prettyHaving : prettyHaving;
 
                 return (
-                  <option key={serverEnum} value={serverEnum}>{customHaving}</option>
+                  <option key={serverEnum} value={serverEnum}>{prettyHaving}</option>
                 );
               })}
             </select>
