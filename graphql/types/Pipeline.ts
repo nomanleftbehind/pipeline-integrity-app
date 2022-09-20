@@ -5,6 +5,9 @@ import { totalPipelineFlowRawQuery } from './PipelineFlow';
 import { Prisma, User as IUser } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
 import { allocateLicenseChange } from './LicenseChange';
+import { allocatePigRun } from './PigRun';
+import { allocateGeotechnical } from './Geotechnical';
+import { allocateCathodicSurvey } from './CathodicSurvey';
 import { withFilter } from 'graphql-subscriptions';
 
 
@@ -1134,6 +1137,9 @@ export const PipelineMutation = extendType({
             try {
               for (const { id: pipelineId } of allPipelines) {
                 await allocateLicenseChange({ pipelineId, ctx });
+                await allocatePigRun({ pipelineId, ctx });
+                await allocateCathodicSurvey({ pipelineId, ctx });
+                await allocateGeotechnical({ pipelineId, ctx });
                 progress += 1;
                 ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
               }

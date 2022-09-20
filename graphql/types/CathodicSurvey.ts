@@ -1,6 +1,6 @@
 import { objectType, stringArg, extendType, nonNull, arg, inputObjectType } from 'nexus';
 import { Context } from '../context';
-import { User as IUser } from '@prisma/client';
+import { Prisma, User as IUser, CathodicSurvey as ICathodicSurvey } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
 
 
@@ -143,19 +143,33 @@ export const CathodicSurveyMutation = extendType({
           const { id: userId, firstName } = user;
           const authorized = resolveCathodicSurveyAuthorized(user);
           if (authorized) {
-
-            const cathodicSurvey = await ctx.prisma.cathodicSurvey.update({
-              where: { id },
-              data: {
-                date: date || undefined,
-                companyId,
-                deficiencies,
-                correctionDate,
-                comment,
-                updatedById: userId,
-              },
-            });
-            return { cathodicSurvey }
+            try {
+              const cathodicSurvey = await ctx.prisma.cathodicSurvey.update({
+                where: { id },
+                data: {
+                  date: date || undefined,
+                  companyId,
+                  deficiencies,
+                  correctionDate,
+                  comment,
+                  updatedById: userId,
+                },
+              });
+              await allocateCathodicSurvey({ pipelineId: cathodicSurvey.pipelineId, ctx });
+              return { cathodicSurvey }
+            } catch (e) {
+              if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2002') {
+                  return {
+                    error: {
+                      field: 'date',
+                      message: `Cathodic Survey dated ${date?.toISOString().split('T')[0]} already exists for this pipeline. One pipeline cannot have multiple cathodic surveys on the same date.`,
+                    }
+                  }
+                }
+              }
+              throw e;
+            }
           }
           return {
             error: {
@@ -212,6 +226,7 @@ export const CathodicSurveyMutation = extendType({
                 updatedById: userId,
               }
             });
+            await allocateCathodicSurvey({ pipelineId: pipelineId, ctx });
             return { cathodicSurvey };
           }
           return {
@@ -244,6 +259,7 @@ export const CathodicSurveyMutation = extendType({
             const cathodicSurvey = await ctx.prisma.cathodicSurvey.delete({
               where: { id }
             });
+            await allocateCathodicSurvey({ pipelineId: cathodicSurvey.pipelineId, ctx });
             return { cathodicSurvey }
           }
           return {
@@ -263,3 +279,35 @@ export const CathodicSurveyMutation = extendType({
     })
   }
 })
+
+
+interface IAllocateCathodicSurvey {
+  pipelineId: ICathodicSurvey['pipelineId'];
+  ctx: Context;
+}
+
+export const allocateCathodicSurvey = async ({ pipelineId, ctx }: IAllocateCathodicSurvey) => {
+
+  const { _min, _max } = await ctx.prisma.cathodicSurvey.aggregate({
+    where: { pipelineId },
+    _max: { date: true },
+    _min: { date: true },
+  });
+
+  const pipelineCathodicSurveys = await ctx.prisma.cathodicSurvey.findMany({
+    where: { pipelineId },
+    select: { id: true, date: true }
+  });
+
+  for (const { id, date } of pipelineCathodicSurveys) {
+    const first = date.getTime() === _min.date?.getTime() ? true : null;
+    const last = date.getTime() === _max.date?.getTime() ? true : null;
+    await ctx.prisma.cathodicSurvey.update({
+      where: { id },
+      data: {
+        first,
+        last,
+      }
+    });
+  }
+}

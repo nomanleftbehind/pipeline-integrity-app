@@ -166,7 +166,7 @@ export const PigRunMutation = extendType({
       resolve: async (_parent, args, ctx: Context) => {
 
         const user = ctx.user;
-        
+
         if (user) {
           const { id: userId, role, firstName } = user;
 
@@ -226,6 +226,7 @@ export const PigRunMutation = extendType({
                   updatedById: userId,
                 },
               });
+              await allocatePigRun({ pipelineId: pigRun.pipelineId, ctx });
               return { pigRun }
             } catch (e) {
               if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -278,6 +279,7 @@ export const PigRunMutation = extendType({
                 updatedById: userId,
               }
             });
+            await allocatePigRun({ pipelineId, ctx });
             return { pigRun };
           }
           return {
@@ -326,6 +328,7 @@ export const PigRunMutation = extendType({
             const pigRun = await ctx.prisma.pigRun.delete({
               where: { id }
             });
+            await allocatePigRun({ pipelineId: pigRun.pipelineId, ctx });
             return { pigRun }
           }
           return {
@@ -346,3 +349,34 @@ export const PigRunMutation = extendType({
   }
 });
 
+
+interface IAllocatePigRun {
+  pipelineId: IPigRun['pipelineId'];
+  ctx: Context;
+}
+
+export const allocatePigRun = async ({ pipelineId, ctx }: IAllocatePigRun) => {
+
+  const { _min, _max } = await ctx.prisma.pigRun.aggregate({
+    where: { pipelineId },
+    _max: { dateIn: true },
+    _min: { dateIn: true },
+  });
+
+  const pipelinePigRuns = await ctx.prisma.pigRun.findMany({
+    where: { pipelineId },
+    select: { id: true, dateIn: true }
+  });
+
+  for (const { id, dateIn } of pipelinePigRuns) {
+    const first = dateIn.getTime() === _min.dateIn?.getTime() ? true : null;
+    const last = dateIn.getTime() === _max.dateIn?.getTime() ? true : null;
+    await ctx.prisma.pigRun.update({
+      where: { id },
+      data: {
+        first,
+        last,
+      }
+    });
+  }
+}

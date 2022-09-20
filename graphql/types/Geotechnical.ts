@@ -2,7 +2,7 @@ import { enumType, objectType, stringArg, extendType, nonNull, arg, inputObjectT
 import { NexusGenObjects } from 'nexus-typegen';
 import { databaseEnumToServerEnum } from './Pipeline';
 import { Context } from '../context';
-import { User as IUser } from '@prisma/client';
+import { User as IUser, Geotechnical as IGeotechnical } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
 
 
@@ -182,6 +182,7 @@ export const GeotechnicalMutation = extendType({
                 updatedById: userId,
               },
             });
+            await allocateGeotechnical({ pipelineId: geotechnical.pipelineId, ctx });
             return { geotechnical }
           }
           return {
@@ -220,6 +221,7 @@ export const GeotechnicalMutation = extendType({
                 updatedById: userId,
               }
             });
+            await allocateGeotechnical({ pipelineId, ctx });
             return { geotechnical };
           }
           return {
@@ -255,6 +257,7 @@ export const GeotechnicalMutation = extendType({
             const geotechnical = await ctx.prisma.geotechnical.delete({
               where: { id }
             });
+            await allocateGeotechnical({ pipelineId: geotechnical.pipelineId, ctx });
             return { geotechnical }
           }
           return {
@@ -274,3 +277,35 @@ export const GeotechnicalMutation = extendType({
     })
   }
 });
+
+
+interface IAllocateGeotechnical {
+  pipelineId: IGeotechnical['pipelineId'];
+  ctx: Context;
+}
+
+export const allocateGeotechnical = async ({ pipelineId, ctx }: IAllocateGeotechnical) => {
+
+  const { _min, _max } = await ctx.prisma.geotechnical.aggregate({
+    where: { pipelineId },
+    _max: { dateSlopeChecked: true },
+    _min: { dateSlopeChecked: true },
+  });
+
+  const pipelineGeotechnicals = await ctx.prisma.geotechnical.findMany({
+    where: { pipelineId },
+    select: { id: true, dateSlopeChecked: true }
+  });
+
+  for (const { id, dateSlopeChecked } of pipelineGeotechnicals) {
+    const first = dateSlopeChecked?.getTime() === _min.dateSlopeChecked?.getTime() ? true : null;
+    const last = dateSlopeChecked?.getTime() === _max.dateSlopeChecked?.getTime() ? true : null;
+    await ctx.prisma.geotechnical.update({
+      where: { id },
+      data: {
+        first,
+        last,
+      }
+    });
+  }
+}
