@@ -182,7 +182,7 @@ export const GeotechnicalMutation = extendType({
                 updatedById: userId,
               },
             });
-            await allocateGeotechnical({ pipelineId: geotechnical.pipelineId, ctx });
+            await allocateGeotechnicalChronologicalEdge({ pipelineId: geotechnical.pipelineId, ctx });
             return { geotechnical }
           }
           return {
@@ -221,7 +221,7 @@ export const GeotechnicalMutation = extendType({
                 updatedById: userId,
               }
             });
-            await allocateGeotechnical({ pipelineId, ctx });
+            await allocateGeotechnicalChronologicalEdge({ pipelineId, ctx });
             return { geotechnical };
           }
           return {
@@ -257,7 +257,7 @@ export const GeotechnicalMutation = extendType({
             const geotechnical = await ctx.prisma.geotechnical.delete({
               where: { id }
             });
-            await allocateGeotechnical({ pipelineId: geotechnical.pipelineId, ctx });
+            await allocateGeotechnicalChronologicalEdge({ pipelineId: geotechnical.pipelineId, ctx });
             return { geotechnical }
           }
           return {
@@ -279,12 +279,12 @@ export const GeotechnicalMutation = extendType({
 });
 
 
-interface IAllocateGeotechnical {
+interface IAllocateGeotechnicalChronologicalEdge {
   pipelineId: IGeotechnical['pipelineId'];
   ctx: Context;
 }
 
-export const allocateGeotechnical = async ({ pipelineId, ctx }: IAllocateGeotechnical) => {
+export const allocateGeotechnicalChronologicalEdge = async ({ pipelineId, ctx }: IAllocateGeotechnicalChronologicalEdge) => {
 
   const { _min, _max } = await ctx.prisma.geotechnical.aggregate({
     where: { pipelineId },

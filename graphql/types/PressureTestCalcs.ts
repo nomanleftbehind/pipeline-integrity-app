@@ -1,4 +1,5 @@
 import { PressureTest as IPressureTest, LicenseChange as ILicenseChange } from '@prisma/client';
+import { Context } from '../context';
 
 type IMaxPressureOfLimitingSpecArgs = Pick<IPressureTest, 'limitingSpec'>;
 
@@ -100,4 +101,58 @@ export const waterForPiggingCalc = async ({ length, outsideDiameter, wallThickne
     return result;
   }
   return null;
+}
+
+
+
+interface IAllocatePressureTestArgs {
+  pipelineId: IPressureTest['pipelineId'];
+  ctx: Context;
+}
+
+export const allocatePressureTest = async ({ pipelineId, ctx }: IAllocatePressureTestArgs) => {
+
+  const pipelinePressureTests = await ctx.prisma.pressureTest.findMany({
+    where: { pipelineId },
+    select: { id: true, limitingSpec: true }
+  });
+
+  if (pipelinePressureTests.length > 0) {
+    const latestLicenseChange = await ctx.prisma.licenseChange.findFirst({
+      where: { pipelineId },
+      orderBy: { date: 'desc' },
+      select: { mop: true, outsideDiameter: true, yieldStrength: true, wallThickness: true, length: true }
+    });
+
+    if (latestLicenseChange) {
+      const { mop, outsideDiameter, yieldStrength, wallThickness, length } = latestLicenseChange;
+      const requiredWTForMop = await requiredWTForMopCalc({ mop, outsideDiameter, yieldStrength });
+      const mopTestPressure = await mopTestPressureCalc({ outsideDiameter, requiredWTForMop, yieldStrength });
+      const waterForPigging = await waterForPiggingCalc({ length, outsideDiameter, wallThickness });
+
+      for (const { id, limitingSpec } of pipelinePressureTests) {
+        const maxPressureOfLimitingSpec = await maxPressureOfLimitingSpecCalc({ limitingSpec });
+
+        const testPressure = await pressureTestPressureCalc({ mopTestPressure, maxPressureOfLimitingSpec });
+
+        const requiredWTForTestPressure = await requiredWTForTestPressureCalc({ testPressure, outsideDiameter, yieldStrength });
+
+        const corrosionAllowance = await pressureTestCorrosionAllowanceCalc({ requiredWTForMop, requiredWTForTestPressure });
+
+        await ctx.prisma.pressureTest.update({
+          where: { id },
+          data: {
+            requiredWTForMop,
+            mopTestPressure,
+            maxPressureOfLimitingSpec,
+            testPressure,
+            requiredWTForTestPressure,
+            corrosionAllowance,
+            waterForPigging,
+          }
+        });
+        // do not return here as you are inside the loop;
+      }
+    }
+  }
 }

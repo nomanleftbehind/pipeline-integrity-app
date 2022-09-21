@@ -4,10 +4,11 @@ import { Context, ContextSubscription } from '../context';
 import { totalPipelineFlowRawQuery } from './PipelineFlow';
 import { Prisma, User as IUser } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
-import { allocateLicenseChange } from './LicenseChange';
-import { allocatePigRun } from './PigRun';
-import { allocateGeotechnical } from './Geotechnical';
-import { allocateCathodicSurvey } from './CathodicSurvey';
+import { allocateLicenseChangeChronologicalEdge } from './LicenseChange';
+import { allocatePressureTestChronologicalEdge } from './PressureTest';
+import { allocatePigRunChronologicalEdge } from './PigRun';
+import { allocateGeotechnicalChronologicalEdge } from './Geotechnical';
+import { allocateCathodicSurveyChronologicalEdge } from './CathodicSurvey';
 import { withFilter } from 'graphql-subscriptions';
 
 
@@ -1136,10 +1137,11 @@ export const PipelineMutation = extendType({
             let progress = 0;
             try {
               for (const { id: pipelineId } of allPipelines) {
-                await allocateLicenseChange({ pipelineId, ctx });
-                await allocatePigRun({ pipelineId, ctx });
-                await allocateCathodicSurvey({ pipelineId, ctx });
-                await allocateGeotechnical({ pipelineId, ctx });
+                await allocateLicenseChangeChronologicalEdge({ pipelineId, ctx });
+                await allocatePressureTestChronologicalEdge({ pipelineId, ctx });
+                await allocatePigRunChronologicalEdge({ pipelineId, ctx });
+                await allocateCathodicSurveyChronologicalEdge({ pipelineId, ctx });
+                await allocateGeotechnicalChronologicalEdge({ pipelineId, ctx });
                 progress += 1;
                 ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
               }

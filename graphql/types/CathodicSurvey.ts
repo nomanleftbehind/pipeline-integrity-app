@@ -155,7 +155,7 @@ export const CathodicSurveyMutation = extendType({
                   updatedById: userId,
                 },
               });
-              await allocateCathodicSurvey({ pipelineId: cathodicSurvey.pipelineId, ctx });
+              await allocateCathodicSurveyChronologicalEdge({ pipelineId: cathodicSurvey.pipelineId, ctx });
               return { cathodicSurvey }
             } catch (e) {
               if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -226,7 +226,7 @@ export const CathodicSurveyMutation = extendType({
                 updatedById: userId,
               }
             });
-            await allocateCathodicSurvey({ pipelineId: pipelineId, ctx });
+            await allocateCathodicSurveyChronologicalEdge({ pipelineId: pipelineId, ctx });
             return { cathodicSurvey };
           }
           return {
@@ -259,7 +259,7 @@ export const CathodicSurveyMutation = extendType({
             const cathodicSurvey = await ctx.prisma.cathodicSurvey.delete({
               where: { id }
             });
-            await allocateCathodicSurvey({ pipelineId: cathodicSurvey.pipelineId, ctx });
+            await allocateCathodicSurveyChronologicalEdge({ pipelineId: cathodicSurvey.pipelineId, ctx });
             return { cathodicSurvey }
           }
           return {
@@ -281,12 +281,12 @@ export const CathodicSurveyMutation = extendType({
 })
 
 
-interface IAllocateCathodicSurvey {
+interface IAllocateCathodicSurveyChronologicalEdge {
   pipelineId: ICathodicSurvey['pipelineId'];
   ctx: Context;
 }
 
-export const allocateCathodicSurvey = async ({ pipelineId, ctx }: IAllocateCathodicSurvey) => {
+export const allocateCathodicSurveyChronologicalEdge = async ({ pipelineId, ctx }: IAllocateCathodicSurveyChronologicalEdge) => {
 
   const { _min, _max } = await ctx.prisma.cathodicSurvey.aggregate({
     where: { pipelineId },

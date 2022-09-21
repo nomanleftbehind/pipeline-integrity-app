@@ -226,7 +226,7 @@ export const PigRunMutation = extendType({
                   updatedById: userId,
                 },
               });
-              await allocatePigRun({ pipelineId: pigRun.pipelineId, ctx });
+              await allocatePigRunChronologicalEdge({ pipelineId: pigRun.pipelineId, ctx });
               return { pigRun }
             } catch (e) {
               if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -279,7 +279,7 @@ export const PigRunMutation = extendType({
                 updatedById: userId,
               }
             });
-            await allocatePigRun({ pipelineId, ctx });
+            await allocatePigRunChronologicalEdge({ pipelineId, ctx });
             return { pigRun };
           }
           return {
@@ -328,7 +328,7 @@ export const PigRunMutation = extendType({
             const pigRun = await ctx.prisma.pigRun.delete({
               where: { id }
             });
-            await allocatePigRun({ pipelineId: pigRun.pipelineId, ctx });
+            await allocatePigRunChronologicalEdge({ pipelineId: pigRun.pipelineId, ctx });
             return { pigRun }
           }
           return {
@@ -350,12 +350,12 @@ export const PigRunMutation = extendType({
 });
 
 
-interface IAllocatePigRun {
+interface IAllocatePigRunChronologicalEdge {
   pipelineId: IPigRun['pipelineId'];
   ctx: Context;
 }
 
-export const allocatePigRun = async ({ pipelineId, ctx }: IAllocatePigRun) => {
+export const allocatePigRunChronologicalEdge = async ({ pipelineId, ctx }: IAllocatePigRunChronologicalEdge) => {
 
   const { _min, _max } = await ctx.prisma.pigRun.aggregate({
     where: { pipelineId },

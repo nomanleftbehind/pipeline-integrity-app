@@ -9,6 +9,8 @@ import {
   useRiskAllocationProgressSubscription,
   useAllocateChronologicalEdgeMutation,
   useChronologicalEdgeAllocationProgressSubscription,
+  useAllocatePressureTestMutation,
+  usePressureTestAllocationProgressSubscription,
 } from '../graphql/generated/graphql';
 
 
@@ -31,6 +33,19 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
     onSubscriptionData: ({ subscriptionData: { data } }) => {
       if (data) {
         const { riskAllocationProgress: { progress, numberOfItems } } = data;
+        setAllocationProgressBar({
+          progress,
+          numberOfItems,
+        });
+      }
+    },
+  });
+
+  const { } = usePressureTestAllocationProgressSubscription({
+    variables: { data: { userId } },
+    onSubscriptionData: ({ subscriptionData: { data } }) => {
+      if (data) {
+        const { pressureTestAllocationProgress: { progress, numberOfItems } } = data;
         setAllocationProgressBar({
           progress,
           numberOfItems,
@@ -64,6 +79,18 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
     }
   });
 
+  const [allocatePressureTest] = useAllocatePressureTestMutation({
+    onCompleted: ({ allocatePressureTest }) => {
+      const { error, success } = allocatePressureTest || {};
+      if (error) {
+        setFieldStatus(error);
+      }
+      if (success) {
+        setFieldStatus(success);
+      }
+    }
+  });
+
   const [allocateChronologicalEdge] = useAllocateChronologicalEdgeMutation({
     onCompleted: ({ allocateChronologicalEdge }) => {
       const { error, success } = allocateChronologicalEdge || {};
@@ -78,6 +105,10 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
 
   const handleAllocateRisk = () => {
     allocateRisk();
+  }
+
+  const handleAllocatePressureTest = () => {
+    allocatePressureTest();
   }
 
   const handleAllocateChronologicalEdge = () => {
@@ -124,6 +155,7 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
         }}
       >
         <MenuItem onClick={handleAllocateRisk}>Risk</MenuItem>
+        <MenuItem onClick={handleAllocatePressureTest}>Pressure Test</MenuItem>
         <MenuItem onClick={handleAllocateChronologicalEdge}>Chronological Edge</MenuItem>
       </Menu>
     </div>

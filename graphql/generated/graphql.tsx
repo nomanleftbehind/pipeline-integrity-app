@@ -178,6 +178,17 @@ export type EditLicenseChangeInput = {
   yieldStrength?: Maybe<Scalars['Int']>;
 };
 
+export type EditPressureTestInput = {
+  comment?: Maybe<Scalars['String']>;
+  date?: Maybe<Scalars['DateTime']>;
+  ddsDate?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  infoSentOutDate?: Maybe<Scalars['DateTime']>;
+  integritySheetUpdated?: Maybe<Scalars['DateTime']>;
+  limitingSpec?: Maybe<LimitingSpecEnum>;
+  pressureTestReceivedDate?: Maybe<Scalars['DateTime']>;
+};
+
 export type EditRiskInput = {
   aerialReview?: Maybe<Scalars['Boolean']>;
   comment?: Maybe<Scalars['String']>;
@@ -330,6 +341,7 @@ export type Mutation = {
   addRisk?: Maybe<RiskPayload>;
   addWellBatch?: Maybe<WellBatchPayload>;
   allocateChronologicalEdge?: Maybe<AllocationPayload>;
+  allocatePressureTest?: Maybe<AllocationPayload>;
   allocateRisk?: Maybe<AllocationPayload>;
   changePassword: AuthPayload;
   connectPipeline?: Maybe<PipelinesOnPipelinesPayload>;
@@ -601,14 +613,7 @@ export type MutationEditPipelineBatchArgs = {
 
 
 export type MutationEditPressureTestArgs = {
-  comment?: Maybe<Scalars['String']>;
-  date?: Maybe<Scalars['DateTime']>;
-  ddsDate?: Maybe<Scalars['DateTime']>;
-  id: Scalars['String'];
-  infoSentOutDate?: Maybe<Scalars['DateTime']>;
-  integritySheetUpdated?: Maybe<Scalars['DateTime']>;
-  limitingSpec?: Maybe<LimitingSpecEnum>;
-  pressureTestReceivedDate?: Maybe<Scalars['DateTime']>;
+  data: EditPressureTestInput;
 };
 
 
@@ -1198,11 +1203,17 @@ export type SourceOptions = {
 
 export type Subscription = {
   chronologicalEdgeAllocationProgress: AllocationProgressObject;
+  pressureTestAllocationProgress: AllocationProgressObject;
   riskAllocationProgress: AllocationProgressObject;
 };
 
 
 export type SubscriptionChronologicalEdgeAllocationProgressArgs = {
+  data: AllocationInput;
+};
+
+
+export type SubscriptionPressureTestAllocationProgressArgs = {
   data: AllocationInput;
 };
 
@@ -1512,14 +1523,7 @@ export type DeleteLicenseChangeMutationVariables = Exact<{
 export type DeleteLicenseChangeMutation = { deleteLicenseChange?: { licenseChange?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type EditPressureTestMutationVariables = Exact<{
-  id: Scalars['String'];
-  limitingSpec?: Maybe<LimitingSpecEnum>;
-  infoSentOutDate?: Maybe<Scalars['DateTime']>;
-  ddsDate?: Maybe<Scalars['DateTime']>;
-  date?: Maybe<Scalars['DateTime']>;
-  pressureTestReceivedDate?: Maybe<Scalars['DateTime']>;
-  integritySheetUpdated?: Maybe<Scalars['DateTime']>;
-  comment?: Maybe<Scalars['String']>;
+  data: EditPressureTestInput;
 }>;
 
 
@@ -1538,6 +1542,11 @@ export type DeletePressureTestMutationVariables = Exact<{
 
 
 export type DeletePressureTestMutation = { deletePressureTest?: { pressureTest?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type AllocatePressureTestMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllocatePressureTestMutation = { allocatePressureTest?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type EditPigRunMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1918,6 +1927,13 @@ export type ChronologicalEdgeAllocationProgressSubscriptionVariables = Exact<{
 
 
 export type ChronologicalEdgeAllocationProgressSubscription = { chronologicalEdgeAllocationProgress: { progress: number, numberOfItems: number } };
+
+export type PressureTestAllocationProgressSubscriptionVariables = Exact<{
+  data: AllocationInput;
+}>;
+
+
+export type PressureTestAllocationProgressSubscription = { pressureTestAllocationProgress: { progress: number, numberOfItems: number } };
 
 
 export const LoginDocument = gql`
@@ -2614,17 +2630,8 @@ export type DeleteLicenseChangeMutationHookResult = ReturnType<typeof useDeleteL
 export type DeleteLicenseChangeMutationResult = Apollo.MutationResult<DeleteLicenseChangeMutation>;
 export type DeleteLicenseChangeMutationOptions = Apollo.BaseMutationOptions<DeleteLicenseChangeMutation, DeleteLicenseChangeMutationVariables>;
 export const EditPressureTestDocument = gql`
-    mutation EditPressureTest($id: String!, $limitingSpec: LimitingSpecEnum, $infoSentOutDate: DateTime, $ddsDate: DateTime, $date: DateTime, $pressureTestReceivedDate: DateTime, $integritySheetUpdated: DateTime, $comment: String) {
-  editPressureTest(
-    id: $id
-    limitingSpec: $limitingSpec
-    infoSentOutDate: $infoSentOutDate
-    ddsDate: $ddsDate
-    date: $date
-    pressureTestReceivedDate: $pressureTestReceivedDate
-    integritySheetUpdated: $integritySheetUpdated
-    comment: $comment
-  ) {
+    mutation EditPressureTest($data: EditPressureTestInput!) {
+  editPressureTest(data: $data) {
     pressureTest {
       id
     }
@@ -2650,14 +2657,7 @@ export type EditPressureTestMutationFn = Apollo.MutationFunction<EditPressureTes
  * @example
  * const [editPressureTestMutation, { data, loading, error }] = useEditPressureTestMutation({
  *   variables: {
- *      id: // value for 'id'
- *      limitingSpec: // value for 'limitingSpec'
- *      infoSentOutDate: // value for 'infoSentOutDate'
- *      ddsDate: // value for 'ddsDate'
- *      date: // value for 'date'
- *      pressureTestReceivedDate: // value for 'pressureTestReceivedDate'
- *      integritySheetUpdated: // value for 'integritySheetUpdated'
- *      comment: // value for 'comment'
+ *      data: // value for 'data'
  *   },
  * });
  */
@@ -2746,6 +2746,45 @@ export function useDeletePressureTestMutation(baseOptions?: Apollo.MutationHookO
 export type DeletePressureTestMutationHookResult = ReturnType<typeof useDeletePressureTestMutation>;
 export type DeletePressureTestMutationResult = Apollo.MutationResult<DeletePressureTestMutation>;
 export type DeletePressureTestMutationOptions = Apollo.BaseMutationOptions<DeletePressureTestMutation, DeletePressureTestMutationVariables>;
+export const AllocatePressureTestDocument = gql`
+    mutation AllocatePressureTest {
+  allocatePressureTest {
+    success {
+      field
+      message
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type AllocatePressureTestMutationFn = Apollo.MutationFunction<AllocatePressureTestMutation, AllocatePressureTestMutationVariables>;
+
+/**
+ * __useAllocatePressureTestMutation__
+ *
+ * To run a mutation, you first call `useAllocatePressureTestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAllocatePressureTestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [allocatePressureTestMutation, { data, loading, error }] = useAllocatePressureTestMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllocatePressureTestMutation(baseOptions?: Apollo.MutationHookOptions<AllocatePressureTestMutation, AllocatePressureTestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AllocatePressureTestMutation, AllocatePressureTestMutationVariables>(AllocatePressureTestDocument, options);
+      }
+export type AllocatePressureTestMutationHookResult = ReturnType<typeof useAllocatePressureTestMutation>;
+export type AllocatePressureTestMutationResult = Apollo.MutationResult<AllocatePressureTestMutation>;
+export type AllocatePressureTestMutationOptions = Apollo.BaseMutationOptions<AllocatePressureTestMutation, AllocatePressureTestMutationVariables>;
 export const EditPigRunDocument = gql`
     mutation EditPigRun($id: String!, $pigTypeId: String, $dateIn: DateTime, $dateOut: DateTime, $isolationValveFunctionTest: PigInspectionEnum, $pigSenderReceiverInspection: PigInspectionEnum, $comment: String, $operatorId: String) {
   editPigRun(
@@ -5171,3 +5210,34 @@ export function useChronologicalEdgeAllocationProgressSubscription(baseOptions: 
       }
 export type ChronologicalEdgeAllocationProgressSubscriptionHookResult = ReturnType<typeof useChronologicalEdgeAllocationProgressSubscription>;
 export type ChronologicalEdgeAllocationProgressSubscriptionResult = Apollo.SubscriptionResult<ChronologicalEdgeAllocationProgressSubscription>;
+export const PressureTestAllocationProgressDocument = gql`
+    subscription PressureTestAllocationProgress($data: AllocationInput!) {
+  pressureTestAllocationProgress(data: $data) {
+    progress
+    numberOfItems
+  }
+}
+    `;
+
+/**
+ * __usePressureTestAllocationProgressSubscription__
+ *
+ * To run a query within a React component, call `usePressureTestAllocationProgressSubscription` and pass it any options that fit your needs.
+ * When your component renders, `usePressureTestAllocationProgressSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePressureTestAllocationProgressSubscription({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function usePressureTestAllocationProgressSubscription(baseOptions: Apollo.SubscriptionHookOptions<PressureTestAllocationProgressSubscription, PressureTestAllocationProgressSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<PressureTestAllocationProgressSubscription, PressureTestAllocationProgressSubscriptionVariables>(PressureTestAllocationProgressDocument, options);
+      }
+export type PressureTestAllocationProgressSubscriptionHookResult = ReturnType<typeof usePressureTestAllocationProgressSubscription>;
+export type PressureTestAllocationProgressSubscriptionResult = Apollo.SubscriptionResult<PressureTestAllocationProgressSubscription>;

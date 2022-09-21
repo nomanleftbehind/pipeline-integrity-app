@@ -307,7 +307,7 @@ export const RiskMutation = extendType({
             return {
               success: {
                 field: 'Risk',
-                message: `Allocated ${allRisks.length} risks`,
+                message: `Allocated ${numberOfItems} risks`,
               }
             }
           }

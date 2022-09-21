@@ -231,7 +231,7 @@ export const LicenseChangeMutation = extendType({
                   updatedById: userId,
                 },
               });
-              await allocateLicenseChange({ pipelineId: licenseChange.pipelineId, ctx });
+              await allocateLicenseChangeChronologicalEdge({ pipelineId: licenseChange.pipelineId, ctx });
               return { licenseChange }
             } catch (e) {
               if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -321,7 +321,7 @@ export const LicenseChangeMutation = extendType({
               const licenseChange = await ctx.prisma.licenseChange.create({
                 data: latestLicenseChange
               })
-              await allocateLicenseChange({ pipelineId, ctx });
+              await allocateLicenseChangeChronologicalEdge({ pipelineId, ctx });
               return { licenseChange };
             }
 
@@ -339,7 +339,7 @@ export const LicenseChangeMutation = extendType({
                 updatedBy: { connect: { id: userId } },
               }
             });
-            await allocateLicenseChange({ pipelineId, ctx });
+            await allocateLicenseChangeChronologicalEdge({ pipelineId, ctx });
             return { licenseChange };
           }
           return {
@@ -372,7 +372,7 @@ export const LicenseChangeMutation = extendType({
             const licenseChange = await ctx.prisma.licenseChange.delete({
               where: { id }
             });
-            await allocateLicenseChange({ pipelineId: licenseChange.pipelineId, ctx });
+            await allocateLicenseChangeChronologicalEdge({ pipelineId: licenseChange.pipelineId, ctx });
             return { licenseChange }
           }
           return {
@@ -394,12 +394,12 @@ export const LicenseChangeMutation = extendType({
 });
 
 
-interface IAllocateLicenseChange {
+interface IAllocateLicenseChangeChronologicalEdge {
   pipelineId: ILicenseChange['pipelineId'];
   ctx: Context;
 }
 
-export const allocateLicenseChange = async ({ pipelineId, ctx }: IAllocateLicenseChange) => {
+export const allocateLicenseChangeChronologicalEdge = async ({ pipelineId, ctx }: IAllocateLicenseChangeChronologicalEdge) => {
 
   const { _min, _max } = await ctx.prisma.licenseChange.aggregate({
     where: { pipelineId },

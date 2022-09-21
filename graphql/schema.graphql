@@ -170,6 +170,17 @@ input EditLicenseChangeInput {
   yieldStrength: Int
 }
 
+input EditPressureTestInput {
+  comment: String
+  date: DateTime
+  ddsDate: DateTime
+  id: String!
+  infoSentOutDate: DateTime
+  integritySheetUpdated: DateTime
+  limitingSpec: LimitingSpecEnum
+  pressureTestReceivedDate: DateTime
+}
+
 input EditRiskInput {
   aerialReview: Boolean
   comment: String
@@ -322,6 +333,7 @@ type Mutation {
   addRisk(id: String!): RiskPayload
   addWellBatch(wellId: String!): WellBatchPayload
   allocateChronologicalEdge: AllocationPayload
+  allocatePressureTest: AllocationPayload
   allocateRisk: AllocationPayload
   changePassword(changePasswordInput: ChangePasswordInput!): AuthPayload!
   connectPipeline(connectNewPipelineId: String!, connectedPipelineId: String, flowCalculationDirection: FlowCalculationDirectionEnum!, pipelineId: String!): PipelinesOnPipelinesPayload
@@ -351,7 +363,7 @@ type Mutation {
   editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigTypeId: String): PigRunPayload
   editPipeline(comment: String, flowCalculationDirection: FlowCalculationDirectionEnum, id: String!, license: String, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String): PipelinePayload
   editPipelineBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, productId: String): PipelineBatchPayload
-  editPressureTest(comment: String, date: DateTime, ddsDate: DateTime, id: String!, infoSentOutDate: DateTime, integritySheetUpdated: DateTime, limitingSpec: LimitingSpecEnum, pressureTestReceivedDate: DateTime): PressureTestPayload
+  editPressureTest(data: EditPressureTestInput!): PressureTestPayload
   editRisk(data: EditRiskInput!): RiskPayload
   editSalesPoint(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, name: String, oil: Float, pipelineId: String, water: Float): SalesPointPayload
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
@@ -764,6 +776,7 @@ type SourceOptions {
 
 type Subscription {
   chronologicalEdgeAllocationProgress(data: AllocationInput!): AllocationProgressObject!
+  pressureTestAllocationProgress(data: AllocationInput!): AllocationProgressObject!
   riskAllocationProgress(data: AllocationInput!): AllocationProgressObject!
 }
 

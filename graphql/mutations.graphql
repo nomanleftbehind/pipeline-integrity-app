@@ -200,8 +200,8 @@ mutation DeleteLicenseChange($id: String!) {
   }
 }
 
-mutation EditPressureTest($id: String!, $limitingSpec: LimitingSpecEnum, $infoSentOutDate: DateTime, $ddsDate: DateTime, $date: DateTime, $pressureTestReceivedDate: DateTime, $integritySheetUpdated: DateTime, $comment: String) {
-  editPressureTest(id: $id, limitingSpec: $limitingSpec, infoSentOutDate: $infoSentOutDate, ddsDate: $ddsDate, date: $date, pressureTestReceivedDate: $pressureTestReceivedDate, integritySheetUpdated: $integritySheetUpdated, comment: $comment) {
+mutation EditPressureTest($data: EditPressureTestInput!) {
+  editPressureTest(data: $data) {
     pressureTest {
       id
     }
@@ -228,6 +228,19 @@ mutation DeletePressureTest($id: String!) {
   deletePressureTest(id: $id) {
     pressureTest {
       id
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
+mutation AllocatePressureTest {
+  allocatePressureTest {
+    success {
+      field
+      message
     }
     error {
       field

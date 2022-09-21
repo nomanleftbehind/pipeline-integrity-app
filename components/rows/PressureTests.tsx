@@ -87,7 +87,7 @@ export default function PressureTests({ pipelineId, validators }: IPressureTests
       }
     }
     newRecord = switchNewRecord();
-    editPressureTest({ variables: { id, [columnName]: newRecord } });
+    editPressureTest({ variables: { data: { id, [columnName]: newRecord } } });
   }
 
   const addRecord = () => {

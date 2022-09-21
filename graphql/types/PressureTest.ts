@@ -1,18 +1,11 @@
-import { enumType, objectType, stringArg, extendType, nonNull, arg } from 'nexus';
-import { NexusGenObjects } from 'nexus-typegen';
+import { enumType, objectType, stringArg, extendType, nonNull, arg, inputObjectType } from 'nexus';
+import { NexusGenObjects, NexusGenFieldTypes, NexusGenArgTypes } from 'nexus-typegen';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
-import { Context } from '../context';
+import { Context, ContextSubscription } from '../context';
 import { User as IUser, PressureTest as IPressureTest } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
-import {
-  requiredWTForMopCalc,
-  mopTestPressureCalc,
-  maxPressureOfLimitingSpecCalc,
-  pressureTestPressureCalc,
-  requiredWTForTestPressureCalc,
-  pressureTestCorrosionAllowanceCalc,
-  waterForPiggingCalc,
-} from './PressureTestCalcs';
+import { allocatePressureTest } from './PressureTestCalcs';
+import { withFilter } from 'graphql-subscriptions';
 
 
 
@@ -116,20 +109,16 @@ export const PressureTestExtendObject = extendType({
     t.nonNull.boolean('authorized', {
       resolve: async ({ createdById }, _args, ctx: Context) => {
         const user = ctx.user;
-        return !!user && resolvePressureTestAuthorized({ user, createdById });
+        return !!user && resolvePressureTestAuthorized(user);
       }
     })
   },
 });
 
-interface IresolvePressureTestAuthorizedArgs {
-  user: IUser;
-  createdById: IPressureTest['createdById'];
-}
 
-const resolvePressureTestAuthorized = ({ user, createdById }: IresolvePressureTestAuthorizedArgs) => {
-  const { role, id } = user;
-  return role === 'ADMIN' || role === 'ENGINEER' || (role === 'OPERATOR' && createdById === id);
+const resolvePressureTestAuthorized = (user: IUser) => {
+  const { role } = user;
+  return role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR';
 }
 
 
@@ -142,49 +131,7 @@ export const PressureTestQuery = extendType({
         pipelineId: nonNull(stringArg()),
       },
       resolve: async (_, { pipelineId }, ctx: Context) => {
-
-
-        const latestLicenseChange = await ctx.prisma.licenseChange.findFirst({
-          where: { pipelineId },
-          orderBy: { date: 'desc' },
-          select: { mop: true, outsideDiameter: true, yieldStrength: true, wallThickness: true, length: true }
-        });
-
-        const pipelinePressureTests = await ctx.prisma.pressureTest.findMany({
-          where: { pipelineId },
-          select: { id: true, limitingSpec: true }
-        });
-
-        if (latestLicenseChange && pipelinePressureTests.length > 0) {
-          const { mop, outsideDiameter, yieldStrength, wallThickness, length } = latestLicenseChange;
-          const requiredWTForMop = await requiredWTForMopCalc({ mop, outsideDiameter, yieldStrength });
-          const mopTestPressure = await mopTestPressureCalc({ outsideDiameter, requiredWTForMop, yieldStrength });
-          const waterForPigging = await waterForPiggingCalc({ length, outsideDiameter, wallThickness });
-
-          for (const { id, limitingSpec } of pipelinePressureTests) {
-            const maxPressureOfLimitingSpec = await maxPressureOfLimitingSpecCalc({ limitingSpec });
-
-            const testPressure = await pressureTestPressureCalc({ mopTestPressure, maxPressureOfLimitingSpec });
-
-            const requiredWTForTestPressure = await requiredWTForTestPressureCalc({ testPressure, outsideDiameter, yieldStrength });
-
-            const corrosionAllowance = await pressureTestCorrosionAllowanceCalc({ requiredWTForMop, requiredWTForTestPressure });
-
-            await ctx.prisma.pressureTest.update({
-              where: { id },
-              data: {
-                requiredWTForMop,
-                mopTestPressure,
-                maxPressureOfLimitingSpec,
-                testPressure,
-                requiredWTForTestPressure,
-                corrosionAllowance,
-                waterForPigging,
-              }
-            });
-            // do not return here as you are inside the loop;
-          }
-        }
+        await allocatePressureTest({ pipelineId, ctx });
         const result = await ctx.prisma.pressureTest.findMany({
           where: { pipelineId },
           orderBy: { date: 'desc' },
@@ -205,22 +152,28 @@ export const PressureTestPayload = objectType({
 });
 
 
+export const EditPressureTestInput = inputObjectType({
+  name: 'EditPressureTestInput',
+  definition(t) {
+    t.nonNull.string('id')
+    t.field('date', { type: 'DateTime' })
+    t.field('limitingSpec', { type: 'LimitingSpecEnum' })
+    t.field('infoSentOutDate', { type: 'DateTime' })
+    t.field('ddsDate', { type: 'DateTime' })
+    t.field('pressureTestReceivedDate', { type: 'DateTime' })
+    t.field('integritySheetUpdated', { type: 'DateTime' })
+    t.string('comment')
+  },
+});
+
+
 export const PressureTestMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editPressureTest', {
       type: 'PressureTestPayload',
-      args: {
-        id: nonNull(stringArg()),
-        limitingSpec: arg({ type: 'LimitingSpecEnum' }),
-        infoSentOutDate: arg({ type: 'DateTime' }),
-        ddsDate: arg({ type: 'DateTime' }),
-        date: arg({ type: 'DateTime' }),
-        pressureTestReceivedDate: arg({ type: 'DateTime' }),
-        integritySheetUpdated: arg({ type: 'DateTime' }),
-        comment: stringArg(),
-      },
-      resolve: async (_, args, ctx: Context) => {
+      args: { data: nonNull(arg({ type: 'EditPressureTestInput' })) },
+      resolve: async (_, { data: { id, date, limitingSpec, infoSentOutDate, ddsDate, pressureTestReceivedDate, integritySheetUpdated, comment } }, ctx: Context) => {
 
         const user = ctx.user;
         if (user) {
@@ -228,7 +181,7 @@ export const PressureTestMutation = extendType({
           if (role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR') {
             if (role === 'OPERATOR') {
               const currentPressureTest = await ctx.prisma.pressureTest.findUnique({
-                where: { id: args.id },
+                where: { id },
                 select: {
                   createdById: true,
                 }
@@ -243,18 +196,19 @@ export const PressureTestMutation = extendType({
               }
             }
             const pressureTest = await ctx.prisma.pressureTest.update({
-              where: { id: args.id },
+              where: { id },
               data: {
-                limitingSpec: databaseEnumToServerEnum(LimitingSpecEnumMembers, args.limitingSpec),
-                infoSentOutDate: args.infoSentOutDate,
-                ddsDate: args.ddsDate,
-                date: args.date || undefined,
-                pressureTestReceivedDate: args.pressureTestReceivedDate,
-                integritySheetUpdated: args.integritySheetUpdated,
-                comment: args.comment,
+                date: date || undefined,
+                limitingSpec: databaseEnumToServerEnum(LimitingSpecEnumMembers, limitingSpec),
+                infoSentOutDate,
+                ddsDate,
+                pressureTestReceivedDate,
+                integritySheetUpdated,
+                comment,
                 updatedById: userId,
               },
             });
+            await allocatePressureTestChronologicalEdge({ pipelineId: pressureTest.pipelineId, ctx });
             return { pressureTest }
           }
           return {
@@ -293,6 +247,7 @@ export const PressureTestMutation = extendType({
                 updatedById: userId,
               }
             });
+            await allocatePressureTestChronologicalEdge({ pipelineId, ctx });
             return { pressureTest }
           }
           return {
@@ -340,6 +295,7 @@ export const PressureTestMutation = extendType({
             const pressureTest = await ctx.prisma.pressureTest.delete({
               where: { id }
             });
+            await allocatePressureTestChronologicalEdge({ pipelineId: pressureTest.pipelineId, ctx });
             return { pressureTest }
           }
           return {
@@ -357,6 +313,106 @@ export const PressureTestMutation = extendType({
         }
       }
     })
+    t.field('allocatePressureTest', {
+      type: 'AllocationPayload',
+      resolve: async (_, _args, ctx) => {
+        const user = ctx.user;
+        if (user) {
+          const { firstName, id: userId } = user;
+          const authorized = resolvePressureTestAuthorized(user);
+          if (authorized) {
+
+            const allPressureTests = await ctx.prisma.pressureTest.groupBy({
+              by: ['pipelineId'],
+              _count: {
+                _all: true
+              }
+            });
+
+            const numberOfItems = allPressureTests.map(({ _count: { _all } }) => _all).reduce((previousValue, currentValue) => previousValue + currentValue);
+            let progress = 0;
+            for (const { pipelineId, _count: { _all } } of allPressureTests) {
+              await allocatePressureTest({ pipelineId, ctx });
+              progress += _all;
+              ctx.pubsub.publish('pressureTestAllocationProgress', { userId, progress, numberOfItems });
+            }
+            // If allocation succeeds, publish initial progress after the loop to close the progress modal
+            ctx.pubsub.publish('pressureTestAllocationProgress', { userId, progress: 0, numberOfItems: 0 });
+            return {
+              success: {
+                field: 'Pressure Test',
+                message: `Allocated ${numberOfItems} pressure tests`,
+              }
+            }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to allocate pressure tests.`,
+            }
+          }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
+      }
+    })
   }
 })
 
+interface IAllocatePressureTestChronologicalEdge {
+  pipelineId: IPressureTest['pipelineId'];
+  ctx: Context;
+}
+
+export const allocatePressureTestChronologicalEdge = async ({ pipelineId, ctx }: IAllocatePressureTestChronologicalEdge) => {
+
+  const { _min, _max } = await ctx.prisma.pressureTest.aggregate({
+    where: { pipelineId },
+    _max: { date: true },
+    _min: { date: true },
+  });
+
+  const pipelinePressureTests = await ctx.prisma.pressureTest.findMany({
+    where: { pipelineId },
+    select: { id: true, date: true }
+  });
+
+  for (const { id, date } of pipelinePressureTests) {
+    const first = date.getTime() === _min.date?.getTime() ? true : null;
+    const last = date.getTime() === _max.date?.getTime() ? true : null;
+    await ctx.prisma.pressureTest.update({
+      where: { id },
+      data: {
+        first,
+        last,
+      }
+    });
+  }
+}
+
+
+export const PressureTestAllocationProgressSubscription = extendType({
+  type: 'Subscription',
+  definition: t => {
+    t.nonNull.field('pressureTestAllocationProgress', {
+      type: 'AllocationProgressObject',
+      args: { data: nonNull(arg({ type: 'AllocationInput' })) },
+      subscribe: withFilter(
+        (_root/* This is still undefined at this point */, _args: NexusGenArgTypes['Subscription']['pressureTestAllocationProgress'], ctx: ContextSubscription) => {
+          return ctx.pubsub.asyncIterator('pressureTestAllocationProgress')
+        },
+        (root: NexusGenFieldTypes['Subscription']['pressureTestAllocationProgress'], args: NexusGenArgTypes['Subscription']['pressureTestAllocationProgress'], _ctx: ContextSubscription) => {
+          // Only push an update for user who pressed the allocate button
+          return (root.userId === args.data.userId);
+        },
+      ),
+      resolve: (root: NexusGenFieldTypes['Subscription']['pressureTestAllocationProgress'], _args, _ctx: ContextSubscription) => {
+        return root
+      },
+    })
+  }
+});

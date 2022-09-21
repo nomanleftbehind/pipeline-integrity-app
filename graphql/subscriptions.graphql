@@ -11,3 +11,10 @@ subscription ChronologicalEdgeAllocationProgress($data: AllocationInput!) {
     numberOfItems
   }
 }
+
+subscription PressureTestAllocationProgress($data: AllocationInput!) {
+  pressureTestAllocationProgress(data: $data) {
+    progress
+    numberOfItems
+  }
+}
