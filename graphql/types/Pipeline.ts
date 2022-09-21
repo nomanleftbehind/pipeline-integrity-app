@@ -1128,36 +1128,48 @@ export const PipelineMutation = extendType({
           const { firstName, id: userId } = user;
           const authorized = resolvePipelineAuthorized(user);
           if (authorized) {
-            const allPipelines = await ctx.prisma.pipeline.findMany({
-              select: {
-                id: true,
-              }
-            });
-            const numberOfItems = allPipelines.length;
+
+            const allLicenseChanges = await ctx.prisma.licenseChange.groupBy({ by: ['pipelineId'], _count: { _all: true } });
+            const allPressureTests = await ctx.prisma.pressureTest.groupBy({ by: ['pipelineId'], _count: { _all: true } });
+            const allPigRuns = await ctx.prisma.pigRun.groupBy({ by: ['pipelineId'], _count: { _all: true } });
+            const allCathodicSurveys = await ctx.prisma.cathodicSurvey.groupBy({ by: ['pipelineId'], _count: { _all: true } });
+            const allGeotechnicals = await ctx.prisma.geotechnical.groupBy({ by: ['pipelineId'], _count: { _all: true } });
+
+            const numberOfItems = allLicenseChanges
+              .concat(allPressureTests, allPigRuns, allCathodicSurveys, allGeotechnicals)
+              .map(({ _count: { _all } }) => _all)
+              .reduce((previousValue, currentValue) => previousValue + currentValue);
+
             let progress = 0;
             try {
-              for (const { id: pipelineId } of allPipelines) {
+              for (const { pipelineId, _count: { _all } } of allLicenseChanges) {
                 await allocateLicenseChangeChronologicalEdge({ pipelineId, ctx });
+                progress += _all;
+                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
+              }
+              for (const { pipelineId, _count: { _all } } of allPressureTests) {
                 await allocatePressureTestChronologicalEdge({ pipelineId, ctx });
+                progress += _all;
+                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
+              }
+              for (const { pipelineId, _count: { _all } } of allPigRuns) {
                 await allocatePigRunChronologicalEdge({ pipelineId, ctx });
+                progress += _all;
+                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
+              }
+              for (const { pipelineId, _count: { _all } } of allCathodicSurveys) {
                 await allocateCathodicSurveyChronologicalEdge({ pipelineId, ctx });
+                progress += _all;
+                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
+              }
+              for (const { pipelineId, _count: { _all } } of allGeotechnicals) {
                 await allocateGeotechnicalChronologicalEdge({ pipelineId, ctx });
-                progress += 1;
+                progress += _all;
                 ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
               }
             } catch (e) {
               // If allocation fails, publish initial progress to close the progress modal
               ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress: 0, numberOfItems: 0 });
-              if (e instanceof Prisma.PrismaClientKnownRequestError) {
-                if (e.code === 'P2010') {
-                  return {
-                    error: {
-                      field: 'Pipeline',
-                      message: `Pipeline flow calculation function does not exit on a database.`,
-                    }
-                  }
-                }
-              }
               throw e;
             }
             // If allocation succeeds, publish initial progress after the loop to close the progress modal
@@ -1165,7 +1177,7 @@ export const PipelineMutation = extendType({
             return {
               success: {
                 field: 'Chronological edge',
-                message: `Allocated ${allPipelines.length} chronological edges`,
+                message: `Allocated ${numberOfItems} chronological edges`,
               }
             }
           }

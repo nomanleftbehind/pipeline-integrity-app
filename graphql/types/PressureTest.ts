@@ -107,7 +107,7 @@ export const PressureTestExtendObject = extendType({
       },
     })
     t.nonNull.boolean('authorized', {
-      resolve: async ({ createdById }, _args, ctx: Context) => {
+      resolve: async (_, _args, ctx: Context) => {
         const user = ctx.user;
         return !!user && resolvePressureTestAuthorized(user);
       }

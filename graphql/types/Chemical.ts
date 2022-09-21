@@ -159,7 +159,6 @@ export const ChemicalMutation = extendType({
           const { id: userId, firstName } = user;
           const authorized = resolveChemicalAuthorized(user);
           if (authorized) {
-            console.log('chemical supplier:', args);
 
             const chemical = await ctx.prisma.chemical.update({
               where: { id: args.id },

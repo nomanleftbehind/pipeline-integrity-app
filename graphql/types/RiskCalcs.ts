@@ -377,8 +377,6 @@ export const allocateRisk = async ({ id, ctx }: IAllocateRiskArgs) => {
 
     const { oil, water, gas } = flowCalculationDirection && (await pipelineFlow({ id, flowCalculationDirection, ctx })) || { oil: 0, water: 0, gas: 0 };
 
-    console.log(oil, water, gas);
-
     const totalFluids = await totalFluidsCalc({ oil, water, gas });
 
     const costPerM3Released = currentSubstance === 'Fresh Water' ? 0 : 25000 * water + 1000 * gas + 15000 * oil;

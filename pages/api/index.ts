@@ -51,13 +51,11 @@ export default cors(async function (req, res: any) {
       {
         schema,
         onConnect: ({ subscriptions }) => {
-          console.log('subscriptions', subscriptions);
         },
         onError: (ctx, msg, errors) => {
           console.log('errors:', errors);
         },
         onDisconnect: () => {
-          console.log('Disconnected');
         },
         context: async (ctx, msg, args) => {
           return {
