@@ -170,6 +170,16 @@ input EditLicenseChangeInput {
   yieldStrength: Int
 }
 
+input EditPipelineBatchInput {
+  chemicalVolume: Float
+  comment: String
+  cost: Float
+  date: DateTime
+  diluentVolume: Float
+  id: String!
+  productId: String
+}
+
 input EditPressureTestInput {
   comment: String
   date: DateTime
@@ -362,7 +372,7 @@ type Mutation {
   editLicenseChange(data: EditLicenseChangeInput!): LicenseChangePayload
   editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigTypeId: String): PigRunPayload
   editPipeline(comment: String, flowCalculationDirection: FlowCalculationDirectionEnum, id: String!, license: String, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String): PipelinePayload
-  editPipelineBatch(chemicalVolume: Float, comment: String, cost: Float, date: DateTime, diluentVolume: Float, id: String!, productId: String): PipelineBatchPayload
+  editPipelineBatch(data: EditPipelineBatchInput!): PipelineBatchPayload
   editPressureTest(data: EditPressureTestInput!): PressureTestPayload
   editRisk(data: EditRiskInput!): RiskPayload
   editSalesPoint(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, name: String, oil: Float, pipelineId: String, water: Float): SalesPointPayload

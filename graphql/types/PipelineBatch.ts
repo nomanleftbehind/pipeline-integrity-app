@@ -1,4 +1,4 @@
-import { objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
+import { objectType, stringArg, extendType, nonNull, arg, floatArg, inputObjectType } from 'nexus';
 import { Context } from '../context';
 import { User as IUser, PipelineBatch as IPipelineBatch } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
@@ -125,38 +125,45 @@ export const PipelineBatchPayload = objectType({
 });
 
 
+export const EditPipelineBatchInput = inputObjectType({
+  name: 'EditPipelineBatchInput',
+  definition(t) {
+    t.nonNull.string('id')
+    t.field('date', { type: 'DateTime' })
+    t.string('productId')
+    t.float('cost')
+    t.float('chemicalVolume')
+    t.float('diluentVolume')
+    t.string('comment')
+  },
+});
+
+
 export const PipelineBatchMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editPipelineBatch', {
       type: 'PipelineBatchPayload',
-      args: {
-        id: nonNull(stringArg()),
-        date: arg({ type: 'DateTime' }),
-        productId: stringArg(),
-        cost: floatArg(),
-        chemicalVolume: floatArg(),
-        diluentVolume: floatArg(),
-        comment: stringArg(),
-      },
-      resolve: async (_parent, args, ctx: Context) => {
+      args: { data: nonNull(arg({ type: 'EditPipelineBatchInput' })) },
+      resolve: async (_parent, { data: { id, date, productId, cost, chemicalVolume, diluentVolume, comment } }, ctx: Context) => {
         const user = ctx.user;
         if (user) {
           const { id: userId, role, firstName } = user;
 
           if (role === 'ADMIN' || role === 'ENGINEER' || role === 'CHEMICAL') {
             const pipelineBatch = await ctx.prisma.pipelineBatch.update({
-              where: { id: args.id },
+              where: { id },
               data: {
-                date: args.date || undefined,
-                productId: args.productId || undefined,
-                cost: args.cost,
-                chemicalVolume: args.chemicalVolume,
-                diluentVolume: args.diluentVolume,
-                comment: args.comment,
+                date: date || undefined,
+                productId: productId || undefined,
+                cost,
+                chemicalVolume,
+                diluentVolume,
+                comment,
                 updatedById: userId,
               },
             });
+            await allocatePipelineBatchChronologicalEdge({ pipelineId: pipelineBatch.pipelineId, ctx });
             return { pipelineBatch }
           }
           return {
@@ -201,6 +208,7 @@ export const PipelineBatchMutation = extendType({
                 updatedBy: { connect: { id: userId } },
               }
             });
+            await allocatePipelineBatchChronologicalEdge({ pipelineId, ctx });
             return { pipelineBatch }
           }
           return {
@@ -253,6 +261,7 @@ export const PipelineBatchMutation = extendType({
             const pipelineBatch = await ctx.prisma.pipelineBatch.delete({
               where: { id }
             });
+            await allocatePipelineBatchChronologicalEdge({ pipelineId: pipelineBatch.pipelineId, ctx });
             return { pipelineBatch }
           }
           return {
@@ -273,3 +282,34 @@ export const PipelineBatchMutation = extendType({
   }
 });
 
+
+interface IAllocatePipelineBatchChronologicalEdge {
+  pipelineId: IPipelineBatch['pipelineId'];
+  ctx: Context;
+}
+
+export const allocatePipelineBatchChronologicalEdge = async ({ pipelineId, ctx }: IAllocatePipelineBatchChronologicalEdge) => {
+
+  const { _min, _max } = await ctx.prisma.pipelineBatch.aggregate({
+    where: { pipelineId },
+    _max: { date: true },
+    _min: { date: true },
+  });
+
+  const pipelinePipelineBatchs = await ctx.prisma.pipelineBatch.findMany({
+    where: { pipelineId },
+    select: { id: true, date: true }
+  });
+
+  for (const { id, date } of pipelinePipelineBatchs) {
+    const first = date.getTime() === _min.date?.getTime() ? true : null;
+    const last = date.getTime() === _max.date?.getTime() ? true : null;
+    await ctx.prisma.pipelineBatch.update({
+      where: { id },
+      data: {
+        first,
+        last,
+      }
+    });
+  }
+}

@@ -174,6 +174,8 @@ CREATE TABLE "LicenseChange" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedById" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "first" BOOLEAN,
+    "last" BOOLEAN,
 
     CONSTRAINT "LicenseChange_pkey" PRIMARY KEY ("id")
 );
@@ -217,6 +219,8 @@ CREATE TABLE "CathodicSurvey" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedById" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "first" BOOLEAN,
+    "last" BOOLEAN,
 
     CONSTRAINT "CathodicSurvey_pkey" PRIMARY KEY ("id")
 );
@@ -249,6 +253,8 @@ CREATE TABLE "PigRun" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedById" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "first" BOOLEAN,
+    "last" BOOLEAN,
 
     CONSTRAINT "PigRun_pkey" PRIMARY KEY ("id")
 );
@@ -288,6 +294,8 @@ CREATE TABLE "PressureTest" (
     "requiredWTForTestPressure" DOUBLE PRECISION,
     "corrosionAllowance" DOUBLE PRECISION,
     "waterForPigging" DOUBLE PRECISION,
+    "first" BOOLEAN,
+    "last" BOOLEAN,
 
     CONSTRAINT "PressureTest_pkey" PRIMARY KEY ("id")
 );
@@ -346,6 +354,8 @@ CREATE TABLE "Geotechnical" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedById" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "first" BOOLEAN,
+    "last" BOOLEAN,
 
     CONSTRAINT "Geotechnical_pkey" PRIMARY KEY ("id")
 );
@@ -458,6 +468,8 @@ CREATE TABLE "PipelineBatch" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedById" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "first" BOOLEAN,
+    "last" BOOLEAN,
 
     CONSTRAINT "PipelineBatch_pkey" PRIMARY KEY ("id")
 );
@@ -476,6 +488,8 @@ CREATE TABLE "WellBatch" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedById" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "first" BOOLEAN,
+    "last" BOOLEAN,
 
     CONSTRAINT "WellBatch_pkey" PRIMARY KEY ("id")
 );

@@ -90,7 +90,7 @@ export default function PipelineBatches({ pipelineId, validators }: IPipelineBat
       }
     }
     newRecord = switchNewRecord();
-    editPipelineBatch({ variables: { id, [columnName]: newRecord } });
+    editPipelineBatch({ variables: { data: { id, [columnName]: newRecord } } });
   }
 
   const addRecord = () => {

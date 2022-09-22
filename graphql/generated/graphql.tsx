@@ -178,6 +178,16 @@ export type EditLicenseChangeInput = {
   yieldStrength?: Maybe<Scalars['Int']>;
 };
 
+export type EditPipelineBatchInput = {
+  chemicalVolume?: Maybe<Scalars['Float']>;
+  comment?: Maybe<Scalars['String']>;
+  cost?: Maybe<Scalars['Float']>;
+  date?: Maybe<Scalars['DateTime']>;
+  diluentVolume?: Maybe<Scalars['Float']>;
+  id: Scalars['String'];
+  productId?: Maybe<Scalars['String']>;
+};
+
 export type EditPressureTestInput = {
   comment?: Maybe<Scalars['String']>;
   date?: Maybe<Scalars['DateTime']>;
@@ -602,13 +612,7 @@ export type MutationEditPipelineArgs = {
 
 
 export type MutationEditPipelineBatchArgs = {
-  chemicalVolume?: Maybe<Scalars['Float']>;
-  comment?: Maybe<Scalars['String']>;
-  cost?: Maybe<Scalars['Float']>;
-  date?: Maybe<Scalars['DateTime']>;
-  diluentVolume?: Maybe<Scalars['Float']>;
-  id: Scalars['String'];
-  productId?: Maybe<Scalars['String']>;
+  data: EditPipelineBatchInput;
 };
 
 
@@ -1577,13 +1581,7 @@ export type DeletePigRunMutationVariables = Exact<{
 export type DeletePigRunMutation = { deletePigRun?: { pigRun?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type EditPipelineBatchMutationVariables = Exact<{
-  id: Scalars['String'];
-  date?: Maybe<Scalars['DateTime']>;
-  productId?: Maybe<Scalars['String']>;
-  cost?: Maybe<Scalars['Float']>;
-  chemicalVolume?: Maybe<Scalars['Float']>;
-  diluentVolume?: Maybe<Scalars['Float']>;
-  comment?: Maybe<Scalars['String']>;
+  data: EditPipelineBatchInput;
 }>;
 
 
@@ -2919,16 +2917,8 @@ export type DeletePigRunMutationHookResult = ReturnType<typeof useDeletePigRunMu
 export type DeletePigRunMutationResult = Apollo.MutationResult<DeletePigRunMutation>;
 export type DeletePigRunMutationOptions = Apollo.BaseMutationOptions<DeletePigRunMutation, DeletePigRunMutationVariables>;
 export const EditPipelineBatchDocument = gql`
-    mutation EditPipelineBatch($id: String!, $date: DateTime, $productId: String, $cost: Float, $chemicalVolume: Float, $diluentVolume: Float, $comment: String) {
-  editPipelineBatch(
-    id: $id
-    date: $date
-    productId: $productId
-    cost: $cost
-    chemicalVolume: $chemicalVolume
-    diluentVolume: $diluentVolume
-    comment: $comment
-  ) {
+    mutation EditPipelineBatch($data: EditPipelineBatchInput!) {
+  editPipelineBatch(data: $data) {
     pipelineBatch {
       id
     }
@@ -2954,13 +2944,7 @@ export type EditPipelineBatchMutationFn = Apollo.MutationFunction<EditPipelineBa
  * @example
  * const [editPipelineBatchMutation, { data, loading, error }] = useEditPipelineBatchMutation({
  *   variables: {
- *      id: // value for 'id'
- *      date: // value for 'date'
- *      productId: // value for 'productId'
- *      cost: // value for 'cost'
- *      chemicalVolume: // value for 'chemicalVolume'
- *      diluentVolume: // value for 'diluentVolume'
- *      comment: // value for 'comment'
+ *      data: // value for 'data'
  *   },
  * });
  */

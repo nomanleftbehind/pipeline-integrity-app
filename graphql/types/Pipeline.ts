@@ -9,6 +9,7 @@ import { allocatePressureTestChronologicalEdge } from './PressureTest';
 import { allocatePigRunChronologicalEdge } from './PigRun';
 import { allocateGeotechnicalChronologicalEdge } from './Geotechnical';
 import { allocateCathodicSurveyChronologicalEdge } from './CathodicSurvey';
+import { allocatePipelineBatchChronologicalEdge } from './PipelineBatch';
 import { withFilter } from 'graphql-subscriptions';
 
 
@@ -1134,9 +1135,10 @@ export const PipelineMutation = extendType({
             const allPigRuns = await ctx.prisma.pigRun.groupBy({ by: ['pipelineId'], _count: { _all: true } });
             const allCathodicSurveys = await ctx.prisma.cathodicSurvey.groupBy({ by: ['pipelineId'], _count: { _all: true } });
             const allGeotechnicals = await ctx.prisma.geotechnical.groupBy({ by: ['pipelineId'], _count: { _all: true } });
+            const allPipelineBatches = await ctx.prisma.pipelineBatch.groupBy({ by: ['pipelineId'], _count: { _all: true } });
 
             const numberOfItems = allLicenseChanges
-              .concat(allPressureTests, allPigRuns, allCathodicSurveys, allGeotechnicals)
+              .concat(allPressureTests, allPigRuns, allCathodicSurveys, allGeotechnicals, allPipelineBatches)
               .map(({ _count: { _all } }) => _all)
               .reduce((previousValue, currentValue) => previousValue + currentValue);
 
@@ -1164,6 +1166,11 @@ export const PipelineMutation = extendType({
               }
               for (const { pipelineId, _count: { _all } } of allGeotechnicals) {
                 await allocateGeotechnicalChronologicalEdge({ pipelineId, ctx });
+                progress += _all;
+                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
+              }
+              for (const { pipelineId, _count: { _all } } of allPipelineBatches) {
+                await allocatePipelineBatchChronologicalEdge({ pipelineId, ctx });
                 progress += _all;
                 ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
               }
