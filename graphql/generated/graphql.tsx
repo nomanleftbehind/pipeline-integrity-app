@@ -214,6 +214,16 @@ export type EditRiskInput = {
   safeguardInternalProtection?: Maybe<Scalars['Int']>;
 };
 
+export type EditWellBatchInput = {
+  chemicalVolume?: Maybe<Scalars['Float']>;
+  comment?: Maybe<Scalars['String']>;
+  cost?: Maybe<Scalars['Float']>;
+  date?: Maybe<Scalars['DateTime']>;
+  diluentVolume?: Maybe<Scalars['Float']>;
+  id: Scalars['String'];
+  productId?: Maybe<Scalars['String']>;
+};
+
 export type EnumObject = {
   databaseEnum: Scalars['String'];
   serverEnum: Scalars['String'];
@@ -664,13 +674,7 @@ export type MutationEditWellArgs = {
 
 
 export type MutationEditWellBatchArgs = {
-  chemicalVolume?: Maybe<Scalars['Float']>;
-  comment?: Maybe<Scalars['String']>;
-  cost?: Maybe<Scalars['Float']>;
-  date?: Maybe<Scalars['DateTime']>;
-  diluentVolume?: Maybe<Scalars['Float']>;
-  id: Scalars['String'];
-  productId?: Maybe<Scalars['String']>;
+  data: EditWellBatchInput;
 };
 
 
@@ -1602,13 +1606,7 @@ export type DeletePipelineBatchMutationVariables = Exact<{
 export type DeletePipelineBatchMutation = { deletePipelineBatch?: { pipelineBatch?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type EditWellBatchMutationVariables = Exact<{
-  id: Scalars['String'];
-  date?: Maybe<Scalars['DateTime']>;
-  productId?: Maybe<Scalars['String']>;
-  cost?: Maybe<Scalars['Float']>;
-  chemicalVolume?: Maybe<Scalars['Float']>;
-  diluentVolume?: Maybe<Scalars['Float']>;
-  comment?: Maybe<Scalars['String']>;
+  data: EditWellBatchInput;
 }>;
 
 
@@ -3034,16 +3032,8 @@ export type DeletePipelineBatchMutationHookResult = ReturnType<typeof useDeleteP
 export type DeletePipelineBatchMutationResult = Apollo.MutationResult<DeletePipelineBatchMutation>;
 export type DeletePipelineBatchMutationOptions = Apollo.BaseMutationOptions<DeletePipelineBatchMutation, DeletePipelineBatchMutationVariables>;
 export const EditWellBatchDocument = gql`
-    mutation EditWellBatch($id: String!, $date: DateTime, $productId: String, $cost: Float, $chemicalVolume: Float, $diluentVolume: Float, $comment: String) {
-  editWellBatch(
-    id: $id
-    date: $date
-    productId: $productId
-    cost: $cost
-    chemicalVolume: $chemicalVolume
-    diluentVolume: $diluentVolume
-    comment: $comment
-  ) {
+    mutation EditWellBatch($data: EditWellBatchInput!) {
+  editWellBatch(data: $data) {
     wellBatch {
       id
     }
@@ -3069,13 +3059,7 @@ export type EditWellBatchMutationFn = Apollo.MutationFunction<EditWellBatchMutat
  * @example
  * const [editWellBatchMutation, { data, loading, error }] = useEditWellBatchMutation({
  *   variables: {
- *      id: // value for 'id'
- *      date: // value for 'date'
- *      productId: // value for 'productId'
- *      cost: // value for 'cost'
- *      chemicalVolume: // value for 'chemicalVolume'
- *      diluentVolume: // value for 'diluentVolume'
- *      comment: // value for 'comment'
+ *      data: // value for 'data'
  *   },
  * });
  */

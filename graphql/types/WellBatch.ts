@@ -1,4 +1,4 @@
-import { objectType, stringArg, extendType, nonNull, arg, floatArg } from 'nexus';
+import { objectType, stringArg, extendType, nonNull, arg, floatArg, inputObjectType } from 'nexus';
 import { Context } from '../context';
 import { User as IUser, WellBatch as IWellBatch } from '@prisma/client';
 
@@ -101,37 +101,42 @@ export const WellBatchPayload = objectType({
   },
 });
 
+export const EditWellBatchInput = inputObjectType({
+  name: 'EditWellBatchInput',
+  definition(t) {
+    t.nonNull.string('id')
+    t.field('date', { type: 'DateTime' })
+    t.string('productId')
+    t.float('cost')
+    t.float('chemicalVolume')
+    t.float('diluentVolume')
+    t.string('comment')
+  },
+});
 
 export const WellBatchMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editWellBatch', {
       type: 'WellBatchPayload',
-      args: {
-        id: nonNull(stringArg()),
-        date: arg({ type: 'DateTime' }),
-        productId: stringArg(),
-        cost: floatArg(),
-        chemicalVolume: floatArg(),
-        diluentVolume: floatArg(),
-        comment: stringArg(),
-      },
-      resolve: async (_parent, args, ctx: Context) => {
+      args: { data: nonNull(arg({ type: 'EditWellBatchInput' })) },
+      resolve: async (_parent, { data: { id, date, productId, cost, chemicalVolume, diluentVolume, comment } }, ctx: Context) => {
         const user = ctx.user;
         if (user && (user.role === 'ADMIN' || user.role === 'ENGINEER' || user.role === 'CHEMICAL')) {
           const { id: userId } = user;
           const wellBatch = await ctx.prisma.wellBatch.update({
-            where: { id: args.id },
+            where: { id },
             data: {
-              date: args.date || undefined,
-              productId: args.productId || undefined,
-              cost: args.cost,
-              chemicalVolume: args.chemicalVolume,
-              diluentVolume: args.diluentVolume,
-              comment: args.comment,
+              date: date || undefined,
+              productId: productId || undefined,
+              cost,
+              chemicalVolume,
+              diluentVolume,
+              comment,
               updatedById: userId,
             },
           });
+          await allocateWellBatchChronologicalEdge({ wellId: wellBatch.wellId, ctx });
           return { wellBatch }
         }
         return {
@@ -163,6 +168,7 @@ export const WellBatchMutation = extendType({
               updatedBy: { connect: { id: userId } },
             }
           });
+          await allocateWellBatchChronologicalEdge({ wellId, ctx });
           return { wellBatch };
         }
         return {
@@ -209,6 +215,7 @@ export const WellBatchMutation = extendType({
           const wellBatch = await ctx.prisma.wellBatch.delete({
             where: { id }
           });
+          await allocateWellBatchChronologicalEdge({ wellId: wellBatch.wellId, ctx });
           return { wellBatch }
         }
 
@@ -223,3 +230,34 @@ export const WellBatchMutation = extendType({
   }
 });
 
+
+interface IAllocateWellBatchChronologicalEdge {
+  wellId: IWellBatch['wellId'];
+  ctx: Context;
+}
+
+export const allocateWellBatchChronologicalEdge = async ({ wellId, ctx }: IAllocateWellBatchChronologicalEdge) => {
+
+  const { _min, _max } = await ctx.prisma.wellBatch.aggregate({
+    where: { wellId },
+    _max: { date: true },
+    _min: { date: true },
+  });
+
+  const wellBatches = await ctx.prisma.wellBatch.findMany({
+    where: { wellId },
+    select: { id: true, date: true }
+  });
+
+  for (const { id, date } of wellBatches) {
+    const first = date.getTime() === _min.date?.getTime() ? true : null;
+    const last = date.getTime() === _max.date?.getTime() ? true : null;
+    await ctx.prisma.wellBatch.update({
+      where: { id },
+      data: {
+        first,
+        last,
+      }
+    });
+  }
+}

@@ -37,7 +37,7 @@ export interface IRecordEntryProps {
 }
 
 export default function RecordEntry({ id, columnName, columnType, nullable, record, validator, authorized, editRecord }: IRecordEntryProps) {
-  
+
   const [edit, setEdit] = useState(false);
   const [selected, setSelected] = useState(false);
   const [valid, setValid] = useState(true);
@@ -187,13 +187,11 @@ export default function RecordEntry({ id, columnName, columnType, nullable, reco
                   className='record-entry-input'
                   name={columnName}
                 >
-                  {validator/* && Object
-                    .entries(validator)
-                    */.map((/*[validatorServer, validatorDatabase]*/{ serverEnum, databaseEnum }) => <option
-                    key={/* validatorServer */serverEnum}
-                    value={/* validatorServer */serverEnum}
+                  {validator.map(({ serverEnum, databaseEnum }) => <option
+                    key={serverEnum}
+                    value={serverEnum}
                   >
-                    {/* validatorDatabase */databaseEnum}
+                    {databaseEnum}
                   </option>)}
                 </DOMSelectInput> :
                 columnType === 'boolean' ?

@@ -8,20 +8,6 @@ import { getMainDefinition } from '@apollo/client/utilities';
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
-function createIsomorphLink() {
-  if (typeof window === 'undefined') {
-    // Extremely important to import variables here because otherwise we get `Module not found: Can't resolve 'fs'` error.
-    const { SchemaLink } = require("@apollo/client/link/schema");
-    const { schema } = require("../graphql/schema");
-    return new SchemaLink({ schema });
-  } else {
-    return new HttpLink({
-      uri: '/api',
-      credentials: 'same-origin',
-    });
-  }
-}
-
 function createApolloClient() {
 
   const httpLink = new HttpLink({

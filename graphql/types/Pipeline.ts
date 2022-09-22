@@ -10,6 +10,7 @@ import { allocatePigRunChronologicalEdge } from './PigRun';
 import { allocateGeotechnicalChronologicalEdge } from './Geotechnical';
 import { allocateCathodicSurveyChronologicalEdge } from './CathodicSurvey';
 import { allocatePipelineBatchChronologicalEdge } from './PipelineBatch';
+import { allocateWellBatchChronologicalEdge } from './WellBatch';
 import { withFilter } from 'graphql-subscriptions';
 
 
@@ -1136,9 +1137,11 @@ export const PipelineMutation = extendType({
             const allCathodicSurveys = await ctx.prisma.cathodicSurvey.groupBy({ by: ['pipelineId'], _count: { _all: true } });
             const allGeotechnicals = await ctx.prisma.geotechnical.groupBy({ by: ['pipelineId'], _count: { _all: true } });
             const allPipelineBatches = await ctx.prisma.pipelineBatch.groupBy({ by: ['pipelineId'], _count: { _all: true } });
+            const allWellBatches = await ctx.prisma.wellBatch.groupBy({ by: ['wellId'], _count: { _all: true } })
+            const allWellBatchesWellIdToPipelineId = allWellBatches.map(({ wellId, _count }) => { return { pipelineId: wellId, _count } });
 
             const numberOfItems = allLicenseChanges
-              .concat(allPressureTests, allPigRuns, allCathodicSurveys, allGeotechnicals, allPipelineBatches)
+              .concat(allPressureTests, allPigRuns, allCathodicSurveys, allGeotechnicals, allPipelineBatches, allWellBatchesWellIdToPipelineId)
               .map(({ _count: { _all } }) => _all)
               .reduce((previousValue, currentValue) => previousValue + currentValue);
 
@@ -1171,6 +1174,11 @@ export const PipelineMutation = extendType({
               }
               for (const { pipelineId, _count: { _all } } of allPipelineBatches) {
                 await allocatePipelineBatchChronologicalEdge({ pipelineId, ctx });
+                progress += _all;
+                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
+              }
+              for (const { wellId, _count: { _all } } of allWellBatches) {
+                await allocateWellBatchChronologicalEdge({ wellId, ctx });
                 progress += _all;
                 ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
               }
