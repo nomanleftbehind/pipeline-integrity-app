@@ -3,7 +3,6 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import {
-  TableEnum,
   OperationEnum,
   HavingEnum,
   EnumObject,
@@ -57,9 +56,11 @@ export default function SearchNavigation({ searchNavigationInputArray, searchEnu
               })}
           </select>
 
-          {having !== HavingEnum.Count && <>
+          {<>
             <div style={{ gridRow: 2, gridColumn: 2 }}>Field:</div>
-            <select style={{ gridRow: 2, gridColumn: 3 }} value={field} onChange={(e) => handleChange({ e, index, key: 'field' })}>
+            <select
+              style={{ gridRow: 2, gridColumn: 3 }} value={field} onChange={(e) => handleChange({ e, index, key: 'field' })}
+              disabled={/* When "having" clause is set to `count` "field" is set to `id` automatically, so we are not allowed to change it */ having === HavingEnum.Count}>
               {options?.filter(({ table: tableName }) => tableName === table).map(({ field: fieldName }) => {
                 const prettyField = prettifyColumnName(fieldName);
                 return (
@@ -69,52 +70,67 @@ export default function SearchNavigation({ searchNavigationInputArray, searchEnu
             </select>
           </>}
 
-          {(table === 'licenseChanges' || table === 'geotechnicalParameters' || table === 'wells' || table === 'salesPoints' || table === 'pigRuns' || table === 'pressureTests' || table === 'pipelineBatches' || table === 'cathodicSurveys' || table === 'upstreamPipelines' || table === 'downstreamPipelines') && <>
-            <div style={{ gridRow: 3, gridColumn: 2 }}>Where:</div>
-            <select style={{ gridRow: 3, gridColumn: 3 }} value={having} onChange={(e) => handleChange({ e, index, key: 'having' })}>
-              {validators && validators.havingEnum.filter(({ serverEnum }) => {
+          { // This section is only available for one-to-many and many-to-many relationship tables in respect to pipelines table
+            (table === 'licenseChanges' || table === 'geotechnicalParameters' || table === 'wells' || table === 'salesPoints' || table === 'pigRuns' || table === 'pressureTests' || table === 'pipelineBatches' || table === 'cathodicSurveys' || table === 'upstreamPipelines' || table === 'downstreamPipelines') && <>
+              <div style={{ gridRow: 3, gridColumn: 2 }}>Where:</div>
+              <select style={{ gridRow: 3, gridColumn: 3 }} value={having} onChange={(e) => handleChange({ e, index, key: 'having' })}>
+                {validators && validators.havingEnum.filter(({ serverEnum }) => {
 
-                // Special case when searching for Count of related fields, field is set to `id` and type is set to `Int` even though `id` is of type `String`
-                // We are never able to select `minimum` or `maximum` Having when type is String, but because in this special case, we have to add special condition when current Having is Count.
-                if (having === HavingEnum.Count) {
-                  return serverEnum === HavingEnum.Any || serverEnum === HavingEnum.Count;
-                }
-                if (table === 'upstreamPipelines' || table === 'downstreamPipelines') {
-                  // Only many-to-many relationship tables
-                  if (['Int', 'Float', 'DateTime'].includes(type)) {
-                    // TODO
-                    // Enable search by min, max, first, last on backend for upstream and downstream pipelines many-to-many relationship with pipelines table
-                    // Then come back here and add HavingEnum.Minimum, HavingEnum.Maximum
+                  if (table === 'upstreamPipelines' || table === 'downstreamPipelines') {
+                    // many-to-many relationship tables (upstream and downstream pipelines are only such tables in the database)
+                    if (having === HavingEnum.Count) {
+                      // When searching by "having" clause `count` in many-to-many relationship records, we can only again select search by "having" clause `any` or `count`
+                      // because when we selected `count` the first time, search by "field" clause was automatically set to `id` which is a `String` "type"
+                      // (Special case used only when searching by `count` of related fields, "field" is set to `id` and "type" is set to `Int` even though `id` is of type `String`)
+                      // Pair that with the fact that none of the many-to-many relationship records have date column, meaning we are not able to search by `first` or `last` "having" clause.
+                      // That leaves us with only `any` or `count`.
+                      return serverEnum === HavingEnum.Any || serverEnum === HavingEnum.Count;
+                    }
+                    if (['Int', 'Float', 'DateTime'].includes(type)) {
+                      // TODO
+                      // Enable search by min and max on server side for many-to-many relationship tables numeric fields.
+                      // Then come back here and add HavingEnum.Minimum, HavingEnum.Maximum
+                      // HavingEnum.First and HavingEnum.Last are not a possibility here because many-to-many tables don't have date column.
+                      return serverEnum === HavingEnum.Any || serverEnum === HavingEnum.Count;
+                    }
                     return serverEnum === HavingEnum.Any || serverEnum === HavingEnum.Count;
                   }
-                  return serverEnum === HavingEnum.Any || serverEnum === HavingEnum.Count;
-                }
-                if (table === 'wells' || table === 'salesPoints') {
-                  // one-to-many relationship tables without the date column (meaning we can't search by first/last condition)
-                  if (['Int', 'Float', 'DateTime'].includes(type)) {
-                    return serverEnum !== HavingEnum.First && serverEnum !== HavingEnum.Last;
+                  if (table === 'wells' || table === 'salesPoints') {
+                    // one-to-many relationship tables without the date column (meaning we can't search by first/last condition)
+                    if (having === HavingEnum.Count) {
+                      // Same as with many-to-many relationship tables, we can't select `min` or `max` "having" clause, because when `count` "having" was first selected, "field" was changed to `id` which is a `String` type,
+                      // and we can't select `first` or `last` "having" clause because these tables don't have date column.
+                      return serverEnum === HavingEnum.Any || serverEnum === HavingEnum.Count;
+                    }
+                    if (['Int', 'Float', 'DateTime'].includes(type)) {
+                      // When searching for numeric types we would normally be able to specify "having" clause, but because these tables don't have date column we have to filter out `first` and `last`
+                      return serverEnum !== HavingEnum.First && serverEnum !== HavingEnum.Last;
+                    }
+                    return serverEnum === HavingEnum.Any || serverEnum === HavingEnum.Count;
                   }
-                  return serverEnum === HavingEnum.Any || serverEnum === HavingEnum.Count;
-                }
-                // Only left with one-to-many relationship tables
-                if (['Int', 'Float', 'DateTime'].includes(type)) {
-                  // return all options if numeric type
-                  return true;
-                }
-                // Only left with non-numeric types in one-to-many relationship tables where we cannot search by min/max values
-                return serverEnum !== HavingEnum.Minimum && serverEnum !== HavingEnum.Maximum;
+                  // Left with one-to-many relationship tables with date column
+                  if (having === HavingEnum.Count) {
+                    // We are able to add `first` and `last` to "having" selection because these tables have date column.
+                    return serverEnum !== HavingEnum.Minimum && serverEnum !== HavingEnum.Maximum;
+                  }
+                  if (['Int', 'Float', 'DateTime'].includes(type)) {
+                    // return all options if numeric type
+                    return true;
+                  }
+                  // We cannot search by min/max values on non-numeric types
+                  return serverEnum !== HavingEnum.Minimum && serverEnum !== HavingEnum.Maximum;
 
-              }).map(({ serverEnum }) => {
+                }).map(({ serverEnum }) => {
 
-                const prettyHaving = prettifyColumnName(serverEnum);
-                // const customHaving = type === 'DateTime' ? serverEnum === HavingEnum.Minimum ? 'First' : serverEnum === HavingEnum.Maximum ? 'Last' : prettyHaving : prettyHaving;
+                  const prettyHaving = prettifyColumnName(serverEnum);
+                  // const customHaving = type === 'DateTime' ? serverEnum === HavingEnum.Minimum ? 'First' : serverEnum === HavingEnum.Maximum ? 'Last' : prettyHaving : prettyHaving;
 
-                return (
-                  <option key={serverEnum} value={serverEnum}>{prettyHaving}</option>
-                );
-              })}
-            </select>
-          </>}
+                  return (
+                    <option key={serverEnum} value={serverEnum}>{prettyHaving}</option>
+                  );
+                })}
+              </select>
+            </>}
 
           <div style={{ gridRow: 4, gridColumn: 2 }}>Operation:</div>
           <select style={{ gridRow: 4, gridColumn: 3 }} value={operation} onChange={(e) => handleChange({ e, index, key: 'operation' })}>
@@ -141,7 +157,7 @@ export default function SearchNavigation({ searchNavigationInputArray, searchEnu
           </select>
 
           <div style={{ gridRow: 5, gridColumn: 2 }}>Value:</div>
-          {searchEnumObjectArray[index].length > 0 && having !== HavingEnum.Count ?
+          {searchEnumObjectArray[index].length > 0/* && having !== HavingEnum.Count*/ ?
             <select style={{ gridRow: 5, gridColumn: 3 }} value={value} onChange={(e) => handleChange({ e, index, key: 'value' })}>
               {searchEnumObjectArray[index].map(({ serverEnum, databaseEnum }) => {
                 return (
