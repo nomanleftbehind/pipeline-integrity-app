@@ -67,6 +67,15 @@ CREATE TABLE "Pipeline" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedById" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "oil" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "water" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "gas" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "gasAssociatedLiquids" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "totalFluids" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "firstProduction" TIMESTAMP(3),
+    "lastProduction" TIMESTAMP(3),
+    "firstInjection" TIMESTAMP(3),
+    "lastInjection" TIMESTAMP(3),
 
     CONSTRAINT "Pipeline_pkey" PRIMARY KEY ("id")
 );
@@ -416,9 +425,9 @@ CREATE TABLE "ChemicalSupplier" (
 CREATE TABLE "Well" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "oil" DOUBLE PRECISION NOT NULL,
-    "water" DOUBLE PRECISION NOT NULL,
-    "gas" DOUBLE PRECISION NOT NULL,
+    "oil" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "water" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "gas" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "firstProduction" TIMESTAMP(3),
     "lastProduction" TIMESTAMP(3),
     "firstInjection" TIMESTAMP(3),
@@ -429,6 +438,8 @@ CREATE TABLE "Well" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedById" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "gasAssociatedLiquids" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "totalFluids" DOUBLE PRECISION NOT NULL DEFAULT 0,
 
     CONSTRAINT "Well_pkey" PRIMARY KEY ("id")
 );
@@ -437,9 +448,9 @@ CREATE TABLE "Well" (
 CREATE TABLE "SalesPoint" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "oil" DOUBLE PRECISION NOT NULL,
-    "water" DOUBLE PRECISION NOT NULL,
-    "gas" DOUBLE PRECISION NOT NULL,
+    "oil" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "water" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "gas" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "firstProduction" TIMESTAMP(3),
     "lastProduction" TIMESTAMP(3),
     "firstInjection" TIMESTAMP(3),
@@ -450,6 +461,8 @@ CREATE TABLE "SalesPoint" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedById" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "gasAssociatedLiquids" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "totalFluids" DOUBLE PRECISION NOT NULL DEFAULT 0,
 
     CONSTRAINT "SalesPoint_pkey" PRIMARY KEY ("id")
 );

@@ -361,8 +361,10 @@ export type Mutation = {
   addRisk?: Maybe<RiskPayload>;
   addWellBatch?: Maybe<WellBatchPayload>;
   allocateChronologicalEdge?: Maybe<AllocationPayload>;
+  allocatePipelineFlow?: Maybe<AllocationPayload>;
   allocatePressureTest?: Maybe<AllocationPayload>;
   allocateRisk?: Maybe<AllocationPayload>;
+  allocateWellFlow?: Maybe<AllocationPayload>;
   changePassword: AuthPayload;
   connectPipeline?: Maybe<PipelinesOnPipelinesPayload>;
   connectSalesPoint?: Maybe<SalesPointPayload>;
@@ -753,11 +755,18 @@ export type Pipeline = {
   currentTo?: Maybe<Scalars['String']>;
   currentToFeature?: Maybe<Scalars['String']>;
   downstream?: Maybe<Array<Maybe<Pipeline>>>;
+  firstInjection?: Maybe<Scalars['DateTime']>;
   firstLicenseDate?: Maybe<Scalars['DateTime']>;
+  firstProduction?: Maybe<Scalars['DateTime']>;
   flowCalculationDirection: FlowCalculationDirectionEnum;
+  gas: Scalars['Float'];
+  gasAssociatedLiquids: Scalars['Float'];
   id: Scalars['String'];
+  lastInjection?: Maybe<Scalars['DateTime']>;
+  lastProduction?: Maybe<Scalars['DateTime']>;
   license: Scalars['String'];
   licenseChanges?: Maybe<Array<Maybe<LicenseChange>>>;
+  oil: Scalars['Float'];
   pigRuns?: Maybe<Array<Maybe<PigRun>>>;
   piggable?: Maybe<Scalars['Boolean']>;
   piggingFrequency?: Maybe<Scalars['Int']>;
@@ -767,10 +776,12 @@ export type Pipeline = {
   satellite?: Maybe<Satellite>;
   satelliteId?: Maybe<Scalars['String']>;
   segment: Scalars['String'];
+  totalFluids: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
   updatedBy: User;
   updatedById: Scalars['String'];
   upstream?: Maybe<Array<Maybe<Pipeline>>>;
+  water: Scalars['Float'];
   wells?: Maybe<Array<Maybe<Well>>>;
 };
 
@@ -1211,12 +1222,19 @@ export type SourceOptions = {
 
 export type Subscription = {
   chronologicalEdgeAllocationProgress: AllocationProgressObject;
+  pipelineFlowAllocationProgress: AllocationProgressObject;
   pressureTestAllocationProgress: AllocationProgressObject;
   riskAllocationProgress: AllocationProgressObject;
+  wellFlowAllocationProgress: AllocationProgressObject;
 };
 
 
 export type SubscriptionChronologicalEdgeAllocationProgressArgs = {
+  data: AllocationInput;
+};
+
+
+export type SubscriptionPipelineFlowAllocationProgressArgs = {
   data: AllocationInput;
 };
 
@@ -1227,6 +1245,11 @@ export type SubscriptionPressureTestAllocationProgressArgs = {
 
 
 export type SubscriptionRiskAllocationProgressArgs = {
+  data: AllocationInput;
+};
+
+
+export type SubscriptionWellFlowAllocationProgressArgs = {
   data: AllocationInput;
 };
 
@@ -1551,11 +1574,6 @@ export type DeletePressureTestMutationVariables = Exact<{
 
 export type DeletePressureTestMutation = { deletePressureTest?: { pressureTest?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
-export type AllocatePressureTestMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type AllocatePressureTestMutation = { allocatePressureTest?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
-
 export type EditPigRunMutationVariables = Exact<{
   id: Scalars['String'];
   pigTypeId?: Maybe<Scalars['String']>;
@@ -1689,16 +1707,6 @@ export type DeleteCathodicSurveyMutationVariables = Exact<{
 
 export type DeleteCathodicSurveyMutation = { deleteCathodicSurvey?: { cathodicSurvey?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
-export type AllocateRiskMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type AllocateRiskMutation = { allocateRisk?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
-
-export type AllocateChronologicalEdgeMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type AllocateChronologicalEdgeMutation = { allocateChronologicalEdge?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
-
 export type EditChemicalMutationVariables = Exact<{
   id: Scalars['String'];
   chemicalSupplierId?: Maybe<Scalars['String']>;
@@ -1734,6 +1742,31 @@ export type DeleteChemicalMutationVariables = Exact<{
 
 
 export type DeleteChemicalMutation = { deleteChemical?: { chemical?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type AllocatePipelineFlowMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllocatePipelineFlowMutation = { allocatePipelineFlow?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type AllocateWellFlowMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllocateWellFlowMutation = { allocateWellFlow?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type AllocateRiskMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllocateRiskMutation = { allocateRisk?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type AllocatePressureTestMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllocatePressureTestMutation = { allocatePressureTest?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
+export type AllocateChronologicalEdgeMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllocateChronologicalEdgeMutation = { allocateChronologicalEdge?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1909,6 +1942,20 @@ export type SideBarQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SideBarQuery = { sideBar?: Array<{ id: string, name: string, satellites: Array<{ id: string, name: string }> } | null | undefined> | null | undefined };
+
+export type PipelineFlowAllocationProgressSubscriptionVariables = Exact<{
+  data: AllocationInput;
+}>;
+
+
+export type PipelineFlowAllocationProgressSubscription = { pipelineFlowAllocationProgress: { progress: number, numberOfItems: number } };
+
+export type WellFlowAllocationProgressSubscriptionVariables = Exact<{
+  data: AllocationInput;
+}>;
+
+
+export type WellFlowAllocationProgressSubscription = { wellFlowAllocationProgress: { progress: number, numberOfItems: number } };
 
 export type RiskAllocationProgressSubscriptionVariables = Exact<{
   data: AllocationInput;
@@ -2742,45 +2789,6 @@ export function useDeletePressureTestMutation(baseOptions?: Apollo.MutationHookO
 export type DeletePressureTestMutationHookResult = ReturnType<typeof useDeletePressureTestMutation>;
 export type DeletePressureTestMutationResult = Apollo.MutationResult<DeletePressureTestMutation>;
 export type DeletePressureTestMutationOptions = Apollo.BaseMutationOptions<DeletePressureTestMutation, DeletePressureTestMutationVariables>;
-export const AllocatePressureTestDocument = gql`
-    mutation AllocatePressureTest {
-  allocatePressureTest {
-    success {
-      field
-      message
-    }
-    error {
-      field
-      message
-    }
-  }
-}
-    `;
-export type AllocatePressureTestMutationFn = Apollo.MutationFunction<AllocatePressureTestMutation, AllocatePressureTestMutationVariables>;
-
-/**
- * __useAllocatePressureTestMutation__
- *
- * To run a mutation, you first call `useAllocatePressureTestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAllocatePressureTestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [allocatePressureTestMutation, { data, loading, error }] = useAllocatePressureTestMutation({
- *   variables: {
- *   },
- * });
- */
-export function useAllocatePressureTestMutation(baseOptions?: Apollo.MutationHookOptions<AllocatePressureTestMutation, AllocatePressureTestMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AllocatePressureTestMutation, AllocatePressureTestMutationVariables>(AllocatePressureTestDocument, options);
-      }
-export type AllocatePressureTestMutationHookResult = ReturnType<typeof useAllocatePressureTestMutation>;
-export type AllocatePressureTestMutationResult = Apollo.MutationResult<AllocatePressureTestMutation>;
-export type AllocatePressureTestMutationOptions = Apollo.BaseMutationOptions<AllocatePressureTestMutation, AllocatePressureTestMutationVariables>;
 export const EditPigRunDocument = gql`
     mutation EditPigRun($id: String!, $pigTypeId: String, $dateIn: DateTime, $dateOut: DateTime, $isolationValveFunctionTest: PigInspectionEnum, $pigSenderReceiverInspection: PigInspectionEnum, $comment: String, $operatorId: String) {
   editPigRun(
@@ -3499,84 +3507,6 @@ export function useDeleteCathodicSurveyMutation(baseOptions?: Apollo.MutationHoo
 export type DeleteCathodicSurveyMutationHookResult = ReturnType<typeof useDeleteCathodicSurveyMutation>;
 export type DeleteCathodicSurveyMutationResult = Apollo.MutationResult<DeleteCathodicSurveyMutation>;
 export type DeleteCathodicSurveyMutationOptions = Apollo.BaseMutationOptions<DeleteCathodicSurveyMutation, DeleteCathodicSurveyMutationVariables>;
-export const AllocateRiskDocument = gql`
-    mutation AllocateRisk {
-  allocateRisk {
-    success {
-      field
-      message
-    }
-    error {
-      field
-      message
-    }
-  }
-}
-    `;
-export type AllocateRiskMutationFn = Apollo.MutationFunction<AllocateRiskMutation, AllocateRiskMutationVariables>;
-
-/**
- * __useAllocateRiskMutation__
- *
- * To run a mutation, you first call `useAllocateRiskMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAllocateRiskMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [allocateRiskMutation, { data, loading, error }] = useAllocateRiskMutation({
- *   variables: {
- *   },
- * });
- */
-export function useAllocateRiskMutation(baseOptions?: Apollo.MutationHookOptions<AllocateRiskMutation, AllocateRiskMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AllocateRiskMutation, AllocateRiskMutationVariables>(AllocateRiskDocument, options);
-      }
-export type AllocateRiskMutationHookResult = ReturnType<typeof useAllocateRiskMutation>;
-export type AllocateRiskMutationResult = Apollo.MutationResult<AllocateRiskMutation>;
-export type AllocateRiskMutationOptions = Apollo.BaseMutationOptions<AllocateRiskMutation, AllocateRiskMutationVariables>;
-export const AllocateChronologicalEdgeDocument = gql`
-    mutation AllocateChronologicalEdge {
-  allocateChronologicalEdge {
-    success {
-      field
-      message
-    }
-    error {
-      field
-      message
-    }
-  }
-}
-    `;
-export type AllocateChronologicalEdgeMutationFn = Apollo.MutationFunction<AllocateChronologicalEdgeMutation, AllocateChronologicalEdgeMutationVariables>;
-
-/**
- * __useAllocateChronologicalEdgeMutation__
- *
- * To run a mutation, you first call `useAllocateChronologicalEdgeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAllocateChronologicalEdgeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [allocateChronologicalEdgeMutation, { data, loading, error }] = useAllocateChronologicalEdgeMutation({
- *   variables: {
- *   },
- * });
- */
-export function useAllocateChronologicalEdgeMutation(baseOptions?: Apollo.MutationHookOptions<AllocateChronologicalEdgeMutation, AllocateChronologicalEdgeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AllocateChronologicalEdgeMutation, AllocateChronologicalEdgeMutationVariables>(AllocateChronologicalEdgeDocument, options);
-      }
-export type AllocateChronologicalEdgeMutationHookResult = ReturnType<typeof useAllocateChronologicalEdgeMutation>;
-export type AllocateChronologicalEdgeMutationResult = Apollo.MutationResult<AllocateChronologicalEdgeMutation>;
-export type AllocateChronologicalEdgeMutationOptions = Apollo.BaseMutationOptions<AllocateChronologicalEdgeMutation, AllocateChronologicalEdgeMutationVariables>;
 export const EditChemicalDocument = gql`
     mutation EditChemical($id: String!, $chemicalSupplierId: String, $baselineFluidAnalysisDate: DateTime, $scaling: Boolean, $bacteria: Boolean, $co2: Boolean, $o2: Boolean, $h2s: Boolean, $continuousInjection: Boolean, $injectionRate: Float, $downholeBatch: Boolean, $inhibitorPipelineBatch: Boolean, $bacteriaTreatment: Boolean, $scaleTreatment: Boolean, $batchFrequency: Int, $comment: String) {
   editChemical(
@@ -3726,6 +3656,201 @@ export function useDeleteChemicalMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteChemicalMutationHookResult = ReturnType<typeof useDeleteChemicalMutation>;
 export type DeleteChemicalMutationResult = Apollo.MutationResult<DeleteChemicalMutation>;
 export type DeleteChemicalMutationOptions = Apollo.BaseMutationOptions<DeleteChemicalMutation, DeleteChemicalMutationVariables>;
+export const AllocatePipelineFlowDocument = gql`
+    mutation AllocatePipelineFlow {
+  allocatePipelineFlow {
+    success {
+      field
+      message
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type AllocatePipelineFlowMutationFn = Apollo.MutationFunction<AllocatePipelineFlowMutation, AllocatePipelineFlowMutationVariables>;
+
+/**
+ * __useAllocatePipelineFlowMutation__
+ *
+ * To run a mutation, you first call `useAllocatePipelineFlowMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAllocatePipelineFlowMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [allocatePipelineFlowMutation, { data, loading, error }] = useAllocatePipelineFlowMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllocatePipelineFlowMutation(baseOptions?: Apollo.MutationHookOptions<AllocatePipelineFlowMutation, AllocatePipelineFlowMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AllocatePipelineFlowMutation, AllocatePipelineFlowMutationVariables>(AllocatePipelineFlowDocument, options);
+      }
+export type AllocatePipelineFlowMutationHookResult = ReturnType<typeof useAllocatePipelineFlowMutation>;
+export type AllocatePipelineFlowMutationResult = Apollo.MutationResult<AllocatePipelineFlowMutation>;
+export type AllocatePipelineFlowMutationOptions = Apollo.BaseMutationOptions<AllocatePipelineFlowMutation, AllocatePipelineFlowMutationVariables>;
+export const AllocateWellFlowDocument = gql`
+    mutation AllocateWellFlow {
+  allocateWellFlow {
+    success {
+      field
+      message
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type AllocateWellFlowMutationFn = Apollo.MutationFunction<AllocateWellFlowMutation, AllocateWellFlowMutationVariables>;
+
+/**
+ * __useAllocateWellFlowMutation__
+ *
+ * To run a mutation, you first call `useAllocateWellFlowMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAllocateWellFlowMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [allocateWellFlowMutation, { data, loading, error }] = useAllocateWellFlowMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllocateWellFlowMutation(baseOptions?: Apollo.MutationHookOptions<AllocateWellFlowMutation, AllocateWellFlowMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AllocateWellFlowMutation, AllocateWellFlowMutationVariables>(AllocateWellFlowDocument, options);
+      }
+export type AllocateWellFlowMutationHookResult = ReturnType<typeof useAllocateWellFlowMutation>;
+export type AllocateWellFlowMutationResult = Apollo.MutationResult<AllocateWellFlowMutation>;
+export type AllocateWellFlowMutationOptions = Apollo.BaseMutationOptions<AllocateWellFlowMutation, AllocateWellFlowMutationVariables>;
+export const AllocateRiskDocument = gql`
+    mutation AllocateRisk {
+  allocateRisk {
+    success {
+      field
+      message
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type AllocateRiskMutationFn = Apollo.MutationFunction<AllocateRiskMutation, AllocateRiskMutationVariables>;
+
+/**
+ * __useAllocateRiskMutation__
+ *
+ * To run a mutation, you first call `useAllocateRiskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAllocateRiskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [allocateRiskMutation, { data, loading, error }] = useAllocateRiskMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllocateRiskMutation(baseOptions?: Apollo.MutationHookOptions<AllocateRiskMutation, AllocateRiskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AllocateRiskMutation, AllocateRiskMutationVariables>(AllocateRiskDocument, options);
+      }
+export type AllocateRiskMutationHookResult = ReturnType<typeof useAllocateRiskMutation>;
+export type AllocateRiskMutationResult = Apollo.MutationResult<AllocateRiskMutation>;
+export type AllocateRiskMutationOptions = Apollo.BaseMutationOptions<AllocateRiskMutation, AllocateRiskMutationVariables>;
+export const AllocatePressureTestDocument = gql`
+    mutation AllocatePressureTest {
+  allocatePressureTest {
+    success {
+      field
+      message
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type AllocatePressureTestMutationFn = Apollo.MutationFunction<AllocatePressureTestMutation, AllocatePressureTestMutationVariables>;
+
+/**
+ * __useAllocatePressureTestMutation__
+ *
+ * To run a mutation, you first call `useAllocatePressureTestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAllocatePressureTestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [allocatePressureTestMutation, { data, loading, error }] = useAllocatePressureTestMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllocatePressureTestMutation(baseOptions?: Apollo.MutationHookOptions<AllocatePressureTestMutation, AllocatePressureTestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AllocatePressureTestMutation, AllocatePressureTestMutationVariables>(AllocatePressureTestDocument, options);
+      }
+export type AllocatePressureTestMutationHookResult = ReturnType<typeof useAllocatePressureTestMutation>;
+export type AllocatePressureTestMutationResult = Apollo.MutationResult<AllocatePressureTestMutation>;
+export type AllocatePressureTestMutationOptions = Apollo.BaseMutationOptions<AllocatePressureTestMutation, AllocatePressureTestMutationVariables>;
+export const AllocateChronologicalEdgeDocument = gql`
+    mutation AllocateChronologicalEdge {
+  allocateChronologicalEdge {
+    success {
+      field
+      message
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type AllocateChronologicalEdgeMutationFn = Apollo.MutationFunction<AllocateChronologicalEdgeMutation, AllocateChronologicalEdgeMutationVariables>;
+
+/**
+ * __useAllocateChronologicalEdgeMutation__
+ *
+ * To run a mutation, you first call `useAllocateChronologicalEdgeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAllocateChronologicalEdgeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [allocateChronologicalEdgeMutation, { data, loading, error }] = useAllocateChronologicalEdgeMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllocateChronologicalEdgeMutation(baseOptions?: Apollo.MutationHookOptions<AllocateChronologicalEdgeMutation, AllocateChronologicalEdgeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AllocateChronologicalEdgeMutation, AllocateChronologicalEdgeMutationVariables>(AllocateChronologicalEdgeDocument, options);
+      }
+export type AllocateChronologicalEdgeMutationHookResult = ReturnType<typeof useAllocateChronologicalEdgeMutation>;
+export type AllocateChronologicalEdgeMutationResult = Apollo.MutationResult<AllocateChronologicalEdgeMutation>;
+export type AllocateChronologicalEdgeMutationOptions = Apollo.BaseMutationOptions<AllocateChronologicalEdgeMutation, AllocateChronologicalEdgeMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -5116,6 +5241,68 @@ export function useSideBarLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Si
 export type SideBarQueryHookResult = ReturnType<typeof useSideBarQuery>;
 export type SideBarLazyQueryHookResult = ReturnType<typeof useSideBarLazyQuery>;
 export type SideBarQueryResult = Apollo.QueryResult<SideBarQuery, SideBarQueryVariables>;
+export const PipelineFlowAllocationProgressDocument = gql`
+    subscription PipelineFlowAllocationProgress($data: AllocationInput!) {
+  pipelineFlowAllocationProgress(data: $data) {
+    progress
+    numberOfItems
+  }
+}
+    `;
+
+/**
+ * __usePipelineFlowAllocationProgressSubscription__
+ *
+ * To run a query within a React component, call `usePipelineFlowAllocationProgressSubscription` and pass it any options that fit your needs.
+ * When your component renders, `usePipelineFlowAllocationProgressSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePipelineFlowAllocationProgressSubscription({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function usePipelineFlowAllocationProgressSubscription(baseOptions: Apollo.SubscriptionHookOptions<PipelineFlowAllocationProgressSubscription, PipelineFlowAllocationProgressSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<PipelineFlowAllocationProgressSubscription, PipelineFlowAllocationProgressSubscriptionVariables>(PipelineFlowAllocationProgressDocument, options);
+      }
+export type PipelineFlowAllocationProgressSubscriptionHookResult = ReturnType<typeof usePipelineFlowAllocationProgressSubscription>;
+export type PipelineFlowAllocationProgressSubscriptionResult = Apollo.SubscriptionResult<PipelineFlowAllocationProgressSubscription>;
+export const WellFlowAllocationProgressDocument = gql`
+    subscription WellFlowAllocationProgress($data: AllocationInput!) {
+  wellFlowAllocationProgress(data: $data) {
+    progress
+    numberOfItems
+  }
+}
+    `;
+
+/**
+ * __useWellFlowAllocationProgressSubscription__
+ *
+ * To run a query within a React component, call `useWellFlowAllocationProgressSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useWellFlowAllocationProgressSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useWellFlowAllocationProgressSubscription({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useWellFlowAllocationProgressSubscription(baseOptions: Apollo.SubscriptionHookOptions<WellFlowAllocationProgressSubscription, WellFlowAllocationProgressSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<WellFlowAllocationProgressSubscription, WellFlowAllocationProgressSubscriptionVariables>(WellFlowAllocationProgressDocument, options);
+      }
+export type WellFlowAllocationProgressSubscriptionHookResult = ReturnType<typeof useWellFlowAllocationProgressSubscription>;
+export type WellFlowAllocationProgressSubscriptionResult = Apollo.SubscriptionResult<WellFlowAllocationProgressSubscription>;
 export const RiskAllocationProgressDocument = gql`
     subscription RiskAllocationProgress($data: AllocationInput!) {
   riskAllocationProgress(data: $data) {

@@ -1,7 +1,10 @@
 import { objectType, extendType, nonNull, stringArg, list, arg } from 'nexus';
 import { gasAssociatedLiquidsCalc, totalFluidsCalc } from './Well';
 import { resolvePipelineAuthorized } from './Pipeline';
-import type { FlowCalculationDirectionEnum } from '@prisma/client';
+import type {
+  FlowCalculationDirectionEnum,
+  Pipeline as IPipeline,
+} from '@prisma/client';
 import { Context } from '../context';
 import { NexusGenObjects } from '../../node_modules/@types/nexus-typegen/index';
 
@@ -113,6 +116,36 @@ export const pipelineFlow = async ({ id, flowCalculationDirection, ctx }: IPipel
     return result;
   }
   return null;
+}
+
+interface IAllocatePipelineFlowArgs {
+  id: IPipeline['id'];
+  flowCalculationDirection: IPipeline['flowCalculationDirection'];
+  ctx: Context;
+}
+
+export const allocatePipelineFlow = async ({ id, flowCalculationDirection, ctx }: IAllocatePipelineFlowArgs) => {
+
+  const resultArray = await pipelineFlow({ id, flowCalculationDirection, ctx });
+  if (resultArray) {
+    const { oil, gas, water, firstProduction, firstInjection, lastInjection, lastProduction } = resultArray;
+    const gasAssociatedLiquids = await gasAssociatedLiquidsCalc(gas);
+    const totalFluids = await totalFluidsCalc({ oil, water, gas })
+    await ctx.prisma.pipeline.update({
+      where: { id },
+      data: {
+        oil,
+        water,
+        gas,
+        gasAssociatedLiquids,
+        totalFluids,
+        firstProduction,
+        firstInjection,
+        lastProduction,
+        lastInjection
+      }
+    });
+  }
 }
 
 

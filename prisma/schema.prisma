@@ -140,6 +140,17 @@ model Pipeline {
   updatedById              String
   updatedAt                DateTime                     @updatedAt
 
+  // calculated fields
+  oil                  Float     @default(0)
+  water                Float     @default(0)
+  gas                  Float     @default(0)
+  gasAssociatedLiquids Float     @default(0)
+  totalFluids          Float     @default(0)
+  firstProduction      DateTime?
+  lastProduction       DateTime?
+  firstInjection       DateTime?
+  lastInjection        DateTime?
+
   @@unique([license, segment])
 }
 
@@ -523,9 +534,9 @@ model ChemicalSupplier {
 model Well {
   id              String      @id @default(uuid())
   name            String      @unique
-  oil             Float
-  water           Float
-  gas             Float
+  oil             Float       @default(0)
+  water           Float       @default(0)
+  gas             Float       @default(0)
   firstProduction DateTime?
   lastProduction  DateTime?
   firstInjection  DateTime?
@@ -540,14 +551,18 @@ model Well {
   updatedBy       User        @relation("wellUpdatedBy", fields: [updatedById], references: [id])
   updatedById     String
   updatedAt       DateTime    @updatedAt
+
+  // calculated fields
+  gasAssociatedLiquids Float @default(0)
+  totalFluids          Float @default(0)
 }
 
 model SalesPoint {
   id              String    @id @default(uuid())
   name            String    @unique
-  oil             Float
-  water           Float
-  gas             Float
+  oil             Float     @default(0)
+  water           Float     @default(0)
+  gas             Float     @default(0)
   firstProduction DateTime?
   lastProduction  DateTime?
   firstInjection  DateTime?
@@ -561,6 +576,10 @@ model SalesPoint {
   updatedBy       User      @relation("salesPointUpdatedBy", fields: [updatedById], references: [id])
   updatedById     String
   updatedAt       DateTime  @updatedAt
+
+  // calculated fields
+  gasAssociatedLiquids Float @default(0)
+  totalFluids          Float @default(0)
 }
 
 model PipelineBatch {

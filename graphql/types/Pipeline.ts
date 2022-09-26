@@ -1,17 +1,10 @@
 import { enumType, intArg, objectType, stringArg, extendType, inputObjectType, nonNull, arg, booleanArg } from 'nexus';
-import { NexusGenObjects, NexusGenFieldTypes, NexusGenArgTypes } from 'nexus-typegen';
-import { Context, ContextSubscription } from '../context';
+import { NexusGenObjects } from 'nexus-typegen';
+import { Context } from '../context';
 import { totalPipelineFlowRawQuery } from './PipelineFlow';
 import { Prisma, User as IUser } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
-import { allocateLicenseChangeChronologicalEdge } from './LicenseChange';
-import { allocatePressureTestChronologicalEdge } from './PressureTest';
-import { allocatePigRunChronologicalEdge } from './PigRun';
-import { allocateGeotechnicalChronologicalEdge } from './Geotechnical';
-import { allocateCathodicSurveyChronologicalEdge } from './CathodicSurvey';
-import { allocatePipelineBatchChronologicalEdge } from './PipelineBatch';
-import { allocateWellBatchChronologicalEdge } from './WellBatch';
-import { withFilter } from 'graphql-subscriptions';
+import { allocatePipelineFlow } from './PipelineFlow';
 
 
 
@@ -64,6 +57,15 @@ export const PipelineObjectFields: ITableConstructObject[] = [
   { field: 'piggable', nullable: true, type: 'Boolean' },
   { field: 'piggingFrequency', nullable: true, type: 'Int' },
   { field: 'comment', nullable: true, type: 'String' },
+  { field: 'oil', nullable: false, type: 'Float' },
+  { field: 'water', nullable: false, type: 'Float' },
+  { field: 'gas', nullable: false, type: 'Float' },
+  { field: 'gasAssociatedLiquids', nullable: false, type: 'Float' },
+  { field: 'totalFluids', nullable: false, type: 'Float' },
+  { field: 'firstProduction', nullable: true, type: 'DateTime' },
+  { field: 'lastProduction', nullable: true, type: 'DateTime' },
+  { field: 'firstInjection', nullable: true, type: 'DateTime' },
+  { field: 'lastInjection', nullable: true, type: 'DateTime' },
   { field: 'satelliteId', nullable: true, type: 'String' },
   { field: 'createdAt', nullable: false, type: 'DateTime' },
   { field: 'createdById', nullable: false, type: 'String' },
@@ -388,15 +390,24 @@ export const PipelineQuery = extendType({
       },
       resolve: async (_, { navigationInput: { hierarchy, search }, skip, take }, ctx: Context) => {
 
+        // Allocate pipeline flow before returning pipelines
         if (hierarchy) {
           const { id, table } = hierarchy;
           if (table === 'satellite') {
             const where = { satelliteId: id };
             const count = await ctx.prisma.pipeline.count({ where });
-            const pipelines = await ctx.prisma.pipeline.findMany({
+            const idsAndFCDs = await ctx.prisma.pipeline.findMany({
               where,
               skip,
               take,
+              select: { id: true, flowCalculationDirection: true },
+            });
+            for (const { id, flowCalculationDirection } of idsAndFCDs) {
+              await allocatePipelineFlow({ id, flowCalculationDirection, ctx });
+            }
+            const ids = idsAndFCDs.map(({ id }) => id);
+            const pipelines = await ctx.prisma.pipeline.findMany({
+              where: { id: { in: ids } },
               orderBy: [
                 { license: 'asc' },
                 { segment: 'asc' },
@@ -406,10 +417,18 @@ export const PipelineQuery = extendType({
           } else if (table === 'facility' && id === 'no-facility') {
             const where = { satellite: { facilityId: null } };
             const count = await ctx.prisma.pipeline.count({ where });
-            const pipelines = await ctx.prisma.pipeline.findMany({
+            const idsAndFCDs = await ctx.prisma.pipeline.findMany({
               where,
               skip,
               take,
+              select: { id: true, flowCalculationDirection: true },
+            });
+            for (const { id, flowCalculationDirection } of idsAndFCDs) {
+              await allocatePipelineFlow({ id, flowCalculationDirection, ctx });
+            }
+            const ids = idsAndFCDs.map(({ id }) => id);
+            const pipelines = await ctx.prisma.pipeline.findMany({
+              where: { id: { in: ids } },
               orderBy: [
                 { license: 'asc' },
                 { segment: 'asc' },
@@ -419,10 +438,18 @@ export const PipelineQuery = extendType({
           } else if (table === 'facility' && id) {
             const where = { satellite: { facilityId: id } };
             const count = await ctx.prisma.pipeline.count({ where });
-            const pipelines = await ctx.prisma.pipeline.findMany({
+            const idsAndFCDs = await ctx.prisma.pipeline.findMany({
               where,
               skip,
               take,
+              select: { id: true, flowCalculationDirection: true },
+            });
+            for (const { id, flowCalculationDirection } of idsAndFCDs) {
+              await allocatePipelineFlow({ id, flowCalculationDirection, ctx });
+            }
+            const ids = idsAndFCDs.map(({ id }) => id);
+            const pipelines = await ctx.prisma.pipeline.findMany({
+              where: { id: { in: ids } },
               orderBy: [
                 { license: 'asc' },
                 { segment: 'asc' },
@@ -431,9 +458,17 @@ export const PipelineQuery = extendType({
             return { pipelines, count };
           } else {
             const count = await ctx.prisma.pipeline.count();
-            const pipelines = await ctx.prisma.pipeline.findMany({
+            const idsAndFCDs = await ctx.prisma.pipeline.findMany({
               skip,
               take,
+              select: { id: true, flowCalculationDirection: true },
+            });
+            for (const { id, flowCalculationDirection } of idsAndFCDs) {
+              await allocatePipelineFlow({ id, flowCalculationDirection, ctx });
+            }
+            const ids = idsAndFCDs.map(({ id }) => id);
+            const pipelines = await ctx.prisma.pipeline.findMany({
+              where: { id: { in: ids } },
               orderBy: [
                 { license: 'asc' },
                 { segment: 'asc' },
@@ -840,10 +875,22 @@ export const PipelineQuery = extendType({
 
           const where = { AND: query, };
           const count = await ctx.prisma.pipeline.count({ where });
-          const pipelines = await ctx.prisma.pipeline.findMany({
+          const idsAndFCDs = await ctx.prisma.pipeline.findMany({
             where,
             skip,
             take,
+            select: { id: true, flowCalculationDirection: true },
+          });
+          for (const { id, flowCalculationDirection } of idsAndFCDs) {
+            await allocatePipelineFlow({ id, flowCalculationDirection, ctx });
+          }
+          const ids = idsAndFCDs.map(({ id }) => id);
+          const pipelines = await ctx.prisma.pipeline.findMany({
+            where: { id: { in: ids } },
+            orderBy: [
+              { license: 'asc' },
+              { segment: 'asc' },
+            ]
           });
           return { pipelines, count };
         }
@@ -1121,117 +1168,6 @@ export const PipelineMutation = extendType({
           }
         }
       }
-    })
-    t.field('allocateChronologicalEdge', {
-      type: 'AllocationPayload',
-      resolve: async (_, _args, ctx) => {
-        const user = ctx.user;
-        if (user) {
-          const { firstName, id: userId } = user;
-          const authorized = resolvePipelineAuthorized(user);
-          if (authorized) {
-
-            const allLicenseChanges = await ctx.prisma.licenseChange.groupBy({ by: ['pipelineId'], _count: { _all: true } });
-            const allPressureTests = await ctx.prisma.pressureTest.groupBy({ by: ['pipelineId'], _count: { _all: true } });
-            const allPigRuns = await ctx.prisma.pigRun.groupBy({ by: ['pipelineId'], _count: { _all: true } });
-            const allCathodicSurveys = await ctx.prisma.cathodicSurvey.groupBy({ by: ['pipelineId'], _count: { _all: true } });
-            const allGeotechnicals = await ctx.prisma.geotechnical.groupBy({ by: ['pipelineId'], _count: { _all: true } });
-            const allPipelineBatches = await ctx.prisma.pipelineBatch.groupBy({ by: ['pipelineId'], _count: { _all: true } });
-            const allWellBatches = await ctx.prisma.wellBatch.groupBy({ by: ['wellId'], _count: { _all: true } })
-            const allWellBatchesWellIdToPipelineId = allWellBatches.map(({ wellId, _count }) => { return { pipelineId: wellId, _count } });
-
-            const numberOfItems = allLicenseChanges
-              .concat(allPressureTests, allPigRuns, allCathodicSurveys, allGeotechnicals, allPipelineBatches, allWellBatchesWellIdToPipelineId)
-              .map(({ _count: { _all } }) => _all)
-              .reduce((previousValue, currentValue) => previousValue + currentValue);
-
-            let progress = 0;
-            try {
-              for (const { pipelineId, _count: { _all } } of allLicenseChanges) {
-                await allocateLicenseChangeChronologicalEdge({ pipelineId, ctx });
-                progress += _all;
-                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
-              }
-              for (const { pipelineId, _count: { _all } } of allPressureTests) {
-                await allocatePressureTestChronologicalEdge({ pipelineId, ctx });
-                progress += _all;
-                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
-              }
-              for (const { pipelineId, _count: { _all } } of allPigRuns) {
-                await allocatePigRunChronologicalEdge({ pipelineId, ctx });
-                progress += _all;
-                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
-              }
-              for (const { pipelineId, _count: { _all } } of allCathodicSurveys) {
-                await allocateCathodicSurveyChronologicalEdge({ pipelineId, ctx });
-                progress += _all;
-                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
-              }
-              for (const { pipelineId, _count: { _all } } of allGeotechnicals) {
-                await allocateGeotechnicalChronologicalEdge({ pipelineId, ctx });
-                progress += _all;
-                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
-              }
-              for (const { pipelineId, _count: { _all } } of allPipelineBatches) {
-                await allocatePipelineBatchChronologicalEdge({ pipelineId, ctx });
-                progress += _all;
-                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
-              }
-              for (const { wellId, _count: { _all } } of allWellBatches) {
-                await allocateWellBatchChronologicalEdge({ wellId, ctx });
-                progress += _all;
-                ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress, numberOfItems });
-              }
-            } catch (e) {
-              // If allocation fails, publish initial progress to close the progress modal
-              ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress: 0, numberOfItems: 0 });
-              throw e;
-            }
-            // If allocation succeeds, publish initial progress after the loop to close the progress modal
-            ctx.pubsub.publish('chronologicalEdgeAllocationProgress', { userId, progress: 0, numberOfItems: 0 });
-            return {
-              success: {
-                field: 'Chronological edge',
-                message: `Allocated ${numberOfItems} chronological edges`,
-              }
-            }
-          }
-          return {
-            error: {
-              field: 'User',
-              message: `Hi ${firstName}, you are not authorized to allocate chronological edges.`,
-            }
-          }
-        }
-        return {
-          error: {
-            field: 'User',
-            message: 'Not authorized',
-          }
-        }
-      }
-    })
-  }
-});
-
-export const PipelineAllocationProgressSubscription = extendType({
-  type: 'Subscription',
-  definition: t => {
-    t.nonNull.field('chronologicalEdgeAllocationProgress', {
-      type: 'AllocationProgressObject',
-      args: { data: nonNull(arg({ type: 'AllocationInput' })) },
-      subscribe: withFilter(
-        (_root/* This is still undefined at this point */, _args: NexusGenArgTypes['Subscription']['chronologicalEdgeAllocationProgress'], ctx: ContextSubscription) => {
-          return ctx.pubsub.asyncIterator('chronologicalEdgeAllocationProgress')
-        },
-        (root: NexusGenFieldTypes['Subscription']['chronologicalEdgeAllocationProgress'], args: NexusGenArgTypes['Subscription']['chronologicalEdgeAllocationProgress'], _ctx: ContextSubscription) => {
-          // Only push an update for user who pressed the allocate button
-          return (root.userId === args.data.userId);
-        },
-      ),
-      resolve: (root: NexusGenFieldTypes['Subscription']['chronologicalEdgeAllocationProgress'], _args, _ctx: ContextSubscription) => {
-        return root
-      },
     })
   }
 });

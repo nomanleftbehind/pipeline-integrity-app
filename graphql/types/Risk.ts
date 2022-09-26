@@ -1,11 +1,8 @@
 import { objectType, stringArg, extendType, nonNull, inputObjectType, arg } from 'nexus';
-import { Context, ContextSubscription } from '../context';
-import { Prisma, User as IUser } from '@prisma/client';
-import { NexusGenFieldTypes, NexusGenArgTypes } from 'nexus-typegen';
+import { Context } from '../context';
+import { User as IUser } from '@prisma/client';
 import { allocateRisk } from './RiskCalcs';
 import { ITableConstructObject } from './SearchNavigation';
-import { withFilter } from 'graphql-subscriptions';
-
 
 
 
@@ -100,7 +97,7 @@ export const RiskExtendObject = extendType({
   }
 });
 
-const resolveRiskAuthorized = (user: IUser) => {
+export const resolveRiskAuthorized = (user: IUser) => {
   const { role } = user;
   return role === 'ADMIN' || role === 'ENGINEER';
 }
@@ -266,112 +263,5 @@ export const RiskMutation = extendType({
         }
       }
     })
-    t.field('allocateRisk', {
-      type: 'AllocationPayload',
-      resolve: async (_, _args, ctx) => {
-        const user = ctx.user;
-        if (user) {
-          const { firstName, id: userId } = user;
-          const authorized = resolveRiskAuthorized(user);
-          if (authorized) {
-            const allRisks = await ctx.prisma.risk.findMany({
-              select: {
-                id: true,
-              }
-            });
-            const numberOfItems = allRisks.length;
-            let progress = 0;
-            try {
-              for (const { id } of allRisks) {
-                await allocateRisk({ id, ctx });
-                progress += 1;
-                ctx.pubsub.publish('riskAllocationProgress', { userId, progress, numberOfItems });
-              }
-            } catch (e) {
-              // If allocation fails, publish initial progress to close the progress modal
-              ctx.pubsub.publish('riskAllocationProgress', { userId, progress: 0, numberOfItems: 0 });
-              if (e instanceof Prisma.PrismaClientKnownRequestError) {
-                if (e.code === 'P2010') {
-                  return {
-                    error: {
-                      field: 'Risk',
-                      message: `Pipeline flow calculation function does not exit on a database.`,
-                    }
-                  }
-                }
-              }
-              throw e;
-            }
-            // If allocation succeeds, publish initial progress after the loop to close the progress modal
-            ctx.pubsub.publish('riskAllocationProgress', { userId, progress: 0, numberOfItems: 0 });
-            return {
-              success: {
-                field: 'Risk',
-                message: `Allocated ${numberOfItems} risks`,
-              }
-            }
-          }
-          return {
-            error: {
-              field: 'User',
-              message: `Hi ${firstName}, you are not authorized to allocate risks.`,
-            }
-          }
-        }
-        return {
-          error: {
-            field: 'User',
-            message: 'Not authorized',
-          }
-        }
-      }
-    })
   }
 })
-
-export const AllocationPayload = objectType({
-  name: 'AllocationPayload',
-  definition: t => {
-    t.field('success', { type: 'FieldError' })
-    t.field('error', { type: 'FieldError' })
-  },
-});
-
-
-export const AllocationProgressObject = objectType({
-  name: 'AllocationProgressObject',
-  definition: t => {
-    t.nonNull.string('userId')
-    t.nonNull.int('progress')
-    t.nonNull.int('numberOfItems')
-  },
-});
-
-export const AllocationInput = inputObjectType({
-  name: 'AllocationInput',
-  definition(t) {
-    t.nonNull.string('userId')
-  },
-});
-
-export const RiskAllocationProgressSubscription = extendType({
-  type: 'Subscription',
-  definition: t => {
-    t.nonNull.field('riskAllocationProgress', {
-      type: 'AllocationProgressObject',
-      args: { data: nonNull(arg({ type: 'AllocationInput' })) },
-      subscribe: withFilter(
-        (_root/* This is still undefined at this point */, _args: NexusGenArgTypes['Subscription']['riskAllocationProgress'], ctx: ContextSubscription) => {
-          return ctx.pubsub.asyncIterator('riskAllocationProgress')
-        },
-        (root: NexusGenFieldTypes['Subscription']['riskAllocationProgress'], args: NexusGenArgTypes['Subscription']['riskAllocationProgress'], _ctx: ContextSubscription) => {
-          // Only push an update for user who pressed the allocate button
-          return (root.userId === args.data.userId);
-        },
-      ),
-      resolve: (root: NexusGenFieldTypes['Subscription']['riskAllocationProgress'], _args, _ctx: ContextSubscription) => {
-        return root
-      },
-    })
-  }
-});

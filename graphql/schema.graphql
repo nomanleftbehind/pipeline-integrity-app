@@ -353,8 +353,10 @@ type Mutation {
   addRisk(id: String!): RiskPayload
   addWellBatch(wellId: String!): WellBatchPayload
   allocateChronologicalEdge: AllocationPayload
+  allocatePipelineFlow: AllocationPayload
   allocatePressureTest: AllocationPayload
   allocateRisk: AllocationPayload
+  allocateWellFlow: AllocationPayload
   changePassword(changePasswordInput: ChangePasswordInput!): AuthPayload!
   connectPipeline(connectNewPipelineId: String!, connectedPipelineId: String, flowCalculationDirection: FlowCalculationDirectionEnum!, pipelineId: String!): PipelinesOnPipelinesPayload
   connectSalesPoint(id: String!, pipelineId: String!): SalesPointPayload
@@ -455,11 +457,18 @@ type Pipeline {
   currentTo: String
   currentToFeature: String
   downstream: [Pipeline]
+  firstInjection: DateTime
   firstLicenseDate: DateTime
+  firstProduction: DateTime
   flowCalculationDirection: FlowCalculationDirectionEnum!
+  gas: Float!
+  gasAssociatedLiquids: Float!
   id: String!
+  lastInjection: DateTime
+  lastProduction: DateTime
   license: String!
   licenseChanges: [LicenseChange]
+  oil: Float!
   pigRuns: [PigRun]
   piggable: Boolean
   piggingFrequency: Int
@@ -469,10 +478,12 @@ type Pipeline {
   satellite: Satellite
   satelliteId: String
   segment: String!
+  totalFluids: Float!
   updatedAt: DateTime!
   updatedBy: User!
   updatedById: String!
   upstream: [Pipeline]
+  water: Float!
   wells: [Well]
 }
 
@@ -796,8 +807,10 @@ type SourceOptions {
 
 type Subscription {
   chronologicalEdgeAllocationProgress(data: AllocationInput!): AllocationProgressObject!
+  pipelineFlowAllocationProgress(data: AllocationInput!): AllocationProgressObject!
   pressureTestAllocationProgress(data: AllocationInput!): AllocationProgressObject!
   riskAllocationProgress(data: AllocationInput!): AllocationProgressObject!
+  wellFlowAllocationProgress(data: AllocationInput!): AllocationProgressObject!
 }
 
 enum TableEnum {

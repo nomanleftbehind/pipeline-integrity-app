@@ -21,3 +21,4 @@ export * from './SalesPoint';
 export * from './PipelineFlow';
 export * from './SearchNavigation';
 export * from './PipelinesOnPipelines';
+export * from './Allocation';

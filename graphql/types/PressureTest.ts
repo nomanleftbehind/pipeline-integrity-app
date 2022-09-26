@@ -1,11 +1,10 @@
 import { enumType, objectType, stringArg, extendType, nonNull, arg, inputObjectType } from 'nexus';
-import { NexusGenObjects, NexusGenFieldTypes, NexusGenArgTypes } from 'nexus-typegen';
+import { NexusGenObjects } from 'nexus-typegen';
 import { serverEnumToDatabaseEnum, databaseEnumToServerEnum } from './Pipeline';
-import { Context, ContextSubscription } from '../context';
+import { Context } from '../context';
 import { User as IUser, PressureTest as IPressureTest } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
 import { allocatePressureTest } from './PressureTestCalcs';
-import { withFilter } from 'graphql-subscriptions';
 
 
 
@@ -116,7 +115,7 @@ export const PressureTestExtendObject = extendType({
 });
 
 
-const resolvePressureTestAuthorized = (user: IUser) => {
+export const resolvePressureTestAuthorized = (user: IUser) => {
   const { role } = user;
   return role === 'ADMIN' || role === 'ENGINEER' || role === 'OPERATOR';
 }
@@ -313,53 +312,6 @@ export const PressureTestMutation = extendType({
         }
       }
     })
-    t.field('allocatePressureTest', {
-      type: 'AllocationPayload',
-      resolve: async (_, _args, ctx) => {
-        const user = ctx.user;
-        if (user) {
-          const { firstName, id: userId } = user;
-          const authorized = resolvePressureTestAuthorized(user);
-          if (authorized) {
-
-            const allPressureTests = await ctx.prisma.pressureTest.groupBy({
-              by: ['pipelineId'],
-              _count: {
-                _all: true
-              }
-            });
-
-            const numberOfItems = allPressureTests.map(({ _count: { _all } }) => _all).reduce((previousValue, currentValue) => previousValue + currentValue);
-            let progress = 0;
-            for (const { pipelineId, _count: { _all } } of allPressureTests) {
-              await allocatePressureTest({ pipelineId, ctx });
-              progress += _all;
-              ctx.pubsub.publish('pressureTestAllocationProgress', { userId, progress, numberOfItems });
-            }
-            // If allocation succeeds, publish initial progress after the loop to close the progress modal
-            ctx.pubsub.publish('pressureTestAllocationProgress', { userId, progress: 0, numberOfItems: 0 });
-            return {
-              success: {
-                field: 'Pressure Test',
-                message: `Allocated ${numberOfItems} pressure tests`,
-              }
-            }
-          }
-          return {
-            error: {
-              field: 'User',
-              message: `Hi ${firstName}, you are not authorized to allocate pressure tests.`,
-            }
-          }
-        }
-        return {
-          error: {
-            field: 'User',
-            message: 'Not authorized',
-          }
-        }
-      }
-    })
   }
 })
 
@@ -393,26 +345,3 @@ export const allocatePressureTestChronologicalEdge = async ({ pipelineId, ctx }:
     });
   }
 }
-
-
-export const PressureTestAllocationProgressSubscription = extendType({
-  type: 'Subscription',
-  definition: t => {
-    t.nonNull.field('pressureTestAllocationProgress', {
-      type: 'AllocationProgressObject',
-      args: { data: nonNull(arg({ type: 'AllocationInput' })) },
-      subscribe: withFilter(
-        (_root/* This is still undefined at this point */, _args: NexusGenArgTypes['Subscription']['pressureTestAllocationProgress'], ctx: ContextSubscription) => {
-          return ctx.pubsub.asyncIterator('pressureTestAllocationProgress')
-        },
-        (root: NexusGenFieldTypes['Subscription']['pressureTestAllocationProgress'], args: NexusGenArgTypes['Subscription']['pressureTestAllocationProgress'], _ctx: ContextSubscription) => {
-          // Only push an update for user who pressed the allocate button
-          return (root.userId === args.data.userId);
-        },
-      ),
-      resolve: (root: NexusGenFieldTypes['Subscription']['pressureTestAllocationProgress'], _args, _ctx: ContextSubscription) => {
-        return root
-      },
-    })
-  }
-});

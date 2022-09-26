@@ -1,10 +1,6 @@
 import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
 import { User as IUser } from '@prisma/client';
-import {
-  gasAssociatedLiquidsCalc,
-  totalFluidsCalc,
-} from './Well';
 import { ITableConstructObject } from './SearchNavigation';
 
 export const SalesPointObjectFields: ITableConstructObject[] = [
@@ -13,6 +9,8 @@ export const SalesPointObjectFields: ITableConstructObject[] = [
   { field: 'oil', nullable: false, type: 'Float' },
   { field: 'water', nullable: false, type: 'Float' },
   { field: 'gas', nullable: false, type: 'Float' },
+  { field: 'gasAssociatedLiquids', nullable: false, type: 'Float' },
+  { field: 'totalFluids', nullable: false, type: 'Float' },
   { field: 'firstProduction', nullable: true, type: 'DateTime' },
   { field: 'lastProduction', nullable: true, type: 'DateTime' },
   { field: 'firstInjection', nullable: true, type: 'DateTime' },
@@ -42,12 +40,12 @@ export const SalesPoint = objectType({
 export const SalesPointExtendObject = extendType({
   type: 'SalesPoint',
   definition(t) {
-    t.nonNull.float('gasAssociatedLiquids', {
-      resolve: async ({ gas }) => await gasAssociatedLiquidsCalc(gas)
-    })
-    t.nonNull.float('totalFluids', {
-      resolve: async ({ oil, water, gas }) => await totalFluidsCalc({ oil, water, gas })
-    })
+    // t.nonNull.float('gasAssociatedLiquids', {
+    //   resolve: async ({ gas }) => await gasAssociatedLiquidsCalc(gas)
+    // })
+    // t.nonNull.float('totalFluids', {
+    //   resolve: async ({ oil, water, gas }) => await totalFluidsCalc({ oil, water, gas })
+    // })
     t.nonNull.field('createdBy', {
       type: 'User',
       resolve: async ({ id }, _args, ctx: Context) => {

@@ -1,6 +1,6 @@
 import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
-import { User as IUser } from '@prisma/client';
+import { User as IUser, Well as IWell } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
 
 
@@ -11,6 +11,8 @@ export const WellObjectFields: ITableConstructObject[] = [
   { field: 'oil', nullable: false, type: 'Float' },
   { field: 'water', nullable: false, type: 'Float' },
   { field: 'gas', nullable: false, type: 'Float' },
+  { field: 'gasAssociatedLiquids', nullable: false, type: 'Float' },
+  { field: 'totalFluids', nullable: false, type: 'Float' },
   { field: 'firstProduction', nullable: true, type: 'DateTime' },
   { field: 'lastProduction', nullable: true, type: 'DateTime' },
   { field: 'firstInjection', nullable: true, type: 'DateTime' },
@@ -56,12 +58,12 @@ export const totalFluidsCalc = async ({ oil, water, gas }: ItotalFluidsCalcArgs)
 export const WellExtendObject = extendType({
   type: 'Well',
   definition(t) {
-    t.nonNull.float('gasAssociatedLiquids', {
-      resolve: async ({ gas }) => await gasAssociatedLiquidsCalc(gas)
-    })
-    t.nonNull.float('totalFluids', {
-      resolve: async ({ oil, water, gas }) => await totalFluidsCalc({ oil, water, gas })
-    })
+    // t.nonNull.float('gasAssociatedLiquids', {
+    //   resolve: async ({ gas }) => await gasAssociatedLiquidsCalc(gas)
+    // })
+    // t.nonNull.float('totalFluids', {
+    //   resolve: async ({ oil, water, gas }) => await totalFluidsCalc({ oil, water, gas })
+    // })
     t.list.field('wellBatches', {
       type: 'WellBatch',
       resolve: async ({ id }, _args, ctx: Context) => {
@@ -106,7 +108,7 @@ export const WellExtendObject = extendType({
   },
 });
 
-const resolveWellAuthorized = (user: IUser) => {
+export const resolveWellAuthorized = (user: IUser) => {
   const { role } = user;
   return role === 'ADMIN' || role === 'ENGINEER';
 }
@@ -410,3 +412,27 @@ export const WellMutation = extendType({
     })
   }
 });
+
+
+
+interface IAllocateWellFlowArgs {
+  id: IWell['id'];
+  oil: IWell['oil'];
+  water: IWell['water'];
+  gas: IWell['gas'];
+  ctx: Context;
+}
+
+export const allocateWellFlow = async ({ id, oil, water, gas, ctx }: IAllocateWellFlowArgs) => {
+
+  const gasAssociatedLiquids = await gasAssociatedLiquidsCalc(gas);
+  const totalFluids = await totalFluidsCalc({ oil, water, gas })
+
+  await ctx.prisma.well.update({
+    where: { id },
+    data: {
+      gasAssociatedLiquids,
+      totalFluids,
+    }
+  });
+}

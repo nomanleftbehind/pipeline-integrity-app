@@ -5,6 +5,10 @@ import MenuItem from '@mui/material/MenuItem';
 import { ModalAllocationProgress, ModalFieldError, openAllocationProgressModal } from './Modal';
 import { openModal } from './rows/RenderPipeline';
 import {
+  useAllocatePipelineFlowMutation,
+  usePipelineFlowAllocationProgressSubscription,
+  useAllocateWellFlowMutation,
+  useWellFlowAllocationProgressSubscription,
   useAllocateRiskMutation,
   useRiskAllocationProgressSubscription,
   useAllocateChronologicalEdgeMutation,
@@ -27,6 +31,32 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const { } = usePipelineFlowAllocationProgressSubscription({
+    variables: { data: { userId } },
+    onSubscriptionData: ({ subscriptionData: { data } }) => {
+      if (data) {
+        const { pipelineFlowAllocationProgress: { progress, numberOfItems } } = data;
+        setAllocationProgressBar({
+          progress,
+          numberOfItems,
+        });
+      }
+    },
+  });
+
+  const { } = useWellFlowAllocationProgressSubscription({
+    variables: { data: { userId } },
+    onSubscriptionData: ({ subscriptionData: { data } }) => {
+      if (data) {
+        const { wellFlowAllocationProgress: { progress, numberOfItems } } = data;
+        setAllocationProgressBar({
+          progress,
+          numberOfItems,
+        });
+      }
+    },
+  });
 
   const { } = useRiskAllocationProgressSubscription({
     variables: { data: { userId } },
@@ -67,6 +97,30 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
     },
   });
 
+  const [allocatePipelineFlow] = useAllocatePipelineFlowMutation({
+    onCompleted: ({ allocatePipelineFlow }) => {
+      const { error, success } = allocatePipelineFlow || {};
+      if (error) {
+        setFieldStatus(error);
+      }
+      if (success) {
+        setFieldStatus(success);
+      }
+    }
+  });
+
+  const [allocateWellFlow] = useAllocateWellFlowMutation({
+    onCompleted: ({ allocateWellFlow }) => {
+      const { error, success } = allocateWellFlow || {};
+      if (error) {
+        setFieldStatus(error);
+      }
+      if (success) {
+        setFieldStatus(success);
+      }
+    }
+  });
+
   const [allocateRisk] = useAllocateRiskMutation({
     onCompleted: ({ allocateRisk }) => {
       const { error, success } = allocateRisk || {};
@@ -102,6 +156,14 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
       }
     }
   });
+
+  const handleAllocatePipelineFlow = () => {
+    allocatePipelineFlow();
+  }
+
+  const handleAllocateWellFlow = () => {
+    allocateWellFlow();
+  }
 
   const handleAllocateRisk = () => {
     allocateRisk();
@@ -154,6 +216,8 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
           'aria-labelledby': 'basic-button',
         }}
       >
+        <MenuItem onClick={handleAllocatePipelineFlow}>Pipeline Flow</MenuItem>
+        <MenuItem onClick={handleAllocateWellFlow}>Well Flow</MenuItem>
         <MenuItem onClick={handleAllocateRisk}>Risk</MenuItem>
         <MenuItem onClick={handleAllocatePressureTest}>Pressure Test</MenuItem>
         <MenuItem onClick={handleAllocateChronologicalEdge}>Chronological Edge</MenuItem>

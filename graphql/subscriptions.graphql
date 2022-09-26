@@ -1,3 +1,17 @@
+subscription PipelineFlowAllocationProgress($data: AllocationInput!) {
+  pipelineFlowAllocationProgress(data: $data) {
+    progress
+    numberOfItems
+  }
+}
+
+subscription WellFlowAllocationProgress($data: AllocationInput!) {
+  wellFlowAllocationProgress(data: $data) {
+    progress
+    numberOfItems
+  }
+}
+
 subscription RiskAllocationProgress($data: AllocationInput!) {
   riskAllocationProgress(data: $data) {
     progress
