@@ -42,7 +42,9 @@ export const Well = objectType({
 
 
 export const gasAssociatedLiquidsCalc = async (gas: number) => {
-  return gas * 35.49 * 0.00355238191999475 / 6.3;
+  const vol = gas * 35.49 * 0.00355238191999475 / 6.3;
+  // Round to two decimals
+  return Math.round((vol + Number.EPSILON) * 100) / 100;
 }
 
 interface ItotalFluidsCalcArgs {
@@ -435,4 +437,7 @@ export const allocateWellFlow = async ({ id, oil, water, gas, ctx }: IAllocateWe
       totalFluids,
     }
   });
+
+  console.log(id, oil, water, gas, gasAssociatedLiquids, totalFluids);
+
 }

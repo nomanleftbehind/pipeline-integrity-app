@@ -188,6 +188,17 @@ export type EditPipelineBatchInput = {
   productId?: Maybe<Scalars['String']>;
 };
 
+export type EditPipelineInput = {
+  comment?: Maybe<Scalars['String']>;
+  flowCalculationDirection?: Maybe<FlowCalculationDirectionEnum>;
+  id: Scalars['String'];
+  license?: Maybe<Scalars['String']>;
+  piggable?: Maybe<Scalars['Boolean']>;
+  piggingFrequency?: Maybe<Scalars['Int']>;
+  satelliteId?: Maybe<Scalars['String']>;
+  segment?: Maybe<Scalars['String']>;
+};
+
 export type EditPressureTestInput = {
   comment?: Maybe<Scalars['String']>;
   date?: Maybe<Scalars['DateTime']>;
@@ -612,14 +623,7 @@ export type MutationEditPigRunArgs = {
 
 
 export type MutationEditPipelineArgs = {
-  comment?: Maybe<Scalars['String']>;
-  flowCalculationDirection?: Maybe<FlowCalculationDirectionEnum>;
-  id: Scalars['String'];
-  license?: Maybe<Scalars['String']>;
-  piggable?: Maybe<Scalars['Boolean']>;
-  piggingFrequency?: Maybe<Scalars['Int']>;
-  satelliteId?: Maybe<Scalars['String']>;
-  segment?: Maybe<Scalars['String']>;
+  data: EditPipelineInput;
 };
 
 
@@ -1519,14 +1523,7 @@ export type DisconnectSalesPointMutationVariables = Exact<{
 export type DisconnectSalesPointMutation = { disconnectSalesPoint?: { salesPoint?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type EditPipelineMutationVariables = Exact<{
-  id: Scalars['String'];
-  satelliteId?: Maybe<Scalars['String']>;
-  license?: Maybe<Scalars['String']>;
-  segment?: Maybe<Scalars['String']>;
-  flowCalculationDirection?: Maybe<FlowCalculationDirectionEnum>;
-  piggable?: Maybe<Scalars['Boolean']>;
-  piggingFrequency?: Maybe<Scalars['Int']>;
-  comment?: Maybe<Scalars['String']>;
+  data: EditPipelineInput;
 }>;
 
 
@@ -2501,17 +2498,8 @@ export type DisconnectSalesPointMutationHookResult = ReturnType<typeof useDiscon
 export type DisconnectSalesPointMutationResult = Apollo.MutationResult<DisconnectSalesPointMutation>;
 export type DisconnectSalesPointMutationOptions = Apollo.BaseMutationOptions<DisconnectSalesPointMutation, DisconnectSalesPointMutationVariables>;
 export const EditPipelineDocument = gql`
-    mutation EditPipeline($id: String!, $satelliteId: String, $license: String, $segment: String, $flowCalculationDirection: FlowCalculationDirectionEnum, $piggable: Boolean, $piggingFrequency: Int, $comment: String) {
-  editPipeline(
-    id: $id
-    satelliteId: $satelliteId
-    license: $license
-    segment: $segment
-    flowCalculationDirection: $flowCalculationDirection
-    piggable: $piggable
-    piggingFrequency: $piggingFrequency
-    comment: $comment
-  ) {
+    mutation EditPipeline($data: EditPipelineInput!) {
+  editPipeline(data: $data) {
     pipeline {
       id
     }
@@ -2537,14 +2525,7 @@ export type EditPipelineMutationFn = Apollo.MutationFunction<EditPipelineMutatio
  * @example
  * const [editPipelineMutation, { data, loading, error }] = useEditPipelineMutation({
  *   variables: {
- *      id: // value for 'id'
- *      satelliteId: // value for 'satelliteId'
- *      license: // value for 'license'
- *      segment: // value for 'segment'
- *      flowCalculationDirection: // value for 'flowCalculationDirection'
- *      piggable: // value for 'piggable'
- *      piggingFrequency: // value for 'piggingFrequency'
- *      comment: // value for 'comment'
+ *      data: // value for 'data'
  *   },
  * });
  */

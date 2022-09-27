@@ -95,7 +95,7 @@ export default function RenderPipeline({ gridRow, rowIsEven, pipeline, validator
       }
     }
     newRecord = switchNewRecord();
-    editPipeline({ variables: { id, [columnName]: newRecord } });
+    editPipeline({ variables: { data: { id, [columnName]: newRecord } } });
   }
 
   const deleteRecord = () => {

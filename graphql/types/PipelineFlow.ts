@@ -145,6 +145,8 @@ export const allocatePipelineFlow = async ({ id, flowCalculationDirection, ctx }
         lastInjection
       }
     });
+    console.log(id, flowCalculationDirection, oil, water, gas, gasAssociatedLiquids, totalFluids,);
+
   }
 }
 

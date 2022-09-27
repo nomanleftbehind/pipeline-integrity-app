@@ -381,6 +381,15 @@ export const PipelineQuery = extendType({
         return null;
       }
     })
+    t.field('pipelineId', {
+      type: 'Pipeline',
+      args: { id: nonNull(stringArg()) },
+      resolve: async (_, { id }, ctx) => {
+        return await ctx.prisma.pipeline.findUnique({
+          where: { id }
+        })
+      }
+    })
     t.nonNull.field('pipelinesById', {
       type: 'PipelinesByIdPayload',
       args: {
@@ -973,50 +982,56 @@ export const PipelinePayload = objectType({
 });
 
 
+export const EditPipelineInput = inputObjectType({
+  name: 'EditPipelineInput',
+  definition(t) {
+    t.nonNull.string('id')
+    t.string('satelliteId')
+    t.string('license')
+    t.string('segment')
+    t.field('flowCalculationDirection', { type: 'FlowCalculationDirectionEnum' })
+    t.boolean('piggable')
+    t.int('piggingFrequency')
+    t.string('comment')
+  },
+});
+
+
 export const PipelineMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editPipeline', {
       type: 'PipelinePayload',
-      args: {
-        id: nonNull(stringArg()),
-        satelliteId: stringArg(),
-        license: stringArg(),
-        segment: stringArg(),
-        flowCalculationDirection: arg({ type: 'FlowCalculationDirectionEnum' }),
-        piggable: booleanArg(),
-        piggingFrequency: intArg(),
-        comment: stringArg(),
-      },
-      resolve: async (_, args, ctx: Context) => {
+      args: { data: nonNull(arg({ type: 'EditPipelineInput' })) },
+      resolve: async (_, { data: { id, satelliteId, license, segment, flowCalculationDirection, piggable, piggingFrequency, comment } }, ctx: Context) => {
         const user = ctx.user;
         if (user) {
           const { id: userId, firstName } = user;
           const authorized = resolvePipelineAuthorized(user);
           if (authorized) {
-            if (args.license) {
-              const error = validateRegex({ field: String(args.license), matchPattern: licenseMatchPattern, prettyMatchPattern: 'AB/SK/BC followed by 5 or 6 digits' });
+            if (license) {
+              const error = validateRegex({ field: license, matchPattern: licenseMatchPattern, prettyMatchPattern: 'AB/SK/BC followed by 5 or 6 digits' });
               if (error) {
                 return error;
               }
             }
-            if (args.segment) {
-              const error = validateRegex({ field: String(args.segment), matchPattern: segmentMatchPattern, prettyMatchPattern: '1-3 digits or UL followed by 1-2 digits' });
+            if (segment) {
+              const error = validateRegex({ field: segment, matchPattern: segmentMatchPattern, prettyMatchPattern: '1-3 digits or UL followed by 1-2 digits' });
               if (error) {
                 return error;
               }
             }
             try {
               const pipeline = await ctx.prisma.pipeline.update({
-                where: { id: args.id },
+                where: { id },
                 data: {
-                  satelliteId: args.satelliteId,
-                  license: args.license || undefined,
-                  segment: args.segment || undefined,
-                  flowCalculationDirection: args.flowCalculationDirection || undefined,
-                  piggable: args.piggable,
-                  piggingFrequency: args.piggingFrequency,
-                  comment: args.comment,
+                  satelliteId,
+                  license: license || undefined,
+                  segment: segment || undefined,
+                  flowCalculationDirection: flowCalculationDirection || undefined,
+                  piggable,
+                  piggingFrequency,
+                  comment,
                   updatedById: userId,
                 },
               });

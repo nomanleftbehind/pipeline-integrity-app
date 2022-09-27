@@ -180,6 +180,17 @@ input EditPipelineBatchInput {
   productId: String
 }
 
+input EditPipelineInput {
+  comment: String
+  flowCalculationDirection: FlowCalculationDirectionEnum
+  id: String!
+  license: String
+  piggable: Boolean
+  piggingFrequency: Int
+  satelliteId: String
+  segment: String
+}
+
 input EditPressureTestInput {
   comment: String
   date: DateTime
@@ -383,7 +394,7 @@ type Mutation {
   editGeotechnical(data: EditGeotechnicalInput!): GeotechnicalPayload
   editLicenseChange(data: EditLicenseChangeInput!): LicenseChangePayload
   editPigRun(comment: String, dateIn: DateTime, dateOut: DateTime, id: String!, isolationValveFunctionTest: PigInspectionEnum, operatorId: String, pigSenderReceiverInspection: PigInspectionEnum, pigTypeId: String): PigRunPayload
-  editPipeline(comment: String, flowCalculationDirection: FlowCalculationDirectionEnum, id: String!, license: String, piggable: Boolean, piggingFrequency: Int, satelliteId: String, segment: String): PipelinePayload
+  editPipeline(data: EditPipelineInput!): PipelinePayload
   editPipelineBatch(data: EditPipelineBatchInput!): PipelineBatchPayload
   editPressureTest(data: EditPressureTestInput!): PressureTestPayload
   editRisk(data: EditRiskInput!): RiskPayload
@@ -624,6 +635,7 @@ type Query {
   pigRunsByPipelineId(pipelineId: String!): [PigRun]
   pipelineBatchesByPipelineId(pipelineId: String!): [PipelineBatch]
   pipelineFlow(flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): PipelineFlow
+  pipelineId(id: String!): Pipeline
   pipelineOptions(id: String!): [SourceOptions]
   pipelinesById(navigationInput: NavigationInput!, skip: Int!, take: Int!): PipelinesByIdPayload!
   pipelinesByUser(userUniqueInput: UserUniqueInput!): [Pipeline]
