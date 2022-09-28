@@ -269,44 +269,48 @@ export const WellPayload = objectType({
   },
 });
 
+export const EditWellInput = inputObjectType({
+  name: 'EditWellInput',
+  definition(t) {
+    t.nonNull.string('id')
+    t.string('pipelineId')
+    t.string('name')
+    t.float('oil')
+    t.float('water')
+    t.float('gas')
+    t.field('firstProduction', { type: 'DateTime' })
+    t.field('lastProduction', { type: 'DateTime' })
+    t.field('firstInjection', { type: 'DateTime' })
+    t.field('lastInjection', { type: 'DateTime' })
+    t.string('fdcRecId')
+  },
+});
 
 export const WellMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editWell', {
       type: 'WellPayload',
-      args: {
-        id: nonNull(stringArg()),
-        pipelineId: stringArg(),
-        name: stringArg(),
-        oil: floatArg(),
-        water: floatArg(),
-        gas: floatArg(),
-        firstProduction: arg({ type: 'DateTime' }),
-        lastProduction: arg({ type: 'DateTime' }),
-        firstInjection: arg({ type: 'DateTime' }),
-        lastInjection: arg({ type: 'DateTime' }),
-        fdcRecId: stringArg(),
-      },
-      resolve: async (_, args, ctx: Context) => {
+      args: { data: nonNull(arg({ type: 'EditWellInput' })) },
+      resolve: async (_, { data: { id, pipelineId, name, oil, water, gas, firstProduction, lastProduction, firstInjection, lastInjection, fdcRecId } }, ctx: Context) => {
         const user = ctx.user;
         if (user) {
           const { id: userId, firstName } = user
           const authorized = resolveWellAuthorized(user);
           if (authorized) {
             const well = await ctx.prisma.well.update({
-              where: { id: args.id },
+              where: { id },
               data: {
-                pipelineId: args.pipelineId || undefined,
-                name: args.name || undefined,
-                oil: args.oil || undefined,
-                water: args.water || undefined,
-                gas: args.gas || undefined,
-                firstProduction: args.firstProduction,
-                lastProduction: args.lastProduction,
-                firstInjection: args.firstInjection,
-                lastInjection: args.lastInjection,
-                fdcRecId: args.fdcRecId,
+                pipelineId,
+                name: name || undefined,
+                oil: oil || undefined,
+                water: water || undefined,
+                gas: gas || undefined,
+                firstProduction,
+                lastProduction,
+                firstInjection,
+                lastInjection,
+                fdcRecId,
                 updatedById: userId,
               },
             });

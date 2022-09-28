@@ -4,7 +4,7 @@ import { Context } from '../context';
 import { totalPipelineFlowRawQuery } from './PipelineFlow';
 import { Prisma, User as IUser } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
-import { allocatePipelineFlow } from './PipelineFlow';
+import { allocatePipelineFlow, allocateRecursivePipelineFlow } from './PipelineFlow';
 
 
 
@@ -872,8 +872,8 @@ export const PipelineQuery = extendType({
                 }
               }
             }
-            // This flow branch will never be returned because search navigation by facility or satellite is not a possibility on frontend.
-            // Typescript is not aware of this so return is defined to satisfy compiler.
+            // This flow branch will never be returned because search navigation by facility or satellite is not a possibility on client side.
+            // TypeScript is not aware of this so return is defined to satisfy compiler.
             return {
               id: ''
             }
@@ -884,18 +884,20 @@ export const PipelineQuery = extendType({
 
           const where = { AND: query, };
           const count = await ctx.prisma.pipeline.count({ where });
-          const idsAndFCDs = await ctx.prisma.pipeline.findMany({
-            where,
+          // const idsAndFCDs = await ctx.prisma.pipeline.findMany({
+          //   where,
+          //   skip,
+          //   take,
+          //   select: { id: true, flowCalculationDirection: true },
+          // });
+          // for (const { id, flowCalculationDirection } of idsAndFCDs) {
+          //   await allocatePipelineFlow({ id, flowCalculationDirection, ctx });
+          // }
+          // const ids = idsAndFCDs.map(({ id }) => id);
+          const pipelines = await ctx.prisma.pipeline.findMany({
+            where/*: { id: { in: ids } }*/,
             skip,
             take,
-            select: { id: true, flowCalculationDirection: true },
-          });
-          for (const { id, flowCalculationDirection } of idsAndFCDs) {
-            await allocatePipelineFlow({ id, flowCalculationDirection, ctx });
-          }
-          const ids = idsAndFCDs.map(({ id }) => id);
-          const pipelines = await ctx.prisma.pipeline.findMany({
-            where: { id: { in: ids } },
             orderBy: [
               { license: 'asc' },
               { segment: 'asc' },
@@ -1000,6 +1002,13 @@ export const EditPipelineInput = inputObjectType({
 export const PipelineMutation = extendType({
   type: 'Mutation',
   definition(t) {
+    t.field('testAllocate', {
+      type: 'String',
+      args: { id: nonNull(stringArg()) },
+      resolve: async (_, { id }, ctx) => {
+        return await allocateRecursivePipelineFlow([id], [], ctx, [], []);
+      }
+    })
     t.field('editPipeline', {
       type: 'PipelinePayload',
       args: { data: nonNull(arg({ type: 'EditPipelineInput' })) },

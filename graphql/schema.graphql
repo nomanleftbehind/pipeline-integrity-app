@@ -227,6 +227,20 @@ input EditWellBatchInput {
   productId: String
 }
 
+input EditWellInput {
+  fdcRecId: String
+  firstInjection: DateTime
+  firstProduction: DateTime
+  gas: Float
+  id: String!
+  lastInjection: DateTime
+  lastProduction: DateTime
+  name: String
+  oil: Float
+  pipelineId: String
+  water: Float
+}
+
 type EnumObject {
   databaseEnum: String!
   serverEnum: String!
@@ -400,12 +414,13 @@ type Mutation {
   editRisk(data: EditRiskInput!): RiskPayload
   editSalesPoint(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, name: String, oil: Float, pipelineId: String, water: Float): SalesPointPayload
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
-  editWell(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, name: String, oil: Float, pipelineId: String, water: Float): WellPayload
+  editWell(data: EditWellInput!): WellPayload
   editWellBatch(data: EditWellBatchInput!): WellBatchPayload
   forgotPassword(email: String!): Boolean!
   login(email: String!, password: String!): AuthPayload!
   logout: Boolean!
   signup(userRegisterInput: UserRegisterInput!): AuthPayload!
+  testAllocate(id: String!): Pipeline
 }
 
 input NavigationInput {
