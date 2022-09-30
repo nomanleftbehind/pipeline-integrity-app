@@ -133,9 +133,10 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection,
   });
   const handleConnectSalesPoint = ({ id, pipelineId, oldSourceId }: IDis_ConnectSource) => {
     if (oldSourceId) {
-      disconnectSalesPoint({ variables: { id: oldSourceId } });
+      // Don't pass pipeline info to sales point being disconnected, because it is the same as the one being passed to connectSalesPoint resolver. No need to run flow allocation twice.
+      disconnectSalesPoint({ variables: { data: { id: oldSourceId } } });
     }
-    connectSalesPoint({ variables: { id, pipelineId } });
+    connectSalesPoint({ variables: { data: { id, pipelineId, flowCalculationDirection } } });
   }
 
   const [disconnectSalesPoint] = useDisconnectSalesPointMutation({
@@ -148,7 +149,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection,
     }
   });
   const handleDisconnectSalesPoint = ({ id }: IDis_ConnectSource) => {
-    disconnectSalesPoint({ variables: { id } });
+    disconnectSalesPoint({ variables: { data: { id, pipelineInfo: { pipelineId, flowCalculationDirection } } } });
   }
 
 

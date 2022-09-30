@@ -274,7 +274,8 @@ export const EditWellInput = inputObjectType({
   name: 'EditWellInput',
   definition(t) {
     t.nonNull.string('id')
-    t.string('pipelineId')
+    t.nonNull.string('pipelineId')
+    t.nonNull.field('flowCalculationDirection', { type: 'FlowCalculationDirectionEnum' })
     t.string('name')
     t.float('oil')
     t.float('water')
@@ -287,8 +288,8 @@ export const EditWellInput = inputObjectType({
   },
 });
 
-export const ConnectWellInput = inputObjectType({
-  name: 'ConnectWellInput',
+export const ConnectSourceInput = inputObjectType({
+  name: 'ConnectSourceInput',
   definition: t => {
     t.nonNull.string('id')
     t.nonNull.string('pipelineId')
@@ -296,21 +297,21 @@ export const ConnectWellInput = inputObjectType({
   },
 });
 
-export const DisconnectWellOptionalInput = inputObjectType({
-  name: 'DisconnectWellOptionalInput',
+export const DisconnectSourceOptionalInput = inputObjectType({
+  name: 'DisconnectSourceOptionalInput',
   definition: t => {
     t.nonNull.string('pipelineId')
     t.nonNull.field('flowCalculationDirection', { type: 'FlowCalculationDirectionEnum' })
   },
 });
 
-export const DisconnectWellInput = inputObjectType({
-  name: 'DisconnectWellInput',
+export const DisconnectSourceInput = inputObjectType({
+  name: 'DisconnectSourceInput',
   definition: t => {
     t.nonNull.string('id')
     t.field('pipelineInfo', {
-      type: 'DisconnectWellOptionalInput',
-      description: 'Pass this object if well is being explicitly disconnected from pipeline, as opposed to implicitly by connecting the well to another pipeline'
+      type: 'DisconnectSourceOptionalInput',
+      description: 'Pass this object if well or sales point is being explicitly disconnected from pipeline, as opposed to implicitly by connecting the well or sales point to another pipeline'
     })
   },
 });
@@ -323,7 +324,7 @@ export const WellMutation = extendType({
     t.field('editWell', {
       type: 'WellPayload',
       args: { data: nonNull(arg({ type: 'EditWellInput' })) },
-      resolve: async (_, { data: { id, pipelineId, name, oil, water, gas, firstProduction, lastProduction, firstInjection, lastInjection, fdcRecId } }, ctx: Context) => {
+      resolve: async (_, { data: { id, pipelineId, flowCalculationDirection, name, oil, water, gas, firstProduction, lastProduction, firstInjection, lastInjection, fdcRecId } }, ctx: Context) => {
         const user = ctx.user;
         if (user) {
           const { id: userId, firstName } = user
@@ -332,7 +333,6 @@ export const WellMutation = extendType({
             const well = await ctx.prisma.well.update({
               where: { id },
               data: {
-                pipelineId,
                 name: name || undefined,
                 oil: oil || undefined,
                 water: water || undefined,
@@ -345,6 +345,11 @@ export const WellMutation = extendType({
                 updatedById: userId,
               },
             });
+            if (typeof oil === 'number' || typeof water === 'number' || typeof gas === 'number' || firstProduction || lastProduction || firstInjection || lastInjection) {
+              // Only allocate pipeline flow if numeric or datetime values have been changed on a wall.
+              // Don't await because it can take many seconds depending on number of chained pipelines, and we dont' need the result of allocation
+              allocateRecursivePipelineFlow({ pipelines: [{ id: pipelineId, flowCalculationDirection }], allocated: [], ctx });
+            }
             return { well }
           }
           return {
@@ -364,7 +369,7 @@ export const WellMutation = extendType({
     })
     t.field('connectWell', {
       type: 'WellPayload',
-      args: { data: nonNull(arg({ type: 'ConnectWellInput' })) },
+      args: { data: nonNull(arg({ type: 'ConnectSourceInput' })) },
       resolve: async (_, { data: { id, pipelineId, flowCalculationDirection } }, ctx: Context) => {
         const user = ctx.user;
         if (user) {
@@ -421,7 +426,7 @@ export const WellMutation = extendType({
     })
     t.field('disconnectWell', {
       type: 'WellPayload',
-      args: { data: nonNull(arg({ type: 'DisconnectWellInput' })) },
+      args: { data: nonNull(arg({ type: 'DisconnectSourceInput' })) },
       resolve: async (_, { data: { id, pipelineInfo } }, ctx: Context) => {
         const user = ctx.user;
         if (user) {

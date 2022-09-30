@@ -104,7 +104,7 @@ mutation DisconnectPipeline($pipelineId: String!, $disconnectPipelineId: String!
   }
 }
 
-mutation ConnectWell($data: ConnectWellInput!) {
+mutation ConnectWell($data: ConnectSourceInput!) {
   connectWell(data: $data) {
     well {
       id
@@ -116,7 +116,7 @@ mutation ConnectWell($data: ConnectWellInput!) {
   }
 }
 
-mutation DisconnectWell($data: DisconnectWellInput!) {
+mutation DisconnectWell($data: DisconnectSourceInput!) {
   disconnectWell(data: $data) {
     well {
       id
@@ -128,8 +128,8 @@ mutation DisconnectWell($data: DisconnectWellInput!) {
   }
 }
 
-mutation ConnectSalesPoint($id: String!, $pipelineId: String!) {
-  connectSalesPoint(id: $id, pipelineId: $pipelineId) {
+mutation ConnectSalesPoint($data: ConnectSourceInput!) {
+  connectSalesPoint(data: $data) {
     salesPoint {
       id
     }
@@ -140,8 +140,8 @@ mutation ConnectSalesPoint($id: String!, $pipelineId: String!) {
   }
 }
 
-mutation DisconnectSalesPoint($id: String!) {
-  disconnectSalesPoint(id: $id) {
+mutation DisconnectSalesPoint($data: DisconnectSourceInput!) {
+  disconnectSalesPoint(data: $data) {
     salesPoint {
       id
     }

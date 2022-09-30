@@ -2,6 +2,8 @@ import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, float
 import { Context } from '../context';
 import { User as IUser } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
+import { allocateRecursivePipelineFlow } from './PipelineFlow';
+
 
 export const SalesPointObjectFields: ITableConstructObject[] = [
   { field: 'id', nullable: false, type: 'String' },
@@ -201,46 +203,57 @@ export const SalesPointPayload = objectType({
 });
 
 
+export const EditSalesPointInput = inputObjectType({
+  name: 'EditSalesPointInput',
+  definition(t) {
+    t.nonNull.string('id')
+    t.nonNull.string('pipelineId')
+    t.nonNull.field('flowCalculationDirection', { type: 'FlowCalculationDirectionEnum' })
+    t.string('name')
+    t.float('oil')
+    t.float('water')
+    t.float('gas')
+    t.field('firstProduction', { type: 'DateTime' })
+    t.field('lastProduction', { type: 'DateTime' })
+    t.field('firstInjection', { type: 'DateTime' })
+    t.field('lastInjection', { type: 'DateTime' })
+    t.string('fdcRecId')
+  },
+});
+
+
 export const SalesPointMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editSalesPoint', {
       type: 'SalesPointPayload',
-      args: {
-        id: nonNull(stringArg()),
-        pipelineId: stringArg(),
-        name: stringArg(),
-        oil: floatArg(),
-        water: floatArg(),
-        gas: floatArg(),
-        firstProduction: arg({ type: 'DateTime' }),
-        lastProduction: arg({ type: 'DateTime' }),
-        firstInjection: arg({ type: 'DateTime' }),
-        lastInjection: arg({ type: 'DateTime' }),
-        fdcRecId: stringArg()
-      },
-      resolve: async (_, args, ctx: Context) => {
+      args: { data: nonNull(arg({ type: 'EditSalesPointInput' })) },
+      resolve: async (_, { data: { id, pipelineId, flowCalculationDirection, name, oil, water, gas, firstProduction, lastProduction, firstInjection, lastInjection, fdcRecId } }, ctx: Context) => {
         const user = ctx.user;
         if (user) {
-          const { firstName } = user
+          const { id: userId, firstName } = user
           const authorized = resolveSalesPointAuthorized(user);
           if (authorized) {
             const salesPoint = await ctx.prisma.salesPoint.update({
-              where: { id: args.id },
+              where: { id },
               data: {
-                pipelineId: args.pipelineId || undefined,
-                name: args.name || undefined,
-                oil: args.oil || undefined,
-                water: args.water || undefined,
-                gas: args.gas || undefined,
-                firstProduction: args.firstProduction,
-                lastProduction: args.lastProduction,
-                firstInjection: args.firstInjection,
-                lastInjection: args.lastInjection,
-                fdcRecId: args.fdcRecId,
-                updatedById: user.id,
+                name: name || undefined,
+                oil: oil || undefined,
+                water: water || undefined,
+                gas: gas || undefined,
+                firstProduction: firstProduction,
+                lastProduction: lastProduction,
+                firstInjection: firstInjection,
+                lastInjection: lastInjection,
+                fdcRecId: fdcRecId,
+                updatedById: userId,
               },
             });
+            if (typeof oil === 'number' || typeof water === 'number' || typeof gas === 'number' || firstProduction || lastProduction || firstInjection || lastInjection) {
+              // Only allocate pipeline flow if numeric or datetime values have been changed on a wall.
+              // Don't await because it can take many seconds depending on number of chained pipelines, and we dont' need the result of allocation
+              allocateRecursivePipelineFlow({ pipelines: [{ id: pipelineId, flowCalculationDirection }], allocated: [], ctx });
+            }
             return { salesPoint }
           }
           return {
@@ -260,16 +273,26 @@ export const SalesPointMutation = extendType({
     })
     t.field('connectSalesPoint', {
       type: 'SalesPointPayload',
-      args: {
-        id: nonNull(stringArg()),
-        pipelineId: nonNull(stringArg()),
-      },
-      resolve: async (_, { id, pipelineId }, ctx: Context) => {
+      args: { data: nonNull(arg({ type: 'ConnectSourceInput' })) },
+      resolve: async (_, { data: { id, pipelineId, flowCalculationDirection } }, ctx: Context) => {
         const user = ctx.user;
         if (user) {
           const { id: userId, firstName } = user
           const authorized = resolveSalesPointAuthorized(user);
           if (authorized) {
+
+            // When connecting new sales point to a pipeline, the requested sales point will implicitly be disconnected from previous pipeline.
+            // We need to find that pipeline before new connection is made and run flow allocation on it, as the flow will have changed.
+            const salesPointInitialPipeline = await ctx.prisma.pipeline.findFirst({
+              where: { salesPoints: { some: { id } } },
+              select: { id: true, flowCalculationDirection: true }
+            });
+
+            const pipelines = [{ id: pipelineId, flowCalculationDirection }];
+            if (salesPointInitialPipeline && salesPointInitialPipeline.id !== pipelineId) {
+              pipelines.push(salesPointInitialPipeline);
+            }
+
             const salesPoint = await ctx.prisma.salesPoint.update({
               where: { id },
               data: {
@@ -285,6 +308,8 @@ export const SalesPointMutation = extendType({
                 }
               }
             });
+            // Don't await because it can take many seconds depending on number of chained pipelines, and we dont' need the result of allocation
+            allocateRecursivePipelineFlow({ pipelines, allocated: [], ctx });
             return { salesPoint }
           }
           return {
@@ -304,10 +329,8 @@ export const SalesPointMutation = extendType({
     })
     t.field('disconnectSalesPoint', {
       type: 'SalesPointPayload',
-      args: {
-        id: nonNull(stringArg()),
-      },
-      resolve: async (_, { id }, ctx: Context) => {
+      args: { data: nonNull(arg({ type: 'DisconnectSourceInput' })) },
+      resolve: async (_, { data: { id, pipelineInfo } }, ctx: Context) => {
         const user = ctx.user;
         if (user) {
           const { id: userId, firstName } = user
@@ -326,6 +349,17 @@ export const SalesPointMutation = extendType({
                 }
               }
             });
+
+            if (pipelineInfo) {
+              // If pipeline info is passed to resolver, it means that resolver is being explicitly called to disconnect the sales point.
+              // We want to run pipeline flow allocation in that case because sales point has been disconnected from the pipeline and flow has changed.
+              // If pipeline info is not passed to resolver, it means that the disconnect sales point resolver is called as part of replacing the sales point with another sales point.
+              // In that case pipeline flow allocation will be called inside connect sales point resolver, hence no need to run it twice.
+              const { pipelineId, flowCalculationDirection } = pipelineInfo;
+              // Don't await because it can take many seconds depending on number of chained pipelines, and we dont' need the result of allocation
+              allocateRecursivePipelineFlow({ pipelines: [{ id: pipelineId, flowCalculationDirection }], allocated: [], ctx });
+            }
+
             return { salesPoint }
           }
           return {

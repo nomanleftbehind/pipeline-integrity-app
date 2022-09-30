@@ -122,7 +122,7 @@ type Company {
   updatedBy: User!
 }
 
-input ConnectWellInput {
+input ConnectSourceInput {
   flowCalculationDirection: FlowCalculationDirectionEnum!
   id: String!
   pipelineId: String!
@@ -133,16 +133,16 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
-input DisconnectWellInput {
+input DisconnectSourceInput {
   id: String!
 
   """
-  Pass this object if well is being explicitly disconnected from pipeline, as opposed to implicitly by connecting the well to another pipeline
+  Pass this object if well or sales point is being explicitly disconnected from pipeline, as opposed to implicitly by connecting the well or sales point to another pipeline
   """
-  pipelineInfo: DisconnectWellOptionalInput
+  pipelineInfo: DisconnectSourceOptionalInput
 }
 
-input DisconnectWellOptionalInput {
+input DisconnectSourceOptionalInput {
   flowCalculationDirection: FlowCalculationDirectionEnum!
   pipelineId: String!
 }
@@ -237,6 +237,21 @@ input EditRiskInput {
   safeguardInternalProtection: Int
 }
 
+input EditSalesPointInput {
+  fdcRecId: String
+  firstInjection: DateTime
+  firstProduction: DateTime
+  flowCalculationDirection: FlowCalculationDirectionEnum!
+  gas: Float
+  id: String!
+  lastInjection: DateTime
+  lastProduction: DateTime
+  name: String
+  oil: Float
+  pipelineId: String!
+  water: Float
+}
+
 input EditWellBatchInput {
   chemicalVolume: Float
   comment: String
@@ -251,13 +266,14 @@ input EditWellInput {
   fdcRecId: String
   firstInjection: DateTime
   firstProduction: DateTime
+  flowCalculationDirection: FlowCalculationDirectionEnum!
   gas: Float
   id: String!
   lastInjection: DateTime
   lastProduction: DateTime
   name: String
   oil: Float
-  pipelineId: String
+  pipelineId: String!
   water: Float
 }
 
@@ -404,8 +420,8 @@ type Mutation {
   allocateWellFlow: AllocationPayload
   changePassword(changePasswordInput: ChangePasswordInput!): AuthPayload!
   connectPipeline(connectNewPipelineId: String!, connectedPipelineId: String, flowCalculationDirection: FlowCalculationDirectionEnum!, pipelineId: String!): PipelinesOnPipelinesPayload
-  connectSalesPoint(id: String!, pipelineId: String!): SalesPointPayload
-  connectWell(data: ConnectWellInput!): WellPayload
+  connectSalesPoint(data: ConnectSourceInput!): SalesPointPayload
+  connectWell(data: ConnectSourceInput!): WellPayload
   createFacility(data: FacilityCreateInput!): Facility
   deleteCathodicSurvey(id: String!): CathodicSurveyPayload
   deleteChemical(id: String!): ChemicalPayload
@@ -419,8 +435,8 @@ type Mutation {
   deleteSatellite(id: String!): Satellite
   deleteWellBatch(id: String!): WellBatchPayload
   disconnectPipeline(disconnectPipelineId: String!, flowCalculationDirection: FlowCalculationDirectionEnum!, pipelineId: String!): PipelinesOnPipelinesPayload
-  disconnectSalesPoint(id: String!): SalesPointPayload
-  disconnectWell(data: DisconnectWellInput!): WellPayload
+  disconnectSalesPoint(data: DisconnectSourceInput!): SalesPointPayload
+  disconnectWell(data: DisconnectSourceInput!): WellPayload
   duplicatePipeline(id: String!): PipelinePayload
   editCathodicSurvey(data: EditCathodicSurveyInput!): CathodicSurveyPayload
   editChemical(bacteria: Boolean, bacteriaTreatment: Boolean, baselineFluidAnalysisDate: DateTime, batchFrequency: Int, chemicalSupplierId: String, co2: Boolean, comment: String, continuousInjection: Boolean, downholeBatch: Boolean, h2s: Boolean, id: String!, inhibitorPipelineBatch: Boolean, injectionRate: Float, o2: Boolean, scaleTreatment: Boolean, scaling: Boolean): ChemicalPayload
@@ -432,7 +448,7 @@ type Mutation {
   editPipelineBatch(data: EditPipelineBatchInput!): PipelineBatchPayload
   editPressureTest(data: EditPressureTestInput!): PressureTestPayload
   editRisk(data: EditRiskInput!): RiskPayload
-  editSalesPoint(fdcRecId: String, firstInjection: DateTime, firstProduction: DateTime, gas: Float, id: String!, lastInjection: DateTime, lastProduction: DateTime, name: String, oil: Float, pipelineId: String, water: Float): SalesPointPayload
+  editSalesPoint(data: EditSalesPointInput!): SalesPointPayload
   editSatellite(facilityUniqueInput: FacilityUniqueInput, id: String!, name: String): Satellite
   editWell(data: EditWellInput!): WellPayload
   editWellBatch(data: EditWellBatchInput!): WellBatchPayload

@@ -135,19 +135,19 @@ export type Company = {
   updatedBy: User;
 };
 
-export type ConnectWellInput = {
+export type ConnectSourceInput = {
   flowCalculationDirection: FlowCalculationDirectionEnum;
   id: Scalars['String'];
   pipelineId: Scalars['String'];
 };
 
-export type DisconnectWellInput = {
+export type DisconnectSourceInput = {
   id: Scalars['String'];
-  /** Pass this object if well is being explicitly disconnected from pipeline, as opposed to implicitly by connecting the well to another pipeline */
-  pipelineInfo?: Maybe<DisconnectWellOptionalInput>;
+  /** Pass this object if well or sales point is being explicitly disconnected from pipeline, as opposed to implicitly by connecting the well or sales point to another pipeline */
+  pipelineInfo?: Maybe<DisconnectSourceOptionalInput>;
 };
 
-export type DisconnectWellOptionalInput = {
+export type DisconnectSourceOptionalInput = {
   flowCalculationDirection: FlowCalculationDirectionEnum;
   pipelineId: Scalars['String'];
 };
@@ -242,6 +242,21 @@ export type EditRiskInput = {
   safeguardInternalProtection?: Maybe<Scalars['Int']>;
 };
 
+export type EditSalesPointInput = {
+  fdcRecId?: Maybe<Scalars['String']>;
+  firstInjection?: Maybe<Scalars['DateTime']>;
+  firstProduction?: Maybe<Scalars['DateTime']>;
+  flowCalculationDirection: FlowCalculationDirectionEnum;
+  gas?: Maybe<Scalars['Float']>;
+  id: Scalars['String'];
+  lastInjection?: Maybe<Scalars['DateTime']>;
+  lastProduction?: Maybe<Scalars['DateTime']>;
+  name?: Maybe<Scalars['String']>;
+  oil?: Maybe<Scalars['Float']>;
+  pipelineId: Scalars['String'];
+  water?: Maybe<Scalars['Float']>;
+};
+
 export type EditWellBatchInput = {
   chemicalVolume?: Maybe<Scalars['Float']>;
   comment?: Maybe<Scalars['String']>;
@@ -256,13 +271,14 @@ export type EditWellInput = {
   fdcRecId?: Maybe<Scalars['String']>;
   firstInjection?: Maybe<Scalars['DateTime']>;
   firstProduction?: Maybe<Scalars['DateTime']>;
+  flowCalculationDirection: FlowCalculationDirectionEnum;
   gas?: Maybe<Scalars['Float']>;
   id: Scalars['String'];
   lastInjection?: Maybe<Scalars['DateTime']>;
   lastProduction?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
   oil?: Maybe<Scalars['Float']>;
-  pipelineId?: Maybe<Scalars['String']>;
+  pipelineId: Scalars['String'];
   water?: Maybe<Scalars['Float']>;
 };
 
@@ -508,13 +524,12 @@ export type MutationConnectPipelineArgs = {
 
 
 export type MutationConnectSalesPointArgs = {
-  id: Scalars['String'];
-  pipelineId: Scalars['String'];
+  data: ConnectSourceInput;
 };
 
 
 export type MutationConnectWellArgs = {
-  data: ConnectWellInput;
+  data: ConnectSourceInput;
 };
 
 
@@ -586,12 +601,12 @@ export type MutationDisconnectPipelineArgs = {
 
 
 export type MutationDisconnectSalesPointArgs = {
-  id: Scalars['String'];
+  data: DisconnectSourceInput;
 };
 
 
 export type MutationDisconnectWellArgs = {
-  data: DisconnectWellInput;
+  data: DisconnectSourceInput;
 };
 
 
@@ -674,17 +689,7 @@ export type MutationEditRiskArgs = {
 
 
 export type MutationEditSalesPointArgs = {
-  fdcRecId?: Maybe<Scalars['String']>;
-  firstInjection?: Maybe<Scalars['DateTime']>;
-  firstProduction?: Maybe<Scalars['DateTime']>;
-  gas?: Maybe<Scalars['Float']>;
-  id: Scalars['String'];
-  lastInjection?: Maybe<Scalars['DateTime']>;
-  lastProduction?: Maybe<Scalars['DateTime']>;
-  name?: Maybe<Scalars['String']>;
-  oil?: Maybe<Scalars['Float']>;
-  pipelineId?: Maybe<Scalars['String']>;
-  water?: Maybe<Scalars['Float']>;
+  data: EditSalesPointInput;
 };
 
 
@@ -1526,29 +1531,28 @@ export type DisconnectPipelineMutationVariables = Exact<{
 export type DisconnectPipelineMutation = { disconnectPipeline?: { pipelinesOnPipelines?: { upstreamId: string, downstreamId: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type ConnectWellMutationVariables = Exact<{
-  data: ConnectWellInput;
+  data: ConnectSourceInput;
 }>;
 
 
 export type ConnectWellMutation = { connectWell?: { well?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type DisconnectWellMutationVariables = Exact<{
-  data: DisconnectWellInput;
+  data: DisconnectSourceInput;
 }>;
 
 
 export type DisconnectWellMutation = { disconnectWell?: { well?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type ConnectSalesPointMutationVariables = Exact<{
-  id: Scalars['String'];
-  pipelineId: Scalars['String'];
+  data: ConnectSourceInput;
 }>;
 
 
 export type ConnectSalesPointMutation = { connectSalesPoint?: { salesPoint?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type DisconnectSalesPointMutationVariables = Exact<{
-  id: Scalars['String'];
+  data: DisconnectSourceInput;
 }>;
 
 
@@ -2372,7 +2376,7 @@ export type DisconnectPipelineMutationHookResult = ReturnType<typeof useDisconne
 export type DisconnectPipelineMutationResult = Apollo.MutationResult<DisconnectPipelineMutation>;
 export type DisconnectPipelineMutationOptions = Apollo.BaseMutationOptions<DisconnectPipelineMutation, DisconnectPipelineMutationVariables>;
 export const ConnectWellDocument = gql`
-    mutation ConnectWell($data: ConnectWellInput!) {
+    mutation ConnectWell($data: ConnectSourceInput!) {
   connectWell(data: $data) {
     well {
       id
@@ -2411,7 +2415,7 @@ export type ConnectWellMutationHookResult = ReturnType<typeof useConnectWellMuta
 export type ConnectWellMutationResult = Apollo.MutationResult<ConnectWellMutation>;
 export type ConnectWellMutationOptions = Apollo.BaseMutationOptions<ConnectWellMutation, ConnectWellMutationVariables>;
 export const DisconnectWellDocument = gql`
-    mutation DisconnectWell($data: DisconnectWellInput!) {
+    mutation DisconnectWell($data: DisconnectSourceInput!) {
   disconnectWell(data: $data) {
     well {
       id
@@ -2450,8 +2454,8 @@ export type DisconnectWellMutationHookResult = ReturnType<typeof useDisconnectWe
 export type DisconnectWellMutationResult = Apollo.MutationResult<DisconnectWellMutation>;
 export type DisconnectWellMutationOptions = Apollo.BaseMutationOptions<DisconnectWellMutation, DisconnectWellMutationVariables>;
 export const ConnectSalesPointDocument = gql`
-    mutation ConnectSalesPoint($id: String!, $pipelineId: String!) {
-  connectSalesPoint(id: $id, pipelineId: $pipelineId) {
+    mutation ConnectSalesPoint($data: ConnectSourceInput!) {
+  connectSalesPoint(data: $data) {
     salesPoint {
       id
     }
@@ -2477,8 +2481,7 @@ export type ConnectSalesPointMutationFn = Apollo.MutationFunction<ConnectSalesPo
  * @example
  * const [connectSalesPointMutation, { data, loading, error }] = useConnectSalesPointMutation({
  *   variables: {
- *      id: // value for 'id'
- *      pipelineId: // value for 'pipelineId'
+ *      data: // value for 'data'
  *   },
  * });
  */
@@ -2490,8 +2493,8 @@ export type ConnectSalesPointMutationHookResult = ReturnType<typeof useConnectSa
 export type ConnectSalesPointMutationResult = Apollo.MutationResult<ConnectSalesPointMutation>;
 export type ConnectSalesPointMutationOptions = Apollo.BaseMutationOptions<ConnectSalesPointMutation, ConnectSalesPointMutationVariables>;
 export const DisconnectSalesPointDocument = gql`
-    mutation DisconnectSalesPoint($id: String!) {
-  disconnectSalesPoint(id: $id) {
+    mutation DisconnectSalesPoint($data: DisconnectSourceInput!) {
+  disconnectSalesPoint(data: $data) {
     salesPoint {
       id
     }
@@ -2517,7 +2520,7 @@ export type DisconnectSalesPointMutationFn = Apollo.MutationFunction<DisconnectS
  * @example
  * const [disconnectSalesPointMutation, { data, loading, error }] = useDisconnectSalesPointMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      data: // value for 'data'
  *   },
  * });
  */
