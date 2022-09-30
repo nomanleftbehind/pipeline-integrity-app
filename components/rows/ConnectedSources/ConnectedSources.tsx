@@ -89,9 +89,10 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection,
     // as otherwise if you click OK, while not having selected a different injection point,
     // it would first override injection point with itself and then delete it.
     if (oldSourceId) {
-      disconnectWell({ variables: { id: oldSourceId } });
+      // Don't pass pipeline info to well being disconnected, because it is the same as the one being passed to connectWell resolver. No need to run flow allocation twice.
+      disconnectWell({ variables: { data: { id: oldSourceId } } });
     }
-    connectWell({ variables: { id, pipelineId } });
+    connectWell({ variables: { data: { id, pipelineId, flowCalculationDirection } } });
   }
 
   const [disconnectWell] = useDisconnectWellMutation({
@@ -104,7 +105,7 @@ export default function ConnectedSources({ pipelineId, flowCalculationDirection,
     }
   });
   const handleDisconnectWell = ({ id }: IDis_ConnectSource) => {
-    disconnectWell({ variables: { id } });
+    disconnectWell({ variables: { data: { id, pipelineInfo: { pipelineId, flowCalculationDirection } } } });
   }
 
 

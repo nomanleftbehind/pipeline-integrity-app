@@ -1,7 +1,8 @@
-import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
+import { objectType, stringArg, inputObjectType, extendType, nonNull, arg } from 'nexus';
 import { Context } from '../context';
 import { User as IUser, Well as IWell } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
+import { allocateRecursivePipelineFlow } from './PipelineFlow';
 
 
 
@@ -286,6 +287,36 @@ export const EditWellInput = inputObjectType({
   },
 });
 
+export const ConnectWellInput = inputObjectType({
+  name: 'ConnectWellInput',
+  definition: t => {
+    t.nonNull.string('id')
+    t.nonNull.string('pipelineId')
+    t.nonNull.field('flowCalculationDirection', { type: 'FlowCalculationDirectionEnum' })
+  },
+});
+
+export const DisconnectWellOptionalInput = inputObjectType({
+  name: 'DisconnectWellOptionalInput',
+  definition: t => {
+    t.nonNull.string('pipelineId')
+    t.nonNull.field('flowCalculationDirection', { type: 'FlowCalculationDirectionEnum' })
+  },
+});
+
+export const DisconnectWellInput = inputObjectType({
+  name: 'DisconnectWellInput',
+  definition: t => {
+    t.nonNull.string('id')
+    t.field('pipelineInfo', {
+      type: 'DisconnectWellOptionalInput',
+      description: 'Pass this object if well is being explicitly disconnected from pipeline, as opposed to implicitly by connecting the well to another pipeline'
+    })
+  },
+});
+
+
+
 export const WellMutation = extendType({
   type: 'Mutation',
   definition(t) {
@@ -333,16 +364,26 @@ export const WellMutation = extendType({
     })
     t.field('connectWell', {
       type: 'WellPayload',
-      args: {
-        id: nonNull(stringArg()),
-        pipelineId: nonNull(stringArg()),
-      },
-      resolve: async (_, { id, pipelineId }, ctx: Context) => {
+      args: { data: nonNull(arg({ type: 'ConnectWellInput' })) },
+      resolve: async (_, { data: { id, pipelineId, flowCalculationDirection } }, ctx: Context) => {
         const user = ctx.user;
         if (user) {
           const { id: userId, firstName } = user
           const authorized = resolveWellAuthorized(user);
           if (authorized) {
+
+            // When connecting new well to a pipeline, the requested well will implicitly be disconnected from previous pipeline.
+            // We need to find that pipeline before new connection is made and run flow allocation on it, as the flow will have changed.
+            const wellInitialPipeline = await ctx.prisma.pipeline.findFirst({
+              where: { wells: { some: { id } } },
+              select: { id: true, flowCalculationDirection: true }
+            });
+
+            const pipelines = [{ id: pipelineId, flowCalculationDirection }];
+            if (wellInitialPipeline && wellInitialPipeline.id !== pipelineId) {
+              pipelines.push(wellInitialPipeline);
+            }
+
             const well = await ctx.prisma.well.update({
               where: { id },
               data: {
@@ -358,6 +399,9 @@ export const WellMutation = extendType({
                 }
               }
             });
+
+            // Don't await because it can take many seconds depending on number of chained pipelines, and we dont' need the result of allocation
+            allocateRecursivePipelineFlow({ pipelines, allocated: [], ctx });
             return { well }
           }
           return {
@@ -377,10 +421,8 @@ export const WellMutation = extendType({
     })
     t.field('disconnectWell', {
       type: 'WellPayload',
-      args: {
-        id: nonNull(stringArg()),
-      },
-      resolve: async (_, { id }, ctx: Context) => {
+      args: { data: nonNull(arg({ type: 'DisconnectWellInput' })) },
+      resolve: async (_, { data: { id, pipelineInfo } }, ctx: Context) => {
         const user = ctx.user;
         if (user) {
           const { id: userId, firstName } = user
@@ -399,6 +441,17 @@ export const WellMutation = extendType({
                 }
               }
             });
+
+            if (pipelineInfo) {
+              // If pipeline info is passed to resolver, it means that resolver is being explicitly called to disconnect the well.
+              // We want to run pipeline flow allocation in that case because well has been disconnected from the pipeline and flow has changed.
+              // If pipeline info is not passed to resolver, it means that the disconnect well resolver is called as part of replacing the well with another well.
+              // In that case pipeline flow allocation will be called inside connect well resolver, hence no need to run it twice.
+              const { pipelineId, flowCalculationDirection } = pipelineInfo;
+              // Don't await because it can take many seconds depending on number of chained pipelines, and we dont' need the result of allocation
+              allocateRecursivePipelineFlow({ pipelines: [{ id: pipelineId, flowCalculationDirection }], allocated: [], ctx });
+            }
+
             return { well }
           }
           return {

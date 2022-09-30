@@ -118,38 +118,51 @@ export const pipelineFlow = async ({ id, flowCalculationDirection, ctx }: IPipel
   return null;
 }
 
+interface IAllocateRecursivePipelineFlow {
+  pipelines: Pick<IPipeline, 'id' | 'flowCalculationDirection'>[];
+  allocated: string[];
+  ctx: Context;
+}
+
+// Recursive function that traverses all chained upstream and downstream pipelines and allocates flow
+export const allocateRecursivePipelineFlow = async ({ pipelines, allocated, ctx }: IAllocateRecursivePipelineFlow) => {
+
+  console.log('pipelines:', pipelines.map((a: any) => a.license + '-' + a.segment), 'allocLic:', allocated);
+
+  for (const { id, flowCalculationDirection } of pipelines) {
+    await allocatePipelineFlow({ id, flowCalculationDirection, ctx });
+    allocated.push(id);
+  }
+
+  if (pipelines.length === 0) {
+
+  } else {
+    const ids = pipelines.map(({ id }) => id);
+
+    const newPipelines = await ctx.prisma.pipeline.findMany({
+      where: {
+        OR: [
+          {
+            upstream: { some: { downstreamId: { in: ids } } }
+          },
+          {
+            downstream: { some: { upstreamId: { in: ids } } }
+          },
+        ],
+        id: { notIn: allocated }
+      },
+      select: { id: true, flowCalculationDirection: true, license: true, segment: true }
+    });
+
+    await allocateRecursivePipelineFlow({ pipelines: newPipelines, allocated, ctx });
+  }
+};
+
 interface IAllocatePipelineFlowArgs {
   id: IPipeline['id'];
   flowCalculationDirection: IPipeline['flowCalculationDirection'];
   ctx: Context;
 }
-
-// Recursive function that traverses all chained upstream and downstream pipelines and allocated flow
-export const allocateRecursivePipelineFlow = async (ids: string[], allocated: string[], ctx: Context, lic: string[], allocLic: string[]): Promise<null> => {
-
-  console.log('lic:', lic, 'allocLic:', allocLic);
-
-  if (ids.length === 0) {
-    return null;
-  } else {
-
-    const upstream = await ctx.prisma.pipelinesOnPipelines.findMany({
-      where: { AND: [{ downstreamId: { in: ids } }, { upstreamId: { notIn: allocated } }] },
-      select: { upstreamId: true, upstream: { select: { flowCalculationDirection: true, license: true, segment: true } } }
-    });
-
-    for (const { upstreamId, upstream: { flowCalculationDirection, license, segment } } of upstream) {
-      await allocatePipelineFlow({ id: upstreamId, flowCalculationDirection, ctx });
-      allocated.push(upstreamId);
-      allocLic.push(`${license}-${segment}`);
-    }
-
-    const newIds = upstream.map(({ upstreamId }) => upstreamId);
-    const newLic = upstream.map(({ upstream: { license, segment } }) => `${license}-${segment}`);
-
-    return await allocateRecursivePipelineFlow(newIds, allocated, ctx, newLic, allocLic);
-  }
-};
 
 export const allocatePipelineFlow = async ({ id, flowCalculationDirection, ctx }: IAllocatePipelineFlowArgs) => {
 
@@ -173,7 +186,6 @@ export const allocatePipelineFlow = async ({ id, flowCalculationDirection, ctx }
       }
     });
     // console.log(id, flowCalculationDirection, oil, water, gas, gasAssociatedLiquids, totalFluids,);
-
   }
 }
 

@@ -135,6 +135,23 @@ export type Company = {
   updatedBy: User;
 };
 
+export type ConnectWellInput = {
+  flowCalculationDirection: FlowCalculationDirectionEnum;
+  id: Scalars['String'];
+  pipelineId: Scalars['String'];
+};
+
+export type DisconnectWellInput = {
+  id: Scalars['String'];
+  /** Pass this object if well is being explicitly disconnected from pipeline, as opposed to implicitly by connecting the well to another pipeline */
+  pipelineInfo?: Maybe<DisconnectWellOptionalInput>;
+};
+
+export type DisconnectWellOptionalInput = {
+  flowCalculationDirection: FlowCalculationDirectionEnum;
+  pipelineId: Scalars['String'];
+};
+
 export type EditCathodicSurveyInput = {
   comment?: Maybe<Scalars['String']>;
   companyId?: Maybe<Scalars['String']>;
@@ -233,6 +250,20 @@ export type EditWellBatchInput = {
   diluentVolume?: Maybe<Scalars['Float']>;
   id: Scalars['String'];
   productId?: Maybe<Scalars['String']>;
+};
+
+export type EditWellInput = {
+  fdcRecId?: Maybe<Scalars['String']>;
+  firstInjection?: Maybe<Scalars['DateTime']>;
+  firstProduction?: Maybe<Scalars['DateTime']>;
+  gas?: Maybe<Scalars['Float']>;
+  id: Scalars['String'];
+  lastInjection?: Maybe<Scalars['DateTime']>;
+  lastProduction?: Maybe<Scalars['DateTime']>;
+  name?: Maybe<Scalars['String']>;
+  oil?: Maybe<Scalars['Float']>;
+  pipelineId?: Maybe<Scalars['String']>;
+  water?: Maybe<Scalars['Float']>;
 };
 
 export type EnumObject = {
@@ -414,6 +445,7 @@ export type Mutation = {
   login: AuthPayload;
   logout: Scalars['Boolean'];
   signup: AuthPayload;
+  testAllocate?: Maybe<Scalars['String']>;
 };
 
 
@@ -482,8 +514,7 @@ export type MutationConnectSalesPointArgs = {
 
 
 export type MutationConnectWellArgs = {
-  id: Scalars['String'];
-  pipelineId: Scalars['String'];
+  data: ConnectWellInput;
 };
 
 
@@ -560,7 +591,7 @@ export type MutationDisconnectSalesPointArgs = {
 
 
 export type MutationDisconnectWellArgs = {
-  id: Scalars['String'];
+  data: DisconnectWellInput;
 };
 
 
@@ -665,17 +696,7 @@ export type MutationEditSatelliteArgs = {
 
 
 export type MutationEditWellArgs = {
-  fdcRecId?: Maybe<Scalars['String']>;
-  firstInjection?: Maybe<Scalars['DateTime']>;
-  firstProduction?: Maybe<Scalars['DateTime']>;
-  gas?: Maybe<Scalars['Float']>;
-  id: Scalars['String'];
-  lastInjection?: Maybe<Scalars['DateTime']>;
-  lastProduction?: Maybe<Scalars['DateTime']>;
-  name?: Maybe<Scalars['String']>;
-  oil?: Maybe<Scalars['Float']>;
-  pipelineId?: Maybe<Scalars['String']>;
-  water?: Maybe<Scalars['Float']>;
+  data: EditWellInput;
 };
 
 
@@ -697,6 +718,12 @@ export type MutationLoginArgs = {
 
 export type MutationSignupArgs = {
   userRegisterInput: UserRegisterInput;
+};
+
+
+export type MutationTestAllocateArgs = {
+  flowCalculationDirection: FlowCalculationDirectionEnum;
+  id: Scalars['String'];
 };
 
 export type NavigationInput = {
@@ -923,6 +950,7 @@ export type Query = {
   pigRunsByPipelineId?: Maybe<Array<Maybe<PigRun>>>;
   pipelineBatchesByPipelineId?: Maybe<Array<Maybe<PipelineBatch>>>;
   pipelineFlow?: Maybe<PipelineFlow>;
+  pipelineId?: Maybe<Pipeline>;
   pipelineOptions?: Maybe<Array<Maybe<SourceOptions>>>;
   pipelinesById: PipelinesByIdPayload;
   pipelinesByUser?: Maybe<Array<Maybe<Pipeline>>>;
@@ -984,6 +1012,11 @@ export type QueryPipelineBatchesByPipelineIdArgs = {
 
 export type QueryPipelineFlowArgs = {
   flowCalculationDirection: FlowCalculationDirectionEnum;
+  id: Scalars['String'];
+};
+
+
+export type QueryPipelineIdArgs = {
   id: Scalars['String'];
 };
 
@@ -1493,15 +1526,14 @@ export type DisconnectPipelineMutationVariables = Exact<{
 export type DisconnectPipelineMutation = { disconnectPipeline?: { pipelinesOnPipelines?: { upstreamId: string, downstreamId: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type ConnectWellMutationVariables = Exact<{
-  id: Scalars['String'];
-  pipelineId: Scalars['String'];
+  data: ConnectWellInput;
 }>;
 
 
 export type ConnectWellMutation = { connectWell?: { well?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type DisconnectWellMutationVariables = Exact<{
-  id: Scalars['String'];
+  data: DisconnectWellInput;
 }>;
 
 
@@ -2340,8 +2372,8 @@ export type DisconnectPipelineMutationHookResult = ReturnType<typeof useDisconne
 export type DisconnectPipelineMutationResult = Apollo.MutationResult<DisconnectPipelineMutation>;
 export type DisconnectPipelineMutationOptions = Apollo.BaseMutationOptions<DisconnectPipelineMutation, DisconnectPipelineMutationVariables>;
 export const ConnectWellDocument = gql`
-    mutation ConnectWell($id: String!, $pipelineId: String!) {
-  connectWell(id: $id, pipelineId: $pipelineId) {
+    mutation ConnectWell($data: ConnectWellInput!) {
+  connectWell(data: $data) {
     well {
       id
     }
@@ -2367,8 +2399,7 @@ export type ConnectWellMutationFn = Apollo.MutationFunction<ConnectWellMutation,
  * @example
  * const [connectWellMutation, { data, loading, error }] = useConnectWellMutation({
  *   variables: {
- *      id: // value for 'id'
- *      pipelineId: // value for 'pipelineId'
+ *      data: // value for 'data'
  *   },
  * });
  */
@@ -2380,8 +2411,8 @@ export type ConnectWellMutationHookResult = ReturnType<typeof useConnectWellMuta
 export type ConnectWellMutationResult = Apollo.MutationResult<ConnectWellMutation>;
 export type ConnectWellMutationOptions = Apollo.BaseMutationOptions<ConnectWellMutation, ConnectWellMutationVariables>;
 export const DisconnectWellDocument = gql`
-    mutation DisconnectWell($id: String!) {
-  disconnectWell(id: $id) {
+    mutation DisconnectWell($data: DisconnectWellInput!) {
+  disconnectWell(data: $data) {
     well {
       id
     }
@@ -2407,7 +2438,7 @@ export type DisconnectWellMutationFn = Apollo.MutationFunction<DisconnectWellMut
  * @example
  * const [disconnectWellMutation, { data, loading, error }] = useDisconnectWellMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      data: // value for 'data'
  *   },
  * });
  */

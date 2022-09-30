@@ -122,10 +122,30 @@ type Company {
   updatedBy: User!
 }
 
+input ConnectWellInput {
+  flowCalculationDirection: FlowCalculationDirectionEnum!
+  id: String!
+  pipelineId: String!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
+
+input DisconnectWellInput {
+  id: String!
+
+  """
+  Pass this object if well is being explicitly disconnected from pipeline, as opposed to implicitly by connecting the well to another pipeline
+  """
+  pipelineInfo: DisconnectWellOptionalInput
+}
+
+input DisconnectWellOptionalInput {
+  flowCalculationDirection: FlowCalculationDirectionEnum!
+  pipelineId: String!
+}
 
 input EditCathodicSurveyInput {
   comment: String
@@ -385,7 +405,7 @@ type Mutation {
   changePassword(changePasswordInput: ChangePasswordInput!): AuthPayload!
   connectPipeline(connectNewPipelineId: String!, connectedPipelineId: String, flowCalculationDirection: FlowCalculationDirectionEnum!, pipelineId: String!): PipelinesOnPipelinesPayload
   connectSalesPoint(id: String!, pipelineId: String!): SalesPointPayload
-  connectWell(id: String!, pipelineId: String!): WellPayload
+  connectWell(data: ConnectWellInput!): WellPayload
   createFacility(data: FacilityCreateInput!): Facility
   deleteCathodicSurvey(id: String!): CathodicSurveyPayload
   deleteChemical(id: String!): ChemicalPayload
@@ -400,7 +420,7 @@ type Mutation {
   deleteWellBatch(id: String!): WellBatchPayload
   disconnectPipeline(disconnectPipelineId: String!, flowCalculationDirection: FlowCalculationDirectionEnum!, pipelineId: String!): PipelinesOnPipelinesPayload
   disconnectSalesPoint(id: String!): SalesPointPayload
-  disconnectWell(id: String!): WellPayload
+  disconnectWell(data: DisconnectWellInput!): WellPayload
   duplicatePipeline(id: String!): PipelinePayload
   editCathodicSurvey(data: EditCathodicSurveyInput!): CathodicSurveyPayload
   editChemical(bacteria: Boolean, bacteriaTreatment: Boolean, baselineFluidAnalysisDate: DateTime, batchFrequency: Int, chemicalSupplierId: String, co2: Boolean, comment: String, continuousInjection: Boolean, downholeBatch: Boolean, h2s: Boolean, id: String!, inhibitorPipelineBatch: Boolean, injectionRate: Float, o2: Boolean, scaleTreatment: Boolean, scaling: Boolean): ChemicalPayload
@@ -420,7 +440,7 @@ type Mutation {
   login(email: String!, password: String!): AuthPayload!
   logout: Boolean!
   signup(userRegisterInput: UserRegisterInput!): AuthPayload!
-  testAllocate(id: String!): Pipeline
+  testAllocate(flowCalculationDirection: FlowCalculationDirectionEnum!, id: String!): String
 }
 
 input NavigationInput {

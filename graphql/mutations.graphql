@@ -104,8 +104,8 @@ mutation DisconnectPipeline($pipelineId: String!, $disconnectPipelineId: String!
   }
 }
 
-mutation ConnectWell($id: String!, $pipelineId: String!) {
-  connectWell(id: $id, pipelineId: $pipelineId) {
+mutation ConnectWell($data: ConnectWellInput!) {
+  connectWell(data: $data) {
     well {
       id
     }
@@ -116,8 +116,8 @@ mutation ConnectWell($id: String!, $pipelineId: String!) {
   }
 }
 
-mutation DisconnectWell($id: String!) {
-  disconnectWell(id: $id) {
+mutation DisconnectWell($data: DisconnectWellInput!) {
+  disconnectWell(data: $data) {
     well {
       id
     }

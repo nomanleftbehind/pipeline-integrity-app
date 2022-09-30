@@ -405,18 +405,10 @@ export const PipelineQuery = extendType({
           if (table === 'satellite') {
             const where = { satelliteId: id };
             const count = await ctx.prisma.pipeline.count({ where });
-            const idsAndFCDs = await ctx.prisma.pipeline.findMany({
+            const pipelines = await ctx.prisma.pipeline.findMany({
               where,
               skip,
               take,
-              select: { id: true, flowCalculationDirection: true },
-            });
-            for (const { id, flowCalculationDirection } of idsAndFCDs) {
-              await allocatePipelineFlow({ id, flowCalculationDirection, ctx });
-            }
-            const ids = idsAndFCDs.map(({ id }) => id);
-            const pipelines = await ctx.prisma.pipeline.findMany({
-              where: { id: { in: ids } },
               orderBy: [
                 { license: 'asc' },
                 { segment: 'asc' },
@@ -426,18 +418,10 @@ export const PipelineQuery = extendType({
           } else if (table === 'facility' && id === 'no-facility') {
             const where = { satellite: { facilityId: null } };
             const count = await ctx.prisma.pipeline.count({ where });
-            const idsAndFCDs = await ctx.prisma.pipeline.findMany({
+            const pipelines = await ctx.prisma.pipeline.findMany({
               where,
               skip,
               take,
-              select: { id: true, flowCalculationDirection: true },
-            });
-            for (const { id, flowCalculationDirection } of idsAndFCDs) {
-              await allocatePipelineFlow({ id, flowCalculationDirection, ctx });
-            }
-            const ids = idsAndFCDs.map(({ id }) => id);
-            const pipelines = await ctx.prisma.pipeline.findMany({
-              where: { id: { in: ids } },
               orderBy: [
                 { license: 'asc' },
                 { segment: 'asc' },
@@ -447,18 +431,10 @@ export const PipelineQuery = extendType({
           } else if (table === 'facility' && id) {
             const where = { satellite: { facilityId: id } };
             const count = await ctx.prisma.pipeline.count({ where });
-            const idsAndFCDs = await ctx.prisma.pipeline.findMany({
+            const pipelines = await ctx.prisma.pipeline.findMany({
               where,
               skip,
               take,
-              select: { id: true, flowCalculationDirection: true },
-            });
-            for (const { id, flowCalculationDirection } of idsAndFCDs) {
-              await allocatePipelineFlow({ id, flowCalculationDirection, ctx });
-            }
-            const ids = idsAndFCDs.map(({ id }) => id);
-            const pipelines = await ctx.prisma.pipeline.findMany({
-              where: { id: { in: ids } },
               orderBy: [
                 { license: 'asc' },
                 { segment: 'asc' },
@@ -467,17 +443,9 @@ export const PipelineQuery = extendType({
             return { pipelines, count };
           } else {
             const count = await ctx.prisma.pipeline.count();
-            const idsAndFCDs = await ctx.prisma.pipeline.findMany({
+            const pipelines = await ctx.prisma.pipeline.findMany({
               skip,
               take,
-              select: { id: true, flowCalculationDirection: true },
-            });
-            for (const { id, flowCalculationDirection } of idsAndFCDs) {
-              await allocatePipelineFlow({ id, flowCalculationDirection, ctx });
-            }
-            const ids = idsAndFCDs.map(({ id }) => id);
-            const pipelines = await ctx.prisma.pipeline.findMany({
-              where: { id: { in: ids } },
               orderBy: [
                 { license: 'asc' },
                 { segment: 'asc' },
@@ -884,18 +852,8 @@ export const PipelineQuery = extendType({
 
           const where = { AND: query, };
           const count = await ctx.prisma.pipeline.count({ where });
-          // const idsAndFCDs = await ctx.prisma.pipeline.findMany({
-          //   where,
-          //   skip,
-          //   take,
-          //   select: { id: true, flowCalculationDirection: true },
-          // });
-          // for (const { id, flowCalculationDirection } of idsAndFCDs) {
-          //   await allocatePipelineFlow({ id, flowCalculationDirection, ctx });
-          // }
-          // const ids = idsAndFCDs.map(({ id }) => id);
           const pipelines = await ctx.prisma.pipeline.findMany({
-            where/*: { id: { in: ids } }*/,
+            where,
             skip,
             take,
             orderBy: [
@@ -1004,9 +962,13 @@ export const PipelineMutation = extendType({
   definition(t) {
     t.field('testAllocate', {
       type: 'String',
-      args: { id: nonNull(stringArg()) },
-      resolve: async (_, { id }, ctx) => {
-        return await allocateRecursivePipelineFlow([id], [], ctx, [], []);
+      args: {
+        id: nonNull(stringArg()),
+        flowCalculationDirection: nonNull(arg({ type: 'FlowCalculationDirectionEnum' }))
+      },
+      resolve: async (_, { id, flowCalculationDirection }, ctx) => {
+        allocateRecursivePipelineFlow({ pipelines: [{ id, flowCalculationDirection }], allocated: [], ctx });
+        return 'hi'
       }
     })
     t.field('editPipeline', {
