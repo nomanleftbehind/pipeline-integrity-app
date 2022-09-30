@@ -2,6 +2,7 @@ import { objectType, stringArg, extendType, nonNull, arg } from 'nexus';
 import { Context } from '../context';
 import { ITableConstructObject } from './SearchNavigation';
 import { resolvePipelineAuthorized } from './Pipeline';
+import { allocateRecursivePipelineFlow } from './PipelineFlow';
 
 export const PipelinesOnPipelinesObjectFields: ITableConstructObject[] = [
   { field: 'upstreamId', nullable: false, type: 'String' },
@@ -32,19 +33,19 @@ export const PipelinesOnPipelinesExtendObject = extendType({
   definition: t => {
     t.nonNull.field('upstream', {
       type: 'Pipeline',
-      resolve: async ({ upstreamId }, _args, ctx: Context) => {
-        const result = await ctx.prisma.pipeline.findUnique({
-          where: { id: upstreamId },
-        });
+      resolve: async ({ upstreamId, downstreamId }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipelinesOnPipelines.findUnique({
+          where: { upstreamId_downstreamId: { upstreamId, downstreamId } },
+        }).upstream();
         return result!
       },
     })
     t.nonNull.field('downstream', {
       type: 'Pipeline',
-      resolve: async ({ downstreamId }, _args, ctx: Context) => {
-        const result = await ctx.prisma.pipeline.findUnique({
-          where: { id: downstreamId },
-        });
+      resolve: async ({ upstreamId, downstreamId }, _args, ctx: Context) => {
+        const result = await ctx.prisma.pipelinesOnPipelines.findUnique({
+          where: { upstreamId_downstreamId: { upstreamId, downstreamId } },
+        }).downstream();
         return result!
       },
     })
@@ -131,7 +132,20 @@ export const PipelinesOnPipelinesMutation = extendType({
           const { id: userId, firstName } = user;
           const authorized = resolvePipelineAuthorized(user);
           if (authorized) {
+
+            const pipelines = [{ id: pipelineId, flowCalculationDirection }];
+
             if (typeof connectedPipelineId === 'string') {
+
+              const connectedPipeline = await ctx.prisma.pipeline.findUnique({
+                where: { id: connectedPipelineId },
+                select: { flowCalculationDirection: true }
+              });
+
+              if (connectedPipeline && connectedPipelineId !== pipelineId) {
+                pipelines.push({ id: connectedPipelineId, flowCalculationDirection: connectedPipeline.flowCalculationDirection });
+              }
+
               const pipelinesOnPipelines = await ctx.prisma.pipelinesOnPipelines.update({
                 where: {
                   upstreamId_downstreamId: {
@@ -145,6 +159,9 @@ export const PipelinesOnPipelinesMutation = extendType({
                   updatedById: userId,
                 },
               });
+
+              // Don't await because it can take many seconds depending on number of chained pipelines, and we dont' need the result of allocation
+              allocateRecursivePipelineFlow({ pipelines, allocated: [], ctx });
               return { pipelinesOnPipelines }
             }
             const pipelinesOnPipelines = await ctx.prisma.pipelinesOnPipelines.create({
@@ -155,6 +172,8 @@ export const PipelinesOnPipelinesMutation = extendType({
                 updatedById: userId,
               }
             });
+            // Don't await because it can take many seconds depending on number of chained pipelines, and we dont' need the result of allocation
+            allocateRecursivePipelineFlow({ pipelines, allocated: [], ctx });
             return { pipelinesOnPipelines }
           }
           return {
@@ -185,6 +204,18 @@ export const PipelinesOnPipelinesMutation = extendType({
           const { firstName } = user;
           const authorized = resolvePipelineAuthorized(user);
           if (authorized) {
+
+            const pipelines = [{ id: pipelineId, flowCalculationDirection }];
+
+            const connectedPipeline = await ctx.prisma.pipeline.findUnique({
+              where: { id: disconnectPipelineId },
+              select: { flowCalculationDirection: true }
+            });
+
+            if (connectedPipeline && disconnectPipelineId !== pipelineId) {
+              pipelines.push({ id: disconnectPipelineId, flowCalculationDirection: connectedPipeline.flowCalculationDirection });
+            }
+
             const pipelinesOnPipelines = await ctx.prisma.pipelinesOnPipelines.delete({
               where: {
                 upstreamId_downstreamId: {
@@ -193,6 +224,8 @@ export const PipelinesOnPipelinesMutation = extendType({
                 }
               },
             });
+            // Don't await because it can take many seconds depending on number of chained pipelines, and we dont' need the result of allocation
+            allocateRecursivePipelineFlow({ pipelines, allocated: [], ctx });
             return { pipelinesOnPipelines }
           }
           return {
