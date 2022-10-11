@@ -95,7 +95,7 @@ export default function Chemical({ id, license, segment, validators }: IChemical
       }
     }
     newRecord = switchNewRecord();
-    editChemical({ variables: { id, [columnName]: newRecord } });
+    editChemical({ variables: { data: { id, [columnName]: newRecord } } });
   }
 
   const addRecord = () => {

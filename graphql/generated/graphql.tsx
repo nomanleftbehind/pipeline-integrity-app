@@ -161,6 +161,25 @@ export type EditCathodicSurveyInput = {
   id: Scalars['String'];
 };
 
+export type EditChemicalInput = {
+  bacteria?: Maybe<Scalars['Boolean']>;
+  bacteriaTreatment?: Maybe<Scalars['Boolean']>;
+  baselineFluidAnalysisDate?: Maybe<Scalars['DateTime']>;
+  batchFrequency?: Maybe<Scalars['Int']>;
+  chemicalSupplierId?: Maybe<Scalars['String']>;
+  co2?: Maybe<Scalars['Boolean']>;
+  comment?: Maybe<Scalars['String']>;
+  continuousInjection?: Maybe<Scalars['Boolean']>;
+  downholeBatch?: Maybe<Scalars['Boolean']>;
+  h2s?: Maybe<Scalars['Boolean']>;
+  id: Scalars['String'];
+  inhibitorPipelineBatch?: Maybe<Scalars['Boolean']>;
+  injectionRate?: Maybe<Scalars['Float']>;
+  o2?: Maybe<Scalars['Boolean']>;
+  scaleTreatment?: Maybe<Scalars['Boolean']>;
+  scaling?: Maybe<Scalars['Boolean']>;
+};
+
 export type EditGeotechnicalInput = {
   comment?: Maybe<Scalars['String']>;
   dateSlopeChecked?: Maybe<Scalars['DateTime']>;
@@ -621,22 +640,7 @@ export type MutationEditCathodicSurveyArgs = {
 
 
 export type MutationEditChemicalArgs = {
-  bacteria?: Maybe<Scalars['Boolean']>;
-  bacteriaTreatment?: Maybe<Scalars['Boolean']>;
-  baselineFluidAnalysisDate?: Maybe<Scalars['DateTime']>;
-  batchFrequency?: Maybe<Scalars['Int']>;
-  chemicalSupplierId?: Maybe<Scalars['String']>;
-  co2?: Maybe<Scalars['Boolean']>;
-  comment?: Maybe<Scalars['String']>;
-  continuousInjection?: Maybe<Scalars['Boolean']>;
-  downholeBatch?: Maybe<Scalars['Boolean']>;
-  h2s?: Maybe<Scalars['Boolean']>;
-  id: Scalars['String'];
-  inhibitorPipelineBatch?: Maybe<Scalars['Boolean']>;
-  injectionRate?: Maybe<Scalars['Float']>;
-  o2?: Maybe<Scalars['Boolean']>;
-  scaleTreatment?: Maybe<Scalars['Boolean']>;
-  scaling?: Maybe<Scalars['Boolean']>;
+  data: EditChemicalInput;
 };
 
 
@@ -1741,22 +1745,7 @@ export type DeleteCathodicSurveyMutationVariables = Exact<{
 export type DeleteCathodicSurveyMutation = { deleteCathodicSurvey?: { cathodicSurvey?: { id: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
 export type EditChemicalMutationVariables = Exact<{
-  id: Scalars['String'];
-  chemicalSupplierId?: Maybe<Scalars['String']>;
-  baselineFluidAnalysisDate?: Maybe<Scalars['DateTime']>;
-  scaling?: Maybe<Scalars['Boolean']>;
-  bacteria?: Maybe<Scalars['Boolean']>;
-  co2?: Maybe<Scalars['Boolean']>;
-  o2?: Maybe<Scalars['Boolean']>;
-  h2s?: Maybe<Scalars['Boolean']>;
-  continuousInjection?: Maybe<Scalars['Boolean']>;
-  injectionRate?: Maybe<Scalars['Float']>;
-  downholeBatch?: Maybe<Scalars['Boolean']>;
-  inhibitorPipelineBatch?: Maybe<Scalars['Boolean']>;
-  bacteriaTreatment?: Maybe<Scalars['Boolean']>;
-  scaleTreatment?: Maybe<Scalars['Boolean']>;
-  batchFrequency?: Maybe<Scalars['Int']>;
-  comment?: Maybe<Scalars['String']>;
+  data: EditChemicalInput;
 }>;
 
 
@@ -3523,25 +3512,8 @@ export type DeleteCathodicSurveyMutationHookResult = ReturnType<typeof useDelete
 export type DeleteCathodicSurveyMutationResult = Apollo.MutationResult<DeleteCathodicSurveyMutation>;
 export type DeleteCathodicSurveyMutationOptions = Apollo.BaseMutationOptions<DeleteCathodicSurveyMutation, DeleteCathodicSurveyMutationVariables>;
 export const EditChemicalDocument = gql`
-    mutation EditChemical($id: String!, $chemicalSupplierId: String, $baselineFluidAnalysisDate: DateTime, $scaling: Boolean, $bacteria: Boolean, $co2: Boolean, $o2: Boolean, $h2s: Boolean, $continuousInjection: Boolean, $injectionRate: Float, $downholeBatch: Boolean, $inhibitorPipelineBatch: Boolean, $bacteriaTreatment: Boolean, $scaleTreatment: Boolean, $batchFrequency: Int, $comment: String) {
-  editChemical(
-    id: $id
-    chemicalSupplierId: $chemicalSupplierId
-    baselineFluidAnalysisDate: $baselineFluidAnalysisDate
-    scaling: $scaling
-    bacteria: $bacteria
-    co2: $co2
-    o2: $o2
-    h2s: $h2s
-    continuousInjection: $continuousInjection
-    injectionRate: $injectionRate
-    downholeBatch: $downholeBatch
-    inhibitorPipelineBatch: $inhibitorPipelineBatch
-    bacteriaTreatment: $bacteriaTreatment
-    scaleTreatment: $scaleTreatment
-    batchFrequency: $batchFrequency
-    comment: $comment
-  ) {
+    mutation EditChemical($data: EditChemicalInput!) {
+  editChemical(data: $data) {
     chemical {
       id
     }
@@ -3567,22 +3539,7 @@ export type EditChemicalMutationFn = Apollo.MutationFunction<EditChemicalMutatio
  * @example
  * const [editChemicalMutation, { data, loading, error }] = useEditChemicalMutation({
  *   variables: {
- *      id: // value for 'id'
- *      chemicalSupplierId: // value for 'chemicalSupplierId'
- *      baselineFluidAnalysisDate: // value for 'baselineFluidAnalysisDate'
- *      scaling: // value for 'scaling'
- *      bacteria: // value for 'bacteria'
- *      co2: // value for 'co2'
- *      o2: // value for 'o2'
- *      h2s: // value for 'h2s'
- *      continuousInjection: // value for 'continuousInjection'
- *      injectionRate: // value for 'injectionRate'
- *      downholeBatch: // value for 'downholeBatch'
- *      inhibitorPipelineBatch: // value for 'inhibitorPipelineBatch'
- *      bacteriaTreatment: // value for 'bacteriaTreatment'
- *      scaleTreatment: // value for 'scaleTreatment'
- *      batchFrequency: // value for 'batchFrequency'
- *      comment: // value for 'comment'
+ *      data: // value for 'data'
  *   },
  * });
  */

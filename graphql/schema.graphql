@@ -156,6 +156,25 @@ input EditCathodicSurveyInput {
   id: String!
 }
 
+input EditChemicalInput {
+  bacteria: Boolean
+  bacteriaTreatment: Boolean
+  baselineFluidAnalysisDate: DateTime
+  batchFrequency: Int
+  chemicalSupplierId: String
+  co2: Boolean
+  comment: String
+  continuousInjection: Boolean
+  downholeBatch: Boolean
+  h2s: Boolean
+  id: String!
+  inhibitorPipelineBatch: Boolean
+  injectionRate: Float
+  o2: Boolean
+  scaleTreatment: Boolean
+  scaling: Boolean
+}
+
 input EditGeotechnicalInput {
   comment: String
   dateSlopeChecked: DateTime
@@ -439,7 +458,7 @@ type Mutation {
   disconnectWell(data: DisconnectSourceInput!): WellPayload
   duplicatePipeline(id: String!): PipelinePayload
   editCathodicSurvey(data: EditCathodicSurveyInput!): CathodicSurveyPayload
-  editChemical(bacteria: Boolean, bacteriaTreatment: Boolean, baselineFluidAnalysisDate: DateTime, batchFrequency: Int, chemicalSupplierId: String, co2: Boolean, comment: String, continuousInjection: Boolean, downholeBatch: Boolean, h2s: Boolean, id: String!, inhibitorPipelineBatch: Boolean, injectionRate: Float, o2: Boolean, scaleTreatment: Boolean, scaling: Boolean): ChemicalPayload
+  editChemical(data: EditChemicalInput!): ChemicalPayload
   editFacility(id: String!, name: String): Facility
   editGeotechnical(data: EditGeotechnicalInput!): GeotechnicalPayload
   editLicenseChange(data: EditLicenseChangeInput!): LicenseChangePayload

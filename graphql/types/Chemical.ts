@@ -1,4 +1,4 @@
-import { objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg } from 'nexus';
+import { objectType, stringArg, extendType, nonNull, arg, floatArg, booleanArg, intArg, inputObjectType } from 'nexus';
 import { Context } from '../context';
 import { User as IUser } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
@@ -127,57 +127,60 @@ export const ChemicalPayload = objectType({
   },
 });
 
+export const EditChemicalInput = inputObjectType({
+  name: 'EditChemicalInput',
+  definition(t) {
+    t.nonNull.string('id')
+    t.string('chemicalSupplierId')
+    t.field('baselineFluidAnalysisDate', { type: 'DateTime' })
+    t.boolean('scaling')
+    t.boolean('bacteria')
+    t.boolean('co2')
+    t.boolean('o2')
+    t.boolean('h2s')
+    t.boolean('continuousInjection')
+    t.float('injectionRate')
+    t.boolean('downholeBatch')
+    t.boolean('inhibitorPipelineBatch')
+    t.boolean('bacteriaTreatment')
+    t.boolean('scaleTreatment')
+    t.int('batchFrequency')
+    t.string('comment')
+  },
+});
+
 
 export const ChemicalMutation = extendType({
   type: 'Mutation',
   definition(t) {
     t.field('editChemical', {
       type: 'ChemicalPayload',
-      args: {
-        id: nonNull(stringArg()),
-        chemicalSupplierId: stringArg(),
-        baselineFluidAnalysisDate: arg({ type: 'DateTime' }),
-        scaling: booleanArg(),
-        bacteria: booleanArg(),
-        co2: booleanArg(),
-        o2: booleanArg(),
-        h2s: booleanArg(),
-        continuousInjection: booleanArg(),
-        injectionRate: floatArg(),
-        downholeBatch: booleanArg(),
-        inhibitorPipelineBatch: booleanArg(),
-        bacteriaTreatment: booleanArg(),
-        scaleTreatment: booleanArg(),
-        batchFrequency: intArg(),
-        comment: stringArg(),
-      },
-      resolve: async (_, args, ctx: Context) => {
+      args: { data: nonNull(arg({ type: 'EditChemicalInput' })) },
+      resolve: async (_, { data: { id, chemicalSupplierId, baselineFluidAnalysisDate, scaling, bacteria, co2, o2, h2s, continuousInjection, injectionRate, downholeBatch, inhibitorPipelineBatch, bacteriaTreatment, scaleTreatment, batchFrequency, comment } }, ctx: Context) => {
 
         const user = ctx.user;
-
         if (user) {
           const { id: userId, firstName } = user;
           const authorized = resolveChemicalAuthorized(user);
           if (authorized) {
-
             const chemical = await ctx.prisma.chemical.update({
-              where: { id: args.id },
+              where: { id },
               data: {
-                chemicalSupplierId: args.chemicalSupplierId,
-                baselineFluidAnalysisDate: args.baselineFluidAnalysisDate,
-                scaling: args.scaling,
-                bacteria: args.bacteria,
-                co2: args.co2,
-                o2: args.o2,
-                h2s: args.h2s,
-                continuousInjection: args.continuousInjection,
-                injectionRate: args.injectionRate,
-                downholeBatch: args.downholeBatch,
-                inhibitorPipelineBatch: args.inhibitorPipelineBatch,
-                bacteriaTreatment: args.bacteriaTreatment,
-                scaleTreatment: args.scaleTreatment,
-                batchFrequency: args.batchFrequency,
-                comment: args.comment,
+                chemicalSupplierId,
+                baselineFluidAnalysisDate,
+                scaling,
+                bacteria,
+                co2,
+                o2,
+                h2s,
+                continuousInjection,
+                injectionRate,
+                downholeBatch,
+                inhibitorPipelineBatch,
+                bacteriaTreatment,
+                scaleTreatment,
+                batchFrequency,
+                comment,
                 updatedById: userId,
               },
             });
