@@ -3,9 +3,9 @@ import { Well as IWell } from '@prisma/client';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-export type IWellPV = Pick<IWell, 'name' | 'oil' | 'water' | 'gas' | 'firstProduction' | 'lastProduction' | 'firstInjection' | 'lastInjection'>;
+export type IWellPV = Pick<IWell, 'name' | 'fdcRecId' | 'oil' | 'water' | 'gas' | 'firstProduction' | 'lastProduction' | 'firstInjection' | 'lastInjection'>;
 
-const sqlConfig = {
+export const sqlConfig = {
   user: process.env["pv_db_username"]!,
   password: process.env["pv_db_password"]!,
   database: process.env["pv_db_database"]!,

@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { loadWellPV, IWellPV } from './LoadWellPV';
 import { loadWellGDC } from './LoadWellGDC';
+import { loadSalesPointPV } from './LoadSalesPointPV';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -25,16 +26,26 @@ async function main() {
   const wellsPV = await loadWellPV(wellNameArg);
   const wellsGDC = await loadWellGDC(wellNameArg1, wellNameArg2);
 
+  const salesPointRecIdArray = await prisma.salesPoint.findMany({
+    select: {
+      fdcRecId: true,
+    }
+  });
+  const salesPointRecId = salesPointRecIdArray.map(({ fdcRecId }) => fdcRecId);
+  const salesPointRecIdArg = salesPointRecId.join("', '");
+  const salesPointsPV = await loadSalesPointPV(salesPointRecIdArg);
+
 
   const finalWells: IWellPV[] = [];
 
   if (wellsPV) {
     for (const wellPV of wellsPV) {
-      const { name, lastProduction: lastProductionPV, lastInjection: lastInjectionPV, firstProduction: firstProductionPV, firstInjection: firstInjectionPV, oil, water, gas } = wellPV;
+      const { name, fdcRecId, lastProduction: lastProductionPV, lastInjection: lastInjectionPV, firstProduction: firstProductionPV, firstInjection: firstInjectionPV, oil, water, gas } = wellPV;
       const { lastProduction: lastProductionGDC, lastInjection: lastInjectionGDC, firstProduction: firstProductionGDC, firstInjection: firstInjectionGDC, name: nameGDC } = wellsGDC?.find(({ name: nameGDC }) => nameGDC === name) || {};
 
       const row: IWellPV = {
         name,
+        fdcRecId,
         oil,
         water,
         gas,
@@ -52,6 +63,7 @@ async function main() {
       if (!finalWells.map(({ name }) => name).includes(name)) {
         const row: IWellPV = {
           name,
+          fdcRecId: null,
           oil: 0,
           water: 0,
           gas: 0,
@@ -84,6 +96,28 @@ async function main() {
 
     const well = await prisma.well.update(data);
     console.log(well);
+  }
+
+  if (salesPointsPV) {
+    for (const { oil, water, gas, lastProduction, firstProduction, fdcRecId } of salesPointsPV) {
+      if (fdcRecId) {
+        const data: Prisma.WellUpdateArgs = {
+          where: {
+            fdcRecId,
+          },
+          data: {
+            oil,
+            water,
+            gas,
+            firstProduction,
+            lastProduction,
+          }
+        }
+
+        const salesPoint = await prisma.salesPoint.update(data);
+        console.log(salesPoint);
+      }
+    }
   }
 }
 

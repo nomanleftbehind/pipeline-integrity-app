@@ -54,7 +54,11 @@ function PipelineDatabase() {
         <div className="pipeline-database-side-bar-fixed" /*style={{border: '1px solid red'}}*/>
           <Navigation
             onNavigationAction={handleNavigation}
-            paginationCount={data?.pipelinesById.count || 0}
+            paginationCount={data?.pipelinesById.count || 0
+              // FIXME: For a brief moment before query returns real count, 0 is passed to Navigation component which then passes it to TablePagination component,
+              // which gives warning "Failed prop type: MUI: The page prop of a TablePagination is out of range (0 to 0, but page is 1)" when "Go to next page" is clicked.
+              // This is a low priority fix because warning is generated due to false count appearing for a split second, and it is not visable in production environment. 
+            }
             validators={validatorsNavigation}
           />
         </div>
