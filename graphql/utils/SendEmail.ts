@@ -3,30 +3,36 @@ import { v4 } from 'uuid';
 import Redis from 'ioredis';
 import { confirmUserPrefix } from '../constants';
 
+const nodemailer_user = process.env.nodemailer_user!;
+const nodemailer_password = process.env.nodemailer_password!;
 export const redis = new Redis();
 
 export async function sendEmail(email: string, url: string) {
-  // Generate test SMTP service account from ethereal.email
-  // Only needed if you don't have a real mail account for testing
-  const account = await nodemailer.createTestAccount();
-
   // create reusable transporter object using the default SMTP transport
   const transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
+    host: 'smtp.office365.com',
     port: 587,
-    secure: false, // true for 465, false for other ports
+    secure: false,
     auth: {
-      user: account.user, // generated ethereal user
-      pass: account.pass, // generated ethereal password
+      user: nodemailer_user,
+      pass: nodemailer_password,
     },
   });
 
+  // verify connection configuration
+  transporter.verify(function (error, success) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Server is ready to take our messages");
+    }
+  });
+
   const mailOptions = {
-    from: '"Doma" <dsucic@bonterraenergy.com>', // sender address
+    from: `"Integrity Pro" <${nodemailer_user}>`, // sender address
     to: email, // list of receivers
-    subject: "Hello ✔", // Subject line
-    text: "Hello world?", // plain text body
-    html: `<a href="${url}">${url}</a>`, // html body
+    subject: "Integrity Pro Reset Password", // Subject line
+    html: `<p>Click <a href="${url}">here</a> to reset password</p>`, // html body
   }
 
   // send mail with defined transport object
