@@ -1,8 +1,9 @@
 import { objectType, stringArg, inputObjectType, extendType, nonNull, arg, floatArg } from 'nexus';
 import { Context } from '../context';
-import { User as IUser } from '@prisma/client';
+import { User as IUser, SalesPoint as ISalesPoint } from '@prisma/client';
 import { ITableConstructObject } from './SearchNavigation';
 import { allocateRecursivePipelineFlow } from './PipelineFlow';
+import { gasAssociatedLiquidsCalc, totalFluidsCalc } from './Well';
 
 
 export const SalesPointObjectFields: ITableConstructObject[] = [
@@ -84,7 +85,7 @@ export const SalesPointExtendObject = extendType({
 })
 
 
-const resolveSalesPointAuthorized = (user: IUser) => {
+export const resolveSalesPointAuthorized = (user: IUser) => {
   const { role } = user;
   return role === 'ADMIN' || role === 'ENGINEER';
 }
@@ -356,7 +357,7 @@ export const SalesPointMutation = extendType({
               // If pipeline info is not passed to resolver, it means that the disconnect sales point resolver is called as part of replacing the sales point with another sales point.
               // In that case pipeline flow allocation will be called inside connect sales point resolver, hence no need to run it twice.
               const { pipelineId, flowCalculationDirection } = pipelineInfo;
-              // Don't await because it can take many seconds depending on number of chained pipelines, and we dont' need the result of allocation
+              // Don't await because it can take many seconds depending on number of chained pipelines, and we don't need the result of allocation
               allocateRecursivePipelineFlow({ pipelines: [{ id: pipelineId, flowCalculationDirection }], allocated: [], ctx });
             }
 
@@ -379,3 +380,26 @@ export const SalesPointMutation = extendType({
     })
   }
 });
+
+
+interface IAllocateSalesPointFlowArgs {
+  id: ISalesPoint['id'];
+  oil: ISalesPoint['oil'];
+  water: ISalesPoint['water'];
+  gas: ISalesPoint['gas'];
+  ctx: Context;
+}
+
+export const allocateSalesPointFlow = async ({ id, oil, water, gas, ctx }: IAllocateSalesPointFlowArgs) => {
+
+  const gasAssociatedLiquids = await gasAssociatedLiquidsCalc(gas);
+  const totalFluids = await totalFluidsCalc({ oil, water, gas })
+
+  await ctx.prisma.salesPoint.update({
+    where: { id },
+    data: {
+      gasAssociatedLiquids,
+      totalFluids,
+    }
+  });
+}

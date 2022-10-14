@@ -441,6 +441,7 @@ export type Mutation = {
   allocatePipelineFlow?: Maybe<AllocationPayload>;
   allocatePressureTest?: Maybe<AllocationPayload>;
   allocateRisk?: Maybe<AllocationPayload>;
+  allocateSalesPointFlow?: Maybe<AllocationPayload>;
   allocateWellFlow?: Maybe<AllocationPayload>;
   changePassword: AuthPayload;
   connectPipeline?: Maybe<PipelinesOnPipelinesPayload>;
@@ -1271,6 +1272,7 @@ export type Subscription = {
   pipelineFlowAllocationProgress: AllocationProgressObject;
   pressureTestAllocationProgress: AllocationProgressObject;
   riskAllocationProgress: AllocationProgressObject;
+  salesPointFlowAllocationProgress: AllocationProgressObject;
   wellFlowAllocationProgress: AllocationProgressObject;
 };
 
@@ -1291,6 +1293,11 @@ export type SubscriptionPressureTestAllocationProgressArgs = {
 
 
 export type SubscriptionRiskAllocationProgressArgs = {
+  data: AllocationInput;
+};
+
+
+export type SubscriptionSalesPointFlowAllocationProgressArgs = {
   data: AllocationInput;
 };
 
@@ -1775,6 +1782,11 @@ export type AllocateWellFlowMutationVariables = Exact<{ [key: string]: never; }>
 
 export type AllocateWellFlowMutation = { allocateWellFlow?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
 
+export type AllocateSalesPointFlowMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllocateSalesPointFlowMutation = { allocateSalesPointFlow?: { success?: { field: string, message: string } | null | undefined, error?: { field: string, message: string } | null | undefined } | null | undefined };
+
 export type AllocateRiskMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1978,6 +1990,13 @@ export type WellFlowAllocationProgressSubscriptionVariables = Exact<{
 
 
 export type WellFlowAllocationProgressSubscription = { wellFlowAllocationProgress: { progress: number, numberOfItems: number } };
+
+export type SalesPointFlowAllocationProgressSubscriptionVariables = Exact<{
+  data: AllocationInput;
+}>;
+
+
+export type SalesPointFlowAllocationProgressSubscription = { salesPointFlowAllocationProgress: { progress: number, numberOfItems: number } };
 
 export type RiskAllocationProgressSubscriptionVariables = Exact<{
   data: AllocationInput;
@@ -3706,6 +3725,45 @@ export function useAllocateWellFlowMutation(baseOptions?: Apollo.MutationHookOpt
 export type AllocateWellFlowMutationHookResult = ReturnType<typeof useAllocateWellFlowMutation>;
 export type AllocateWellFlowMutationResult = Apollo.MutationResult<AllocateWellFlowMutation>;
 export type AllocateWellFlowMutationOptions = Apollo.BaseMutationOptions<AllocateWellFlowMutation, AllocateWellFlowMutationVariables>;
+export const AllocateSalesPointFlowDocument = gql`
+    mutation AllocateSalesPointFlow {
+  allocateSalesPointFlow {
+    success {
+      field
+      message
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+    `;
+export type AllocateSalesPointFlowMutationFn = Apollo.MutationFunction<AllocateSalesPointFlowMutation, AllocateSalesPointFlowMutationVariables>;
+
+/**
+ * __useAllocateSalesPointFlowMutation__
+ *
+ * To run a mutation, you first call `useAllocateSalesPointFlowMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAllocateSalesPointFlowMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [allocateSalesPointFlowMutation, { data, loading, error }] = useAllocateSalesPointFlowMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllocateSalesPointFlowMutation(baseOptions?: Apollo.MutationHookOptions<AllocateSalesPointFlowMutation, AllocateSalesPointFlowMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AllocateSalesPointFlowMutation, AllocateSalesPointFlowMutationVariables>(AllocateSalesPointFlowDocument, options);
+      }
+export type AllocateSalesPointFlowMutationHookResult = ReturnType<typeof useAllocateSalesPointFlowMutation>;
+export type AllocateSalesPointFlowMutationResult = Apollo.MutationResult<AllocateSalesPointFlowMutation>;
+export type AllocateSalesPointFlowMutationOptions = Apollo.BaseMutationOptions<AllocateSalesPointFlowMutation, AllocateSalesPointFlowMutationVariables>;
 export const AllocateRiskDocument = gql`
     mutation AllocateRisk {
   allocateRisk {
@@ -5275,6 +5333,37 @@ export function useWellFlowAllocationProgressSubscription(baseOptions: Apollo.Su
       }
 export type WellFlowAllocationProgressSubscriptionHookResult = ReturnType<typeof useWellFlowAllocationProgressSubscription>;
 export type WellFlowAllocationProgressSubscriptionResult = Apollo.SubscriptionResult<WellFlowAllocationProgressSubscription>;
+export const SalesPointFlowAllocationProgressDocument = gql`
+    subscription SalesPointFlowAllocationProgress($data: AllocationInput!) {
+  salesPointFlowAllocationProgress(data: $data) {
+    progress
+    numberOfItems
+  }
+}
+    `;
+
+/**
+ * __useSalesPointFlowAllocationProgressSubscription__
+ *
+ * To run a query within a React component, call `useSalesPointFlowAllocationProgressSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSalesPointFlowAllocationProgressSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSalesPointFlowAllocationProgressSubscription({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useSalesPointFlowAllocationProgressSubscription(baseOptions: Apollo.SubscriptionHookOptions<SalesPointFlowAllocationProgressSubscription, SalesPointFlowAllocationProgressSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<SalesPointFlowAllocationProgressSubscription, SalesPointFlowAllocationProgressSubscriptionVariables>(SalesPointFlowAllocationProgressDocument, options);
+      }
+export type SalesPointFlowAllocationProgressSubscriptionHookResult = ReturnType<typeof useSalesPointFlowAllocationProgressSubscription>;
+export type SalesPointFlowAllocationProgressSubscriptionResult = Apollo.SubscriptionResult<SalesPointFlowAllocationProgressSubscription>;
 export const RiskAllocationProgressDocument = gql`
     subscription RiskAllocationProgress($data: AllocationInput!) {
   riskAllocationProgress(data: $data) {

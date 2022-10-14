@@ -9,6 +9,8 @@ import {
   usePipelineFlowAllocationProgressSubscription,
   useAllocateWellFlowMutation,
   useWellFlowAllocationProgressSubscription,
+  useAllocateSalesPointFlowMutation,
+  useSalesPointFlowAllocationProgressSubscription,
   useAllocateRiskMutation,
   useRiskAllocationProgressSubscription,
   useAllocateChronologicalEdgeMutation,
@@ -50,6 +52,19 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
     onSubscriptionData: ({ subscriptionData: { data } }) => {
       if (data) {
         const { wellFlowAllocationProgress: { progress, numberOfItems } } = data;
+        setAllocationProgressBar({
+          progress,
+          numberOfItems,
+        });
+      }
+    },
+  });
+
+  const { } = useSalesPointFlowAllocationProgressSubscription({
+    variables: { data: { userId } },
+    onSubscriptionData: ({ subscriptionData: { data } }) => {
+      if (data) {
+        const { salesPointFlowAllocationProgress: { progress, numberOfItems } } = data;
         setAllocationProgressBar({
           progress,
           numberOfItems,
@@ -121,6 +136,18 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
     }
   });
 
+  const [allocateSalesPointFlow] = useAllocateSalesPointFlowMutation({
+    onCompleted: ({ allocateSalesPointFlow }) => {
+      const { error, success } = allocateSalesPointFlow || {};
+      if (error) {
+        setFieldStatus(error);
+      }
+      if (success) {
+        setFieldStatus(success);
+      }
+    }
+  });
+
   const [allocateRisk] = useAllocateRiskMutation({
     onCompleted: ({ allocateRisk }) => {
       const { error, success } = allocateRisk || {};
@@ -163,6 +190,10 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
 
   const handleAllocateWellFlow = () => {
     allocateWellFlow();
+  }
+
+  const handleAllocateSalesPointFlow = () => {
+    allocateSalesPointFlow();
   }
 
   const handleAllocateRisk = () => {
@@ -218,6 +249,7 @@ export default function AllocateMenu({ userId }: IAllocateMenuProps) {
       >
         <MenuItem onClick={handleAllocatePipelineFlow}>Pipeline Flow</MenuItem>
         <MenuItem onClick={handleAllocateWellFlow}>Well Flow</MenuItem>
+        <MenuItem onClick={handleAllocateSalesPointFlow}>Sales Point Flow</MenuItem>
         <MenuItem onClick={handleAllocateRisk}>Risk</MenuItem>
         <MenuItem onClick={handleAllocatePressureTest}>Pressure Test</MenuItem>
         <MenuItem onClick={handleAllocateChronologicalEdge}>Chronological Edge</MenuItem>

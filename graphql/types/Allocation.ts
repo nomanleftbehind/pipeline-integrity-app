@@ -20,6 +20,7 @@ import {
   resolveWellAuthorized,
   allocateWellFlow,
 } from './Well';
+import { resolveSalesPointAuthorized, allocateSalesPointFlow } from './SalesPoint';
 
 export const AllocationMutation = extendType({
   type: 'Mutation',
@@ -243,6 +244,57 @@ export const AllocationMutation = extendType({
         }
       }
     })
+    t.field('allocateSalesPointFlow', {
+      type: 'AllocationPayload',
+      resolve: async (_, _args, ctx) => {
+        const user = ctx.user;
+        if (user) {
+          const { firstName, id: userId } = user;
+          const authorized = resolveSalesPointAuthorized(user);
+          if (authorized) {
+
+            const allSalesPoints = await ctx.prisma.salesPoint.findMany({
+              select: { id: true, oil: true, water: true, gas: true }
+            });
+
+            const numberOfItems = allSalesPoints.length;
+            let progress = 0;
+            try {
+              for (const { id, oil, water, gas } of allSalesPoints) {
+                await allocateSalesPointFlow({ id, oil, water, gas, ctx });
+                progress += 1;
+                ctx.pubsub.publish('salesPointFlowAllocationProgress', { userId, progress, numberOfItems });
+              }
+
+            } catch (e) {
+              // If allocation fails, publish initial progress to close the progress modal
+              ctx.pubsub.publish('salesPointFlowAllocationProgress', { userId, progress: 0, numberOfItems: 0 });
+              throw e;
+            }
+            // If allocation succeeds, publish initial progress after the loop to close the progress modal
+            ctx.pubsub.publish('salesPointFlowAllocationProgress', { userId, progress: 0, numberOfItems: 0 });
+            return {
+              success: {
+                field: 'Sales point flow',
+                message: `Allocated flow to ${numberOfItems} sales points`,
+              }
+            }
+          }
+          return {
+            error: {
+              field: 'User',
+              message: `Hi ${firstName}, you are not authorized to allocate flow for sales points.`,
+            }
+          }
+        }
+        return {
+          error: {
+            field: 'User',
+            message: 'Not authorized',
+          }
+        }
+      }
+    })
     t.field('allocateChronologicalEdge', {
       type: 'AllocationPayload',
       resolve: async (_, _args, ctx) => {
@@ -396,6 +448,22 @@ export const RiskAllocationProgressSubscription = extendType({
         },
       ),
       resolve: (root: NexusGenFieldTypes['Subscription']['wellFlowAllocationProgress'], _args, _ctx: ContextSubscription) => {
+        return root
+      },
+    })
+    t.nonNull.field('salesPointFlowAllocationProgress', {
+      type: 'AllocationProgressObject',
+      args: { data: nonNull(arg({ type: 'AllocationInput' })) },
+      subscribe: withFilter(
+        (_root/* This is still undefined at this point */, _args: NexusGenArgTypes['Subscription']['salesPointFlowAllocationProgress'], ctx: ContextSubscription) => {
+          return ctx.pubsub.asyncIterator('salesPointFlowAllocationProgress')
+        },
+        (root: NexusGenFieldTypes['Subscription']['salesPointFlowAllocationProgress'], args: NexusGenArgTypes['Subscription']['salesPointFlowAllocationProgress'], _ctx: ContextSubscription) => {
+          // Only push an update for user who pressed the allocate button
+          return (root.userId === args.data.userId);
+        },
+      ),
+      resolve: (root: NexusGenFieldTypes['Subscription']['salesPointFlowAllocationProgress'], _args, _ctx: ContextSubscription) => {
         return root
       },
     })

@@ -514,6 +514,19 @@ mutation AllocateWellFlow {
   }
 }
 
+mutation AllocateSalesPointFlow {
+  allocateSalesPointFlow {
+    success {
+      field
+      message
+    }
+    error {
+      field
+      message
+    }
+  }
+}
+
 mutation AllocateRisk {
   allocateRisk {
     success {

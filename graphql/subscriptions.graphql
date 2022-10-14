@@ -12,6 +12,13 @@ subscription WellFlowAllocationProgress($data: AllocationInput!) {
   }
 }
 
+subscription SalesPointFlowAllocationProgress($data: AllocationInput!) {
+  salesPointFlowAllocationProgress(data: $data) {
+    progress
+    numberOfItems
+  }
+}
+
 subscription RiskAllocationProgress($data: AllocationInput!) {
   riskAllocationProgress(data: $data) {
     progress

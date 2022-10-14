@@ -436,6 +436,7 @@ type Mutation {
   allocatePipelineFlow: AllocationPayload
   allocatePressureTest: AllocationPayload
   allocateRisk: AllocationPayload
+  allocateSalesPointFlow: AllocationPayload
   allocateWellFlow: AllocationPayload
   changePassword(changePasswordInput: ChangePasswordInput!): AuthPayload!
   connectPipeline(connectNewPipelineId: String!, connectedPipelineId: String, flowCalculationDirection: FlowCalculationDirectionEnum!, pipelineId: String!): PipelinesOnPipelinesPayload
@@ -892,6 +893,7 @@ type Subscription {
   pipelineFlowAllocationProgress(data: AllocationInput!): AllocationProgressObject!
   pressureTestAllocationProgress(data: AllocationInput!): AllocationProgressObject!
   riskAllocationProgress(data: AllocationInput!): AllocationProgressObject!
+  salesPointFlowAllocationProgress(data: AllocationInput!): AllocationProgressObject!
   wellFlowAllocationProgress(data: AllocationInput!): AllocationProgressObject!
 }
 
