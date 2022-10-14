@@ -330,6 +330,42 @@ export const WellMutation = extendType({
           const { id: userId, firstName } = user
           const authorized = resolveWellAuthorized(user);
           if (authorized) {
+
+            let totalFluids;
+            let gasAssociatedLiquids;
+
+            if (typeof oil === 'number') {
+              const currentWellFlow = await ctx.prisma.well.findUnique({
+                where: { id },
+                select: { water: true, gas: true }
+              });
+              if (currentWellFlow) {
+                const { water, gas } = currentWellFlow;
+                totalFluids = await totalFluidsCalc({ oil, water, gas })
+              }
+            }
+            if (typeof water === 'number') {
+              const currentWellFlow = await ctx.prisma.well.findUnique({
+                where: { id },
+                select: { oil: true, gas: true }
+              });
+              if (currentWellFlow) {
+                const { oil, gas } = currentWellFlow;
+                totalFluids = await totalFluidsCalc({ oil, water, gas })
+              }
+            }
+            if (typeof gas === 'number') {
+              const currentWellFlow = await ctx.prisma.well.findUnique({
+                where: { id },
+                select: { oil: true, water: true }
+              });
+              if (currentWellFlow) {
+                const { oil, water } = currentWellFlow;
+                totalFluids = await totalFluidsCalc({ oil, water, gas });
+                gasAssociatedLiquids = await gasAssociatedLiquidsCalc(gas);
+              }
+            }
+            
             const well = await ctx.prisma.well.update({
               where: { id },
               data: {
@@ -337,6 +373,8 @@ export const WellMutation = extendType({
                 oil: oil || undefined,
                 water: water || undefined,
                 gas: gas || undefined,
+                gasAssociatedLiquids,
+                totalFluids,
                 firstProduction,
                 lastProduction,
                 firstInjection,

@@ -235,6 +235,42 @@ export const SalesPointMutation = extendType({
           const { id: userId, firstName } = user
           const authorized = resolveSalesPointAuthorized(user);
           if (authorized) {
+
+            let totalFluids;
+            let gasAssociatedLiquids;
+
+            if (typeof oil === 'number') {
+              const currentSalesPointFlow = await ctx.prisma.salesPoint.findUnique({
+                where: { id },
+                select: { water: true, gas: true }
+              });
+              if (currentSalesPointFlow) {
+                const { water, gas } = currentSalesPointFlow;
+                totalFluids = await totalFluidsCalc({ oil, water, gas })
+              }
+            }
+            if (typeof water === 'number') {
+              const currentSalesPointFlow = await ctx.prisma.salesPoint.findUnique({
+                where: { id },
+                select: { oil: true, gas: true }
+              });
+              if (currentSalesPointFlow) {
+                const { oil, gas } = currentSalesPointFlow;
+                totalFluids = await totalFluidsCalc({ oil, water, gas })
+              }
+            }
+            if (typeof gas === 'number') {
+              const currentSalesPointFlow = await ctx.prisma.salesPoint.findUnique({
+                where: { id },
+                select: { oil: true, water: true }
+              });
+              if (currentSalesPointFlow) {
+                const { oil, water } = currentSalesPointFlow;
+                totalFluids = await totalFluidsCalc({ oil, water, gas });
+                gasAssociatedLiquids = await gasAssociatedLiquidsCalc(gas);
+              }
+            }
+
             const salesPoint = await ctx.prisma.salesPoint.update({
               where: { id },
               data: {
@@ -242,6 +278,8 @@ export const SalesPointMutation = extendType({
                 oil: oil || undefined,
                 water: water || undefined,
                 gas: gas || undefined,
+                gasAssociatedLiquids,
+                totalFluids,
                 firstProduction: firstProduction,
                 lastProduction: lastProduction,
                 firstInjection: firstInjection,
