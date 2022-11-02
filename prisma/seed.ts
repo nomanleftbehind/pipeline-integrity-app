@@ -44,6 +44,7 @@ import {
 import {
   pipelineBatchData1,
   pipelineBatchData2,
+  pipelineBatchData3,
 } from './SeedPipelineBatchData';
 
 import {
@@ -53,6 +54,8 @@ import {
   wellBatchData4,
   wellBatchData5,
   wellBatchData6,
+  wellBatchData7,
+  wellBatchData8,
 } from './SeedWellBatchData';
 
 import {
@@ -371,6 +374,13 @@ async function main() {
     console.log(`Created pipeline batch on pipeline ${pipelineBatch.pipelineId} dated ${pipelineBatch.date}`)
   }
 
+  for (const u of pipelineBatchData3) {
+    const pipelineBatch = await prisma.pipelineBatch.create({
+      data: u,
+    })
+    console.log(`Created pipeline batch on pipeline ${pipelineBatch.pipelineId} dated ${pipelineBatch.date}`)
+  }
+
   for (const u of wellBatchData1) {
     const wellBatch = await prisma.wellBatch.create({
       data: u,
@@ -407,6 +417,20 @@ async function main() {
   }
 
   for (const u of wellBatchData6) {
+    const wellBatch = await prisma.wellBatch.create({
+      data: u,
+    })
+    console.log(`Created well batch on well ${wellBatch.wellId} dated ${wellBatch.date}`)
+  }
+
+  for (const u of wellBatchData7) {
+    const wellBatch = await prisma.wellBatch.create({
+      data: u,
+    })
+    console.log(`Created well batch on well ${wellBatch.wellId} dated ${wellBatch.date}`)
+  }
+
+  for (const u of wellBatchData8) {
     const wellBatch = await prisma.wellBatch.create({
       data: u,
     })

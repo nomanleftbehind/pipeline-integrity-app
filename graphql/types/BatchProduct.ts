@@ -67,6 +67,8 @@ export const BatchProduct = objectType({
 export const SolubilityEnumMembers = {
   Oil: 'Oil',
   Water: 'Water',
+  Solvent: 'Solvent',
+  ScaleInhibitor: 'Scale Inhibitor',
 }
 
 export const SolubilityEnum = enumType({

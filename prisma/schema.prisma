@@ -647,6 +647,8 @@ model BatchProduct {
 enum SolubilityEnum {
   Oil
   Water
+  Solvent
+  ScaleInhibitor @map("Scale Inhibitor")
 
   @@map("solubility")
 }

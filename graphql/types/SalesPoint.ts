@@ -289,7 +289,7 @@ export const SalesPointMutation = extendType({
               },
             });
             if (typeof oil === 'number' || typeof water === 'number' || typeof gas === 'number' || firstProduction || lastProduction || firstInjection || lastInjection) {
-              // Only allocate pipeline flow if numeric or datetime values have been changed on a wall.
+              // Only allocate pipeline flow if numeric or datetime values have been changed on a sales point.
               // Don't await because it can take many seconds depending on number of chained pipelines, and we dont' need the result of allocation
               allocateRecursivePipelineFlow({ pipelines: [{ id: pipelineId, flowCalculationDirection }], allocated: [], ctx });
             }

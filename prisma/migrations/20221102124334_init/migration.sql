@@ -2,7 +2,7 @@
 CREATE TYPE "user_role" AS ENUM ('Admin', 'Engineer', 'Regulatory', 'Office', 'Operator', 'Chemical', 'Cathodic', 'Contractor');
 
 -- CreateEnum
-CREATE TYPE "solubility" AS ENUM ('Oil', 'Water');
+CREATE TYPE "solubility" AS ENUM ('Oil', 'Water', 'Solvent', 'Scale Inhibitor');
 
 -- CreateEnum
 CREATE TYPE "flow_calculation_direction" AS ENUM ('Upstream', 'Downstream');
