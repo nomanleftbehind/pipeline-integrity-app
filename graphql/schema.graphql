@@ -865,6 +865,8 @@ type SideBar {
 
 enum SolubilityEnum {
   Oil
+  ScaleInhibitor
+  Solvent
   Water
 }
 
